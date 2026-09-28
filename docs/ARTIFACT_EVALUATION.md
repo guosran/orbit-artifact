@@ -2,7 +2,7 @@
 
 ## Claims and present gate
 
-The repository is structured for seven independently validated modules: semantic rewrite, shape/replication, spatial orchestration, temporal scheduling, cost/ranking, selected native replay, and paper reproduction. Run `./artifact.sh status` for machine-derived module verdicts. Current source-backed resource/spatial/temporal fixtures are limited to small cases; there is no complete replica/policy/replay/paper path at the pinned source. Full-system GO is unavailable.
+The repository is structured for seven independently validated modules: semantic rewrite, shape/replication, spatial orchestration, temporal scheduling, cost/ranking, selected native replay, and paper reproduction. Run `./artifact.sh status` for machine-derived module verdicts. Current source-backed resource/spatial/temporal fixtures are limited to small cases; there is no complete replica/policy/replay/paper path at the pinned source. Full-system GO is unavailable. RTL simulation is optional and is not an acceptance gate; native mapper replay remains a separate required evidence class.
 
 ## Hardware and software
 
@@ -45,4 +45,3 @@ The semantic command is a real 126-graph, four-case host run. Resource uses a on
 ## Long runs, troubleshooting, cleanup
 
 No full workload or RTL long run is scheduled. Future plans use independent case files and `./artifact.sh resume <run-directory>`; completed cases are skipped and interrupted cases remain incomplete. See [long-run status](LONG_RUN_STATUS.md). Use `commands.jsonl` and `logs/` to diagnose failures. `./artifact.sh clean-results` removes only recognized generated runs; it leaves source/build caches and checked-in reference metadata.
-

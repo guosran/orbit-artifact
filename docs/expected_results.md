@@ -4,5 +4,4 @@
 
 The 126 expected graph IDs are in `reference/semantic_closure_summary.json`. They identify source-owned semantic graphs. The reference is a comparison target only; every run creates new C++ manifest, witness replay, host numeric audit, and derived summaries. Tables are generated from run JSON, never copied from this document.
 
-The pinned closure commit's prior manifest contained 5,920 action attempts, so the action invariant is known to be at risk. A new run determines the result; do not reinterpret a failed validator as a pass.
-
+Fresh pinned-source runs consistently contain 5,920 action calls. [The action ledger](ACTION_COUNT_RECONCILIATION.md) attributes the 640-call difference to witness-upgrade requeues of 32 existing graphs. The historical 5,280 itself includes older requeues, so neither number is a stable count of distinct canonical input/action combinations. The frozen 5,280 remains unchanged and validation fails closed until the source metric and artifact contract receive a reviewed correction.

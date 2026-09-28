@@ -67,6 +67,20 @@ The source was fetched into a new checkout with pinned Neura, and this run used 
        smoke_exe["element_comparisons"], smoke_exe["numeric_mismatches"],
        smoke_neg["detected_mismatches"], tests["python_passed"],
        tests["lit_passed"], env["optional_dependency_state"], run["wall_clock_seconds"])
+    reconciliation = RESULTS / "action-count-reconciliation/action_count_diff.json"
+    if reconciliation.exists():
+        diff = json.loads(reconciliation.read_text())
+        text += ("\nThe action ledger reconciles the difference as %s graph IDs gaining "
+                 "one 20-action re-expansion each: %s added accepted duplicate-output calls "
+                 "and %s added deterministic rejections. The old and current ledgers each "
+                 "contain %s distinct canonical input/action combinations. Every added "
+                 "combination already appeared in the old ledger; the two fresh current "
+                 "enumerations agree exactly. This does not satisfy the frozen contract. "
+                 "See `ACTION_COUNT_PROVENANCE.md` and `ACTION_COUNT_RECONCILIATION.md`.\n" %
+                 (len(diff["extra_by_input_graph"]),
+                  diff["added_groups"]["legality_result"].get("accepted", 0),
+                  diff["added_groups"]["legality_result"].get("rejected", 0),
+                  diff["current_unique_input_action_pairs"]))
     (ROOT / "docs/SEMANTIC_ARTIFACT_REPORT.md").write_text(text)
     return full, validation
 
@@ -98,6 +112,8 @@ def full_report(semantic_path, semantic_validation):
 - Paper: only semantic and fixture Markdown tables can currently be generated. Matched native baselines, performance tables and plots are pending.
 
 The harness ran %s tests with %s failures and %s errors. Existing CNN/GPT-2/FFT results use an earlier dirty source/provisional protocol and remain historical or diagnostic; they do not enter current paper comparisons. No full-workload, RTL, systolic, or blocked-GEMM long run was started. See `RESULT_COMPARABILITY.md` and `LONG_RUN_STATUS.md`.
+
+RTL simulation is optional and is not a final artifact gate. Native mapper replay and matched current-protocol baselines remain required.
 
 For full-system GO, resolve the frozen semantic attempt-count conflict, implement/reproduce replica-aware resource candidates and the activity scheduler policy matrix, remove the native replay file-binding conflict through a reviewed source protocol, run matched current-protocol baselines and selected native replay, and generate every paper table and plot from complete results. The public artifact repository and tag are separate publication checks and do not substitute for these gates.
 """ % (modules["full_system_verdict"], "passed" if semantic_validation["pass"] else "failed", rows,

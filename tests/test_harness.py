@@ -92,6 +92,15 @@ class HarnessTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "unique_semantic_graphs"):
                 validate_results.validate(path)
 
+    def test_wrong_action_count_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp); self.fixture(path)
+            data = json.loads((path / "semantic_summary.json").read_text())
+            data["attempted_actions"] = 5920
+            common.write_json(path / "semantic_summary.json", data)
+            with self.assertRaisesRegex(ValueError, "attempted_actions: expected 5280, observed 5920"):
+                validate_results.validate(path)
+
     def test_negative_control_required(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp); self.fixture(path)

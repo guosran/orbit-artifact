@@ -21,6 +21,8 @@
 - Native replay: pending. Pinned mapper replay requires score/trace file bindings and has no current no-binding selected-candidate path.
 - Paper: only semantic and fixture Markdown tables can currently be generated. Matched native baselines, performance tables and plots are pending.
 
-The harness ran 31 tests with 0 failures and 0 errors. Existing CNN/GPT-2/FFT results use an earlier dirty source/provisional protocol and remain historical or diagnostic; they do not enter current paper comparisons. No full-workload, RTL, systolic, or blocked-GEMM long run was started. See `RESULT_COMPARABILITY.md` and `LONG_RUN_STATUS.md`.
+The harness ran 40 tests with 0 failures and 0 errors. Existing CNN/GPT-2/FFT results use an earlier dirty source/provisional protocol and remain historical or diagnostic; they do not enter current paper comparisons. No full-workload, RTL, systolic, or blocked-GEMM long run was started. See `RESULT_COMPARABILITY.md` and `LONG_RUN_STATUS.md`.
+
+RTL simulation is optional and is not a final artifact gate. Native mapper replay and matched current-protocol baselines remain required.
 
 For full-system GO, resolve the frozen semantic attempt-count conflict, implement/reproduce replica-aware resource candidates and the activity scheduler policy matrix, remove the native replay file-binding conflict through a reviewed source protocol, run matched current-protocol baselines and selected native replay, and generate every paper table and plot from complete results. The public artifact repository and tag are separate publication checks and do not substitute for these gates.

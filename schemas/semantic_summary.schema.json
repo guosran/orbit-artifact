@@ -6,7 +6,10 @@
   "required": ["schema", "attempted_actions", "unique_semantic_graphs", "graph_ids", "materialized_witnesses", "mlir_verified", "graph_fact_matches", "k_mode_counts", "fusion_mode_counts", "rejection_reasons", "coverage"],
   "properties": {
     "schema": {"const": "orbit-semantic-summary-v1"},
-    "attempted_actions": {"type": "integer", "minimum": 0},
+    "attempted_actions": {
+      "type": "integer", "minimum": 0,
+      "description": "Source C++ action_attempts: one applyAction call for each catalog action on each dequeued rewrite state, including rejected/no-op actions and witness-upgrade requeues. This is a queue-visit invocation count, before output-graph deduplication; it is not a count of distinct canonical input/action pairs. Witness validation, materialization, host execution, Python reference evaluation, and reruns are excluded."
+    },
     "unique_semantic_graphs": {"type": "integer", "minimum": 0},
     "graph_ids": {"type": "array", "items": {"type": "string"}},
     "materialized_witnesses": {"type": "integer", "minimum": 0},
