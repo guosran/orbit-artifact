@@ -63,7 +63,8 @@ class HarnessTests(unittest.TestCase):
         common.write_json(path / "environment.json", {"source_commit": run["amoeba_git_commit"],
                            "required_status": "available", "optional_dependency_state": "optional_dependency_missing"})
         common.write_json(path / "negative_control.json", {"injected_mismatches": 1, "detected_mismatches": 1})
-        common.write_json(path / "test_summary.json", {"python_passed": 114, "lit_passed": 2, "optional_skipped": 6})
+        common.write_json(path / "test_summary.json", {"python_passed": 114, "lit_passed": 2, "optional_skipped": 0,
+                           "optional_out_of_scope_cases": 6, "broader_lit_executed": False})
         (path / "commands.jsonl").write_text("{}\n")
         (path / "graph_inventory.jsonl").write_text("".join(json.dumps({"graph_id": graph_id}) + "\n" for graph_id in ids))
 

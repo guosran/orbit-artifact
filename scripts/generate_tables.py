@@ -47,6 +47,7 @@ def generate(path):
         ("Focused Python tests", tests.get("python_passed", "not run")),
         ("Focused lit tests", tests.get("lit_passed", "not run")),
         ("Skipped optional tests", tests.get("optional_skipped", "not run")),
+        ("Historical broader-suite cases out of scope", tests.get("optional_out_of_scope_cases", "not recorded")),
         ("Wall clock seconds", run.get("wall_clock_seconds", "incomplete")),
         ("Peak memory KiB", run.get("peak_memory_kib", "unavailable"))]))
 

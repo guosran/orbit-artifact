@@ -160,6 +160,9 @@ def temporal(src, opt, run_dir):
 
 
 def cost(src, opt, run_dir):
+    protocol = json.loads((ROOT / "config/protocols/analytical_fixture.json").read_text())
+    if protocol.get("schema") != "orbit-analytical-fixture-protocol-v1":
+        raise ValueError("unknown analytical fixture protocol")
     _, _, manifest, rows = enumerate_shapes(src, opt, run_dir,
         "score-scheduler-makespan.mlir", 1, network=True)
     candidates = [r for r in rows if r.get("record_type") == "candidate"]
@@ -170,7 +173,7 @@ def cost(src, opt, run_dir):
         raise ValueError("cost fixture task identity changed")
     # Artifact fixture model only: the source-owned score pass requires file
     # hash bindings and cannot be invoked by this no-file-hash artifact.
-    durations = {"A": 5, "B": 5}
+    durations = protocol["channel_task_durations_cycles"]
     channel_scores = [{"candidate_id": candidates[0]["candidate_id"], "evidence_class": "analytical_estimate",
                "model": "fixed-five-cycle-channel-fixture", "cost": {"value": sum(durations.values()),
                "unit": "cycles", "source": "analytical_estimate"}, "status": "selected"}]
@@ -179,7 +182,7 @@ def cost(src, opt, run_dir):
     shape_candidates = [r for r in shape_rows if r.get("record_type") == "candidate"]
     shape_scores = []
     for row in shape_candidates:
-        task_costs = {task["task"]: math.ceil(10 / task["shape"]["cgra_count"])
+        task_costs = {task["task"]: math.ceil(protocol["shape_task_work_units"] / task["shape"]["cgra_count"])
                       for task in row["task_shapes"]}
         shape_scores.append({"candidate_id": row["candidate_id"],
                              "predicted_parallel_makespan_cycles": max(task_costs.values()),
@@ -191,8 +194,10 @@ def cost(src, opt, run_dir):
                "estimated_makespan_cycles": shape_scores[0]["predicted_parallel_makespan_cycles"],
                "shape_scores": shape_scores, "channel_fixture_scores": channel_scores,
                "channel_fixture_makespan_cycles": 10,
-               "ranking_tie_break": "candidate_id ascending",
-               "model": "fixture task duration = ceil(10 / physical CGRAs); independent tasks overlap",
+               "ranking_tie_break": protocol["tie_break"],
+               "model": "fixture task duration = %s; independent makespan = %s" %
+                        (protocol["shape_task_duration_rule"], protocol["independent_task_makespan_rule"]),
+               "protocol_path": "config/protocols/analytical_fixture.json",
                "source_score_pass_executed": False,
                "scope": "artifact analytical fixture; production score pass requires file-hash contract"}
     write_json(run_dir / "cost_summary.json", summary)

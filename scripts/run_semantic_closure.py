@@ -62,7 +62,8 @@ def strip_legacy_file_hash_fields(value):
 
 
 def summary_tests(run_dir, env, src, build, llvm, child_env):
-    tests = {"optional_skipped": 6 if env["optional_dependency_state"] == "optional_dependency_missing" else 0,
+    tests = {"optional_skipped": 0, "optional_out_of_scope_cases": 6,
+             "broader_lit_executed": False,
              "optional_state": env["optional_dependency_state"]}
     test_files = sorted((src / "tools").glob("test_*.py"))
     python_argv = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *map(str, test_files)]
@@ -147,7 +148,9 @@ def run(mode):
             summary_tests(run_dir, env, src, build, llvm, child_env)
             run_record["completed_stage"] = "numeric"
         else:
-            write_json(run_dir / "test_summary.json", {"optional_skipped": 6 if env["optional_dependency_state"] == "optional_dependency_missing" else 0,
+            write_json(run_dir / "test_summary.json", {"optional_skipped": 0,
+                                                       "optional_out_of_scope_cases": 6,
+                                                       "broader_lit_executed": False,
                                                        "python_passed": "not run", "lit_passed": "not run"})
         collect(run_dir)
         run_record["status"] = "completed"
