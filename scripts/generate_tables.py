@@ -14,11 +14,13 @@ def table(rows):
 
 
 def generate(path):
+    run = json.loads((path / "run.json").read_text())
+    if run.get("schema") == "orbit-system-module-run-v1":
+        return generate_module(path, run["module"])
     semantic = json.loads((path / "semantic_summary.json").read_text())
     execution = json.loads((path / "execution_summary.json").read_text())
     negative = json.loads((path / "negative_control.json").read_text())
     environment = json.loads((path / "environment.json").read_text())
-    run = json.loads((path / "run.json").read_text())
     dest = path / "tables"; dest.mkdir(exist_ok=True)
     rows = [("Action attempts", semantic["attempted_actions"]),
             ("Unique semantic graphs", semantic["unique_semantic_graphs"]),
@@ -49,7 +51,26 @@ def generate(path):
         ("Peak memory KiB", run.get("peak_memory_kib", "unavailable"))]))
 
 
+def generate_module(path, module):
+    summary = json.loads((path / (module + "_summary.json")).read_text())
+    rows = [(key.replace("_", " "), value) for key, value in summary.items()
+            if key not in ("schema", "scope", "shape_scores", "channel_fixture_scores",
+                           "placements", "channel_placements", "communication", "tasks")
+            and not isinstance(value, (dict, list))]
+    if module == "resource":
+        rows += [("shapes using %s CGRAs" % count, value)
+                 for count, value in sorted(summary["shape_counts_by_cgras"].items())]
+    if module == "spatial":
+        rows += [("placed tasks", len(summary["placements"])),
+                 ("channel payload bits", summary["communication"]["payload_bits"]),
+                 ("link reservations", len(summary["communication"]["route_link_reservations"]))]
+    if module == "cost":
+        rows += [("rank %d: %s" % (i, row["candidate_id"]), row["predicted_parallel_makespan_cycles"])
+                 for i, row in enumerate(summary["shape_scores"])]
+    dest = path / "tables"; dest.mkdir(exist_ok=True)
+    (dest / (module + ".md")).write_text("# %s fixture (partial module evidence)\n\n" % module.title() + table(rows))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("run_dir", nargs="?", type=Path)
     args = ap.parse_args(); generate(args.run_dir or latest_run())
-

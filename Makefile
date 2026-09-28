@@ -1,5 +1,5 @@
-.PHONY: doctor setup build smoke semantic validate tables clean-results test
-doctor setup build smoke validate tables clean-results:
+.PHONY: doctor setup build smoke semantic status validate tables clean-results test
+doctor setup build smoke status validate tables clean-results:
 	./artifact.sh $@
 semantic:
 	./artifact.sh reproduce semantic

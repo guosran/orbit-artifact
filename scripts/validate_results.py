@@ -89,11 +89,49 @@ def validate(path, require_full=True):
             "checked_run": str(path), "checked_invariants": list(expected)}
 
 
+def validate_module(path):
+    run = json.loads((path / "run.json").read_text())
+    if run.get("schema") != "orbit-system-module-run-v1" or run.get("status") != "completed":
+        raise ValueError("module run is incomplete")
+    if not (path / "commands.jsonl").is_file() or not (path / "commands.jsonl").read_text().strip():
+        raise ValueError("module command log missing")
+    module = run["module"]
+    summary = json.loads((path / (module + "_summary.json")).read_text())
+    if module == "resource":
+        rows = [json.loads(line) for line in (path / "resource_candidates.jsonl").read_text().splitlines()]
+        if summary["candidate_count"] != 8 or len(rows) != 8 or summary["fabric"]["physical_cgras"] != 16:
+            raise ValueError("resource fixture shape count or fabric differs")
+        if any(r["physical_cgras"] > 4 or r["logical_tile_id"] == r["replica_id"] for r in rows):
+            raise ValueError("resource fixture violates shape or tile/replica contract")
+    elif module == "spatial":
+        if len(summary["placements"]) != 2 or summary["communication"]["payload_bits"] != 32:
+            raise ValueError("spatial fixture placement or payload differs")
+        if not summary["communication"]["route_link_reservations"]:
+            raise ValueError("spatial route reservation missing")
+    elif module == "temporal":
+        if summary["makespan_cycles"] != 1000005 or len(summary["tasks"]) != 2:
+            raise ValueError("temporal release-event fixture differs")
+    elif module == "cost":
+        scores = summary["shape_scores"]
+        if len(scores) != 9 or scores[0]["candidate_id"] != summary["selected_source_candidate_id"]:
+            raise ValueError("analytical fixture ranking differs")
+        if scores != sorted(scores, key=lambda row: (row["predicted_parallel_makespan_cycles"], row["candidate_id"])):
+            raise ValueError("analytical fixture tie-breaking differs")
+        if summary["channel_fixture_makespan_cycles"] != 10 or summary["source_score_pass_executed"]:
+            raise ValueError("analytical fixture evidence classification differs")
+    else:
+        raise ValueError("unknown module result: " + module)
+    return {"schema": "orbit-module-validation-v1", "pass": True, "scope": "fixture_only",
+            "module": module, "reason": summary["scope"]}
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("run_dir", nargs="?", type=Path)
     args = ap.parse_args(); path = args.run_dir or latest_run()
     try:
-        result = validate(path, require_full="semantic" in path.name)
+        run = json.loads((path / "run.json").read_text())
+        result = (validate_module(path) if run.get("schema") == "orbit-system-module-run-v1" else
+                  validate(path, require_full="semantic" in path.name))
     except (KeyError, ValueError, OSError, json.JSONDecodeError) as error:
         result = {"schema": "orbit-validation-v1", "pass": False, "error": str(error)}
     write_json(path / "validation.json", result)

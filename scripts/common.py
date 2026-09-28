@@ -66,13 +66,18 @@ def require_source_clean(path=None):
         raise ValueError("wrong AMOEBA source commit: " + git(path, "rev-parse", "HEAD"))
     if git(path, "status", "--porcelain", "--ignore-submodules=none"):
         raise ValueError("AMOEBA source is dirty: " + str(path))
-    for name, rel in (("neura", "thirdparty/neura"),
-                      ("cgra_ii_predictor", "thirdparty/cgra-ii-predictor")):
+    for name, rel in (("neura", "thirdparty/neura"),):
         sub = path / rel
         if not sub.is_dir() or git(sub, "rev-parse", "HEAD") != lock()[name]["commit"]:
             raise ValueError("missing or wrong pinned submodule: " + rel)
         if git(sub, "status", "--porcelain", "--ignore-submodules=all"):
             raise ValueError("dirty pinned submodule: " + rel)
+    optional = path / "thirdparty/cgra-ii-predictor"
+    if (optional / ".git").exists():
+        if git(optional, "rev-parse", "HEAD") != lock()["cgra_ii_predictor"]["commit"]:
+            raise ValueError("wrong optional predictor submodule commit")
+        if git(optional, "status", "--porcelain", "--ignore-submodules=all"):
+            raise ValueError("dirty optional predictor submodule")
     return path
 
 

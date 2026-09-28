@@ -15,9 +15,13 @@ fi
 if [ -n "$(git -C "$source_dir" status --porcelain --ignore-submodules=all)" ]; then
   echo "dirty source; refusing to alter $source_dir" >&2; exit 1
 fi
-# Only the two top-level submodules are used by this artifact. Their nested
-# benchmark submodules are unrelated and deliberately not fetched.
-for spec in 'thirdparty/neura:ORBIT_NEURA_MIRROR' 'thirdparty/cgra-ii-predictor:ORBIT_PREDICTOR_MIRROR'; do
+# The semantic build only needs Neura. The predictor remains pinned in AMOEBA
+# but is optional here; its nested benchmark submodules are also unrelated.
+specs=('thirdparty/neura:ORBIT_NEURA_MIRROR')
+if [ "${ORBIT_FETCH_OPTIONAL_PREDICTOR:-0}" = 1 ]; then
+  specs+=('thirdparty/cgra-ii-predictor:ORBIT_PREDICTOR_MIRROR')
+fi
+for spec in "${specs[@]}"; do
   rel="${spec%%:*}"; var="${spec#*:}"
   mirror="${!var:-}"
   if [ -e "$source_dir/$rel/.git" ]; then

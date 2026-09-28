@@ -11,14 +11,30 @@ case "${1:-}" in
     fi
     exec "$root/scripts/configure.sh" ;;
   build) exec "$root/scripts/build.sh" ;;
-  smoke) exec "$python_bin" "$root/scripts/run_semantic_closure.py" --mode smoke ;;
+  smoke)
+    case "${2:-semantic}" in
+      semantic) exec "$python_bin" "$root/scripts/run_semantic_closure.py" --mode smoke ;;
+      backend|scheduler) exec "$python_bin" "$root/scripts/system_entry.py" smoke "$2" ;;
+      *) echo 'usage: artifact.sh smoke {semantic|backend|scheduler}' >&2; exit 2 ;;
+    esac ;;
   reproduce)
-    if [ "${2:-}" != semantic ]; then echo 'usage: artifact.sh reproduce semantic' >&2; exit 2; fi
-    exec "$python_bin" "$root/scripts/run_semantic_closure.py" --mode semantic ;;
-  validate) exec "$python_bin" "$root/scripts/validate_results.py" "${2:-}" ;;
-  tables) exec "$python_bin" "$root/scripts/generate_tables.py" "${2:-}" ;;
+    case "${2:-}" in
+      semantic) exec "$python_bin" "$root/scripts/run_semantic_closure.py" --mode semantic ;;
+      resource|spatial|temporal|cost|replay|core|paper|full)
+        exec "$python_bin" "$root/scripts/system_entry.py" reproduce "$2" ;;
+      *) echo 'usage: artifact.sh reproduce {semantic|resource|spatial|temporal|cost|replay|core|paper|full}' >&2; exit 2 ;;
+    esac ;;
+  status) exec "$python_bin" "$root/scripts/system_status.py" ;;
+  resume)
+    if [ -z "${2:-}" ]; then echo 'usage: artifact.sh resume <run-directory>' >&2; exit 2; fi
+    exec "$python_bin" "$root/scripts/resume.py" "$2" ;;
+  validate)
+    if [ "$#" -ge 2 ]; then exec "$python_bin" "$root/scripts/validate_results.py" "$2"; fi
+    exec "$python_bin" "$root/scripts/validate_results.py" ;;
+  tables)
+    if [ "$#" -ge 2 ]; then exec "$python_bin" "$root/scripts/generate_tables.py" "$2"; fi
+    exec "$python_bin" "$root/scripts/generate_tables.py" ;;
   clean-results)
     exec "$python_bin" "$root/scripts/clean_results.py" ;;
-  *) echo 'usage: artifact.sh {doctor|setup|build|smoke|reproduce semantic|validate [run-dir]|tables [run-dir]|clean-results}' >&2; exit 2 ;;
+  *) echo 'usage: artifact.sh {doctor|setup|build|smoke {semantic|backend|scheduler}|reproduce {semantic|resource|spatial|temporal|cost|replay|core|paper|full}|status|validate [run-dir]|tables [run-dir]|resume <run-dir>|clean-results}' >&2; exit 2 ;;
 esac
-

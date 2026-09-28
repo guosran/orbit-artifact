@@ -76,7 +76,7 @@ def summary_tests(run_dir, env, src, build, llvm, child_env):
                        "(host-lowering|orbit-joint-standalone-passes)", str(build / "test")],
                       src, run_dir, "focused-lit", check=False)
     output = (run_dir / lit["stdout_log"]).read_text() + (run_dir / lit["stderr_log"]).read_text()
-    match = re.search(r"Passed Tests\s*:\s*(\d+)", output)
+    match = re.search(r"Passed\s*:\s*(\d+)", output)
     tests["lit_passed"] = int(match.group(1)) if match else 0
     tests["lit_exit_code"] = lit["exit_code"]
     write_json(run_dir / "test_summary.json", tests)
