@@ -31,6 +31,7 @@ def probe():
                                "version": version([str(llvm / "bin/mlir-runner"), "--version"])}
     src = source()
     source_head = git(src, "rev-parse", "HEAD") if (src / ".git").exists() else None
+    llvm_head = git(llvm.parent, "rev-parse", "HEAD") if (llvm.parent / ".git").exists() else None
     optional = {}
     for name in ("torch", "torch_mlir"):
         try:
@@ -48,12 +49,13 @@ def probe():
             "os": platform.platform(), "hostname": platform.node(),
             "cpu_count": os.cpu_count(), "memory_kib": mem_kib,
             "disk_available_bytes": disk.free, "python": platform.python_version(),
-            "required": required, "required_status": "available" if sys.version_info >= (3, 10) and all(x["version"] for x in required.values()) else "missing_required_dependency",
+            "required": required, "required_status": "available" if sys.version_info >= (3, 10) and all(x["version"] for x in required.values()) and llvm_head == lock()["llvm_mlir"]["commit"] else "missing_required_dependency",
             "optional": optional,
             "optional_dependency_state": "available" if all(x == "available" for x in optional.values()) else "optional_dependency_missing",
             "source_commit": source_head, "expected_source_commit": lock()["amoeba"]["commit"],
             "source_status": "pinned" if source_head == lock()["amoeba"]["commit"] else "missing_or_wrong_commit",
-            "llvm_commit": git(llvm.parent, "rev-parse", "HEAD") if (llvm.parent / ".git").exists() else None,
+            "llvm_commit": llvm_head,
+            "expected_llvm_commit": lock()["llvm_mlir"]["commit"],
             "amoeba_optimizer": str(build_dir() / "tools/mlir-amoeba-opt/mlir-amoeba-opt")}
 
 
