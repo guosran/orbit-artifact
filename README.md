@@ -45,7 +45,7 @@ export ORBIT_PYTHON=/path/to/python3.11
 ./artifact.sh smoke
 ```
 
-`setup` clones source into gitignored `.work/amoeba` and checks out the pinned commit detached. It initializes the required Neura submodule. `ORBIT_SOURCE_DIR` may point to an existing clean checkout at that exact commit. The script refuses a wrong commit or dirty source. `ORBIT_AMOEBA_MIRROR` and `ORBIT_NEURA_MIRROR` support local Git mirrors. The pinned predictor is unused by the semantic build and is fetched only with `ORBIT_FETCH_OPTIONAL_PREDICTOR=1`.
+`setup` clones source into gitignored `.work/amoeba` and checks out the pinned commit detached. It initializes the required Neura submodule. LLVM source, LLVM build, AMOEBA build, and results occupy separate `.work/llvm-project`, `.work/llvm-build`, `.work/build`, and `results/` paths by default. `ORBIT_SOURCE_DIR` may point to an existing clean checkout at that exact commit. The script refuses a wrong commit or dirty source. `ORBIT_AMOEBA_MIRROR` and `ORBIT_NEURA_MIRROR` support local Git mirrors. The pinned predictor is unused by the semantic build and is fetched only with `ORBIT_FETCH_OPTIONAL_PREDICTOR=1`.
 
 ## Full semantic reproduction
 

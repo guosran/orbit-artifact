@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import sys
 
-from common import ROOT, RESULTS, build_dir, git, lock, llvm_build, now, source, write_json
+from common import ROOT, RESULTS, build_dir, git, lock, llvm_build, llvm_source, now, source, write_json
 
 
 def version(argv):
@@ -31,7 +31,8 @@ def probe():
                                "version": version([str(llvm / "bin/mlir-runner"), "--version"])}
     src = source()
     source_head = git(src, "rev-parse", "HEAD") if (src / ".git").exists() else None
-    llvm_head = git(llvm.parent, "rev-parse", "HEAD") if (llvm.parent / ".git").exists() else None
+    llvm_checkout = llvm.parent if (llvm.parent / ".git").exists() else llvm_source()
+    llvm_head = git(llvm_checkout, "rev-parse", "HEAD") if (llvm_checkout / ".git").exists() else None
     optional = {}
     for name in ("torch", "torch_mlir"):
         try:

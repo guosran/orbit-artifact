@@ -6,7 +6,7 @@ case "${1:-}" in
   doctor) exec "$python_bin" "$root/scripts/check_environment.py" ;;
   setup)
     "$root/scripts/fetch_sources.sh"
-    if [ ! -f "${ORBIT_LLVM_BUILD:-$root/.work/llvm-project/build}/lib/cmake/mlir/MLIRConfig.cmake" ]; then
+    if [ ! -f "${ORBIT_LLVM_BUILD:-$root/.work/llvm-build}/lib/cmake/mlir/MLIRConfig.cmake" ]; then
       "$root/scripts/setup_llvm.sh"
     fi
     exec "$root/scripts/configure.sh" ;;

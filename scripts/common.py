@@ -47,7 +47,11 @@ def source():
 
 
 def llvm_build():
-    return Path(os.environ.get("ORBIT_LLVM_BUILD", str(WORK / "llvm-project/build"))).expanduser().resolve()
+    return Path(os.environ.get("ORBIT_LLVM_BUILD", str(WORK / "llvm-build"))).expanduser().resolve()
+
+
+def llvm_source():
+    return Path(os.environ.get("ORBIT_LLVM_SOURCE", str(WORK / "llvm-project"))).expanduser().resolve()
 
 
 def build_dir():
