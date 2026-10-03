@@ -1,0 +1,294 @@
+{
+  "schema": "orbit-amoeba-input0-neighborhood-v3",
+  "active": true,
+  "scope": "six complete-program fixed input-0 cumulative ablation; budgeted best-found search",
+  "workloads_in_delivery_order": [
+    "LLaMA",
+    "LU",
+    "Harris",
+    "Radar",
+    "GCN",
+    "Raytracing"
+  ],
+  "canonical_program_pattern": ".work/input0-source-owned-once-mainline-v1/prepared/<workload>/identified-prepared-shaped.mlir",
+  "source_commit": "a57376e7043b1681e64e7169c5a8cb02eb192331",
+  "source_dirty_build": true,
+  "source_binding": "exact compiler source and optimizer bytes, canonical MLIR, architecture, model, cost and replay contracts; no SHA-256",
+  "project_source_checkout": "${ORBIT_SRC}",
+  "current_binary_build_source": "${ORBIT_SRC}",
+  "architecture": "${ARTIFACT_ROOT}/config/architectures/amoeba_4x4_full_mesh_context12.yaml",
+  "fabric": {
+    "rows": 4,
+    "columns": 4,
+    "total_cgras": 16,
+    "max_cgras_per_task": 4
+  },
+  "input_policy": "fixed input-0; compile-time-proven static bounds",
+  "stages": [
+    {
+      "stage": 1,
+      "name": "shape-only",
+      "dimensions": [
+        "shape"
+      ],
+      "dispatch": "fixed dependency-ready"
+    },
+    {
+      "stage": 2,
+      "name": "shape-temporal",
+      "dimensions": [
+        "shape"
+      ],
+      "dispatch": "critical-path"
+    },
+    {
+      "stage": 3,
+      "name": "shape-temporal-replica",
+      "dimensions": [
+        "shape",
+        "replica"
+      ],
+      "dispatch": "critical-path"
+    },
+    {
+      "stage": 4,
+      "name": "shape-temporal-replica-tiling",
+      "dimensions": [
+        "shape",
+        "replica",
+        "tiling"
+      ],
+      "dispatch": "critical-path"
+    },
+    {
+      "stage": 5,
+      "name": "full-joint",
+      "dimensions": [
+        "shape",
+        "replica",
+        "tiling",
+        "fusion"
+      ],
+      "dispatch": "critical-path"
+    }
+  ],
+  "search": {
+    "algorithm": "source-owned C++ MLIR complete-program neighborhood beam search",
+    "result_label": "best-found",
+    "exhaustive": false,
+    "global_optimality_claim": false,
+    "max_rounds": 4,
+    "max_unique_complete_candidates_scored": 1024,
+    "beam_width": 16,
+    "cost_selected_max_slots": 12,
+    "diversity_min_slots": 4,
+    "diversity_policy": "distinct legal transformation paths or parameter configurations; fill shortfall with other unique candidates",
+    "native_shortlist": 5,
+    "shortlist_order": "global archive cost order; diversity affects expansion only",
+    "candidate_state": "complete program graph rewrite plus every task shape/replica decision",
+    "graph_closure_precomputation": false,
+    "cartesian_shape_enumeration": false,
+    "round_steps": [
+      "bounded local neighbor generation",
+      "materialize and verify",
+      "source-owned canonical facts deduplicate while preserving paths",
+      "whole-program production scheduler score with explicit communication",
+      "update permanent archive",
+      "choose next beam"
+    ],
+    "initial_seeds": [
+      "canonical identity",
+      "compatible existing legal good candidates",
+      "previous measured stage winner",
+      "no-op for every enabled dimension"
+    ],
+    "previous_winner_decisions": "mutable; replacement, withdrawal and alternative decisions permitted",
+    "archive_retention": [
+      "identity",
+      "all explored legal scored candidates",
+      "historical best and previous winner"
+    ],
+    "initial_shapes": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "later_shapes": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        4,
+        1
+      ]
+    ],
+    "initial_replica_factors": [
+      1,
+      2
+    ],
+    "later_replica_factors": [
+      1,
+      2,
+      4
+    ],
+    "initial_tiling_factors": [
+      1,
+      2
+    ],
+    "later_tiling_cumulative_max": 4,
+    "cumulative_factor_proof": "relative to original domain and partition lineage; repeated doubling cannot exceed four",
+    "replica_and_tiling_independent": true,
+    "fusion_action": "one legal pair per primitive; larger groups by legal sequential actions",
+    "combination_actions": [
+      "producer_consumer_co_tiling",
+      "fusion_plus_shape",
+      "fuse_then_tile",
+      "tile_then_fuse"
+    ],
+    "intermediate_improvement_required": false,
+    "unsupported_unknown_policy": "record separately; retain predecessor; not semantic-illegal and not an experiment-wide blocker",
+    "stop_reasons": [
+      "max-rounds",
+      "max-unique-candidates",
+      "no-new-legal-candidates",
+      "explicit-pause",
+      "fatal-write-or-contract-error"
+    ],
+    "budget_policy": "uniform across workload stages; record hits; any smaller initial version must use one separately bound uniform protocol",
+    "budget_expansion_authorized": true,
+    "budget_expansion_policy": "User authorized expansion when needed on 2026-10-03; apply uniformly through a new bound common protocol version, preserving prior budgeted best-found records.",
+    "profile_reason": "User-authorized uniform smaller first delivery: actual LLaMA S1 full-profile search scored12886 in1327s; full profile preserved separately.",
+    "larger_profile_preserved": "config/protocols/amoeba_input0_neighborhood_v3.json"
+  },
+  "K_modes_to_try_when_proved": [
+    "sequential_state_carry",
+    "parallel_private_partials_linear_reduction",
+    "parallel_private_partials_balanced_tree_reduction"
+  ],
+  "completion_join": "ordering only, never numeric addition",
+  "scoring": {
+    "task_cost": "existing C++ ML predicted task II and startup catalogue/cache; no model training or wholesale task remapping",
+    "task_latency_contract": "ceil(startup_cycles + predicted_ii * (trip_count - 1)); identical to existing C++ production score duration",
+    "whole_program_scorer": "existing production spatial-temporal heuristic",
+    "communication_mode": "explicit",
+    "placement_order_search": "existing production heuristic only",
+    "replica_inheritance": "only compiler-proven body equivalence, shard bounds and output coordinates",
+    "ML_predicted_II_and_mapper_II": "record separately",
+    "pruning": "existing proved bounds and dynamic incumbent domain checks where applicable; heuristic priorities are not proof pruning",
+    "hardware_legality": "actual-active capacity, placement non-overlap and route feasibility; temporal reuse allowed",
+    "reject_ready_total_area_gt_16": false,
+    "additional_area_pruning": false
+  },
+  "controls_outside_top_k": [
+    "identity",
+    "previous_stage_measured_winner"
+  ],
+  "selection": {
+    "prediction": "C++ global archive top5 across all explored graphs/resources",
+    "actual_stage_cycles": "minimum whole-program native cycles across all legal measured stage candidates including controls",
+    "native_admission": [
+      "real_neura_mapper",
+      "complete_program_native_replay",
+      "independent_trace"
+    ],
+    "measured_ranking_recorded": true,
+    "regression_policy": "investigate omissions, version changes and replay/protocol differences for S2-S5; no automatic claim added dimensions harmful",
+    "mapper_failure_policy": "preserve errors and continue other candidates; finite evidenced failure exits; no wall-clock timeout",
+    "numeric_mapper_equality_trace_SRAM": "separate statuses",
+    "pending_policy": "diagnostic table permitted; pending is not correctness/performance GO"
+  },
+  "checkpoint": {
+    "contents": [
+      "beam",
+      "archive",
+      "pending-neighbors",
+      "round",
+      "budget-consumption",
+      "version-binding"
+    ],
+    "resume": "continue exact pending state, no restart from identity",
+    "identity": "exact structural/text/byte equality; no SHA-256",
+    "storage": "atomic writes, compressed immutable candidate snapshots where beneficial, avoid repeated large snapshots, disk guard",
+    "write_failure": "propagate nonzero, never report success"
+  },
+  "execution_policy": {
+    "cores": 12,
+    "affinity": "three disjoint four-CPU lanes",
+    "compile_and_link_jobs": 1,
+    "persistent_background": true,
+    "monitor_interval_seconds": 300,
+    "subprocess_timeout": null,
+    "ML_cache": "compiler-proven mapper-visible body and mapper shape with model and architecture contract",
+    "mapper_cache": "identical mapper input and mapper shape with actual architecture contents",
+    "legacy_result_reuse": "No v9 results or checkpoints copied as current evidence. Existing C++ selection modules/shapes seed a fresh search, are verified and rescored under v11. Exact-input mapper and ML cache entries reused under unchanged model/architecture.",
+    "delivery_priority": "First uniform six-workload five-stage diagnostic curve, LLaMA then LU then Harris Radar GCN Raytracing; larger batch preserved.",
+    "workload_workers": 3,
+    "mapper_jobs_per_workload": 4
+  },
+  "implementation_contract": {
+    "candidate_enumeration": "C++ MLIR passes",
+    "rewrite_legality_and_materialization": "C++ MLIR passes",
+    "placement_temporal_communication_scoring": "C++ MLIR passes using the production spatial-temporal scheduler",
+    "global_ranking": "C++ MLIR passes",
+    "python_role": "process orchestration, tests, and machine-record table rendering only"
+  },
+  "excluded": [
+    "RTL",
+    "simple_resnet_tosa.mlir",
+    "new scheduler",
+    "new model training",
+    "SHA-256 scheme",
+    "git reset/clean/stash/tag"
+  ],
+  "source_git_repository": "git@github.com:guosran/amoeba.git",
+  "model_namespace": "formal-max4-nohash-v2-exploratory",
+  "model_ensemble": ".work/formal-model-nohash-v2-trained-rerun/ensemble.json",
+  "ML_cache": ".work/input0-task-ml-cache.json",
+  "budget_profile": "uniform-first-delivery-4-rounds-1024-unique",
+  "optimizer_pin": "${ORBIT_BUILD}/tools/mlir-amoeba-opt/mlir-amoeba-opt",
+  "source_contract_file": "${ARTIFACT_ROOT}/.work/input0-neighborhood-publication/source-model-contract.json",
+  "runtime_fix": "v11: corrected memory-feedback sequential-K SSA replacement; incremental archive top5; same task model, architecture, production scheduler and numeric/trace replay",
+  "seed_revalidation": {
+    "historical_modules": "v9 selected top5 and measured winner plus existing good candidates; C++ revalidation/rescoring",
+    "historical_scores_admitted": false,
+    "previous_stage_winner": "new v11 measured result only",
+    "checkpoint_migration": false,
+    "seed_manifest_max_rows": 16
+  },
+  "publication_authorization": "User authorized separate commits and pushes after actual six-program ablation data complete.",
+  "publication_variant": "Minimal inputs and final observations; runtime task caches are regenerated."
+}

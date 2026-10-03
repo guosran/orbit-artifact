@@ -1,0 +1,132 @@
+{
+  "schema": "orbit-amoeba-input0-neighborhood-chain-config-v1",
+  "config_base": "${ARTIFACT_ROOT}",
+  "defaults": {
+    "model_cache": "${ARTIFACT_ROOT}/.work/formal-model-nohash-v2-trained-rerun/ensemble.json",
+    "cost_cache": "${ARTIFACT_ROOT}/.work/input0-task-ml-cache.json"
+  },
+  "workloads": {
+    "llama": {
+      "canonical": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/prepared/llama/identified-prepared-shaped.mlir",
+      "parent_cost_file": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/costs/llama.json",
+      "stages": {
+        "shape-only": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/llama-shape-only.jsonl"
+        },
+        "shape-temporal": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/llama-shape-temporal.jsonl"
+        },
+        "shape-temporal-replica": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/llama-shape-temporal-replica.jsonl"
+        },
+        "shape-temporal-replica-tiling": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/llama-shape-temporal-replica-tiling.jsonl"
+        },
+        "full-joint": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/llama-full-joint.jsonl"
+        }
+      }
+    },
+    "lu": {
+      "canonical": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v2/prepared/lu/identified-prepared-shaped.mlir",
+      "parent_cost_file": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v2/costs/lu.json",
+      "stages": {
+        "shape-only": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/lu-shape-only.jsonl"
+        },
+        "shape-temporal": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/lu-shape-temporal.jsonl"
+        },
+        "shape-temporal-replica": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/lu-shape-temporal-replica.jsonl"
+        },
+        "shape-temporal-replica-tiling": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/lu-shape-temporal-replica-tiling.jsonl"
+        },
+        "full-joint": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/lu-full-joint.jsonl"
+        }
+      }
+    },
+    "harris": {
+      "canonical": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/prepared/harris/identified-prepared-shaped.mlir",
+      "parent_cost_file": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/costs/harris.json",
+      "stages": {
+        "shape-temporal-replica": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/harris-shape-temporal-replica.jsonl"
+        },
+        "shape-only": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/harris-shape-only.jsonl"
+        },
+        "shape-temporal": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/harris-shape-temporal.jsonl"
+        },
+        "shape-temporal-replica-tiling": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/harris-shape-temporal-replica-tiling.jsonl"
+        },
+        "full-joint": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/harris-full-joint.jsonl"
+        }
+      }
+    },
+    "radar": {
+      "canonical": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/prepared/radar/identified-prepared-shaped.mlir",
+      "parent_cost_file": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/costs/radar.json",
+      "stages": {
+        "shape-temporal-replica": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/radar-shape-temporal-replica.jsonl"
+        },
+        "shape-only": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/radar-shape-only.jsonl"
+        },
+        "shape-temporal": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/radar-shape-temporal.jsonl"
+        },
+        "shape-temporal-replica-tiling": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/radar-shape-temporal-replica-tiling.jsonl"
+        },
+        "full-joint": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/radar-full-joint.jsonl"
+        }
+      }
+    },
+    "gcn": {
+      "canonical": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/prepared/gcn/identified-prepared-shaped.mlir",
+      "parent_cost_file": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/costs/gcn.json",
+      "stages": {
+        "shape-temporal-replica": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/gcn-shape-temporal-replica.jsonl"
+        },
+        "shape-only": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/gcn-shape-only.jsonl"
+        },
+        "shape-temporal": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/gcn-shape-temporal.jsonl"
+        },
+        "shape-temporal-replica-tiling": {},
+        "full-joint": {}
+      }
+    },
+    "raytracing": {
+      "canonical": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/prepared/raytracing/identified-prepared-shaped.mlir",
+      "parent_cost_file": "${ARTIFACT_ROOT}/.work/input0-source-owned-once-mainline-v1/costs/raytracing.json",
+      "stages": {
+        "shape-only": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/raytracing-shape-only.jsonl"
+        },
+        "shape-temporal": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/raytracing-shape-temporal.jsonl"
+        },
+        "shape-temporal-replica": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/raytracing-shape-temporal-replica.jsonl"
+        },
+        "shape-temporal-replica-tiling": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/raytracing-shape-temporal-replica-tiling.jsonl"
+        },
+        "full-joint": {
+          "seed_manifest": "${ARTIFACT_ROOT}/.work/neighborhood-search-20261003/v11-seeds/raytracing-full-joint.jsonl"
+        }
+      }
+    }
+  }
+}
