@@ -1,0 +1,65 @@
+{
+  "schema": "orbit-portable-model-equivalence-v1",
+  "method": "exact JSON structural equality of all C++ cost entries; exact canonical text equality after relocating only the prepared-input provenance directory",
+  "prediction_fields_and_all_catalog_entries_unchanged": true,
+  "model_changes": "Only five informational metadata path fields per model/checkpoint payload were made relative; all predictor parameters and features are identical. Fresh replay binds the portable model bytes separately.",
+  "raw_canonical_byte_equality": false,
+  "raw_difference": "The C++ prepared-input evidence-path attribute records each preparation directory. Runtime witness bindings are kept separate.",
+  "records": [
+    {
+      "workload": "llama",
+      "task_shape_rows": 72,
+      "entire_cost_entry_equality_after_preparation_path_relocation": true,
+      "canonical_equality_after_preparation_path_relocation": true,
+      "raw_canonical_byte_equality": false
+    },
+    {
+      "workload": "lu",
+      "task_shape_rows": 72,
+      "entire_cost_entry_equality_after_preparation_path_relocation": true,
+      "canonical_equality_after_preparation_path_relocation": true,
+      "raw_canonical_byte_equality": false
+    },
+    {
+      "workload": "gcn",
+      "task_shape_rows": 224,
+      "entire_cost_entry_equality_after_preparation_path_relocation": true,
+      "canonical_equality_after_preparation_path_relocation": true,
+      "raw_canonical_byte_equality": false
+    },
+    {
+      "workload": "harris",
+      "task_shape_rows": 192,
+      "entire_cost_entry_equality_after_preparation_path_relocation": true,
+      "canonical_equality_after_preparation_path_relocation": true,
+      "raw_canonical_byte_equality": false
+    },
+    {
+      "workload": "radar",
+      "task_shape_rows": 168,
+      "entire_cost_entry_equality_after_preparation_path_relocation": true,
+      "canonical_equality_after_preparation_path_relocation": true,
+      "raw_canonical_byte_equality": false
+    },
+    {
+      "workload": "raytracing",
+      "task_shape_rows": 216,
+      "entire_cost_entry_equality_after_preparation_path_relocation": true,
+      "canonical_equality_after_preparation_path_relocation": true,
+      "raw_canonical_byte_equality": false
+    }
+  ],
+  "total_task_shape_rows": 944,
+  "portable_workflow_acceptance": {
+    "status": "pass",
+    "workloads": 6,
+    "source_files_bound": 128,
+    "replay_files_bound": 7,
+    "fresh_canonical_and_cost_catalogue_generation": true,
+    "numeric_reference_libraries_built": 6,
+    "llama_harness_installed": true,
+    "source_contract_and_launch_command_generation": true,
+    "configuration_tests_passed": 7,
+    "runtime_caches_reused": false
+  }
+}

@@ -179,6 +179,8 @@ def _contract_specs(config: Mapping[str, Any], options: "ChainOptions",
     add(options.protocol, "protocol")
     add(options.source_contract_file, "source_contract")
     add(options.architecture, "architecture")
+    if options.inter_task_network is not None:
+        add(options.inter_task_network, "inter_task_network")
     add(options.optimizer, "optimizer")
     add(options.seed_index, "seed_index")
     for workload in options.workloads:
@@ -322,6 +324,7 @@ class ChainOptions:
     model_cache: Path | None = None
     cost_cache: Path | None = None
     sram_config: Path | None = None
+    inter_task_network: Path | None = None
     # An optional index of source-owned historical C++ rows.  It is used only
     # to seed the first requested stage; the current optimizer must rescore
     # the row under the current protocol before it can enter the archive.
@@ -351,6 +354,8 @@ def _validate_options(options: ChainOptions) -> None:
             raise ChainError(f"{field} does not exist: {getattr(options, field)}")
     if options.seed_index is not None and not options.seed_index.is_file():
         raise ChainError(f"seed_index does not exist: {options.seed_index}")
+    if options.inter_task_network is not None and not options.inter_task_network.is_file():
+        raise ChainError(f"inter_task_network does not exist: {options.inter_task_network}")
     if not options.mapping_cache.exists():
         raise ChainError(f"mapping_cache does not exist: {options.mapping_cache}")
     if not options.table_script.is_file() and not options.allow_missing_table:
@@ -376,7 +381,7 @@ def expected_binding(entry: Mapping[str, Any], workload: str, stage: str,
     previous_override = _path_for(entry, "previous_winner", stage, base=config_base)
     if previous_override is None and stage == options.start_stage:
         previous_override = _seed_index_winner(options, workload, stage)
-    return {
+    binding = {
         "schema": BINDING_SCHEMA,
         "workload": workload,
         "stage": stage,
@@ -402,6 +407,10 @@ def expected_binding(entry: Mapping[str, Any], workload: str, stage: str,
         "protocol_schema": _protocol_schema(options.protocol),
         "identity_policy": "exact protocol/source-contract binding; no hash identity",
     }
+    if options.inter_task_network is not None:
+        binding["inter_task_network"] = str(options.inter_task_network)
+        binding["inter_task_network_text"] = options.inter_task_network.read_text()
+    return binding
 
 
 def _protocol_schema(path: Path) -> str | None:
@@ -446,7 +455,7 @@ def _seed_index_winner(options: ChainOptions, workload: str, stage: str) -> Path
 
 
 def _global_binding(config: Mapping[str, Any], options: ChainOptions) -> dict[str, Any]:
-    return {
+    binding = {
         "schema": CHAIN_SCHEMA,
         "protocol": str(options.protocol),
         "source_contract_file": str(options.source_contract_file),
@@ -470,6 +479,10 @@ def _global_binding(config: Mapping[str, Any], options: ChainOptions) -> dict[st
         "best_found": True,
         "exhaustive": False,
     }
+    if options.inter_task_network is not None:
+        binding["inter_task_network"] = str(options.inter_task_network)
+        binding["inter_task_network_text"] = options.inter_task_network.read_text()
+    return binding
 
 
 def _run_logged(argv: Sequence[str], directory: Path, label: str) -> dict[str, Any]:
@@ -533,6 +546,9 @@ def _compatible_source_binding(value: Mapping[str, Any], expected: Mapping[str, 
                "optimizer": "optimizer", "architecture": "architecture"}
     for expected_key, source_key in aliases.items():
         if value.get(source_key) != expected.get(expected_key):
+            return False
+    for key in ("inter_task_network", "inter_task_network_text"):
+        if value.get(key) != expected.get(key):
             return False
     if value.get("source_commit") != _protocol_source_commit(expected):
         return False
@@ -714,6 +730,8 @@ def _build_replay_command(*, workload: str, stage: str, entry: Mapping[str, Any]
         argv += ["--manifest", str(manifest)]
     if sram_config:
         argv += ["--sram-config", str(sram_config)]
+    if options.inter_task_network is not None:
+        argv += ["--inter-task-network", str(options.inter_task_network)]
     if resume:
         argv += ["--resume", str(checkpoint)]
     if skip_search:
@@ -1034,6 +1052,7 @@ def _parse_args(argv: Sequence[str] | None = None) -> tuple[ChainOptions, Path]:
     parser.add_argument("--model-cache", type=Path)
     parser.add_argument("--cost-cache", type=Path)
     parser.add_argument("--sram-config", type=Path)
+    parser.add_argument("--inter-task-network", type=Path)
     parser.add_argument("--seed-index", type=Path,
                         help="optional index of source-owned historical C++ winner rows")
     parser.add_argument("--start-stage", choices=STAGES, default=STAGES[0],
@@ -1048,7 +1067,7 @@ def _parse_args(argv: Sequence[str] | None = None) -> tuple[ChainOptions, Path]:
     args = parser.parse_args(argv)
     for name in ("config", "output_root", "protocol", "source_contract_file", "optimizer",
                  "architecture", "mapping_cache", "replay_script", "table_script",
-                 "model_cache", "cost_cache", "sram_config", "seed_index"):
+                 "model_cache", "cost_cache", "sram_config", "inter_task_network", "seed_index"):
         value = getattr(args, name)
         if value is not None:
             setattr(args, name, value.resolve())
@@ -1061,7 +1080,8 @@ def _parse_args(argv: Sequence[str] | None = None) -> tuple[ChainOptions, Path]:
         jobs=args.jobs, max_rounds=args.max_rounds, max_candidates=args.max_candidates,
         beam_width=args.beam_width, diversity_slots=args.diversity_slots,
         model_cache=args.model_cache, cost_cache=args.cost_cache,
-        sram_config=args.sram_config, seed_index=args.seed_index,
+        sram_config=args.sram_config, inter_task_network=args.inter_task_network,
+        seed_index=args.seed_index,
         workloads=tuple(args.workloads), start_stage=args.start_stage,
         allow_missing_table=args.allow_missing_table)
     return options, config_path

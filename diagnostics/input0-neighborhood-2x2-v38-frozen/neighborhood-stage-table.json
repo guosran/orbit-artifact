@@ -1,0 +1,3030 @@
+{
+  "experiment_kind": "direct-model-neighborhood",
+  "model_domain_exclusions": {
+    "raytracing": {
+      "canonical_module_witness_verified": true,
+      "cxx_preflight_diagnostic": "${ARTIFACT_ROOT}/.work/input0-neighborhood-2x2-v38/source-domain-prep/raytracing/canonical.mlir:1:1: error: task has no supported model shape for canonical identity: Task_13",
+      "cxx_preflight_exit_code": 1,
+      "evidence_file": "results/input0-neighborhood-2x2-v38/model-domain-evidence.json",
+      "model_interval_max_ii": 20,
+      "native_cycles": null,
+      "not_run": true,
+      "status": "unsupported_model_domain",
+      "task": "Task_13",
+      "unsupported_shape_count": 8,
+      "unsupported_shapes": [
+        {
+          "analytical_lower_bound": 83,
+          "mapper_tile_cols": 2,
+          "mapper_tile_rows": 2
+        },
+        {
+          "analytical_lower_bound": 42,
+          "mapper_tile_cols": 4,
+          "mapper_tile_rows": 2
+        },
+        {
+          "analytical_lower_bound": 28,
+          "mapper_tile_cols": 6,
+          "mapper_tile_rows": 2
+        },
+        {
+          "analytical_lower_bound": 21,
+          "mapper_tile_cols": 8,
+          "mapper_tile_rows": 2
+        },
+        {
+          "analytical_lower_bound": 42,
+          "mapper_tile_cols": 2,
+          "mapper_tile_rows": 4
+        },
+        {
+          "analytical_lower_bound": 21,
+          "mapper_tile_cols": 4,
+          "mapper_tile_rows": 4
+        },
+        {
+          "analytical_lower_bound": 28,
+          "mapper_tile_cols": 2,
+          "mapper_tile_rows": 6
+        },
+        {
+          "analytical_lower_bound": 21,
+          "mapper_tile_cols": 2,
+          "mapper_tile_rows": 8
+        }
+      ],
+      "workload": "raytracing"
+    }
+  },
+  "protocol": "orbit-amoeba-input0-neighborhood-v3",
+  "rows": [
+    {
+      "best_found": true,
+      "cache_hits": 20394,
+      "cache_misses": 72,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-3154",
+          "control_role": null,
+          "native_cycles": 762655252,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-3150",
+          "control_role": null,
+          "native_cycles": 788869650,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-3151",
+          "control_role": null,
+          "native_cycles": 788869650,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-3153",
+          "control_role": null,
+          "native_cycles": 815084050,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-3156",
+          "control_role": null,
+          "native_cycles": 815084050,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1129656836,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 762655252,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-3150",
+          "predicted_cycles": 682338116,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-3151",
+          "predicted_cycles": 684909266,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-3153",
+          "predicted_cycles": 687532480,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-3154",
+          "predicted_cycles": 689115617,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-3156",
+          "predicted_cycles": 690103630,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-3150",
+        "neighborhood-3151",
+        "neighborhood-3153",
+        "neighborhood-3154",
+        "neighborhood-3156"
+      ],
+      "predicted_top5_cycles": [
+        682338116,
+        684909266,
+        687532480,
+        689115617,
+        690103630
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 867,
+        "lineage_replacement_target_has_no_authenticated_producer": 441
+      },
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": 0,
+      "relative_to_s1_percent": 0.0,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 254.637,
+      "search_rounds": 4,
+      "sram": "pending",
+      "stage": "shape-only",
+      "status": "native_replayed",
+      "stop_reason": "max-rounds",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 2274,
+      "workload": "llama"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 20529,
+      "cache_misses": 72,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-3349",
+          "control_role": null,
+          "native_cycles": 704983574,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-3247",
+          "control_role": null,
+          "native_cycles": 720712214,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-3344",
+          "control_role": null,
+          "native_cycles": 725955093,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-3343",
+          "control_role": null,
+          "native_cycles": 746926612,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 762655252,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-3345",
+          "control_role": null,
+          "native_cycles": 767898131,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1129656836,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 704983574,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-3247",
+          "predicted_cycles": 605448235,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-3349",
+          "predicted_cycles": 605789674,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-3343",
+          "predicted_cycles": 605789674,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-3344",
+          "predicted_cycles": 605789674,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-3345",
+          "predicted_cycles": 605789674,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-3247",
+        "neighborhood-3349",
+        "neighborhood-3343",
+        "neighborhood-3344",
+        "neighborhood-3345"
+      ],
+      "predicted_top5_cycles": [
+        605448235,
+        605789674,
+        605789674,
+        605789674,
+        605789674
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 876,
+        "lineage_replacement_target_has_no_authenticated_producer": 450
+      },
+      "relative_to_previous_stage_cycles": -57671678,
+      "relative_to_previous_stage_percent": -7.561959069810486,
+      "relative_to_s1_cycles": -57671678,
+      "relative_to_s1_percent": -7.561959069810486,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 162.662,
+      "search_rounds": 4,
+      "sram": "pending",
+      "stage": "shape-temporal",
+      "status": "native_replayed",
+      "stop_reason": "max-rounds",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 2289,
+      "workload": "llama"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 38592,
+      "cache_misses": 18083,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-7399",
+          "control_role": null,
+          "native_cycles": 549902875,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-7400",
+          "control_role": null,
+          "native_cycles": 549902875,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-7401",
+          "control_role": null,
+          "native_cycles": 549902875,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-7402",
+          "control_role": null,
+          "native_cycles": 549902875,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-7403",
+          "control_role": null,
+          "native_cycles": 549902875,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 704983574,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1129656836,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 549902875,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-7399",
+          "predicted_cycles": 456258848,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-7400",
+          "predicted_cycles": 456258848,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-7401",
+          "predicted_cycles": 456258848,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-7402",
+          "predicted_cycles": 456258848,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-7403",
+          "predicted_cycles": 456258848,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-7399",
+        "neighborhood-7400",
+        "neighborhood-7401",
+        "neighborhood-7402",
+        "neighborhood-7403"
+      ],
+      "predicted_top5_cycles": [
+        456258848,
+        456258848,
+        456258848,
+        456258848,
+        456258848
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 692,
+        "cumulative_original_replica_factor_exceeds_eight": 932,
+        "lineage_replacement_target_has_no_authenticated_producer": 367,
+        "source_owned_materializer_rejected": 1346
+      },
+      "relative_to_previous_stage_cycles": -155080699,
+      "relative_to_previous_stage_percent": -21.99777480205517,
+      "relative_to_s1_cycles": -212752377,
+      "relative_to_s1_percent": -27.896271145065164,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 719.059,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "llama"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 54105,
+      "cache_misses": 9026,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-18056",
+          "control_role": null,
+          "native_cycles": 497281562,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-18059",
+          "control_role": null,
+          "native_cycles": 497281562,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-18081",
+          "control_role": null,
+          "native_cycles": 497281562,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-18084",
+          "control_role": null,
+          "native_cycles": 497281562,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-19556",
+          "control_role": null,
+          "native_cycles": 497281562,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 549902875,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1129656836,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 497281562,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-18056",
+          "predicted_cycles": 399748371,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-18059",
+          "predicted_cycles": 399748371,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-18081",
+          "predicted_cycles": 399748371,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-18084",
+          "predicted_cycles": 399748371,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-19556",
+          "predicted_cycles": 399748371,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-18056",
+        "neighborhood-18059",
+        "neighborhood-18081",
+        "neighborhood-18084",
+        "neighborhood-19556"
+      ],
+      "predicted_top5_cycles": [
+        399748371,
+        399748371,
+        399748371,
+        399748371,
+        399748371
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 976,
+        "cumulative_original_replica_factor_exceeds_eight": 1140,
+        "cumulative_original_tiling_factor_exceeds_eight": 140,
+        "lineage_replacement_target_has_no_authenticated_producer": 283,
+        "source_iteration_domain_rewrite_unproven": 286,
+        "source_owned_materializer_rejected": 12419,
+        "task_metadata_unknown": 1512
+      },
+      "relative_to_previous_stage_cycles": -52621313,
+      "relative_to_previous_stage_percent": -9.569201288500262,
+      "relative_to_s1_cycles": -265373690,
+      "relative_to_s1_percent": -34.796022095708324,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1129.322,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica-tiling",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "llama"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 75615,
+      "cache_misses": 6490,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-655",
+          "control_role": null,
+          "native_cycles": 497179163,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-10540",
+          "control_role": null,
+          "native_cycles": 497281561,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-8102",
+          "control_role": null,
+          "native_cycles": 497281561,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": null,
+          "native_cycles": 497281562,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 497281562,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-36902",
+          "control_role": null,
+          "native_cycles": 518150691,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1129656836,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 497179163,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-655",
+          "predicted_cycles": 399669419,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-10540",
+          "predicted_cycles": 399748370,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-8102",
+          "predicted_cycles": 399748370,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "predicted_cycles": 399748371,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-36902",
+          "predicted_cycles": 404049337,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-655",
+        "neighborhood-10540",
+        "neighborhood-8102",
+        "neighborhood-seed-1",
+        "neighborhood-36902"
+      ],
+      "predicted_top5_cycles": [
+        399669419,
+        399748370,
+        399748370,
+        399748371,
+        404049337
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 1113,
+        "co_tiling_dependency_proof_unknown": 8,
+        "cumulative_original_replica_factor_exceeds_eight": 1300,
+        "cumulative_original_tiling_factor_exceeds_eight": 3580,
+        "lineage_replacement_target_has_no_authenticated_producer": 209,
+        "source_iteration_domain_rewrite_unproven": 258,
+        "source_owned_materializer_rejected": 25490,
+        "task_metadata_unknown": 1088
+      },
+      "relative_to_previous_stage_cycles": -102399,
+      "relative_to_previous_stage_percent": -0.020591754817567143,
+      "relative_to_s1_cycles": -265476089,
+      "relative_to_s1_percent": -34.80944873896967,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 2276.576,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "full-joint",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "llama"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 19827,
+      "cache_misses": 72,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-3150",
+          "control_role": null,
+          "native_cycles": 11347,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-3173",
+          "control_role": null,
+          "native_cycles": 11347,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-2718",
+          "control_role": null,
+          "native_cycles": 11858,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-3191",
+          "control_role": null,
+          "native_cycles": 12369,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-3178",
+          "control_role": null,
+          "native_cycles": 12880,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 18501,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 11347,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-3150",
+          "predicted_cycles": 10910,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-3173",
+          "predicted_cycles": 11145,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-2718",
+          "predicted_cycles": 11186,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-3191",
+          "predicted_cycles": 11188,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-3178",
+          "predicted_cycles": 11249,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-3150",
+        "neighborhood-3173",
+        "neighborhood-2718",
+        "neighborhood-3191",
+        "neighborhood-3178"
+      ],
+      "predicted_top5_cycles": [
+        10910,
+        11145,
+        11186,
+        11188,
+        11249
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 930,
+        "lineage_replacement_target_has_no_authenticated_producer": 441
+      },
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": 0,
+      "relative_to_s1_percent": 0.0,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 249.507,
+      "search_rounds": 4,
+      "sram": "pending",
+      "stage": "shape-only",
+      "status": "native_replayed",
+      "stop_reason": "max-rounds",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 2211,
+      "workload": "lu"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 20178,
+      "cache_misses": 72,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-465",
+          "control_role": null,
+          "native_cycles": 11283,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-1547",
+          "control_role": null,
+          "native_cycles": 11283,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-1695",
+          "control_role": null,
+          "native_cycles": 11283,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-1839",
+          "control_role": null,
+          "native_cycles": 11283,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-1548",
+          "control_role": null,
+          "native_cycles": 11283,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 11347,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 18501,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 11283,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-465",
+          "predicted_cycles": 10711,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-1547",
+          "predicted_cycles": 10711,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-1695",
+          "predicted_cycles": 10711,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-1839",
+          "predicted_cycles": 10711,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-1548",
+          "predicted_cycles": 10711,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-465",
+        "neighborhood-1547",
+        "neighborhood-1695",
+        "neighborhood-1839",
+        "neighborhood-1548"
+      ],
+      "predicted_top5_cycles": [
+        10711,
+        10711,
+        10711,
+        10711,
+        10711
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 915,
+        "lineage_replacement_target_has_no_authenticated_producer": 450
+      },
+      "relative_to_previous_stage_cycles": -64,
+      "relative_to_previous_stage_percent": -0.5640257336741006,
+      "relative_to_s1_cycles": -64,
+      "relative_to_s1_percent": -0.5640257336741006,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 156.438,
+      "search_rounds": 4,
+      "sram": "pending",
+      "stage": "shape-temporal",
+      "status": "native_replayed",
+      "stop_reason": "max-rounds",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 2250,
+      "workload": "lu"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 56202,
+      "cache_misses": 1879,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-6978",
+          "control_role": null,
+          "native_cycles": 9663,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-6979",
+          "control_role": null,
+          "native_cycles": 9663,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-6982",
+          "control_role": null,
+          "native_cycles": 9663,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-6983",
+          "control_role": null,
+          "native_cycles": 9663,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-6986",
+          "control_role": null,
+          "native_cycles": 9663,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 11283,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 18501,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 9663,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-6978",
+          "predicted_cycles": 8911,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-6979",
+          "predicted_cycles": 8911,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-6982",
+          "predicted_cycles": 8911,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-6983",
+          "predicted_cycles": 8911,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-6986",
+          "predicted_cycles": 8911,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-6978",
+        "neighborhood-6979",
+        "neighborhood-6982",
+        "neighborhood-6983",
+        "neighborhood-6986"
+      ],
+      "predicted_top5_cycles": [
+        8911,
+        8911,
+        8911,
+        8911,
+        8911
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 845,
+        "cumulative_original_replica_factor_exceeds_eight": 602,
+        "lineage_replacement_target_has_no_authenticated_producer": 392,
+        "source_owned_materializer_rejected": 2247
+      },
+      "relative_to_previous_stage_cycles": -1620,
+      "relative_to_previous_stage_percent": -14.357883541611272,
+      "relative_to_s1_cycles": -1684,
+      "relative_to_s1_percent": -14.84092711729973,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 976.394,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "lu"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 68169,
+      "cache_misses": 709,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-23347",
+          "control_role": null,
+          "native_cycles": 8594,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-18966",
+          "control_role": null,
+          "native_cycles": 8632,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-23808",
+          "control_role": null,
+          "native_cycles": 8632,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-22832",
+          "control_role": null,
+          "native_cycles": 8980,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-24155",
+          "control_role": null,
+          "native_cycles": 8980,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 9663,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 18501,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 8594,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-18966",
+          "predicted_cycles": 7885,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-23808",
+          "predicted_cycles": 7885,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-22832",
+          "predicted_cycles": 8068,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-24155",
+          "predicted_cycles": 8068,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-23347",
+          "predicted_cycles": 8161,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-18966",
+        "neighborhood-23808",
+        "neighborhood-22832",
+        "neighborhood-24155",
+        "neighborhood-23347"
+      ],
+      "predicted_top5_cycles": [
+        7885,
+        7885,
+        8068,
+        8068,
+        8161
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 1164,
+        "cumulative_original_replica_factor_exceeds_eight": 1176,
+        "lineage_replacement_target_has_no_authenticated_producer": 359,
+        "source_owned_materializer_rejected": 19054,
+        "task_metadata_unknown": 444
+      },
+      "relative_to_previous_stage_cycles": -1069,
+      "relative_to_previous_stage_percent": -11.06281693055987,
+      "relative_to_s1_cycles": -2753,
+      "relative_to_s1_percent": -24.26191945007491,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1959.486,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica-tiling",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "lu"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 94172,
+      "cache_misses": 2652,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-48069",
+          "control_role": null,
+          "native_cycles": 8586,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-48071",
+          "control_role": null,
+          "native_cycles": 8586,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-48100",
+          "control_role": null,
+          "native_cycles": 8586,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-48102",
+          "control_role": null,
+          "native_cycles": 8586,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-48221",
+          "control_role": null,
+          "native_cycles": 8586,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 8594,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 18501,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 8586,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-48069",
+          "predicted_cycles": 7706,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-48071",
+          "predicted_cycles": 7706,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-48100",
+          "predicted_cycles": 7706,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-48102",
+          "predicted_cycles": 7706,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-48221",
+          "predicted_cycles": 7706,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-48069",
+        "neighborhood-48071",
+        "neighborhood-48100",
+        "neighborhood-48102",
+        "neighborhood-48221"
+      ],
+      "predicted_top5_cycles": [
+        7706,
+        7706,
+        7706,
+        7706,
+        7706
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 1209,
+        "cumulative_original_replica_factor_exceeds_eight": 1088,
+        "cumulative_original_tiling_factor_exceeds_eight": 5440,
+        "lineage_replacement_target_has_no_authenticated_producer": 358,
+        "source_iteration_domain_rewrite_unproven": 4,
+        "source_owned_materializer_rejected": 36976
+      },
+      "relative_to_previous_stage_cycles": -8,
+      "relative_to_previous_stage_percent": -0.09308820107051252,
+      "relative_to_s1_cycles": -2761,
+      "relative_to_s1_percent": -24.33242266678417,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1935.226,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "full-joint",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "lu"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 98174,
+      "cache_misses": 130,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-6040",
+          "control_role": null,
+          "native_cycles": 933326,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-6041",
+          "control_role": null,
+          "native_cycles": 941011,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-6038",
+          "control_role": null,
+          "native_cycles": 941012,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-6022",
+          "control_role": null,
+          "native_cycles": 941012,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-6039",
+          "control_role": null,
+          "native_cycles": 948697,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 988256,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 933326,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-6038",
+          "predicted_cycles": 941600,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-6022",
+          "predicted_cycles": 941600,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-6040",
+          "predicted_cycles": 942050,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-6041",
+          "predicted_cycles": 942050,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-6039",
+          "predicted_cycles": 942083,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-6038",
+        "neighborhood-6022",
+        "neighborhood-6040",
+        "neighborhood-6041",
+        "neighborhood-6039"
+      ],
+      "predicted_top5_cycles": [
+        941600,
+        941600,
+        942050,
+        942050,
+        942083
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 834,
+        "lineage_replacement_target_has_no_authenticated_producer": 1176
+      },
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": 0,
+      "relative_to_s1_percent": 0.0,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 527.117,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-only",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "harris"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 98178,
+      "cache_misses": 126,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-4946",
+          "control_role": null,
+          "native_cycles": 925389,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-4938",
+          "control_role": null,
+          "native_cycles": 933074,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-4940",
+          "control_role": null,
+          "native_cycles": 933074,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-4947",
+          "control_role": null,
+          "native_cycles": 933074,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5071",
+          "control_role": null,
+          "native_cycles": 933074,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 933327,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 988256,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 925389,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-4938",
+          "predicted_cycles": 902748,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-4940",
+          "predicted_cycles": 902965,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-4946",
+          "predicted_cycles": 903944,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-4947",
+          "predicted_cycles": 903959,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5071",
+          "predicted_cycles": 903983,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-4938",
+        "neighborhood-4940",
+        "neighborhood-4946",
+        "neighborhood-4947",
+        "neighborhood-5071"
+      ],
+      "predicted_top5_cycles": [
+        902748,
+        902965,
+        903944,
+        903959,
+        903983
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 777,
+        "lineage_replacement_target_has_no_authenticated_producer": 1200
+      },
+      "relative_to_previous_stage_cycles": -7937,
+      "relative_to_previous_stage_percent": -0.850399538853519,
+      "relative_to_s1_cycles": -7937,
+      "relative_to_s1_percent": -0.850399538853519,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 428.77,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "harris"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 90527,
+      "cache_misses": 26747,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-5012",
+          "control_role": null,
+          "native_cycles": 851243,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5014",
+          "control_role": null,
+          "native_cycles": 851249,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-5204",
+          "control_role": null,
+          "native_cycles": 855086,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-5230",
+          "control_role": null,
+          "native_cycles": 855086,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5206",
+          "control_role": null,
+          "native_cycles": 855092,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 925389,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 988256,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 851243,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-5012",
+          "predicted_cycles": 836966,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5014",
+          "predicted_cycles": 836972,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-5204",
+          "predicted_cycles": 841033,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-5230",
+          "predicted_cycles": 841033,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5206",
+          "predicted_cycles": 841039,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-5012",
+        "neighborhood-5014",
+        "neighborhood-5204",
+        "neighborhood-5230",
+        "neighborhood-5206"
+      ],
+      "predicted_top5_cycles": [
+        836966,
+        836972,
+        841033,
+        841033,
+        841039
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 795,
+        "cumulative_original_replica_factor_exceeds_eight": 472,
+        "lineage_replacement_target_has_no_authenticated_producer": 1115,
+        "source_owned_materializer_rejected": 180
+      },
+      "relative_to_previous_stage_cycles": -74146,
+      "relative_to_previous_stage_percent": -8.012414238768773,
+      "relative_to_s1_cycles": -82083,
+      "relative_to_s1_percent": -8.79467624388477,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1041.492,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "harris"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 32622,
+      "cache_misses": 106635,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-25005",
+          "control_role": null,
+          "native_cycles": 625665,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-25072",
+          "control_role": null,
+          "native_cycles": 625665,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-24271",
+          "control_role": null,
+          "native_cycles": 625916,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-24207",
+          "control_role": null,
+          "native_cycles": 625917,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-25022",
+          "control_role": null,
+          "native_cycles": 633481,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 851243,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 988256,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 625665,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-25005",
+          "predicted_cycles": 623750,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-25072",
+          "predicted_cycles": 623750,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-25022",
+          "predicted_cycles": 623820,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-24271",
+          "predicted_cycles": 623968,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-24207",
+          "predicted_cycles": 623969,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-25005",
+        "neighborhood-25072",
+        "neighborhood-25022",
+        "neighborhood-24271",
+        "neighborhood-24207"
+      ],
+      "predicted_top5_cycles": [
+        623750,
+        623750,
+        623820,
+        623968,
+        623969
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 1066,
+        "cumulative_original_tiling_factor_exceeds_eight": 990,
+        "lineage_replacement_target_has_no_authenticated_producer": 851,
+        "source_owned_materializer_rejected": 17903,
+        "task_metadata_unknown": 634
+      },
+      "relative_to_previous_stage_cycles": -225578,
+      "relative_to_previous_stage_percent": -26.49983612200042,
+      "relative_to_s1_cycles": -307661,
+      "relative_to_s1_percent": -32.96393757379522,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 165.406,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica-tiling",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "harris"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 92144,
+      "cache_misses": 68602,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-66389",
+          "control_role": null,
+          "native_cycles": 560137,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-66406",
+          "control_role": null,
+          "native_cycles": 560137,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-65589",
+          "control_role": null,
+          "native_cycles": 560137,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-65784",
+          "control_role": null,
+          "native_cycles": 560137,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-67594",
+          "control_role": null,
+          "native_cycles": 560137,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 625665,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 988256,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 560137,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-66389",
+          "predicted_cycles": 552670,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-66406",
+          "predicted_cycles": 552670,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-65589",
+          "predicted_cycles": 552670,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-65784",
+          "predicted_cycles": 552670,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-67594",
+          "predicted_cycles": 553329,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-66389",
+        "neighborhood-66406",
+        "neighborhood-65589",
+        "neighborhood-65784",
+        "neighborhood-67594"
+      ],
+      "predicted_top5_cycles": [
+        552670,
+        552670,
+        552670,
+        552670,
+        553329
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 1778,
+        "co_tiling_dependency_proof_unknown": 359,
+        "cumulative_original_replica_factor_exceeds_eight": 120,
+        "cumulative_original_tiling_factor_exceeds_eight": 3048,
+        "current_graph_cost_unknown": 1702,
+        "lineage_replacement_target_has_no_authenticated_producer": 626,
+        "source_iteration_domain_rewrite_unproven": 1277,
+        "source_owned_materializer_rejected": 57289,
+        "task_metadata_unknown": 862
+      },
+      "relative_to_previous_stage_cycles": -65528,
+      "relative_to_previous_stage_percent": -10.473336370102215,
+      "relative_to_s1_cycles": -373189,
+      "relative_to_s1_percent": -39.984849880963345,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 6330.628,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "full-joint",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "harris"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 85772,
+      "cache_misses": 244,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-5803",
+          "control_role": null,
+          "native_cycles": 1309621,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-4795",
+          "control_role": null,
+          "native_cycles": 1311668,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-4796",
+          "control_role": null,
+          "native_cycles": 1311668,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5807",
+          "control_role": null,
+          "native_cycles": 1312691,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-4799",
+          "control_role": null,
+          "native_cycles": 1314738,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1317811,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 1309621,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-5803",
+          "predicted_cycles": 1322656,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5807",
+          "predicted_cycles": 1322700,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-4795",
+          "predicted_cycles": 1322914,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-4796",
+          "predicted_cycles": 1322914,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-4799",
+          "predicted_cycles": 1322958,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-5803",
+        "neighborhood-5807",
+        "neighborhood-4795",
+        "neighborhood-4796",
+        "neighborhood-4799"
+      ],
+      "predicted_top5_cycles": [
+        1322656,
+        1322700,
+        1322914,
+        1322914,
+        1322958
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 845,
+        "lineage_replacement_target_has_no_authenticated_producer": 1029
+      },
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": 0,
+      "relative_to_s1_percent": 0.0,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 545.191,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-only",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "radar"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 85893,
+      "cache_misses": 123,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-4795",
+          "control_role": null,
+          "native_cycles": 1305305,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-4459",
+          "control_role": null,
+          "native_cycles": 1305305,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-4460",
+          "control_role": null,
+          "native_cycles": 1305305,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-4797",
+          "control_role": null,
+          "native_cycles": 1305305,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-4796",
+          "control_role": null,
+          "native_cycles": 1305306,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 1309621,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1317811,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 1305305,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-4795",
+          "predicted_cycles": 1316858,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-4459",
+          "predicted_cycles": 1316859,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-4796",
+          "predicted_cycles": 1316859,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-4460",
+          "predicted_cycles": 1316860,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-4797",
+          "predicted_cycles": 1316880,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-4795",
+        "neighborhood-4459",
+        "neighborhood-4796",
+        "neighborhood-4460",
+        "neighborhood-4797"
+      ],
+      "predicted_top5_cycles": [
+        1316858,
+        1316859,
+        1316859,
+        1316860,
+        1316880
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 789,
+        "lineage_replacement_target_has_no_authenticated_producer": 1050
+      },
+      "relative_to_previous_stage_cycles": -4316,
+      "relative_to_previous_stage_percent": -0.32956099512759796,
+      "relative_to_s1_cycles": -4316,
+      "relative_to_s1_percent": -0.32956099512759796,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1744.273,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "radar"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 85890,
+      "cache_misses": 126,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-8920",
+          "control_role": null,
+          "native_cycles": 1272539,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-8935",
+          "control_role": null,
+          "native_cycles": 1274584,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-8919",
+          "control_role": null,
+          "native_cycles": 1274584,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-8903",
+          "control_role": null,
+          "native_cycles": 1274584,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-9943",
+          "control_role": null,
+          "native_cycles": 1274584,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 1305305,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1317811,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 1272539,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-8935",
+          "predicted_cycles": 1258059,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-8919",
+          "predicted_cycles": 1258069,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-8903",
+          "predicted_cycles": 1258073,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-9943",
+          "predicted_cycles": 1258092,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-8920",
+          "predicted_cycles": 1258104,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-8935",
+        "neighborhood-8919",
+        "neighborhood-8903",
+        "neighborhood-9943",
+        "neighborhood-8920"
+      ],
+      "predicted_top5_cycles": [
+        1258059,
+        1258069,
+        1258073,
+        1258092,
+        1258104
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 864,
+        "lineage_replacement_target_has_no_authenticated_producer": 1050,
+        "source_owned_materializer_rejected": 4298
+      },
+      "relative_to_previous_stage_cycles": -32766,
+      "relative_to_previous_stage_percent": -2.5102179184175344,
+      "relative_to_s1_cycles": -37082,
+      "relative_to_s1_percent": -2.83150621439332,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 2060.326,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "radar"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 85888,
+      "cache_misses": 128,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-31237",
+          "control_role": null,
+          "native_cycles": 1141467,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-31446",
+          "control_role": null,
+          "native_cycles": 1141467,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-31235",
+          "control_role": null,
+          "native_cycles": 1143513,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-32243",
+          "control_role": null,
+          "native_cycles": 1143513,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-31571",
+          "control_role": null,
+          "native_cycles": 1143513,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 1272539,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1317811,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 1141467,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-31235",
+          "predicted_cycles": 1026316,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-32243",
+          "predicted_cycles": 1026369,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-31237",
+          "predicted_cycles": 1026378,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-31446",
+          "predicted_cycles": 1026431,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-31571",
+          "predicted_cycles": 1026432,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-31235",
+        "neighborhood-32243",
+        "neighborhood-31237",
+        "neighborhood-31446",
+        "neighborhood-31571"
+      ],
+      "predicted_top5_cycles": [
+        1026316,
+        1026369,
+        1026378,
+        1026431,
+        1026432
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 900,
+        "lineage_replacement_target_has_no_authenticated_producer": 1050,
+        "source_owned_materializer_rejected": 26628
+      },
+      "relative_to_previous_stage_cycles": -131072,
+      "relative_to_previous_stage_percent": -10.300037955614716,
+      "relative_to_s1_cycles": -168154,
+      "relative_to_s1_percent": -12.839897955209945,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 2082.49,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica-tiling",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "radar"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 85895,
+      "cache_misses": 121,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 1141467,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-50605",
+          "control_role": null,
+          "native_cycles": 1145562,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-49934",
+          "control_role": null,
+          "native_cycles": 1145562,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-50606",
+          "control_role": null,
+          "native_cycles": 1145562,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-49933",
+          "control_role": null,
+          "native_cycles": 1145563,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-50269",
+          "control_role": null,
+          "native_cycles": 1145563,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 1317811,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 1141467,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-50605",
+          "predicted_cycles": 1018648,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-49933",
+          "predicted_cycles": 1018649,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-49934",
+          "predicted_cycles": 1018649,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-50269",
+          "predicted_cycles": 1018649,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-50606",
+          "predicted_cycles": 1018649,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-50605",
+        "neighborhood-49933",
+        "neighborhood-49934",
+        "neighborhood-50269",
+        "neighborhood-50606"
+      ],
+      "predicted_top5_cycles": [
+        1018648,
+        1018649,
+        1018649,
+        1018649,
+        1018649
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 780,
+        "lineage_replacement_target_has_no_authenticated_producer": 1050,
+        "source_iteration_domain_rewrite_unproven": 700,
+        "source_owned_materializer_rejected": 44828
+      },
+      "relative_to_previous_stage_cycles": 0,
+      "relative_to_previous_stage_percent": 0.0,
+      "relative_to_s1_cycles": -168154,
+      "relative_to_s1_percent": -12.839897955209945,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1284.315,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "full-joint",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "radar"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 114424,
+      "cache_misses": 264,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-5519",
+          "control_role": null,
+          "native_cycles": 89389,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5502",
+          "control_role": null,
+          "native_cycles": 89389,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-5504",
+          "control_role": null,
+          "native_cycles": 89389,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-5522",
+          "control_role": null,
+          "native_cycles": 89389,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5486",
+          "control_role": null,
+          "native_cycles": 89389,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 99506,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 89389,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-5519",
+          "predicted_cycles": 91069,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5502",
+          "predicted_cycles": 91069,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-5504",
+          "predicted_cycles": 91069,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-5522",
+          "predicted_cycles": 91069,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5486",
+          "predicted_cycles": 91069,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-5519",
+        "neighborhood-5502",
+        "neighborhood-5504",
+        "neighborhood-5522",
+        "neighborhood-5486"
+      ],
+      "predicted_top5_cycles": [
+        91069,
+        91069,
+        91069,
+        91069,
+        91069
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 656,
+        "lineage_replacement_target_has_no_authenticated_producer": 1372
+      },
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": 0,
+      "relative_to_s1_percent": 0.0,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1613.004,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-only",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "gcn"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 114548,
+      "cache_misses": 140,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-5165",
+          "control_role": null,
+          "native_cycles": 84199,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-5148",
+          "control_role": null,
+          "native_cycles": 84200,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5129",
+          "control_role": null,
+          "native_cycles": 84599,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5130",
+          "control_role": null,
+          "native_cycles": 84599,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-5131",
+          "control_role": null,
+          "native_cycles": 84599,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 89387,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 95772,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 84199,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-5129",
+          "predicted_cycles": 85412,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-5130",
+          "predicted_cycles": 85412,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-5131",
+          "predicted_cycles": 85412,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-5148",
+          "predicted_cycles": 85417,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-5165",
+          "predicted_cycles": 85417,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-5129",
+        "neighborhood-5130",
+        "neighborhood-5131",
+        "neighborhood-5148",
+        "neighborhood-5165"
+      ],
+      "predicted_top5_cycles": [
+        85412,
+        85412,
+        85412,
+        85417,
+        85417
+      ],
+      "reject_reasons": {
+        "canonical_duplicate": 686,
+        "lineage_replacement_target_has_no_authenticated_producer": 1400
+      },
+      "relative_to_previous_stage_cycles": -5190,
+      "relative_to_previous_stage_percent": -5.806083522581074,
+      "relative_to_s1_cycles": -5190,
+      "relative_to_s1_percent": -5.806083522581074,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 1566.102,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "gcn"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 115212,
+      "cache_misses": 17715,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-8533",
+          "control_role": null,
+          "native_cycles": 78138,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-8535",
+          "control_role": null,
+          "native_cycles": 78138,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-10500",
+          "control_role": null,
+          "native_cycles": 78517,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-10484",
+          "control_role": null,
+          "native_cycles": 78517,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-10389",
+          "control_role": null,
+          "native_cycles": 78606,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 84199,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 95772,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 78138,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-8533",
+          "predicted_cycles": 78235,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-8535",
+          "predicted_cycles": 78235,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-10500",
+          "predicted_cycles": 78268,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-10484",
+          "predicted_cycles": 78268,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-10389",
+          "predicted_cycles": 78297,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-8533",
+        "neighborhood-8535",
+        "neighborhood-10500",
+        "neighborhood-10484",
+        "neighborhood-10389"
+      ],
+      "predicted_top5_cycles": [
+        78235,
+        78235,
+        78268,
+        78268,
+        78297
+      ],
+      "reject_reasons": {
+        "active_transfer_proof_unsupported": 292,
+        "canonical_duplicate": 643,
+        "cumulative_original_replica_factor_exceeds_eight": 230,
+        "current_graph_cost_unknown": 42,
+        "lineage_replacement_target_has_no_authenticated_producer": 1342,
+        "production_scheduler_rejected": 3,
+        "source_owned_materializer_rejected": 3476,
+        "source_owned_pass_failed": 876
+      },
+      "relative_to_previous_stage_cycles": -6061,
+      "relative_to_previous_stage_percent": -7.198422784118574,
+      "relative_to_s1_cycles": -11251,
+      "relative_to_s1_percent": -12.586559867545223,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 3502.468,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "gcn"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 143172,
+      "cache_misses": 5818,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-51847",
+          "control_role": null,
+          "native_cycles": 76492,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-52054",
+          "control_role": null,
+          "native_cycles": 76556,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-52346",
+          "control_role": null,
+          "native_cycles": 76790,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-52350",
+          "control_role": null,
+          "native_cycles": 76792,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-52312",
+          "control_role": null,
+          "native_cycles": 76874,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 78138,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 95772,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 76492,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-51847",
+          "predicted_cycles": 75783,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-52312",
+          "predicted_cycles": 75813,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-52346",
+          "predicted_cycles": 75814,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-52350",
+          "predicted_cycles": 75818,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-52054",
+          "predicted_cycles": 75843,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-51847",
+        "neighborhood-52312",
+        "neighborhood-52346",
+        "neighborhood-52350",
+        "neighborhood-52054"
+      ],
+      "predicted_top5_cycles": [
+        75783,
+        75813,
+        75814,
+        75818,
+        75843
+      ],
+      "reject_reasons": {
+        "active_transfer_proof_unsupported": 292,
+        "canonical_duplicate": 886,
+        "cumulative_original_replica_factor_exceeds_eight": 526,
+        "cumulative_original_tiling_factor_exceeds_eight": 10,
+        "current_graph_cost_unknown": 119,
+        "lineage_replacement_target_has_no_authenticated_producer": 1242,
+        "production_scheduler_rejected": 24,
+        "source_owned_materializer_rejected": 44334,
+        "source_owned_pass_failed": 876
+      },
+      "relative_to_previous_stage_cycles": -1646,
+      "relative_to_previous_stage_percent": -2.106529473495611,
+      "relative_to_s1_cycles": -12897,
+      "relative_to_s1_percent": -14.427949747731827,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 10098.915,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "shape-temporal-replica-tiling",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "gcn"
+    },
+    {
+      "best_found": true,
+      "cache_hits": 167983,
+      "cache_misses": 1499,
+      "exhaustive": false,
+      "measured_native_order": [
+        {
+          "candidate_id": "neighborhood-118395",
+          "control_role": null,
+          "native_cycles": 76262,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-118379",
+          "control_role": null,
+          "native_cycles": 76262,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-118363",
+          "control_role": null,
+          "native_cycles": 76262,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-118260",
+          "control_role": null,
+          "native_cycles": 76284,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-118261",
+          "control_role": null,
+          "native_cycles": 76284,
+          "rank": 4
+        },
+        {
+          "candidate_id": "neighborhood-seed-1",
+          "control_role": "previous_stage_measured_winner",
+          "native_cycles": 76492,
+          "rank": 6
+        },
+        {
+          "candidate_id": "neighborhood-0",
+          "control_role": "identity",
+          "native_cycles": 95772,
+          "rank": 5
+        }
+      ],
+      "native_stage_cycles": 76262,
+      "native_top5_status": "native_replayed",
+      "numeric": "pass",
+      "predicted_cxx_order": [
+        {
+          "candidate_id": "neighborhood-118395",
+          "predicted_cycles": 74993,
+          "rank": 0
+        },
+        {
+          "candidate_id": "neighborhood-118379",
+          "predicted_cycles": 74993,
+          "rank": 1
+        },
+        {
+          "candidate_id": "neighborhood-118363",
+          "predicted_cycles": 74993,
+          "rank": 2
+        },
+        {
+          "candidate_id": "neighborhood-118260",
+          "predicted_cycles": 74995,
+          "rank": 3
+        },
+        {
+          "candidate_id": "neighborhood-118261",
+          "predicted_cycles": 74995,
+          "rank": 4
+        }
+      ],
+      "predicted_top5_candidate_ids": [
+        "neighborhood-118395",
+        "neighborhood-118379",
+        "neighborhood-118363",
+        "neighborhood-118260",
+        "neighborhood-118261"
+      ],
+      "predicted_top5_cycles": [
+        74993,
+        74993,
+        74993,
+        74995,
+        74995
+      ],
+      "reject_reasons": {
+        "active_transfer_proof_unsupported": 292,
+        "canonical_duplicate": 1240,
+        "cumulative_original_replica_factor_exceeds_eight": 818,
+        "current_graph_cost_unknown": 680,
+        "lineage_replacement_target_has_no_authenticated_producer": 1216,
+        "source_owned_materializer_rejected": 109502,
+        "source_owned_pass_failed": 876
+      },
+      "relative_to_previous_stage_cycles": -230,
+      "relative_to_previous_stage_percent": -0.300685038958326,
+      "relative_to_s1_cycles": -13127,
+      "relative_to_s1_percent": -14.685252100370294,
+      "result_label": "best-found",
+      "search_elapsed_seconds": 18202.738,
+      "search_rounds": 3,
+      "sram": "pending",
+      "stage": "full-joint",
+      "status": "native_replayed",
+      "stop_reason": "max-unique-candidates",
+      "trace": "pass",
+      "unique_complete_candidates_scored": 4096,
+      "workload": "gcn"
+    },
+    {
+      "best_found": false,
+      "cache_hits": null,
+      "cache_misses": null,
+      "exhaustive": false,
+      "measured_native_order": [],
+      "native_stage_cycles": null,
+      "native_top5_status": "not_run",
+      "numeric": "not_applicable",
+      "predicted_cxx_order": [],
+      "predicted_top5_candidate_ids": [],
+      "predicted_top5_cycles": null,
+      "reject_reasons": {},
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": null,
+      "relative_to_s1_percent": null,
+      "result_label": "not_run",
+      "search_elapsed_seconds": null,
+      "search_rounds": null,
+      "sram": "not_applicable",
+      "stage": "shape-only",
+      "status": "unsupported_model_domain",
+      "stop_reason": "unsupported_model_domain",
+      "trace": "not_applicable",
+      "unique_complete_candidates_scored": null,
+      "workload": "raytracing"
+    },
+    {
+      "best_found": false,
+      "cache_hits": null,
+      "cache_misses": null,
+      "exhaustive": false,
+      "measured_native_order": [],
+      "native_stage_cycles": null,
+      "native_top5_status": "not_run",
+      "numeric": "not_applicable",
+      "predicted_cxx_order": [],
+      "predicted_top5_candidate_ids": [],
+      "predicted_top5_cycles": null,
+      "reject_reasons": {},
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": null,
+      "relative_to_s1_percent": null,
+      "result_label": "not_run",
+      "search_elapsed_seconds": null,
+      "search_rounds": null,
+      "sram": "not_applicable",
+      "stage": "shape-temporal",
+      "status": "unsupported_model_domain",
+      "stop_reason": "unsupported_model_domain",
+      "trace": "not_applicable",
+      "unique_complete_candidates_scored": null,
+      "workload": "raytracing"
+    },
+    {
+      "best_found": false,
+      "cache_hits": null,
+      "cache_misses": null,
+      "exhaustive": false,
+      "measured_native_order": [],
+      "native_stage_cycles": null,
+      "native_top5_status": "not_run",
+      "numeric": "not_applicable",
+      "predicted_cxx_order": [],
+      "predicted_top5_candidate_ids": [],
+      "predicted_top5_cycles": null,
+      "reject_reasons": {},
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": null,
+      "relative_to_s1_percent": null,
+      "result_label": "not_run",
+      "search_elapsed_seconds": null,
+      "search_rounds": null,
+      "sram": "not_applicable",
+      "stage": "shape-temporal-replica",
+      "status": "unsupported_model_domain",
+      "stop_reason": "unsupported_model_domain",
+      "trace": "not_applicable",
+      "unique_complete_candidates_scored": null,
+      "workload": "raytracing"
+    },
+    {
+      "best_found": false,
+      "cache_hits": null,
+      "cache_misses": null,
+      "exhaustive": false,
+      "measured_native_order": [],
+      "native_stage_cycles": null,
+      "native_top5_status": "not_run",
+      "numeric": "not_applicable",
+      "predicted_cxx_order": [],
+      "predicted_top5_candidate_ids": [],
+      "predicted_top5_cycles": null,
+      "reject_reasons": {},
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": null,
+      "relative_to_s1_percent": null,
+      "result_label": "not_run",
+      "search_elapsed_seconds": null,
+      "search_rounds": null,
+      "sram": "not_applicable",
+      "stage": "shape-temporal-replica-tiling",
+      "status": "unsupported_model_domain",
+      "stop_reason": "unsupported_model_domain",
+      "trace": "not_applicable",
+      "unique_complete_candidates_scored": null,
+      "workload": "raytracing"
+    },
+    {
+      "best_found": false,
+      "cache_hits": null,
+      "cache_misses": null,
+      "exhaustive": false,
+      "measured_native_order": [],
+      "native_stage_cycles": null,
+      "native_top5_status": "not_run",
+      "numeric": "not_applicable",
+      "predicted_cxx_order": [],
+      "predicted_top5_candidate_ids": [],
+      "predicted_top5_cycles": null,
+      "reject_reasons": {},
+      "relative_to_previous_stage_cycles": null,
+      "relative_to_previous_stage_percent": null,
+      "relative_to_s1_cycles": null,
+      "relative_to_s1_percent": null,
+      "result_label": "not_run",
+      "search_elapsed_seconds": null,
+      "search_rounds": null,
+      "sram": "not_applicable",
+      "stage": "full-joint",
+      "status": "unsupported_model_domain",
+      "stop_reason": "unsupported_model_domain",
+      "trace": "not_applicable",
+      "unique_complete_candidates_scored": null,
+      "workload": "raytracing"
+    }
+  ],
+  "schema": "orbit-neighborhood-stage-table-v1"
+}

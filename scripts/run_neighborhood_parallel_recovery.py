@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import replace
+import fcntl
 import json
 from pathlib import Path
 import sys
@@ -62,6 +63,16 @@ def run(command_file: Path, workload: str, jobs: int) -> int:
                 raise chain.ChainError("existing stage lacks its binding")
             chain.atomic_write(binding, expected)
             complete, result = chain._stage_complete(directory, expected)
+            if complete:
+                try:
+                    chain.choose_measured_winner(result)
+                except chain.ChainError as error:
+                    # Native mapping can finish while the numeric launcher
+                    # fails to start. Keep the C++ search and mapper cache,
+                    # but retry validation instead of treating the stage as
+                    # reusable and failing forever at winner selection.
+                    record["existing_validation_incomplete"] = str(error)
+                    complete = False
             if not complete:
                 search_done = chain._search_artifacts_complete(directory)
                 resume = (directory / "checkpoint.json").is_file() and not search_done
@@ -102,7 +113,17 @@ def main() -> int:
     parser.add_argument("--jobs", type=int, default=4)
     args = parser.parse_args()
     try:
-        return run(args.chain_command_file, args.workload, args.jobs)
+        command = json.loads(args.chain_command_file.read_text(encoding="utf-8"))
+        index = next((i for i, value in enumerate(command)
+                      if Path(str(value)).name == "run_neighborhood_stage_chain.py"), None)
+        if index is None:
+            raise chain.ChainError("frozen chain script missing from argv")
+        options, _ = chain._parse_args(command[index + 1:])
+        lock_dir = options.output_root / "parallel" / args.workload
+        lock_dir.mkdir(parents=True, exist_ok=True)
+        with (lock_dir / "recovery.lock").open("a+") as lock:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            return run(args.chain_command_file, args.workload, args.jobs)
     except (chain.ChainError, OSError, ValueError) as error:
         print(f"parallel recovery failed: {error}", file=sys.stderr)
         return 2

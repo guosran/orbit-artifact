@@ -1,0 +1,85 @@
+{
+  "schema": "orbit-input0-complete-affine-source-inputs-v1",
+  "status": "source-inputs-only; corrected performance results pending",
+  "source_origin": "AMOEBA benchmark input-0 L3 MLIR",
+  "specialization": "source-owned bind-static-scalar-argument; unchanged memory capacity and full loop bodies",
+  "records": [
+    {
+      "workload": "gcn",
+      "input": "inputs/gcn.mlir",
+      "benchmark_source": "Evaluation/GCN/L3/gcn.mlir",
+      "fixed_input": 0,
+      "static_scalar_argument": 0,
+      "static_scalar_value": 5,
+      "specialization_pass": "--bind-static-scalar-argument=function=_Z8gcn_funciPA256_KiS1_S1_S1_PA16_S_S3_S3_S3_PA256_iPA256_S4_PA256_A16_iSA_SA_Pi argument=0 value=5",
+      "source_contains_complete_affine_domains": true,
+      "caller_evidence": "callers/gcn.mlir",
+      "caller_scope": "input-0 allocation/call proof; no inherited performance claim"
+    },
+    {
+      "workload": "harris",
+      "input": "inputs/harris.mlir",
+      "benchmark_source": "Evaluation/Harris/L3/harris.mlir",
+      "fixed_input": 0,
+      "static_scalar_argument": 0,
+      "static_scalar_value": 63,
+      "specialization_pass": "--bind-static-scalar-argument=function=_Z11harris_funciPA128_KiS1_S1_PA128_iS3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_ argument=0 value=63",
+      "source_contains_complete_affine_domains": true,
+      "caller_evidence": "callers/harris.mlir",
+      "caller_scope": "input-0 allocation/call proof; no inherited performance claim"
+    },
+    {
+      "workload": "llama",
+      "input": "inputs/llama.mlir",
+      "benchmark_source": "Evaluation/LLaMA/L3/llama.mlir",
+      "fixed_input": 0,
+      "static_scalar_argument": 0,
+      "static_scalar_value": 320,
+      "specialization_pass": "--bind-static-scalar-argument=function=_Z10llama_funciPA256_KiS1_S1_S1_S1_S1_S1_PA256_i argument=0 value=320",
+      "source_contains_complete_affine_domains": true,
+      "caller_evidence": "callers/llama.mlir",
+      "caller_scope": "input-0 allocation/call proof; no inherited performance claim"
+    },
+    {
+      "workload": "lu",
+      "input": "inputs/lu.mlir",
+      "benchmark_source": "Evaluation/LU/L3/lu.mlir",
+      "fixed_input": 0,
+      "static_scalar_argument": 0,
+      "static_scalar_value": 8,
+      "specialization_pass": "--bind-static-scalar-argument=function=_Z7lu_funciPA100_KiPS_PA100_iS4_S4_PiS5_S4_S5_ argument=0 value=8",
+      "source_contains_complete_affine_domains": true,
+      "caller_evidence": "callers/lu.mlir",
+      "caller_scope": "input-0 allocation/call proof; no inherited performance claim",
+      "source_correction": {
+        "pass_name": "repair-lu-affine-determinant-carry",
+        "source": "source/lu_func.cpp",
+        "scope": "Exact audited determinant recurrence restored before static specialization; not a search transformation"
+      }
+    },
+    {
+      "workload": "radar",
+      "input": "inputs/radar.mlir",
+      "benchmark_source": "Evaluation/Radar/L3/radar.mlir",
+      "fixed_input": 0,
+      "static_scalar_argument": 0,
+      "static_scalar_value": 64,
+      "specialization_pass": "--bind-static-scalar-argument=function=_Z10radar_funciPA256_KiS1_S1_S1_PA32_S_S3_PiS4_PA256_iS6_S6_S6_S6_S6_S4_S4_S6_S6_S6_S6_S6_S6_S6_S6_S6_S6_S6_S6_S6_S4_ argument=0 value=64",
+      "source_contains_complete_affine_domains": true,
+      "caller_evidence": "callers/radar.mlir",
+      "caller_scope": "input-0 allocation/call proof; no inherited performance claim"
+    },
+    {
+      "workload": "raytracing",
+      "input": "inputs/raytracing.mlir",
+      "benchmark_source": "Evaluation/Raytracing/L3/raytracing.mlir",
+      "fixed_input": 0,
+      "static_scalar_argument": 0,
+      "static_scalar_value": 1472,
+      "specialization_pass": "--bind-static-scalar-argument=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ argument=0 value=1472",
+      "source_contains_complete_affine_domains": true,
+      "caller_evidence": "callers/raytracing.mlir",
+      "caller_scope": "input-0 allocation/call proof; no inherited performance claim"
+    }
+  ]
+}

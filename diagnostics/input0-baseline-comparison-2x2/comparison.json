@@ -1,0 +1,67 @@
+{
+  "schema": "orbit-input0-validated-baseline-comparison-v1",
+  "input_index": 0,
+  "architecture": "config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+  "inter_task_network": "config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+  "model_namespace": "orbit-per-cgra-2x2-direct-4member-v1",
+  "formal_go": false,
+  "rows": [
+    {
+      "workload": "gcn",
+      "fixed_1x1_cycles": 99506,
+      "amoeba_cycles": 106351,
+      "s1_cycles": 89389,
+      "s2_cycles": 84199,
+      "s3_cycles": 78138,
+      "s4_cycles": 76492,
+      "s5_cycles": 76262,
+      "s5_reduction_vs_amoeba_percent": 28.29216462468618
+    },
+    {
+      "workload": "harris",
+      "fixed_1x1_cycles": 988256,
+      "amoeba_cycles": 1072495,
+      "s1_cycles": 933326,
+      "s2_cycles": 925389,
+      "s3_cycles": 851243,
+      "s4_cycles": 625665,
+      "s5_cycles": 560137,
+      "s5_reduction_vs_amoeba_percent": 47.77253040806717
+    },
+    {
+      "workload": "llama",
+      "fixed_1x1_cycles": 1129656836,
+      "amoeba_cycles": 636723751,
+      "s1_cycles": 762655252,
+      "s2_cycles": 704983574,
+      "s3_cycles": 549902875,
+      "s4_cycles": 497281562,
+      "s5_cycles": 497179163,
+      "s5_reduction_vs_amoeba_percent": 21.91603309611738
+    },
+    {
+      "workload": "lu",
+      "fixed_1x1_cycles": 18501,
+      "amoeba_cycles": 11602,
+      "s1_cycles": 11347,
+      "s2_cycles": 11283,
+      "s3_cycles": 9663,
+      "s4_cycles": 8594,
+      "s5_cycles": 8586,
+      "s5_reduction_vs_amoeba_percent": 25.9955180141355
+    },
+    {
+      "workload": "radar",
+      "fixed_1x1_cycles": 1317811,
+      "amoeba_cycles": 1321316,
+      "s1_cycles": 1309621,
+      "s2_cycles": 1305305,
+      "s3_cycles": 1272539,
+      "s4_cycles": 1141467,
+      "s5_cycles": 1141467,
+      "s5_reduction_vs_amoeba_percent": 13.61135413481711
+    }
+  ],
+  "amoeba_replica_duration": "original F45 full-parent duration ceiling division; unchanged compiled II",
+  "ray_scope": "original II20 excluded; II23 and fission are separate supplements"
+}

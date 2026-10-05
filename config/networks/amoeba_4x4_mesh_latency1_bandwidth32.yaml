@@ -1,0 +1,62 @@
+inter_task_network:
+  version: 1
+  rows: 4
+  columns: 4
+  local_bandwidth_bits_per_cycle: 32
+  links:
+    # Row 0 horizontal edges.
+    - {src_row: 0, src_column: 0, dst_row: 0, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 0, src_column: 1, dst_row: 0, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 0, src_column: 1, dst_row: 0, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 0, src_column: 2, dst_row: 0, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 0, src_column: 2, dst_row: 0, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 0, src_column: 3, dst_row: 0, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Row 1 horizontal edges.
+    - {src_row: 1, src_column: 0, dst_row: 1, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 1, dst_row: 1, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 1, dst_row: 1, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 2, dst_row: 1, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 2, dst_row: 1, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 3, dst_row: 1, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Row 2 horizontal edges.
+    - {src_row: 2, src_column: 0, dst_row: 2, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 1, dst_row: 2, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 1, dst_row: 2, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 2, dst_row: 2, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 2, dst_row: 2, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 3, dst_row: 2, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Row 3 horizontal edges.
+    - {src_row: 3, src_column: 0, dst_row: 3, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 1, dst_row: 3, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 1, dst_row: 3, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 2, dst_row: 3, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 2, dst_row: 3, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 3, dst_row: 3, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Column 0 vertical edges.
+    - {src_row: 0, src_column: 0, dst_row: 1, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 0, dst_row: 0, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 0, dst_row: 2, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 0, dst_row: 1, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 0, dst_row: 3, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 0, dst_row: 2, dst_column: 0, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Column 1 vertical edges.
+    - {src_row: 0, src_column: 1, dst_row: 1, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 1, dst_row: 0, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 1, dst_row: 2, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 1, dst_row: 1, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 1, dst_row: 3, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 1, dst_row: 2, dst_column: 1, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Column 2 vertical edges.
+    - {src_row: 0, src_column: 2, dst_row: 1, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 2, dst_row: 0, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 2, dst_row: 2, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 2, dst_row: 1, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 2, dst_row: 3, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 2, dst_row: 2, dst_column: 2, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    # Column 3 vertical edges.
+    - {src_row: 0, src_column: 3, dst_row: 1, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 3, dst_row: 0, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 1, src_column: 3, dst_row: 2, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 3, dst_row: 1, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 2, src_column: 3, dst_row: 3, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}
+    - {src_row: 3, src_column: 3, dst_row: 2, dst_column: 3, latency_cycles: 1, bandwidth_bits_per_cycle: 32}

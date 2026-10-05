@@ -1,0 +1,76 @@
+{
+  "assertions": {
+    "archive_negative_and_continuation": {
+      "passed": true,
+      "task0_tiling_rejection": {
+        "candidate_id": "neighborhood-205",
+        "index": 203,
+        "reason": "source_owned_materializer_rejected:output counter domain is outside the proven shape",
+        "valid": false
+      },
+      "task8_positive": {
+        "candidate_id": "neighborhood-872",
+        "index": 867,
+        "valid": true
+      },
+      "task9_positive_after_task8": {
+        "candidate_id": "neighborhood-905",
+        "index": 900,
+        "valid": true
+      }
+    },
+    "changed_network_resume": {
+      "changed_resume_rejected": true,
+      "checkpoint_unchanged": true,
+      "initial_search_exit": 0,
+      "passed": true,
+      "reason": "neighborhood exact byte/options binding mismatch",
+      "same_semantics_byte_mutation": true
+    },
+    "selective_withdrawal": {
+      "completion_evidence": "Existing 80-score summary reached max-unique-candidates and no matching checker process remains; no process was signaled.",
+      "parent_candidate_id": "neighborhood-seed-1",
+      "passed": true,
+      "preserves_parent_shape": true,
+      "preserves_parent_tile": true,
+      "process_naturally_completed": true,
+      "remaining_replica_actions": 0,
+      "replacement_candidate_id": "neighborhood-10126",
+      "same_initial_shapes": true,
+      "typed_history_known": true
+    },
+    "task8_typed_replay": {
+      "leaf_k_domain": [
+        0,
+        16
+      ],
+      "output_axis": 2,
+      "output_counter_axes": [
+        4294967295,
+        0,
+        1
+      ],
+      "passed": true,
+      "prediction_or_mapping_run": false,
+      "replica_regions": {
+        "Task_8.replica.0": [
+          0,
+          8
+        ],
+        "Task_8.replica.1": [
+          8,
+          16
+        ]
+      },
+      "selected_counter_axis": 1,
+      "source_iteration_domain_verified": true
+    }
+  },
+  "full_checker_rerun": false,
+  "overall_existing_evidence_assertions": "pass",
+  "schema": "orbit-controller-v36-existing-evidence-acceptance-v1",
+  "scope_note": "Assertions were independently evaluated from existing v36 artifacts. No search, predictor, or mapper was launched.",
+  "compiler_version": "v36-scored-family-fairness",
+  "checker": "test/multi-cgra/taskflow/joint-scheduling/run-active-transfer-neighborhood-checks.py",
+  "raw_runtime_evidence_published": false
+}

@@ -1,0 +1,1485 @@
+--- a/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.h
++++ b/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.h
+@@ -6,12 +6,14 @@
+ #include "TaskflowDialect/Orchestration/orchestration_utils.h"
+ #include "TaskflowDialect/TaskflowOps.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
++#include "mlir/Pass/Pass.h"
+ #include "mlir/Support/LLVM.h"
+ #include "llvm/ADT/DenseMap.h"
+ #include "llvm/ADT/STLFunctionalExtras.h"
+ #include "llvm/ADT/SmallVector.h"
+ #include "llvm/ADT/StringRef.h"
+ 
++#include <memory>
+ #include <optional>
+ #include <string>
+ 
+@@ -52,14 +54,31 @@
+                                       llvm::StringRef output_file) const;
+ 
+   // Writes a completed profile map as a JSON cache.
+-  static LogicalResult writeTaskProfileMapToJson(
+-      func::FuncOp func, const TaskProfileMap &profile_map,
+-      llvm::StringRef output_file);
++  static LogicalResult
++  writeTaskProfileMapToJson(func::FuncOp func,
++                            const TaskProfileMap &profile_map,
++                            llvm::StringRef output_file);
+ 
+   // Reads a JSON profile cache and maps entries back to taskflow.task ops by
+   // task name.
+   static FailureOr<TaskProfileMap>
+   readTaskProfileMapFromJson(func::FuncOp func, llvm::StringRef input_file);
++
++  // Exports each task after the exact pre-mapper lowering used by profiling.
++  // This path stops before MapToAcceleratorPass and records the serialized
++  // mapper-visible function body and source task metadata without invoking the
++  // mapper.
++  static LogicalResult exportPreMapperTaskBodies(func::FuncOp func,
++                                                 llvm::StringRef output_file);
++
++  // Verifies exact pre-mapper task-body equivalence and taskflow source
++  // semantics between two versions of the same function. A mismatch or an
++  // unsupported input fails closed, so cached mapper profiles cannot be
++  // treated as reusable based on operation counts or aggregate trip counts.
++  static LogicalResult
++  verifyPreMapperTaskBodyEquivalence(func::FuncOp reference,
++                                     func::FuncOp candidate,
++                                     llvm::StringRef output_file);
+ 
+   // Profiles one task across rectangular composed-CGRA options by invoking
+   // the Neura mapper on the task's kernel. Symbol-bound counters use the
+@@ -92,4 +111,10 @@
+ } // namespace taskflow
+ } // namespace mlir
+ 
++namespace mlir {
++namespace taskflow {
++std::unique_ptr<Pass> createTaskProfilerBodyEquivalencePass();
++} // namespace taskflow
++} // namespace mlir
++
+ #endif // TASKFLOW_THROUGHPUT_GUIDED_TASK_PROFILER_H
+--- a/include/TaskflowDialect/TaskflowPasses.h
++++ b/include/TaskflowDialect/TaskflowPasses.h
+@@ -26,6 +26,7 @@
+ std::unique_ptr<mlir::Pass> createClassifyTaskAndCounterPass();
+ std::unique_ptr<mlir::Pass> createOrchestrateTaskOnCgraPass();
+ std::unique_ptr<mlir::Pass> createProfileTaskCandidatesPass();
++std::unique_ptr<mlir::Pass> createTaskProfilerBodyEquivalencePass();
+ std::unique_ptr<mlir::Pass> createAnalyzeTaskPipelineIntervalPass();
+ std::unique_ptr<mlir::Pass> createVisualizeTaskOrchestrationPass();
+ std::unique_ptr<mlir::Pass> createFuseTaskPass();
+--- a/include/TaskflowDialect/TaskflowPasses.td
++++ b/include/TaskflowDialect/TaskflowPasses.td
+@@ -302,3 +302,9 @@
+                            "mlir::func::FuncDialect"];
+ }
+ #endif // TASKFLOW_PASSES_TD
++
++// Opt-in exact pre-mapper validation; never invokes the mapper.
++def TaskProfilerBodyEquivalence : Pass<"verify-task-profiler-body-equivalence", "ModuleOp"> {
++  let summary = "Verify task profiler pre-mapper bodies and source bindings";
++  let constructor = "taskflow::createTaskProfilerBodyEquivalencePass()";
++}
+--- a/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/CMakeLists.txt
++++ b/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/CMakeLists.txt
+@@ -1,6 +1,7 @@
+ add_mlir_library(MLIRTaskflowThroughputGuidedTaskOrchestration
+     ResourceAssignmentState.cpp
+     TaskProfiler.cpp
++    TaskProfilerBodyEquivalencePass.cpp
+     ThroughputGuidedTaskOrchestration.cpp
+ 
+     DEPENDS
+--- a/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.cpp
++++ b/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.cpp
+@@ -16,25 +16,31 @@
+ #include "mlir/Dialect/LLVMIR/LLVMDialect.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/SCF/IR/SCF.h"
++#include "mlir/IR/AffineExpr.h"
++#include "mlir/IR/AffineMap.h"
+ #include "mlir/IR/Attributes.h"
+ #include "mlir/IR/BuiltinOps.h"
+ #include "mlir/IR/IRMapping.h"
++#include "mlir/IR/Operation.h"
+ #include "mlir/Parser/Parser.h"
+ #include "mlir/Pass/PassManager.h"
+ #include "mlir/Transforms/Passes.h"
+ #include "llvm/ADT/DenseSet.h"
++#include "llvm/ADT/STLExtras.h"
++#include "llvm/ADT/StringMap.h"
++#include "llvm/Support/Error.h"
+ #include "llvm/Support/ErrorHandling.h"
+-#include "llvm/Support/Error.h"
+ #include "llvm/Support/JSON.h"
+ #include "llvm/Support/MemoryBuffer.h"
+-#include "llvm/ADT/STLExtras.h"
+-#include "llvm/ADT/StringMap.h"
+ #include "llvm/Support/raw_ostream.h"
+ 
+ #include <algorithm>
+ #include <cassert>
++#include <functional>
+ #include <limits>
++#include <map>
+ #include <optional>
++#include <set>
+ 
+ namespace mlir {
+ namespace taskflow {
+@@ -91,8 +97,8 @@
+ void writeTaskProfile(raw_ostream &os, const TaskProfile &profile,
+                       StringRef indent) {
+   os << indent << "{\n";
+-  os << indent << "  \"composed_cgra_count\": "
+-     << profile.composed_cgra_count << ",\n";
++  os << indent << "  \"composed_cgra_count\": " << profile.composed_cgra_count
++     << ",\n";
+   os << indent << "  \"composed_cgra_shape\": ";
+   writeJsonString(os, profile.composed_cgra_shape);
+   os << ",\n";
+@@ -110,13 +116,13 @@
+ }
+ 
+ LogicalResult writeTaskProfileMapToJsonImpl(
+-    func::FuncOp func, const TaskProfileMap &profile_map,
+-    StringRef output_file, const ProfileJsonProgress *progress) {
++    func::FuncOp func, const TaskProfileMap &profile_map, StringRef output_file,
++    const ProfileJsonProgress *progress) {
+   std::error_code error;
+   llvm::raw_fd_ostream os(output_file, error);
+   if (error) {
+-    func.emitError() << "failed to open task profile JSON file '"
+-                     << output_file << "': " << error.message();
++    func.emitError() << "failed to open task profile JSON file '" << output_file
++                     << "': " << error.message();
+     return failure();
+   }
+ 
+@@ -229,14 +235,12 @@
+       !sample_trip_count || !materialized_operation_count ||
+       !estimated_latency || !mapper_succeeded) {
+     if (!composed_cgra_shape) {
+-      task.emitError()
+-          << "task profile JSON entry requires string key "
+-             "'composed_cgra_shape'";
++      task.emitError() << "task profile JSON entry requires string key "
++                          "'composed_cgra_shape'";
+     }
+     if (!mapper_succeeded) {
+-      task.emitError()
+-          << "task profile JSON entry requires boolean key "
+-             "'mapper_succeeded'";
++      task.emitError() << "task profile JSON entry requires boolean key "
++                          "'mapper_succeeded'";
+     }
+     return std::nullopt;
+   }
+@@ -263,11 +267,140 @@
+ 
+ } // namespace
+ 
++static std::optional<int64_t>
++evaluateAffineExpression(AffineExpr expression, ArrayRef<int64_t> operands,
++                         unsigned num_dims) {
++  if (auto constant = dyn_cast<AffineConstantExpr>(expression))
++    return constant.getValue();
++  if (auto dim = dyn_cast<AffineDimExpr>(expression)) {
++    if (dim.getPosition() >= num_dims || dim.getPosition() >= operands.size())
++      return std::nullopt;
++    return operands[dim.getPosition()];
++  }
++  if (auto symbol = dyn_cast<AffineSymbolExpr>(expression)) {
++    size_t position = static_cast<size_t>(num_dims) + symbol.getPosition();
++    if (position >= operands.size())
++      return std::nullopt;
++    return operands[position];
++  }
++  auto binary = dyn_cast<AffineBinaryOpExpr>(expression);
++  if (!binary)
++    return std::nullopt;
++  std::optional<int64_t> lhs =
++      evaluateAffineExpression(binary.getLHS(), operands, num_dims);
++  std::optional<int64_t> rhs =
++      evaluateAffineExpression(binary.getRHS(), operands, num_dims);
++  if (!lhs || !rhs)
++    return std::nullopt;
++
++  __int128 value;
++  switch (expression.getKind()) {
++  case AffineExprKind::Add:
++    value = static_cast<__int128>(*lhs) + *rhs;
++    break;
++  case AffineExprKind::Mul:
++    value = static_cast<__int128>(*lhs) * *rhs;
++    break;
++  default:
++    // Division/modulo semantics are intentionally unsupported here. The
++    // proof stays fail-closed unless all bound arithmetic is handled exactly.
++    return std::nullopt;
++  }
++  if (value < std::numeric_limits<int64_t>::min() ||
++      value > std::numeric_limits<int64_t>::max())
++    return std::nullopt;
++  return static_cast<int64_t>(value);
++}
++
+ static std::optional<int64_t> getConstantIndex(Value value) {
+-  if (auto cst = value.getDefiningOp<arith::ConstantIndexOp>()) {
+-    return cst.value();
+-  }
+-  return std::nullopt;
++  // Resolve constants captured by an isolated Taskflow task. This changes
++  // input specialization to exact captured scalar values. Affine arithmetic
++  // is folded only after all operands resolve; cycles, overflow, and
++  // unsupported affine expressions remain unknown.
++  llvm::DenseSet<Value> active;
++  std::function<std::optional<int64_t>(Value)> resolve =
++      [&](Value current) -> std::optional<int64_t> {
++    if (!current || !active.insert(current).second)
++      return std::nullopt;
++
++    std::optional<int64_t> result;
++    if (auto constant = current.getDefiningOp<arith::ConstantOp>()) {
++      auto integer = dyn_cast<IntegerAttr>(constant.getValue());
++      if (integer && integer.getValue().isSignedIntN(64))
++        result = integer.getInt();
++    } else if (auto cast = current.getDefiningOp<arith::IndexCastOp>()) {
++      result = resolve(cast.getIn());
++    } else if (current.getDefiningOp<arith::AddIOp>() ||
++               current.getDefiningOp<arith::SubIOp>() ||
++               current.getDefiningOp<arith::MulIOp>()) {
++      Value lhs;
++      Value rhs;
++      enum class IndexArithmetic {
++        Add,
++        Sub,
++        Mul
++      } arithmetic = IndexArithmetic::Add;
++      if (auto add = current.getDefiningOp<arith::AddIOp>()) {
++        lhs = add.getLhs();
++        rhs = add.getRhs();
++        arithmetic = IndexArithmetic::Add;
++      } else if (auto sub = current.getDefiningOp<arith::SubIOp>()) {
++        lhs = sub.getLhs();
++        rhs = sub.getRhs();
++        arithmetic = IndexArithmetic::Sub;
++      } else if (auto mul = current.getDefiningOp<arith::MulIOp>()) {
++        lhs = mul.getLhs();
++        rhs = mul.getRhs();
++        arithmetic = IndexArithmetic::Mul;
++      }
++      if (isa<IndexType>(current.getType()) && lhs && rhs &&
++          isa<IndexType>(lhs.getType()) && isa<IndexType>(rhs.getType())) {
++        std::optional<int64_t> lhsValue = resolve(lhs);
++        std::optional<int64_t> rhsValue = resolve(rhs);
++        if (lhsValue && rhsValue) {
++          __int128 folded;
++          switch (arithmetic) {
++          case IndexArithmetic::Add:
++            folded = static_cast<__int128>(*lhsValue) + *rhsValue;
++            break;
++          case IndexArithmetic::Sub:
++            folded = static_cast<__int128>(*lhsValue) - *rhsValue;
++            break;
++          case IndexArithmetic::Mul:
++            folded = static_cast<__int128>(*lhsValue) * *rhsValue;
++            break;
++          }
++          if (folded >= std::numeric_limits<int64_t>::min() &&
++              folded <= std::numeric_limits<int64_t>::max())
++            result = static_cast<int64_t>(folded);
++        }
++      }
++    } else if (auto apply = current.getDefiningOp<affine::AffineApplyOp>()) {
++      SmallVector<int64_t> operands;
++      bool all_constant =
++          apply.getMapOperands().size() == apply.getAffineMap().getNumInputs();
++      for (Value operand : apply.getMapOperands()) {
++        std::optional<int64_t> integer = resolve(operand);
++        if (!integer) {
++          all_constant = false;
++          break;
++        }
++        operands.push_back(*integer);
++      }
++      if (all_constant && apply.getAffineMap().getNumResults() == 1)
++        result = evaluateAffineExpression(apply.getAffineMap().getResult(0),
++                                          operands,
++                                          apply.getAffineMap().getNumDims());
++    } else if (auto argument = dyn_cast<BlockArgument>(current)) {
++      auto task = dyn_cast<TaskflowTaskOp>(argument.getOwner()->getParentOp());
++      if (task && argument.getArgNumber() < task->getNumOperands())
++        result = resolve(task->getOperand(argument.getArgNumber()));
++    }
++
++    active.erase(current);
++    return result;
++  };
++  return resolve(value);
+ }
+ 
+ static std::optional<int>
+@@ -566,6 +699,744 @@
+   return success();
+ }
+ 
++struct PreMapperTaskBodyRecord {
++  std::string task_name;
++  int static_trip_count = 0;
++  std::string task_signature;
++  std::string counter_signature;
++  std::string kernel_binding_signature;
++  std::string normalized_mapper_body;
++};
++
++struct PreMapperFunctionRecord {
++  std::string function_name;
++  std::string function_signature;
++  std::string function_result_signature;
++  std::map<std::string, PreMapperTaskBodyRecord> tasks;
++};
++
++static std::string printType(Type type) {
++  std::string text;
++  llvm::raw_string_ostream os(text);
++  type.print(os);
++  return os.str();
++}
++
++static std::string printAttribute(Attribute attr) {
++  std::string text;
++  llvm::raw_string_ostream os(text);
++  attr.print(os);
++  return os.str();
++}
++
++static std::string getTaskResultRole(TaskflowTaskOp task,
++                                     unsigned result_number) {
++  if (result_number < task.getDependencyReadOut().size())
++    return "dependency_read_out[" + std::to_string(result_number) + "]";
++  result_number -= task.getDependencyReadOut().size();
++  if (result_number < task.getDependencyWriteOut().size())
++    return "dependency_write_out[" + std::to_string(result_number) + "]";
++  result_number -= task.getDependencyWriteOut().size();
++  if (result_number < task.getValueOutputs().size())
++    return "value_output[" + std::to_string(result_number) + "]";
++  return "invalid-result[" + std::to_string(result_number) + "]";
++}
++
++// Stable source identities are part of the reuse proof. Unknown region-valued
++// sources fail closed rather than allowing distinct dependency states to
++// collapse to the same signature.
++class TaskSourceValueSerializer {
++public:
++  TaskSourceValueSerializer(func::FuncOp function,
++                            ArrayRef<TaskflowCounterOp> counters) {
++    unsigned ordinal = 0;
++    function.walk([&](Operation *op) { operation_ordinals_[op] = ordinal++; });
++    for (unsigned index = 0; index < counters.size(); ++index) {
++      TaskflowCounterOp counter = counters[index];
++      counter_ordinals_[counter.getCounterIndex()] = index;
++    }
++  }
++
++  FailureOr<std::string> serialize(Value value) {
++    llvm::DenseSet<Value> active;
++    return serializeImpl(value, active);
++  }
++
++private:
++  FailureOr<std::string> serializeImpl(Value value,
++                                       llvm::DenseSet<Value> &active) {
++    if (!value)
++      return failure();
++    auto cached = serialized_values_.find(value);
++    if (cached != serialized_values_.end())
++      return cached->second;
++    if (!active.insert(value).second)
++      return failure();
++
++    std::string result;
++    if (auto argument = dyn_cast<BlockArgument>(value)) {
++      Operation *parent = argument.getOwner()->getParentOp();
++      if (isa<func::FuncOp>(parent)) {
++        result = "function-arg[" + std::to_string(argument.getArgNumber()) +
++                 "]:" + printType(argument.getType());
++      } else if (auto task = dyn_cast<TaskflowTaskOp>(parent)) {
++        unsigned number = argument.getArgNumber();
++        Value source;
++        std::string role;
++        if (number < task.getDependencyReadIn().size()) {
++          source = task.getDependencyReadIn()[number];
++          role = "dependency_read_in[" + std::to_string(number) + "]";
++        } else if ((number -= task.getDependencyReadIn().size()) <
++                   task.getDependencyWriteIn().size()) {
++          source = task.getDependencyWriteIn()[number];
++          role = "dependency_write_in[" + std::to_string(number) + "]";
++        } else {
++          number -= task.getDependencyWriteIn().size();
++          if (number >= task.getValueInputs().size())
++            return failure();
++          source = task.getValueInputs()[number];
++          role = "value_input[" + std::to_string(number) + "]";
++        }
++        FailureOr<std::string> source_identity = serializeImpl(source, active);
++        if (failed(source_identity))
++          return failure();
++        result = "task-arg{" + role + ",type=" + printType(argument.getType()) +
++                 ",source=" + *source_identity + "}";
++      } else {
++        return failure();
++      }
++    } else {
++      Operation *definition = value.getDefiningOp();
++      if (!definition)
++        return failure();
++      if (auto constant = dyn_cast<arith::ConstantOp>(definition)) {
++        result = "constant{" + printType(value.getType()) +
++                 ",value=" + printAttribute(constant.getValue()) + "}";
++      } else if (auto channel = dyn_cast<TaskflowChannelOp>(definition)) {
++        FailureOr<std::string> source_identity =
++            serializeImpl(channel.getSource(), active);
++        if (failed(source_identity))
++          return failure();
++        result = "channel{" + *source_identity + "}";
++      } else if (auto producer = dyn_cast<TaskflowTaskOp>(definition)) {
++        unsigned result_number = cast<OpResult>(value).getResultNumber();
++        result = "task-result{" + producer.getTaskName().str() + "," +
++                 getTaskResultRole(producer, result_number) +
++                 ",type=" + printType(value.getType()) + "}";
++      } else if (auto counter = dyn_cast<TaskflowCounterOp>(definition)) {
++        auto ordinal = counter_ordinals_.find(counter.getCounterIndex());
++        if (ordinal == counter_ordinals_.end())
++          return failure();
++        result = "task-counter[" + std::to_string(ordinal->second) +
++                 "]:" + printType(value.getType());
++      } else if (isa<neura::KernelOp>(definition)) {
++        result = "kernel-result[" +
++                 std::to_string(cast<OpResult>(value).getResultNumber()) +
++                 "]:" + printType(value.getType());
++      } else {
++        if (definition->getNumRegions() != 0)
++          return failure();
++        auto ordinal = operation_ordinals_.find(definition);
++        if (ordinal == operation_ordinals_.end())
++          return failure();
++        result = "source-op{" + definition->getName().getStringRef().str() +
++                 "#" + std::to_string(ordinal->second) + ",result=" +
++                 std::to_string(cast<OpResult>(value).getResultNumber()) +
++                 ",type=" + printType(value.getType()) +
++                 ",attrs=" + printAttribute(definition->getAttrDictionary()) +
++                 ",operands=[";
++        bool first = true;
++        for (Value operand : definition->getOperands()) {
++          FailureOr<std::string> operand_identity =
++              serializeImpl(operand, active);
++          if (failed(operand_identity))
++            return failure();
++          if (!first)
++            result += ";";
++          first = false;
++          result += *operand_identity;
++        }
++        result += "]}";
++      }
++    }
++
++    active.erase(value);
++    serialized_values_[value] = result;
++    return result;
++  }
++
++  llvm::DenseMap<const Operation *, unsigned> operation_ordinals_;
++  llvm::DenseMap<Value, unsigned> counter_ordinals_;
++  llvm::DenseMap<Value, std::string> serialized_values_;
++};
++
++static LogicalResult
++buildStaticCounterSignature(TaskflowTaskOp task,
++                            SmallVectorImpl<TaskflowCounterOp> &counters,
++                            std::string &signature, int &sample_trip_count) {
++  for (Operation &op : task.getBody().front()) {
++    if (auto counter = dyn_cast<TaskflowCounterOp>(&op))
++      counters.push_back(counter);
++  }
++  if (counters.empty()) {
++    task.emitError("body equivalence requires at least one taskflow.counter");
++    return failure();
++  }
++
++  SmallVector<int64_t> trips;
++  SmallVector<int64_t> lower_bounds;
++  SmallVector<int64_t> upper_bounds;
++  SmallVector<int64_t> steps;
++  llvm::DenseMap<Value, unsigned> counter_indices;
++  for (auto [index, counter] : llvm::enumerate(counters))
++    counter_indices[counter.getCounterIndex()] = index;
++
++  SmallVector<SmallVector<unsigned, 4>> children(counters.size());
++  SmallVector<unsigned> roots;
++  for (auto [index, counter] : llvm::enumerate(counters)) {
++    if (Value parent = counter.getParentIndex()) {
++      auto parent_index = counter_indices.find(parent);
++      if (parent_index == counter_indices.end()) {
++        task.emitError(
++            "body equivalence found a counter parent outside its task");
++        return failure();
++      }
++      children[parent_index->second].push_back(index);
++    } else {
++      roots.push_back(index);
++    }
++
++    std::optional<int64_t> lower = getConstantIndex(counter.getLowerBound());
++    std::optional<int64_t> upper = getConstantIndex(counter.getUpperBound());
++    std::optional<int64_t> step = getConstantIndex(counter.getStep());
++    auto hierarchy = counter->getAttrOfType<StringAttr>("counter_hierarchy");
++    auto dynamism = counter->getAttrOfType<StringAttr>("counter_dynamism");
++    auto counter_id = counter->getAttrOfType<IntegerAttr>("counter_id");
++    if (!lower || !upper || !step || *step <= 0 || *upper <= *lower ||
++        !hierarchy || !dynamism || !counter_id) {
++      task.emitError("body equivalence requires fully static counter bounds, "
++                     "positive steps, and complete counter metadata");
++      return failure();
++    }
++
++    __int128 range = static_cast<__int128>(*upper) - *lower;
++    __int128 trip = (range + *step - 1) / *step;
++    if (trip <= 0 || trip > std::numeric_limits<int>::max()) {
++      task.emitError("body equivalence counter trip count is out of range");
++      return failure();
++    }
++    lower_bounds.push_back(*lower);
++    upper_bounds.push_back(*upper);
++    steps.push_back(*step);
++    trips.push_back(static_cast<int64_t>(trip));
++  }
++
++  if (roots.empty()) {
++    task.emitError("body equivalence counter graph has no root");
++    return failure();
++  }
++  int64_t max_chain_trip_count = 0;
++  for (unsigned root : roots) {
++    int64_t chain_trip_count = 1;
++    SmallVector<unsigned> worklist{root};
++    llvm::DenseSet<unsigned> visited;
++    while (!worklist.empty()) {
++      unsigned current = worklist.pop_back_val();
++      if (!visited.insert(current).second) {
++        task.emitError("body equivalence counter graph contains a cycle");
++        return failure();
++      }
++      if (chain_trip_count > std::numeric_limits<int>::max() / trips[current]) {
++        task.emitError(
++            "body equivalence nested counter trip count is out of range");
++        return failure();
++      }
++      chain_trip_count *= trips[current];
++      for (unsigned child : children[current])
++        worklist.push_back(child);
++    }
++    max_chain_trip_count = std::max(max_chain_trip_count, chain_trip_count);
++  }
++
++  if (max_chain_trip_count <= 0 ||
++      max_chain_trip_count > std::numeric_limits<int>::max()) {
++    task.emitError("body equivalence task trip count is out of range");
++    return failure();
++  }
++  sample_trip_count = static_cast<int>(max_chain_trip_count);
++  for (auto [index, counter] : llvm::enumerate(counters)) {
++    auto hierarchy = counter->getAttrOfType<StringAttr>("counter_hierarchy");
++    auto dynamism = counter->getAttrOfType<StringAttr>("counter_dynamism");
++    auto counter_id = counter->getAttrOfType<IntegerAttr>("counter_id");
++    signature += "counter[" + std::to_string(index) +
++                 "]{id=" + std::to_string(counter_id.getInt()) +
++                 ",hierarchy=" + printAttribute(hierarchy) +
++                 ",dynamism=" + printAttribute(dynamism) + ",parent=";
++    if (Value parent = counter.getParentIndex())
++      signature += std::to_string(counter_indices.lookup(parent));
++    else
++      signature += "none";
++    signature += ",lower=" + std::to_string(lower_bounds[index]) +
++                 ",upper=" + std::to_string(upper_bounds[index]) +
++                 ",step=" + std::to_string(steps[index]) +
++                 ",trip=" + std::to_string(trips[index]) + "}\n";
++  }
++  signature +=
++      "task_static_trip_count=" + std::to_string(sample_trip_count) + "\n";
++  return success();
++}
++
++static FailureOr<std::string>
++serializeValueRange(StringRef role, ValueRange values,
++                    TaskSourceValueSerializer &serializer) {
++  std::string text = role.str() + "[";
++  for (auto [index, value] : llvm::enumerate(values)) {
++    FailureOr<std::string> identity = serializer.serialize(value);
++    if (failed(identity))
++      return failure();
++    if (index != 0)
++      text += ";";
++    text += "type=" + printType(value.getType()) + ",source=" + *identity;
++  }
++  text += "]\n";
++  return text;
++}
++
++static FailureOr<PreMapperTaskBodyRecord>
++collectPreMapperTaskBody(func::FuncOp function, TaskflowTaskOp task) {
++  PreMapperTaskBodyRecord record;
++  record.task_name = task.getTaskName().str();
++  SmallVector<TaskflowCounterOp> counters;
++  if (failed(buildStaticCounterSignature(
++          task, counters, record.counter_signature, record.static_trip_count)))
++    return failure();
++
++  TaskSourceValueSerializer serializer(function, counters);
++  auto appendRange = [&](std::string &into, StringRef role,
++                         ValueRange values) -> LogicalResult {
++    FailureOr<std::string> serialized =
++        serializeValueRange(role, values, serializer);
++    if (failed(serialized))
++      return failure();
++    into += *serialized;
++    return success();
++  };
++
++  record.task_signature = "task=" + record.task_name + "\n";
++  if (failed(appendRange(record.task_signature, "dependency_read_in",
++                         task.getDependencyReadIn())) ||
++      failed(appendRange(record.task_signature, "dependency_write_in",
++                         task.getDependencyWriteIn())) ||
++      failed(appendRange(record.task_signature, "value_inputs",
++                         task.getValueInputs())) ||
++      failed(appendRange(record.task_signature, "original_read_memrefs",
++                         task.getOriginalReadMemrefs())) ||
++      failed(appendRange(record.task_signature, "original_write_memrefs",
++                         task.getOriginalWriteMemrefs())) ||
++      failed(appendRange(record.task_signature, "dependency_read_out_types",
++                         task.getDependencyReadOut())) ||
++      failed(appendRange(record.task_signature, "dependency_write_out_types",
++                         task.getDependencyWriteOut())) ||
++      failed(appendRange(record.task_signature, "value_output_types",
++                         task.getValueOutputs()))) {
++    task.emitError("body equivalence cannot serialize task input/output "
++                   "source semantics");
++    return failure();
++  }
++
++  TaskflowYieldOp task_yield =
++      dyn_cast<TaskflowYieldOp>(task.getBody().front().getTerminator());
++  if (!task_yield ||
++      task_yield.getReadResults().size() !=
++          task.getDependencyReadOut().size() ||
++      task_yield.getMemoryResults().size() !=
++          task.getDependencyWriteOut().size() ||
++      task_yield.getValueResults().size() != task.getValueOutputs().size()) {
++    task.emitError(
++        "body equivalence found an incomplete taskflow.yield signature");
++    return failure();
++  }
++  if (failed(appendRange(record.task_signature, "yield_read_states",
++                         task_yield.getReadResults())) ||
++      failed(appendRange(record.task_signature, "yield_write_states",
++                         task_yield.getMemoryResults())) ||
++      failed(appendRange(record.task_signature, "yield_value_results",
++                         task_yield.getValueResults()))) {
++    task.emitError("body equivalence cannot serialize taskflow.yield sources");
++    return failure();
++  }
++
++  SmallVector<neura::KernelOp> kernels;
++  task.walk([&](neura::KernelOp kernel) { kernels.push_back(kernel); });
++  if (kernels.size() != 1) {
++    task.emitError(
++        "body equivalence requires exactly one neura.kernel per task");
++    return failure();
++  }
++  neura::KernelOp kernel = kernels.front();
++  record.kernel_binding_signature = "";
++  if (failed(appendRange(record.kernel_binding_signature, "kernel_inputs",
++                         kernel.getInputs())) ||
++      failed(appendRange(record.kernel_binding_signature,
++                         "kernel_iter_args_init", kernel.getIterArgsInit()))) {
++    task.emitError("body equivalence cannot serialize kernel input bindings");
++    return failure();
++  }
++  record.kernel_binding_signature += "kernel_result_types=[";
++  for (auto [index, type] : llvm::enumerate(kernel.getResultTypes())) {
++    if (index != 0)
++      record.kernel_binding_signature += ";";
++    record.kernel_binding_signature += printType(type);
++  }
++  record.kernel_binding_signature += "]\n";
++
++  std::optional<std::string> wrapper_text =
++      buildMapperWrapperModuleText(kernel);
++  if (!wrapper_text) {
++    task.emitError("body equivalence could not build the mapper wrapper");
++    return failure();
++  }
++  MLIRContext mapper_context;
++  mapper_context.disableMultithreading();
++  loadMapperDialects(mapper_context);
++  ParserConfig parser_config(&mapper_context);
++  OwningOpRef<ModuleOp> module = parseSourceString<ModuleOp>(
++      *wrapper_text, parser_config, "task-profile-body-equivalence.mlir");
++  if (!module) {
++    task.emitError("body equivalence mapper wrapper could not be parsed");
++    return failure();
++  }
++  PassManager lowering_pm(&mapper_context);
++  lowering_pm.enableVerifier(false);
++  addMapperLoweringPipeline(lowering_pm);
++  if (failed(lowering_pm.run(*module))) {
++    task.emitError(
++        "body equivalence exact pre-mapper lowering pipeline failed");
++    return failure();
++  }
++  func::FuncOp lowered_function =
++      module->lookupSymbol<func::FuncOp>("__task_profile__");
++  if (!lowered_function) {
++    task.emitError(
++        "body equivalence lowering removed the task wrapper function");
++    return failure();
++  }
++  llvm::raw_string_ostream body_stream(record.normalized_mapper_body);
++  OpPrintingFlags print_flags;
++  print_flags.useLocalScope();
++  lowered_function->print(body_stream, print_flags);
++  body_stream.flush();
++  return record;
++}
++
++static FailureOr<PreMapperFunctionRecord>
++collectPreMapperFunction(func::FuncOp function) {
++  PreMapperFunctionRecord record;
++  record.function_name = function.getSymName().str();
++  std::string function_type;
++  llvm::raw_string_ostream type_stream(function_type);
++  function.getFunctionType().print(type_stream);
++  record.function_signature = "function_type=" + type_stream.str();
++
++  TaskSourceValueSerializer function_value_serializer(function, {});
++  func::ReturnOp return_op;
++  for (Block &block : function.getBody()) {
++    if (auto terminator = dyn_cast<func::ReturnOp>(block.getTerminator()))
++      return_op = terminator;
++  }
++  if (!return_op) {
++    function.emitError("body equivalence requires a func.return terminator");
++    return failure();
++  }
++  record.function_result_signature = "function_results=[";
++  for (auto [index, value] : llvm::enumerate(return_op.getOperands())) {
++    FailureOr<std::string> identity =
++        function_value_serializer.serialize(value);
++    if (failed(identity)) {
++      function.emitError("body equivalence cannot serialize function return "
++                         "source semantics");
++      return failure();
++    }
++    if (index != 0)
++      record.function_result_signature += ";";
++    record.function_result_signature +=
++        "type=" + printType(value.getType()) + ",source=" + *identity;
++  }
++  record.function_result_signature += "]";
++
++  SmallVector<TaskflowTaskOp> tasks;
++  function.walk([&](TaskflowTaskOp task) { tasks.push_back(task); });
++  for (TaskflowTaskOp task : tasks) {
++    std::string name = task.getTaskName().str();
++    if (name.empty() || record.tasks.count(name) != 0) {
++      task.emitError("body equivalence requires unique nonempty task names");
++      return failure();
++    }
++    FailureOr<PreMapperTaskBodyRecord> task_record =
++        collectPreMapperTaskBody(function, task);
++    if (failed(task_record))
++      return failure();
++    record.tasks[name] = std::move(*task_record);
++  }
++  return record;
++}
++
++static void writePreMapperTaskBodyRecord(raw_ostream &os,
++                                         const PreMapperTaskBodyRecord &record,
++                                         StringRef indent) {
++  os << indent << "{\n" << indent << "  \"task\": ";
++  writeJsonString(os, record.task_name);
++  os << ",\n"
++     << indent << "  \"static_trip_count\": " << record.static_trip_count
++     << ",\n"
++     << indent << "  \"task_signature\": ";
++  writeJsonString(os, record.task_signature);
++  os << ",\n" << indent << "  \"counter_signature\": ";
++  writeJsonString(os, record.counter_signature);
++  os << ",\n" << indent << "  \"kernel_binding_signature\": ";
++  writeJsonString(os, record.kernel_binding_signature);
++  os << ",\n" << indent << "  \"normalized_mapper_body\": ";
++  writeJsonString(os, record.normalized_mapper_body);
++  os << "\n" << indent << "}";
++}
++
++static LogicalResult writePreMapperExport(func::FuncOp function,
++                                          const PreMapperFunctionRecord &record,
++                                          StringRef output_file) {
++  std::error_code error;
++  llvm::raw_fd_ostream os(output_file, error);
++  if (error) {
++    function.emitError() << "failed to open pre-mapper body export '"
++                         << output_file << "': " << error.message();
++    return failure();
++  }
++  os << "{\n  \"format\": \"amoeba-pre-mapper-task-bodies-v1\",\n"
++     << "  \"function\": ";
++  writeJsonString(os, record.function_name);
++  os << ",\n  \"function_signature\": ";
++  writeJsonString(os, record.function_signature);
++  os << ",\n  \"function_result_signature\": ";
++  writeJsonString(os, record.function_result_signature);
++  os << ",\n  \"task_count\": " << record.tasks.size() << ",\n"
++     << "  \"tasks\": [\n";
++  unsigned index = 0;
++  for (const auto &entry : record.tasks) {
++    writePreMapperTaskBodyRecord(os, entry.second, "    ");
++    if (++index != record.tasks.size())
++      os << ",";
++    os << "\n";
++  }
++  os << "  ]\n}\n";
++  return success();
++}
++
++static LogicalResult writePreMapperComparison(
++    func::FuncOp reference, func::FuncOp candidate,
++    const PreMapperFunctionRecord *reference_record,
++    const PreMapperFunctionRecord *candidate_record,
++    ArrayRef<std::string> function_mismatches,
++    const std::map<std::string, SmallVector<std::string>> &task_mismatches,
++    StringRef unsupported_reason, StringRef output_file) {
++  std::error_code error;
++  llvm::raw_fd_ostream os(output_file, error);
++  if (error) {
++    candidate.emitError() << "failed to open pre-mapper equivalence report '"
++                          << output_file << "': " << error.message();
++    return failure();
++  }
++
++  bool supported = reference_record && candidate_record;
++  bool equivalent =
++      supported && function_mismatches.empty() && task_mismatches.empty();
++  os << "{\n  \"format\": \"amoeba-pre-mapper-body-equivalence-v1\",\n"
++     << "  \"supported\": " << (supported ? "true" : "false") << ",\n"
++     << "  \"equivalent\": " << (equivalent ? "true" : "false") << ",\n"
++     << "  \"unsupported_reason\": ";
++  writeJsonString(os, unsupported_reason);
++  os << ",\n  \"reference_function\": ";
++  writeJsonString(os, reference ? reference.getSymName() : StringRef());
++  os << ",\n  \"candidate_function\": ";
++  writeJsonString(os, candidate ? candidate.getSymName() : StringRef());
++  os << ",\n  \"function_mismatches\": [";
++  for (auto [index, mismatch] : llvm::enumerate(function_mismatches)) {
++    if (index != 0)
++      os << ", ";
++    writeJsonString(os, mismatch);
++  }
++  os << "],\n  \"reference_function_signature\": ";
++  if (reference_record)
++    writeJsonString(os, reference_record->function_signature);
++  else
++    os << "null";
++  os << ",\n  \"candidate_function_signature\": ";
++  if (candidate_record)
++    writeJsonString(os, candidate_record->function_signature);
++  else
++    os << "null";
++  os << ",\n  \"reference_function_result_signature\": ";
++  if (reference_record)
++    writeJsonString(os, reference_record->function_result_signature);
++  else
++    os << "null";
++  os << ",\n  \"candidate_function_result_signature\": ";
++  if (candidate_record)
++    writeJsonString(os, candidate_record->function_result_signature);
++  else
++    os << "null";
++  os << ",\n  \"tasks\": [\n";
++
++  std::set<std::string> task_names;
++  if (reference_record)
++    for (const auto &entry : reference_record->tasks)
++      task_names.insert(entry.first);
++  if (candidate_record)
++    for (const auto &entry : candidate_record->tasks)
++      task_names.insert(entry.first);
++
++  bool first_task = true;
++  for (const std::string &name : task_names) {
++    const PreMapperTaskBodyRecord *reference_task = nullptr;
++    const PreMapperTaskBodyRecord *candidate_task = nullptr;
++    if (reference_record) {
++      auto it = reference_record->tasks.find(name);
++      if (it != reference_record->tasks.end())
++        reference_task = &it->second;
++    }
++    if (candidate_record) {
++      auto it = candidate_record->tasks.find(name);
++      if (it != candidate_record->tasks.end())
++        candidate_task = &it->second;
++    }
++    auto mismatches = task_mismatches.find(name);
++    if (!first_task)
++      os << ",\n";
++    first_task = false;
++    os << "    {\n      \"task\": ";
++    writeJsonString(os, name);
++    os << ",\n      \"equivalent\": "
++       << (reference_task && candidate_task &&
++                   mismatches == task_mismatches.end()
++               ? "true"
++               : "false")
++       << ",\n      \"mismatches\": [";
++    if (mismatches != task_mismatches.end()) {
++      for (auto [index, mismatch] : llvm::enumerate(mismatches->second)) {
++        if (index != 0)
++          os << ", ";
++        writeJsonString(os, mismatch);
++      }
++    } else if (!reference_task || !candidate_task) {
++      writeJsonString(os, "task missing from one function");
++    }
++    os << "],\n      \"reference\": ";
++    if (reference_task)
++      writePreMapperTaskBodyRecord(os, *reference_task, "      ");
++    else
++      os << "null";
++    os << ",\n      \"candidate\": ";
++    if (candidate_task)
++      writePreMapperTaskBodyRecord(os, *candidate_task, "      ");
++    else
++      os << "null";
++    os << "\n    }";
++  }
++  os << "\n  ]\n}\n";
++  return success();
++}
++
++LogicalResult
++TaskProfiler::exportPreMapperTaskBodies(func::FuncOp func,
++                                        llvm::StringRef output_file) {
++  FailureOr<PreMapperFunctionRecord> record = collectPreMapperFunction(func);
++  if (failed(record)) {
++    std::error_code error;
++    llvm::raw_fd_ostream os(output_file, error);
++    if (!error) {
++      os << "{\n  \"format\": \"amoeba-pre-mapper-task-bodies-v1\",\n"
++         << "  \"supported\": false,\n"
++         << "  \"error\": \"could not lower or serialize every task\"\n}\n";
++    }
++    return failure();
++  }
++  return writePreMapperExport(func, *record, output_file);
++}
++
++LogicalResult
++TaskProfiler::verifyPreMapperTaskBodyEquivalence(func::FuncOp reference,
++                                                 func::FuncOp candidate,
++                                                 llvm::StringRef output_file) {
++  FailureOr<PreMapperFunctionRecord> reference_record =
++      collectPreMapperFunction(reference);
++  FailureOr<PreMapperFunctionRecord> candidate_record =
++      collectPreMapperFunction(candidate);
++  if (failed(reference_record) || failed(candidate_record)) {
++    if (failed(writePreMapperComparison(
++            reference, candidate, /*reference_record=*/nullptr,
++            /*candidate_record=*/nullptr, {}, {},
++            "one or both functions could not be lowered or serialized",
++            output_file)))
++      return failure();
++    return failure();
++  }
++
++  SmallVector<std::string> function_mismatches;
++  if (reference_record->function_name != candidate_record->function_name)
++    function_mismatches.push_back("function_name");
++  if (reference_record->function_signature !=
++      candidate_record->function_signature)
++    function_mismatches.push_back("function_signature");
++  if (reference_record->function_result_signature !=
++      candidate_record->function_result_signature)
++    function_mismatches.push_back("function_result_signature");
++  if (reference_record->tasks.size() != candidate_record->tasks.size())
++    function_mismatches.push_back("task_count");
++
++  std::set<std::string> task_names;
++  for (const auto &entry : reference_record->tasks)
++    task_names.insert(entry.first);
++  for (const auto &entry : candidate_record->tasks)
++    task_names.insert(entry.first);
++
++  std::map<std::string, SmallVector<std::string>> task_mismatches;
++  for (const std::string &name : task_names) {
++    auto reference_it = reference_record->tasks.find(name);
++    auto candidate_it = candidate_record->tasks.find(name);
++    SmallVector<std::string> mismatches;
++    if (reference_it == reference_record->tasks.end() ||
++        candidate_it == candidate_record->tasks.end()) {
++      mismatches.push_back("task missing from one function");
++    } else {
++      const PreMapperTaskBodyRecord &reference_task = reference_it->second;
++      const PreMapperTaskBodyRecord &candidate_task = candidate_it->second;
++      if (reference_task.static_trip_count != candidate_task.static_trip_count)
++        mismatches.push_back("static_trip_count");
++      if (reference_task.task_signature != candidate_task.task_signature)
++        mismatches.push_back("task_signature");
++      if (reference_task.counter_signature != candidate_task.counter_signature)
++        mismatches.push_back("counter_signature");
++      if (reference_task.kernel_binding_signature !=
++          candidate_task.kernel_binding_signature)
++        mismatches.push_back("kernel_binding_signature");
++      if (reference_task.normalized_mapper_body !=
++          candidate_task.normalized_mapper_body)
++        mismatches.push_back("normalized_mapper_body");
++    }
++    if (!mismatches.empty())
++      task_mismatches.emplace(name, std::move(mismatches));
++  }
++
++  if (failed(writePreMapperComparison(reference, candidate, &*reference_record,
++                                      &*candidate_record, function_mismatches,
++                                      task_mismatches,
++                                      /*unsupported_reason=*/"", output_file)))
++    return failure();
++  if (!function_mismatches.empty() || !task_mismatches.empty()) {
++    candidate.emitError("pre-mapper task body equivalence check failed");
++    return failure();
++  }
++  return success();
++}
++
+ TaskProfileMap TaskProfiler::profileFunction(func::FuncOp func) const {
+   TaskProfileMap profile_map;
+   func.walk(
+@@ -573,8 +1444,9 @@
+   return profile_map;
+ }
+ 
+-LogicalResult TaskProfiler::profileFunctionToJson(
+-    func::FuncOp func, llvm::StringRef output_file) const {
++LogicalResult
++TaskProfiler::profileFunctionToJson(func::FuncOp func,
++                                    llvm::StringRef output_file) const {
+   TaskProfileMap profile_map;
+ 
+   SmallVector<TaskflowTaskOp> tasks;
+@@ -594,9 +1466,8 @@
+   progress.expected_candidate_count =
+       candidates_per_task * static_cast<int>(tasks.size());
+   progress.completed_candidate_count = 0;
+-  if (failed(
+-          writeTaskProfileMapToJsonImpl(func, profile_map, output_file,
+-                                        &progress))) {
++  if (failed(writeTaskProfileMapToJsonImpl(func, profile_map, output_file,
++                                           &progress))) {
+     return failure();
+   }
+ 
+@@ -605,10 +1476,9 @@
+     bool write_failed = false;
+     llvm::SmallVector<TaskProfile> task_profiles =
+         profileTaskWithCandidateCallback(
+-            task,
+-            [&](int candidate_index, const CgraShape &shape,
+-                int composed_cgra_count,
+-                const std::optional<TaskProfile> &profile) {
++            task, [&](int candidate_index, const CgraShape &shape,
++                      int composed_cgra_count,
++                      const std::optional<TaskProfile> &profile) {
+               ++progress.completed_candidate_count;
+               progress.last_task = getTaskProfileName(task);
+               progress.last_candidate_index = candidate_index;
+@@ -634,9 +1504,10 @@
+                                        &progress);
+ }
+ 
+-LogicalResult TaskProfiler::writeTaskProfileMapToJson(
+-    func::FuncOp func, const TaskProfileMap &profile_map,
+-    llvm::StringRef output_file) {
++LogicalResult
++TaskProfiler::writeTaskProfileMapToJson(func::FuncOp func,
++                                        const TaskProfileMap &profile_map,
++                                        llvm::StringRef output_file) {
+   return writeTaskProfileMapToJsonImpl(func, profile_map, output_file,
+                                        /*progress=*/nullptr);
+ }
+@@ -657,8 +1528,8 @@
+     std::string error_message;
+     llvm::raw_string_ostream os(error_message);
+     llvm::logAllUnhandledErrors(parsed.takeError(), os);
+-    func.emitError() << "failed to parse task profile JSON file '"
+-                     << input_file << "': " << os.str();
++    func.emitError() << "failed to parse task profile JSON file '" << input_file
++                     << "': " << os.str();
+     return failure();
+   }
+ 
+@@ -731,8 +1602,7 @@
+     for (llvm::json::Value &profile_value : *profile_entries) {
+       llvm::json::Object *profile_object = profile_value.getAsObject();
+       if (!profile_object) {
+-        task.emitError()
+-            << "task profile JSON profile entries must be objects";
++        task.emitError() << "task profile JSON profile entries must be objects";
+         return failure();
+       }
+       std::optional<TaskProfile> profile =
+@@ -763,12 +1633,11 @@
+ llvm::SmallVector<TaskProfile>
+ TaskProfiler::profileTask(TaskflowTaskOp task) const {
+   return profileTaskWithCandidateCallback(
+-      task, [](int, const CgraShape &, int,
+-               const std::optional<TaskProfile> &) {});
+-}
+-
+-llvm::SmallVector<TaskProfile>
+-TaskProfiler::profileTaskWithCandidateCallback(
++      task,
++      [](int, const CgraShape &, int, const std::optional<TaskProfile> &) {});
++}
++
++llvm::SmallVector<TaskProfile> TaskProfiler::profileTaskWithCandidateCallback(
+     TaskflowTaskOp task,
+     llvm::function_ref<void(int, const CgraShape &, int,
+                             const std::optional<TaskProfile> &)>
+--- /dev/null
++++ b/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfilerBodyEquivalencePass.cpp
+@@ -0,0 +1,153 @@
++// Standalone pre-mapper body export and equivalence verifier.
++
++#include "TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.h"
++
++#include "NeuraDialect/NeuraDialect.h"
++#include "TaskflowDialect/TaskflowDialect.h"
++#include "mlir/Dialect/Affine/IR/AffineOps.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
++#include "mlir/Dialect/ControlFlow/IR/ControlFlowOps.h"
++#include "mlir/Dialect/Func/IR/FuncOps.h"
++#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
++#include "mlir/Dialect/MemRef/IR/MemRef.h"
++#include "mlir/Dialect/SCF/IR/SCF.h"
++#include "mlir/IR/BuiltinOps.h"
++#include "mlir/IR/DialectRegistry.h"
++#include "mlir/Parser/Parser.h"
++#include "mlir/Pass/Pass.h"
++#include "llvm/Support/MemoryBuffer.h"
++
++#include <memory>
++#include <string>
++
++namespace mlir {
++namespace taskflow {
++namespace {
++
++class TaskProfilerBodyEquivalencePass
++    : public PassWrapper<TaskProfilerBodyEquivalencePass,
++                         OperationPass<ModuleOp>> {
++public:
++  MLIR_DEFINE_EXPLICIT_INTERNAL_INLINE_TYPE_ID(TaskProfilerBodyEquivalencePass)
++
++  TaskProfilerBodyEquivalencePass() = default;
++  TaskProfilerBodyEquivalencePass(const TaskProfilerBodyEquivalencePass &other)
++      : PassWrapper(other) {}
++
++  StringRef getArgument() const final {
++    return "verify-task-profiler-body-equivalence";
++  }
++
++  StringRef getDescription() const final {
++    return "export or exactly compare task profiler pre-mapper bodies";
++  }
++
++  void getDependentDialects(DialectRegistry &registry) const override {
++    registry.insert<affine::AffineDialect, arith::ArithDialect,
++                    cf::ControlFlowDialect, func::FuncDialect,
++                    LLVM::LLVMDialect, memref::MemRefDialect,
++                    neura::NeuraDialect, scf::SCFDialect, TaskflowDialect>();
++  }
++
++  void runOnOperation() override {
++    ModuleOp candidate_module = getOperation();
++    if (outputFile.empty()) {
++      candidate_module.emitError(
++          "body equivalence pass requires a nonempty output option");
++      signalPassFailure();
++      return;
++    }
++
++    func::FuncOp candidate = findFunction(candidate_module, functionName);
++    if (!candidate) {
++      candidate_module.emitError()
++          << "body equivalence pass requires exactly one matching function; "
++             "set the function option explicitly";
++      signalPassFailure();
++      return;
++    }
++
++    if (referenceFile.empty()) {
++      if (failed(
++              TaskProfiler::exportPreMapperTaskBodies(candidate, outputFile)))
++        signalPassFailure();
++      return;
++    }
++
++    auto buffer = llvm::MemoryBuffer::getFile(referenceFile);
++    if (!buffer) {
++      candidate.emitError()
++          << "failed to read reference module '" << referenceFile
++          << "': " << buffer.getError().message();
++      signalPassFailure();
++      return;
++    }
++
++    MLIRContext *context = candidate_module.getContext();
++    context->getOrLoadDialect<affine::AffineDialect>();
++    context->getOrLoadDialect<arith::ArithDialect>();
++    context->getOrLoadDialect<cf::ControlFlowDialect>();
++    context->getOrLoadDialect<func::FuncDialect>();
++    context->getOrLoadDialect<LLVM::LLVMDialect>();
++    context->getOrLoadDialect<memref::MemRefDialect>();
++    context->getOrLoadDialect<neura::NeuraDialect>();
++    context->getOrLoadDialect<scf::SCFDialect>();
++    context->getOrLoadDialect<TaskflowDialect>();
++    ParserConfig parser_config(context);
++    OwningOpRef<ModuleOp> reference_module = parseSourceString<ModuleOp>(
++        (*buffer)->getBuffer(), parser_config, referenceFile);
++    if (!reference_module) {
++      candidate.emitError()
++          << "failed to parse reference module '" << referenceFile << "'";
++      signalPassFailure();
++      return;
++    }
++
++    func::FuncOp reference = findFunction(*reference_module, functionName);
++    if (!reference) {
++      candidate.emitError()
++          << "reference module has no unique function selected by '"
++          << functionName << "'";
++      signalPassFailure();
++      return;
++    }
++    if (failed(TaskProfiler::verifyPreMapperTaskBodyEquivalence(
++            reference, candidate, outputFile)))
++      signalPassFailure();
++  }
++
++  Option<std::string> referenceFile{
++      *this, "reference",
++      llvm::cl::desc("reference module; omit to export only"),
++      llvm::cl::init("")};
++  Option<std::string> functionName{*this, "function",
++                                   llvm::cl::desc("function symbol to inspect"),
++                                   llvm::cl::init("")};
++  Option<std::string> outputFile{*this, "output",
++                                 llvm::cl::desc("JSON export/report path"),
++                                 llvm::cl::init("")};
++
++private:
++  static func::FuncOp findFunction(ModuleOp module, StringRef requested_name) {
++    if (!requested_name.empty())
++      return module.lookupSymbol<func::FuncOp>(requested_name);
++    func::FuncOp found;
++    unsigned count = 0;
++    module.walk([&](func::FuncOp function) {
++      if (function.isExternal())
++        return;
++      found = function;
++      ++count;
++    });
++    return count == 1 ? found : func::FuncOp();
++  }
++};
++
++} // namespace
++
++std::unique_ptr<Pass> createTaskProfilerBodyEquivalencePass() {
++  return std::make_unique<TaskProfilerBodyEquivalencePass>();
++}
++
++} // namespace taskflow
++} // namespace mlir
+--- a/lib/TaskflowDialect/Orchestration/orchestration_utils.cpp
++++ b/lib/TaskflowDialect/Orchestration/orchestration_utils.cpp
+@@ -831,6 +831,22 @@
+ 
+   recordScheduleResult(graph);
+ 
++  // Keep the exact decisions made by this scheduler invocation available to
++  // downstream replay. `sorted_tasks` is the dependency-respecting dispatch
++  // order used by Phase 1 above; schedule_result_ carries the final concrete
++  // placement times after the SRAM fixed point. The scheduler time axis is
++  // scaled by schedule_time_scale_, so these times are explicitly labeled as
++  // internal placement slots rather than cycles.
++  llvm::DenseMap<Operation *, const TaskScheduleResult *> scheduleByTask;
++  for (const TaskScheduleResult &taskResult : schedule_result_) {
++    TaskflowTaskOp scheduledTask = taskResult.task;
++    scheduleByTask[scheduledTask.getOperation()] = &taskResult;
++  }
++  llvm::DenseMap<Operation *, int64_t> dispatchIndexByTask;
++  for (auto [dispatchIndex, taskNode] : llvm::enumerate(sorted_tasks))
++    dispatchIndexByTask[taskNode->op.getOperation()] =
++        static_cast<int64_t>(dispatchIndex);
++
+   // Write output attributes.
+   OpBuilder builder(func.getContext());
+   for (auto &task_node : graph.task_nodes) {
+@@ -940,7 +956,141 @@
+     // Removes upstream resource-binding attributes that have been consumed.
+     task_node->op->removeAttr("cgra_count");
+     task_node->op->removeAttr("cgra_shape");
+-  }
++
++    auto resultIt = scheduleByTask.find(task_node->op.getOperation());
++    auto dispatchIt = dispatchIndexByTask.find(task_node->op.getOperation());
++    if (resultIt != scheduleByTask.end() &&
++        dispatchIt != dispatchIndexByTask.end()) {
++      const TaskScheduleResult &taskResult = *resultIt->second;
++      SmallVector<Attribute> scheduledPlacements;
++      for (const TaskScheduleResult::CgraOccupancy &occupancy :
++           taskResult.cgra_occupancies) {
++        SmallVector<NamedAttribute> placementAttrs;
++        placementAttrs.push_back(builder.getNamedAttr(
++            "col", builder.getI32IntegerAttr(occupancy.col)));
++        placementAttrs.push_back(builder.getNamedAttr(
++            "context_id", builder.getI32IntegerAttr(occupancy.context_id)));
++        placementAttrs.push_back(builder.getNamedAttr(
++            "replica_id", builder.getI32IntegerAttr(occupancy.replica_id)));
++        placementAttrs.push_back(builder.getNamedAttr(
++            "row", builder.getI32IntegerAttr(occupancy.row)));
++        placementAttrs.push_back(builder.getNamedAttr(
++            "scheduler_duration",
++            builder.getI64IntegerAttr(occupancy.duration)));
++        placementAttrs.push_back(builder.getNamedAttr(
++            "scheduler_end_time",
++            builder.getI64IntegerAttr(occupancy.start_time +
++                                      occupancy.duration)));
++        placementAttrs.push_back(builder.getNamedAttr(
++            "scheduler_start_time",
++            builder.getI64IntegerAttr(occupancy.start_time)));
++        scheduledPlacements.push_back(
++            DictionaryAttr::get(func.getContext(), placementAttrs));
++      }
++
++      auto selectedCount =
++          task_node->op->getAttrOfType<IntegerAttr>("composed_cgra_count");
++      auto selectedShape =
++          task_node->op->getAttrOfType<StringAttr>("composed_cgra_shape");
++      auto activeReplicas =
++          task_node->op->getAttrOfType<IntegerAttr>("active_replicas");
++      const int replicaCount = std::max(
++          1, activeReplicas ? static_cast<int>(activeReplicas.getInt()) : 1);
++      SmallVector<SmallVector<TaskScheduleResult::CgraOccupancy>>
++          replicaOccupancies(replicaCount);
++      for (const TaskScheduleResult::CgraOccupancy &occupancy :
++           taskResult.cgra_occupancies) {
++        if (occupancy.replica_id >= 0 && occupancy.replica_id < replicaCount)
++          replicaOccupancies[occupancy.replica_id].push_back(occupancy);
++      }
++      SmallVector<Attribute> replicaShapes;
++      for (auto [replicaId, occupancies] :
++           llvm::enumerate(replicaOccupancies)) {
++        if (occupancies.empty())
++          continue;
++        int minRow = std::numeric_limits<int>::max();
++        int minCol = std::numeric_limits<int>::max();
++        int maxRow = std::numeric_limits<int>::min();
++        int maxCol = std::numeric_limits<int>::min();
++        for (const TaskScheduleResult::CgraOccupancy &occupancy : occupancies) {
++          minRow = std::min(minRow, occupancy.row);
++          minCol = std::min(minCol, occupancy.col);
++          maxRow = std::max(maxRow, occupancy.row);
++          maxCol = std::max(maxCol, occupancy.col);
++        }
++        const int placementRows = maxRow - minRow + 1;
++        const int placementCols = maxCol - minCol + 1;
++        SmallVector<NamedAttribute> replicaAttrs;
++        replicaAttrs.push_back(builder.getNamedAttr(
++            "cgra_count", builder.getI32IntegerAttr(
++                              static_cast<int32_t>(occupancies.size()))));
++        replicaAttrs.push_back(
++            builder.getNamedAttr("col", builder.getI32IntegerAttr(minCol)));
++        replicaAttrs.push_back(builder.getNamedAttr(
++            "placement_cols", builder.getI32IntegerAttr(placementCols)));
++        replicaAttrs.push_back(builder.getNamedAttr(
++            "placement_rows", builder.getI32IntegerAttr(placementRows)));
++        replicaAttrs.push_back(builder.getNamedAttr(
++            "replica_id",
++            builder.getI32IntegerAttr(static_cast<int32_t>(replicaId))));
++        replicaAttrs.push_back(
++            builder.getNamedAttr("row", builder.getI32IntegerAttr(minRow)));
++        replicaAttrs.push_back(builder.getNamedAttr(
++            "shape", builder.getStringAttr(std::to_string(placementRows) + "x" +
++                                           std::to_string(placementCols))));
++        replicaShapes.push_back(
++            DictionaryAttr::get(func.getContext(), replicaAttrs));
++      }
++      SmallVector<NamedAttribute> scheduleAttrs;
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "active_replicas", builder.getI32IntegerAttr(replicaCount)));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "composed_cgra_count",
++          builder.getI64IntegerAttr(selectedCount ? selectedCount.getInt()
++                                                  : 1)));
++      if (selectedShape)
++        scheduleAttrs.push_back(
++            builder.getNamedAttr("composed_cgra_shape", selectedShape));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "dispatch_index", builder.getI64IntegerAttr(dispatchIt->second)));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "duration", builder.getI64IntegerAttr(taskResult.duration)));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "duration_unit", builder.getStringAttr("profiled-cycles")));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "placements", builder.getArrayAttr(scheduledPlacements)));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "replica_shapes", builder.getArrayAttr(replicaShapes)));
++      scheduleAttrs.push_back(
++          builder.getNamedAttr("scheduler_end_time",
++                               builder.getI64IntegerAttr(taskResult.end_time)));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "scheduler_start_time",
++          builder.getI64IntegerAttr(taskResult.start_time)));
++      scheduleAttrs.push_back(builder.getNamedAttr(
++          "task_name", builder.getStringAttr(task_node->op.getTaskName())));
++      task_node->op->setAttr(
++          "amoeba.task_scheduler_schedule_info",
++          DictionaryAttr::get(func.getContext(), scheduleAttrs));
++    }
++  }
++
++  SmallVector<Attribute> dispatchOrder;
++  SmallVector<Attribute> taskSchedule;
++  for (TaskNode *taskNode : sorted_tasks) {
++    dispatchOrder.push_back(builder.getStringAttr(taskNode->op.getTaskName()));
++    if (Attribute scheduleInfo =
++            taskNode->op->getAttr("amoeba.task_scheduler_schedule_info"))
++      taskSchedule.push_back(scheduleInfo);
++  }
++  func->setAttr("amoeba.task_scheduler_dispatch_order",
++                builder.getArrayAttr(dispatchOrder));
++  func->setAttr("amoeba.task_scheduler_task_schedule",
++                builder.getArrayAttr(taskSchedule));
++  func->setAttr("amoeba.task_scheduler_time_scale",
++                builder.getI64IntegerAttr(schedule_time_scale_));
++  func->setAttr("amoeba.task_scheduler_time_unit",
++                builder.getStringAttr("scaled-internal-placement-slots"));
+   return true;
+ }
+ 

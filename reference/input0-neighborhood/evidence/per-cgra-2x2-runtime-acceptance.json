@@ -1,0 +1,228 @@
+{
+  "claim_scope": "C++ frontend, direct four-member runtime parity, cache stability, strict model/source binding, and Search cost-catalog integration only; this is not mapper-accuracy or production-readiness evidence.",
+  "hardware": {
+    "fabric_cgra_shape": [
+      4,
+      4
+    ],
+    "maximum_physical_cgras_per_task": 4,
+    "per_cgra_pe_shape": [
+      2,
+      2
+    ]
+  },
+  "model_contract": {
+    "candidate_only": true,
+    "ensemble_members": 4,
+    "feature_width": 148,
+    "namespace": "orbit-per-cgra-2x2-direct-4member-v1",
+    "production_ready": false,
+    "schema": "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1",
+    "selected_feature_count": 61,
+    "shape_protocol": "amoeba-static-rectangles-2x2-per-cgra-max4"
+  },
+  "optimizer_pin": ".work/post-publication/mlir-amoeba-opt-v38-direct-catalog-domain",
+  "original_ray_domain": {
+    "all_eight_shapes_unsupported_without_predictions": true,
+    "analytical_lower_bound_range": [
+      21,
+      83
+    ],
+    "query_count": 216,
+    "status": "pass",
+    "supported_queries": 208,
+    "unsupported_queries": 8,
+    "unsupported_task": "Task_13"
+  },
+  "portable_reproduction_assets": {
+    "checker": "scripts/check_per_cgra_2x2_catalog_runtime.py",
+    "direct_ensemble": "reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json",
+    "architecture": "config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+    "inter_task_network": "config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+    "python_source_repository": "https://github.com/guosran/cgra-ii-predictor",
+    "python_source_commit": "3ade31806cb4c92e31888109f7c42b8a77e4cbce",
+    "checkpoint_path": "models/candidates/per-cgra-2x2/mapper.pt",
+    "runtime_inputs": "Fresh source-domain preparation for the six original programs and separate Ray fission, plus their exact source/model contract."
+  },
+  "ray_fission_bootstrap": {
+    "catalog_query_count": 224,
+    "native_mapper_invoked": false,
+    "scored_candidates": 1,
+    "selected_cgra_shapes": [
+      {
+        "shape": [
+          1,
+          2
+        ],
+        "task": "Task_13.fission.0"
+      },
+      {
+        "shape": [
+          1,
+          2
+        ],
+        "task": "Task_13"
+      }
+    ],
+    "selected_shape_maps_to_supported_catalog_query": true,
+    "status": "pass",
+    "unit_queries": [
+      {
+        "analytical_lower_bound": 31,
+        "mapper_tile_shape_pe": [
+          2,
+          2
+        ],
+        "status": "unsupported-model-domain",
+        "task": "Task_13.fission.0"
+      },
+      {
+        "analytical_lower_bound": 30,
+        "mapper_tile_shape_pe": [
+          2,
+          2
+        ],
+        "status": "unsupported-model-domain",
+        "task": "Task_13"
+      }
+    ]
+  },
+  "schema": "orbit-per-cgra-2x2-direct-runtime-acceptance-summary-v1",
+  "source_model": {
+    "branch": "orbit-2x2-predictor",
+    "commit": "3ade31806cb4c92e31888109f7c42b8a77e4cbce",
+    "repository": "https://github.com/guosran/cgra-ii-predictor"
+  },
+  "status": "pass",
+  "strict_binding_rejections": {
+    "changed-architecture": {
+      "reason": "rejected: architecture bytes do not match the bound direct-model architecture",
+      "rejected_before_output": true,
+      "status": "pass"
+    },
+    "new-namespace-old-model": {
+      "reason": "rejected: old formal ensemble schema is incompatible with the direct model namespace",
+      "rejected_before_output": true,
+      "status": "pass"
+    },
+    "tampered-bundle-member": {
+      "reason": "rejected: malformed member tensor dimensions",
+      "rejected_before_output": true,
+      "status": "pass"
+    },
+    "tampered-bundle-provenance": {
+      "reason": "rejected: direct model source provenance mismatch",
+      "rejected_before_output": true,
+      "status": "pass"
+    }
+  },
+  "supported_module_runtime": {
+    "cache_round_trip": {
+      "all_member_and_aggregate_scalars_exact": true,
+      "query_count": 224,
+      "second_run_hits": 224,
+      "second_run_misses": 0,
+      "status": "pass"
+    },
+    "catalog_query_count": 224,
+    "cpp_actual_facts": {
+      "lower_bound_max": 9.0,
+      "lower_bound_min": 1.0,
+      "rec_mii_max": 1.0,
+      "rec_mii_min": 1.0,
+      "res_mii_max": 9.0,
+      "res_mii_min": 1.0,
+      "source": "actual C++ feature-output rec_mii/res_mii; lower bound independently checked as max(RecMII, ResMII) and against catalog"
+    },
+    "cpp_vs_pinned_python_frontend_max_abs_error": 0.0,
+    "cpp_vs_portable_bundle": {
+      "max_mean_abs_error": 9.5367431640625e-07,
+      "max_member_abs_error": 1.430511474609375e-06
+    },
+    "cpp_vs_python_source_network_max_abs_error": {
+      "max_mean_abs_error": 9.5367431640625e-07,
+      "max_member_abs_error": 1.430511474609375e-06,
+      "max_population_std_abs_error": 5.498692529082305e-07
+    },
+    "distinct_mapper_visible_graphs": 14,
+    "mapper_shapes": {
+      "2x2": {
+        "dimensions_in_pe_tiles": [
+          2,
+          2
+        ],
+        "query_count": 28
+      },
+      "2x4": {
+        "dimensions_in_pe_tiles": [
+          2,
+          4
+        ],
+        "query_count": 28
+      },
+      "2x6": {
+        "dimensions_in_pe_tiles": [
+          2,
+          6
+        ],
+        "query_count": 28
+      },
+      "2x8": {
+        "dimensions_in_pe_tiles": [
+          2,
+          8
+        ],
+        "query_count": 28
+      },
+      "4x2": {
+        "dimensions_in_pe_tiles": [
+          4,
+          2
+        ],
+        "query_count": 28
+      },
+      "4x4": {
+        "dimensions_in_pe_tiles": [
+          4,
+          4
+        ],
+        "query_count": 28
+      },
+      "6x2": {
+        "dimensions_in_pe_tiles": [
+          6,
+          2
+        ],
+        "query_count": 28
+      },
+      "8x2": {
+        "dimensions_in_pe_tiles": [
+          8,
+          2
+        ],
+        "query_count": 28
+      }
+    },
+    "search": {
+      "canonical_all_unit_cost_status": "supported",
+      "canonical_bootstrap_applied": false,
+      "cost_catalogue_loaded": true,
+      "native_mapper_invoked": false,
+      "status": "pass",
+      "unique_complete_candidates_scored": 1
+    },
+    "status": "pass",
+    "task_count": 28,
+    "workload": "GCN"
+  },
+  "validation": {
+    "immutable_v38_build": "pass",
+    "isolated_cpp17_syntax_only": "pass",
+    "native_mapper_invoked": false,
+    "source_bound_search": "pass"
+  },
+  "workload_source": {
+    "commit": "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e",
+    "repository": "https://github.com/guosran/orbit.git"
+  }
+}

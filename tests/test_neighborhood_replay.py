@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -46,6 +47,17 @@ def row(rank, candidate=None, record_type="selection", role=None):
 
 
 class NeighborhoodReplayContractTests(unittest.TestCase):
+    def test_generic_prepared_function_with_argument_dictionaries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            canonical = Path(directory) / "canonical.mlir"
+            canonical.write_text('"builtin.module"() ({ "func.func"() <{'
+                'arg_attrs = [{}, {amoeba.noalias}], function_type = () -> (), '
+                'sym_name = "kernel"}> ({ "func.return"() : () -> () }) : () -> () }) : () -> ()')
+            self.assertEqual(replay.infer_function(canonical, None), "kernel")
+            canonical.write_text(canonical.read_text() + '\n"func.func"() <{sym_name = "other"}> ({}) : () -> ()')
+            with self.assertRaises(replay.ContractError):
+                replay.infer_function(canonical, None)
+
     def test_shortlist_order_is_preserved_and_not_sorted(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "global-top5.jsonl"
@@ -100,7 +112,6 @@ class NeighborhoodReplayContractTests(unittest.TestCase):
         self.assertIn("parent-cost-file=/tmp/parent-costs.json", option)
         self.assertNotIn("enumerate-joint-graph-closure", option)
         self.assertNotIn("complete-cartesian", option)
-
         resumed = replay.build_search_command(
             optimizer=Path("/opt/mlir-amoeba-opt"), canonical=Path("/tmp/input.mlir"),
             output_dir=Path("/tmp/search"), function="kernel", stage="full-joint",
@@ -126,6 +137,117 @@ class NeighborhoodReplayContractTests(unittest.TestCase):
             self.assertEqual([r["rank"] for r in summary["records"]], [2, 0])
             self.assertEqual(summary["numeric"], "pass")
             self.assertEqual(summary["sram_gate"], "pending")
+
+    def test_numeric_gate_uses_tracked_runner_and_stage_local_separate_outputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            stage_output = base / "protocol-vnext" / "llama" / "shape-only"
+            llvm = base / "llvm-build"
+            top5_root = base / "native-top5"
+            controls_root = base / "native-controls"
+            calls = []
+
+            def prepare_native(root, rank):
+                (root / f"rank-{rank}").mkdir(parents=True)
+                (root / f"rank-{rank}" / "native.mlir").write_text("module {}\n")
+                replay.atomic_write(root / f"rank-{rank}" / "result.json", {
+                    "rank": rank, "status": "native_replayed", "numeric": "pending",
+                    "native_cycles": 100, "sram_gate": "pending",
+                })
+                replay.atomic_write(root / "summary.json", {
+                    "records": [{"rank": rank, "numeric": "pending", "sram_gate": "pending"}],
+                })
+
+            prepare_native(top5_root, 0)
+            prepare_native(controls_root, 5)
+
+            def fake_run(argv, output_dir, label, *, env=None):
+                calls.append((list(argv), output_dir, label))
+                output_root = Path(argv[argv.index("--output-root") + 1])
+                workload = argv[argv.index("--workloads") + 1]
+                stage = argv[argv.index("--stage") + 1]
+                rank = int(argv[argv.index("--ranks") + 1])
+                evidence = output_root / workload / f"{stage}-rank-{rank}" / "result.json"
+                replay.atomic_write(evidence, {
+                    "status": "pass", "element_comparisons": 8,
+                })
+                return {"status": "finished", "exit_code": 0, "argv": list(argv)}
+
+            with patch.dict(os.environ, {"ORBIT_LLVM_BUILD": str(llvm)}):
+                with patch.object(replay, "_run_logged", side_effect=fake_run):
+                    top5 = replay.run_numeric_gate(
+                        workload="llama", stage="shape-only", native_root=top5_root,
+                        ranks=range(5), optimizer=Path("/opt/orbit-opt"), jobs=4,
+                        label_suffix="top5", output_dir=stage_output,
+                    )
+                    controls = replay.run_numeric_gate(
+                        workload="llama", stage="shape-only", native_root=controls_root,
+                        ranks=(5,), optimizer=Path("/opt/orbit-opt"), jobs=4,
+                        label_suffix="controls", output_dir=stage_output,
+                    )
+
+            self.assertEqual(len(calls), 2)
+            top_args, control_args = calls[0][0], calls[1][0]
+            self.assertEqual(top_args[0], sys.executable)
+            self.assertEqual(Path(top_args[1]), replay.ROOT / "scripts/run_input0_numeric.py")
+            for argv in (top_args, control_args):
+                self.assertEqual(argv[argv.index("--artifact-root") + 1], str(replay.ROOT))
+                self.assertEqual(argv[argv.index("--reference-root") + 1],
+                                 str(replay.DEFAULT_NUMERIC_REFERENCE_ROOT))
+                self.assertEqual(argv[argv.index("--llama-harness") + 1],
+                                 str(replay.DEFAULT_LLAMA_HARNESS))
+                self.assertEqual(argv[argv.index("--llvm-build") + 1], str(llvm))
+            top_output = Path(top_args[top_args.index("--output-root") + 1])
+            control_output = Path(control_args[control_args.index("--output-root") + 1])
+            self.assertEqual(top_output.parent, stage_output / "numeric" / "top5")
+            self.assertEqual(control_output.parent, stage_output / "numeric" / "controls")
+            self.assertNotEqual(top_output, control_output)
+            self.assertNotIn("results/input0-cpp-numeric-gates", str(top_output))
+            self.assertEqual(top5["numeric_output_root"], str(top_output))
+            self.assertEqual(controls["numeric_output_root"], str(control_output))
+            top_record = json.loads((top5_root / "rank-0/result.json").read_text())
+            control_record = json.loads((controls_root / "rank-5/result.json").read_text())
+            self.assertEqual(top_record["numeric"], "pass")
+            self.assertEqual(control_record["numeric"], "pass")
+            self.assertIn(top_output, Path(top_record["numeric_evidence"]).parents)
+            self.assertIn(control_output, Path(control_record["numeric_evidence"]).parents)
+
+    def test_numeric_gate_missing_result_propagates_incomplete_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            native_root = base / "native-top5"
+            (native_root / "rank-0").mkdir(parents=True)
+            (native_root / "rank-0/native.mlir").write_text("module {}\n")
+            replay.atomic_write(native_root / "rank-0/result.json", {
+                "rank": 0, "status": "native_replayed", "numeric": "pending",
+                "native_cycles": 100, "sram_gate": "pending",
+            })
+            replay.atomic_write(native_root / "summary.json", {
+                "records": [{"rank": 0, "numeric": "pending", "sram_gate": "pending"}],
+            })
+            with patch.object(replay, "_run_logged", return_value={
+                "status": "finished", "exit_code": 7, "argv": ["fixture"],
+            }):
+                command = replay.run_numeric_gate(
+                    workload="lu", stage="shape-only", native_root=native_root,
+                    ranks=(0,), optimizer=Path("/opt/orbit-opt"), jobs=1,
+                    label_suffix="top5", output_dir=base / "stage",
+                )
+            record = json.loads((native_root / "rank-0/result.json").read_text())
+            summary = json.loads((native_root / "summary.json").read_text())
+            self.assertEqual(command["exit_code"], 7)
+            self.assertEqual(record["numeric"], "incomplete")
+            self.assertEqual(record["numeric_command_exit_code"], 7)
+            self.assertEqual(record["numeric_error"], "numeric_gate_result_missing")
+            self.assertEqual(summary["numeric"], "incomplete")
+            self.assertEqual(replay.numeric_gate_status(summary, command), "incomplete")
+
+    def test_numeric_process_failure_overrides_pass_rows_but_mismatch_remains_fail(self):
+        passed_rows = {"numeric": "pass", "records": [{"numeric": "pass"}]}
+        self.assertEqual(replay.numeric_gate_status(passed_rows, {"exit_code": 0}), "pass")
+        self.assertEqual(replay.numeric_gate_status(passed_rows, {"exit_code": 7}), "incomplete")
+        failed_rows = {"numeric": "fail", "records": [{"numeric": "fail"}]}
+        self.assertEqual(replay.numeric_gate_status(failed_rows, {"exit_code": 7}), "fail")
 
     def test_mapper_failure_is_saved_and_other_records_continue(self):
         class BrokenReplay:
@@ -162,7 +284,8 @@ class NeighborhoodReplayContractTests(unittest.TestCase):
             selected["candidate_manifest"] = str(manifest)
             args = SimpleNamespace(manifest=manifest, graph_manifests=None, output_dir=base,
                 optimizer=Path("/opt/opt"), architecture=Path("/tmp/arch"),
-                mapping_cache=Path("/tmp/cache"), reuse_mapped_root=None)
+                mapping_cache=Path("/tmp/cache"), reuse_mapped_root=None,
+                inter_task_network=None)
             with patch.object(helper, "invoke", return_value={"exit_code": 1}) as invoke:
                 result = helper.replay(selected, args)
             command = invoke.call_args.args[0]

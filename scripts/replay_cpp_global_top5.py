@@ -49,7 +49,9 @@ def replay(selection, args):
     elif selection['graph_variant_id'] != 'identity':
         manifest = Path(selection['candidate_manifest'])
     mapped=d/'mapped.mlir';native=d/'native.mlir'
-    argv=[str(args.optimizer),selection['mapper_replay_path'],'--verify-each',f'--architecture-spec={args.architecture}']
+    network_options = ([f'--joint-inter-task-network-spec={args.inter_task_network}']
+                       if args.inter_task_network is not None else [])
+    argv=[str(args.optimizer),selection['mapper_replay_path'],'--verify-each',f'--architecture-spec={args.architecture}', *network_options]
     # Fresh identity inputs and older closure artifacts may lack the scored
     # semantic label. Bind every selection through the C++ enumerator before
     # strict materialization;
@@ -67,8 +69,8 @@ def replay(selection, args):
         assert space['graph_variant_id']==selection['graph_variant_id']
         argv.append(f'--enumerate-analytical-task-candidates=function={space["function"]} output={d}/replay-space.jsonl factored-output=true search-policy=complete-cartesian max-cgras-per-task={space["max_cgras_per_task"]} graph-variant-id={selection["graph_variant_id"]}')
     argv += [f'--materialize-analytical-task-candidate=candidates={manifest} candidate-id={score["shape_candidate_id"]}',
-          f'--map-joint-scheduling-tasks=scores={selection["score_file_path"]} candidate-id={cid} mapping-cache-dir={args.mapping_cache}',
-          '-o',str(mapped)]
+          f'--map-joint-scheduling-tasks=scores={selection["score_file_path"]} candidate-id={cid} mapping-cache-dir={args.mapping_cache}{" audit-calls=true" if getattr(args, "audit_mapper_calls", False) else ""}',
+          '--mlir-print-op-generic','-o',str(mapped)]
     result['status']='mapper_running';write(d/'result.json',result)
     reusable=args.reuse_mapped_root/('rank-'+str(rank))/'mapped.mlir' if args.reuse_mapped_root else None
     reuse_ok=bool(reusable and reusable.is_file())
@@ -84,6 +86,12 @@ def replay(selection, args):
         command={'exit_code':0,'reused_mapper_result':str(reusable)}
     else: command=invoke(argv,d,'mapper')
     result['mapper_command']=command
+    if getattr(args, "audit_mapper_calls", False):
+        log = gzip.open(d/'mapper.stderr.gz', 'rt').read() if (d/'mapper.stderr.gz').exists() else ""
+        calls = [json.loads(line.split('[ORBIT-MAPPER-CALL] ', 1)[1])
+                 for line in log.splitlines() if line.startswith('[ORBIT-MAPPER-CALL] ')]
+        result['actual_mapper_calls'] = len(calls)
+        write(d/'mapper-call-audit.json', calls)
     if command['exit_code']:
         result.update(status='incomplete',blocker='mapper_process_failed');write(d/'result.json',result);return result
     text=mapped.read_text();count=len(score['task_costs'])
@@ -91,8 +99,8 @@ def replay(selection, args):
     result['mapper_cache_hits']=int(re.search(r'joint_scheduling_mapper_cache_hits = ([0-9]+)',text).group(1))
     result['mapper_cache_misses']=int(re.search(r'joint_scheduling_mapper_cache_misses = ([0-9]+)',text).group(1))
     result['prediction_mapper_equal']='joint_scheduling_prediction_mapper_equal = true' in text
-    argv=[str(args.optimizer),str(mapped),'--verify-each',f'--architecture-spec={args.architecture}',
-          f'--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy={dispatch_policy} communication-mode=explicit exact-replay-timing=mapped','-o',str(native)]
+    argv=[str(args.optimizer),str(mapped),'--verify-each',f'--architecture-spec={args.architecture}', *network_options,
+          f'--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy={dispatch_policy} communication-mode=explicit exact-replay-timing=mapped','--mlir-print-op-generic','-o',str(native)]
     result['status']='native_running';write(d/'result.json',result)
     command=invoke(argv,d,'native');result['native_command']=command
     if command['exit_code']:
@@ -122,22 +130,27 @@ def replay(selection, args):
         capacity = json.loads(args.sram_config.read_text())
         assert capacity['schema'] == 'orbit-vectorcgra-sram-configuration-v1'
         assert capacity['fabric_rows'] == capacity['fabric_columns'] == 4
-        gate = d/'sram-gate.json'
-        result['sram_command'] = invoke([
-            str(args.optimizer), str(native), '--verify-each',
-            '--verify-production-sram-native-capacity-gate=capacity-bytes-per-cgra={} grid-rows={} grid-columns={} output={}'.format(
-                capacity['per_cgra_capacity_bytes'], capacity['fabric_rows'], capacity['fabric_columns'], gate),
-            '-o', '/dev/null'], d, 'sram')
         result['sram_capacity_config'] = str(args.sram_config)
-        if result['sram_command']['exit_code'] or not gate.is_file():
-            result.update(sram_gate='pending', sram_blocker='native_sram_evidence_process_failed')
+        if capacity.get('per_cgra_capacity_bytes') is None:
+            assert capacity.get('capacity_status') == 'pending'
+            result.update(sram_gate='pending', sram_blocker='target_sram_capacity_unestablished',
+                          sram_capacity_evaluated=False)
         else:
-            evidence = json.loads(gate.read_text())
-            assert evidence['schema'] == 'orbit-native-sram-capacity-gate-v1'
-            assert evidence['status'] in ('pass','pending','fail')
-            result.update(sram_gate=evidence['status'], sram_evidence=str(gate))
-            if evidence['status'] != 'pass':
-                result['sram_blocker'] = evidence['reason']
+            gate = d/'sram-gate.json'
+            result['sram_command'] = invoke([
+                str(args.optimizer), str(native), '--verify-each',
+                '--verify-production-sram-native-capacity-gate=capacity-bytes-per-cgra={} grid-rows={} grid-columns={} output={}'.format(
+                    capacity['per_cgra_capacity_bytes'], capacity['fabric_rows'], capacity['fabric_columns'], gate),
+                '-o', '/dev/null'], d, 'sram')
+            if result['sram_command']['exit_code'] or not gate.is_file():
+                result.update(sram_gate='pending', sram_blocker='native_sram_evidence_process_failed')
+            else:
+                evidence = json.loads(gate.read_text())
+                assert evidence['schema'] == 'orbit-native-sram-capacity-gate-v1'
+                assert evidence['status'] in ('pass','pending','fail')
+                result.update(sram_gate=evidence['status'], sram_evidence=str(gate))
+                if evidence['status'] != 'pass':
+                    result['sram_blocker'] = evidence['reason']
     result['ended_utc']=datetime.now(timezone.utc).isoformat();write(d/'result.json',result);return result
 
 def main():
@@ -147,6 +160,7 @@ def main():
     p.add_argument('--jobs',type=int,default=2);p.add_argument('--reuse-mapped-root',type=Path)
     p.add_argument('--graph-manifests',type=Path)
     p.add_argument('--sram-config',type=Path,default=ROOT/'config/architectures/amoeba_4x4_vectorcgra_sram.json')
+    p.add_argument('--inter-task-network',type=Path)
     a=p.parse_args()
     for key,value in vars(a).items():
         if isinstance(value,Path):setattr(a,key,value.resolve())

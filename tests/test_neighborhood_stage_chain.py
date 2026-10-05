@@ -166,6 +166,47 @@ class FakeRunner:
         return {"status": "finished", "exit_code": 0, "argv": argv}
 
 
+@pytest.mark.parametrize("retry_fails", [False, True])
+def test_parallel_recovery_retries_failed_numeric_without_search(
+    tmp_path, monkeypatch, retry_fails
+):
+    config, options = setup_inputs(tmp_path, ("llama",))
+    first = FakeRunner()
+    monkeypatch.setattr(chain, "_run_logged", first)
+    assert chain.run_chain(config, options) == 0
+    stage = chain.STAGES[0]
+    directory = options.output_root / "llama" / stage
+    result_path = directory / "result.json"
+    result = json.loads(result_path.read_text())
+    for key in ("native_top5", "native_controls"):
+        for record in result[key]["records"]:
+            record["numeric"] = "incomplete"
+    write_json(result_path, result)
+
+    spec = importlib.util.spec_from_file_location(
+        "parallel_recovery_tested", SCRIPT.with_name("run_neighborhood_parallel_recovery.py")
+    )
+    assert spec is not None and spec.loader is not None
+    monkeypatch.setitem(sys.modules, "run_neighborhood_stage_chain", chain)
+    recovery = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(recovery)
+    config_path = tmp_path / "config.json"
+    write_json(config_path, config)
+    command_path = tmp_path / "command.json"
+    write_json(command_path, [sys.executable, str(SCRIPT)])
+    monkeypatch.setattr(chain, "_parse_args", lambda _: (options, config_path))
+    retry = FakeRunner(fail=("llama", stage) if retry_fails else None)
+    monkeypatch.setattr(chain, "_run_logged", retry)
+
+    assert recovery.run(command_path, "llama", 4) == (2 if retry_fails else 0)
+    assert len(retry.calls) == 1
+    assert "--skip-search" in retry.calls[0][2]
+    progress = json.loads((options.output_root / "parallel/llama/progress.json").read_text())
+    assert "existing_validation_incomplete" in progress["stages"][stage]
+    later = progress["stages"][chain.STAGES[1]]["status"]
+    assert later == ("blocked" if retry_fails else "reused")
+
+
 def test_resume_skips_completed_stages_and_control_winner_is_forwarded(tmp_path, monkeypatch):
     workloads = ("llama",)
     config, options = setup_inputs(tmp_path, workloads)
@@ -355,3 +396,19 @@ def test_start_stage_runs_only_suffix_with_external_previous_winner(tmp_path, mo
         assert stages[chain.STAGES[0]]["status"] == "outside-start"
         assert stages[chain.STAGES[1]]["status"] == "outside-start"
         assert all(stages[stage]["status"] == "complete" for stage in chain.STAGES[2:])
+
+
+def test_network_override_bytes_bind_stage_and_replay(tmp_path):
+    config, options = setup_inputs(tmp_path, ("gcn",))
+    network = tmp_path / "network.yaml"
+    network.write_text("inter_task_network: original\n")
+    options = chain.ChainOptions(**{**options.__dict__, "inter_task_network": network})
+    entry = config["workloads"]["gcn"]
+    expected = chain.expected_binding(entry, "gcn", chain.STAGES[0], options, config_base=tmp_path)
+    source = {**expected, "source_commit": chain._protocol_source_commit(expected)}
+    assert chain._compatible_source_binding(source, expected)
+    mutated = {**source, "inter_task_network_text": "inter_task_network: changed\n"}
+    assert not chain._compatible_source_binding(mutated, expected)
+    assert not chain._compatible_source_binding({key: value for key, value in source.items() if not key.startswith("inter_task_network")}, expected)
+    command = chain._build_replay_command(entry=entry, workload="gcn", stage=chain.STAGES[0], options=options, config_base=tmp_path, stage_dir=tmp_path / "stage", previous_winner=None, resume=False, skip_search=False)
+    assert command[command.index("--inter-task-network") + 1] == str(network)

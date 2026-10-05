@@ -1,0 +1,254 @@
+{
+  "schema": "orbit-paper-2x2-supplemental-baselines-v1",
+  "status": "five_standard_programs_validated; ray_ii23_separate",
+  "all_unit": {
+    "schema": "orbit-paper-2x2-all-unit-acceptance-v1",
+    "architecture": "config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+    "model_consumed": false,
+    "rows": [
+      {
+        "workload": "gcn",
+        "status": "complete",
+        "baseline_cycles": 99506,
+        "mapper_equality": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "sram_gate": "pending",
+        "sram_blocker": "target_sram_capacity_unestablished",
+        "formal_go": false,
+        "blocker": null,
+        "source_pin": "mlir-amoeba-opt-v36-scored-family-fairness",
+        "active_transfer_arguments": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      {
+        "workload": "harris",
+        "status": "complete",
+        "baseline_cycles": 988256,
+        "mapper_equality": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "sram_gate": "pending",
+        "sram_blocker": "target_sram_capacity_unestablished",
+        "formal_go": false,
+        "blocker": null
+      },
+      {
+        "workload": "llama",
+        "status": "complete",
+        "baseline_cycles": 1129656836,
+        "mapper_equality": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "sram_gate": "pending",
+        "sram_blocker": "target_sram_capacity_unestablished",
+        "formal_go": false,
+        "blocker": null
+      },
+      {
+        "workload": "lu",
+        "status": "complete",
+        "baseline_cycles": 18501,
+        "mapper_equality": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "sram_gate": "pending",
+        "sram_blocker": "target_sram_capacity_unestablished",
+        "formal_go": false,
+        "blocker": null
+      },
+      {
+        "workload": "radar",
+        "status": "complete",
+        "baseline_cycles": 1317811,
+        "mapper_equality": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "sram_gate": "pending",
+        "sram_blocker": "target_sram_capacity_unestablished",
+        "formal_go": false,
+        "blocker": null
+      },
+      {
+        "workload": "raytracing",
+        "status": "mapper_failed",
+        "baseline_cycles": null,
+        "mapper_equality": "pending",
+        "numeric": "pending",
+        "independent_trace": "pending",
+        "sram_gate": "pending",
+        "sram_blocker": "target_sram_capacity_unestablished",
+        "formal_go": false,
+        "blocker": "mapper_process_failed"
+      }
+    ],
+    "source_pin_other_workloads": "mlir-amoeba-opt-v34-mixed-proof-and-network",
+    "communication_protocol": "Main ablation protocol: explicit network, GCN arguments1\u201312 source-proved active-transfer boxes"
+  },
+  "original_amoeba": {
+    "schema": "orbit-original-amoeba-paper-2x2-profile-summary-v1",
+    "compiler_source_commit": "f45a0c5f4cc3163a016250fee865c19ec56f0fa0",
+    "compiler_extensions": [
+      "captured static bounds",
+      "body export/equivalence audit"
+    ],
+    "architecture": "config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+    "input_index": 0,
+    "input_id": "input0",
+    "scope": "fresh current-body II20 profiles; mapper completeness is separate from validated whole-program fixed-decision cycles; II23 Ray is recorded separately",
+    "full_results_summary": "reference/input0-neighborhood/evidence/2x2-original-amoeba-baselines.json",
+    "rows": [
+      {
+        "workload": "gcn",
+        "tasks": 28,
+        "queries": 224,
+        "completed_queries": 224,
+        "mapped": 224,
+        "failed": 0,
+        "profile_evidence": ".work/post-publication/amoeba-input0-gcn-2x2-v41-reprofile/task-profiles.json",
+        "orchestration_status": "fixed_original_decisions_validated_with_original_f45_replica_estimate",
+        "native": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "formal_go": false,
+        "native_cycles": 106351,
+        "replica_timing_policy": {
+          "child_mapper_profiles_used": false,
+          "duration_formula": "ceil(ceil(catalog_startup_cycles + compiled_ii * (source_macro_firings - 1)) / original_active_replicas)",
+          "replica_duration_rule": "ceil-full-parent-mapped-duration-over-original-active-replicas-v1",
+          "schema": "amoeba-original-f45-replica-scaling-v1",
+          "status": "original-f45-scheduler-estimate"
+        }
+      },
+      {
+        "workload": "harris",
+        "tasks": 24,
+        "queries": 192,
+        "completed_queries": 192,
+        "mapped": 192,
+        "failed": 0,
+        "profile_evidence": ".work/post-publication/amoeba-input0-harris-2x2-v41-reprofile/task-profiles.json",
+        "orchestration_status": "fixed_original_decisions_validated_with_original_f45_replica_estimate",
+        "native": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "formal_go": false,
+        "native_cycles": 1072495,
+        "replica_timing_policy": {
+          "child_mapper_profiles_used": false,
+          "duration_formula": "ceil(ceil(catalog_startup_cycles + compiled_ii * (source_macro_firings - 1)) / original_active_replicas)",
+          "replica_duration_rule": "ceil-full-parent-mapped-duration-over-original-active-replicas-v1",
+          "schema": "amoeba-original-f45-replica-scaling-v1",
+          "status": "original-f45-scheduler-estimate"
+        }
+      },
+      {
+        "workload": "llama",
+        "tasks": 9,
+        "queries": 72,
+        "completed_queries": 72,
+        "mapped": 72,
+        "failed": 0,
+        "profile_evidence": ".work/post-publication/amoeba-input0-llama-2x2-v40-reprofile/task-profiles.json",
+        "orchestration_status": "fixed_original_decisions_validated",
+        "native": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "formal_go": false,
+        "native_cycles": 636723751,
+        "result_evidence": "results/input0-amoeba-full-2x2-direct/llama/result.json"
+      },
+      {
+        "workload": "lu",
+        "tasks": 9,
+        "queries": 72,
+        "completed_queries": 72,
+        "mapped": 72,
+        "failed": 0,
+        "profile_evidence": ".work/post-publication/amoeba-input0-lu-source-corrected-v56-parent-profiles-20261005/task-profiles.json",
+        "orchestration_status": "fixed_original_decisions_validated_with_original_f45_replica_estimate",
+        "native": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "formal_go": false,
+        "native_cycles": 11602,
+        "replica_timing_policy": {
+          "child_mapper_profiles_used": false,
+          "duration_formula": "ceil(ceil(catalog_startup_cycles + compiled_ii * (source_macro_firings - 1)) / original_active_replicas)",
+          "replica_duration_rule": "ceil-full-parent-mapped-duration-over-original-active-replicas-v1",
+          "schema": "amoeba-original-f45-replica-scaling-v1",
+          "status": "original-f45-scheduler-estimate"
+        },
+        "source_correction": {
+          "pass": "repair-lu-affine-determinant-carry-v1",
+          "scope": "same audited affine input repair as ORBIT, before original F45 profiling",
+          "unchanged_body_tasks": [
+            "Task_0",
+            "Task_1",
+            "Task_2",
+            "Task_3",
+            "Task_4",
+            "Task_5",
+            "Task_6",
+            "Task_7"
+          ],
+          "corrected_task": "Task_8",
+          "fresh_parent_mapper_attempts": 72,
+          "old_numeric_mismatch": {
+            "argument": 9,
+            "element": 0,
+            "actual": 1023,
+            "expected": 1017
+          },
+          "old_run_admitted": false
+        }
+      },
+      {
+        "workload": "radar",
+        "tasks": 21,
+        "queries": 168,
+        "completed_queries": 168,
+        "mapped": 168,
+        "failed": 0,
+        "profile_evidence": ".work/post-publication/amoeba-input0-radar-2x2-v40-reprofile/task-profiles.json",
+        "orchestration_status": "fixed_original_decisions_validated",
+        "native": "pass",
+        "numeric": "pass",
+        "independent_trace": "pass",
+        "formal_go": false,
+        "native_cycles": 1321316,
+        "result_evidence": "results/input0-amoeba-full-2x2-direct/radar/result.json"
+      },
+      {
+        "workload": "raytracing",
+        "tasks": 27,
+        "queries": 216,
+        "completed_queries": 112,
+        "mapped": 104,
+        "profile_evidence": ".work/post-publication/amoeba-input0-raytracing-2x2-v41-reprofile/task-profiles.json",
+        "orchestration_status": "failed_mapper_ceiling20",
+        "native": "pending",
+        "numeric": "pending",
+        "independent_trace": "pending",
+        "formal_go": false,
+        "failed_rows_recorded": 0,
+        "failed": null,
+        "unrecorded_completed_queries": 8,
+        "failure_note": "II20 profiler aborted at Task_13 after eight mapper failures without complete failure rows; latest complete II23 run is separate"
+      }
+    ]
+  },
+  "formal_go": false
+}

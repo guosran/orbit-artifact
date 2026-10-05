@@ -27,6 +27,8 @@ SCOPES = (
     "include/TaskflowDialect",
     "include/Backend/Neura/Conversion/TaskflowToNeura",
     "lib/Backend/Neura/Conversion/TaskflowToNeura",
+    "lib/Backend/Neura/Transforms",
+    "lib/Conversion/AffineToTaskflow",
     "thirdparty/neura/lib/NeuraDialect/Architecture",
     "thirdparty/neura/include/NeuraDialect/Architecture",
     "thirdparty/neura/lib/NeuraDialect/Transforms/Optimizations",
@@ -46,6 +48,7 @@ REPLAY_FILES = (
     "config/architectures/amoeba_4x4_vectorcgra_sram.json",
 )
 MODEL_FILES = ("ensemble.json", "baseline.json", "large-operation.json", "ranking.json")
+DIRECT_2X2_SCHEMA = "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1"
 
 
 class ContractError(RuntimeError):
@@ -154,6 +157,8 @@ def _model_payloads(model_root: Path) -> list[dict[str, str]]:
         ensemble = json.loads(ensemble_text)
     except json.JSONDecodeError as error:
         raise ContractError(f"model ensemble is not JSON: {error}") from error
+    if ensemble.get("schema") == DIRECT_2X2_SCHEMA:
+        return [{"path": "ensemble.json", "text": ensemble_text}]
     checkpoints = ensemble.get("checkpoints")
     if not isinstance(checkpoints, dict):
         raise ContractError("model ensemble has no checkpoints object")
@@ -195,6 +200,19 @@ def _git_head(source_root: Path) -> str | None:
     return None
 
 
+def _git_dirty(source_root: Path) -> bool | None:
+    process = subprocess.run(
+        ["git", "-C", str(source_root), "status", "--porcelain", "--untracked-files=all"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if process.returncode:
+        return None
+    return bool(process.stdout.strip())
+
+
 def _portable_path(path: Path, artifact_root: Path, source_root: Path, build_root: Path) -> str:
     for base, token in (
         (artifact_root, "${ARTIFACT_ROOT}"),
@@ -220,6 +238,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--optimizer", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--source-file-list", type=Path)
+    parser.add_argument("--source-commit", help="cost/source namespace for this new cohort")
+    parser.add_argument("--model-namespace")
+    parser.add_argument("--sram-config", type=Path)
+    parser.add_argument("--inter-task-network", type=Path)
     return parser
 
 
@@ -244,7 +266,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     source_payloads = [{"path": relative, "text": _read_utf8(source_root / relative)} for relative in source_paths]
     model_payloads = _model_payloads(model_root)
     replay_payloads = []
-    for relative in REPLAY_FILES:
+    replay_files = list(REPLAY_FILES)
+    if args.sram_config:
+        replay_files[-1] = _relative(artifact_root, args.sram_config, "SRAM configuration")
+    if args.inter_task_network:
+        replay_files.append(_relative(artifact_root, args.inter_task_network, "inter-task network configuration"))
+    for relative in replay_files:
         path = artifact_root / relative
         if not path.is_file():
             raise ContractError(f"missing replay payload: {path}")
@@ -253,12 +280,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         source_list_public = str(source_list.resolve().relative_to(artifact_root.resolve()))
     except ValueError:
         source_list_public = "reference/input0-neighborhood/source-file-list.json"
+    ensemble_metadata = json.loads(model_payloads[0]["text"])
+    direct_2x2 = ensemble_metadata.get("schema") == DIRECT_2X2_SCHEMA
+    model_namespace = args.model_namespace or ensemble_metadata.get("model_namespace")
+    if direct_2x2 and not isinstance(model_namespace, str):
+        raise ContractError("direct 2x2 ensemble must declare its model_namespace")
+    if direct_2x2 and model_namespace != ensemble_metadata.get("model_namespace"):
+        raise ContractError("model namespace differs from the direct 2x2 ensemble")
     body = {
         "schema": "orbit-neighborhood-exact-source-model-contract-v1",
-        "source_commit": ORIGINAL_SOURCE_COMMIT,
+        "source_commit": args.source_commit or (_git_head(source_root) if direct_2x2 else ORIGINAL_SOURCE_COMMIT),
         "published_source_commit": _git_head(source_root),
-        "model_namespace": MODEL_NAMESPACE,
-        "source_dirty": True,
+        "model_namespace": model_namespace or MODEL_NAMESPACE,
+        "source_dirty": _git_dirty(source_root),
         "search_contract": "orbit-neighborhood-search-v1",
         "rewrite_contract": "orbit-joint-graph-rewrite-contract-v8",
         "immutable_optimizer_pin": _portable_path(optimizer, artifact_root, source_root, build_root),

@@ -1,0 +1,100 @@
+{
+  "schema": "orbit-input0-supplemental-baselines-v1",
+  "source_commit": "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e",
+  "source_repository": "https://github.com/guosran/orbit",
+  "protocol": "published v11 diagnostic, explicit capacity-shaped communication",
+  "all_shapes_1x1": {
+    "canonical_graph": true,
+    "dispatch": "critical-path",
+    "tile_rows": 4,
+    "tile_columns": 4,
+    "fabric_rows": 4,
+    "fabric_columns": 4
+  },
+  "amoeba_full": {
+    "status": "pending",
+    "workflow": "original AMOEBA full throughput-guided",
+    "tile_rows": 4,
+    "tile_columns": 4
+  },
+  "rows": [
+    {
+      "workload": "gcn",
+      "baseline": "all-shapes-1x1",
+      "native_cycles": 1493759,
+      "orbit_v11_s5_cycles": 915638,
+      "s5_cycle_reduction_from_baseline_percent": 38.70242790168963,
+      "status": "native_replayed",
+      "numeric": "pass",
+      "trace": "pass",
+      "mapper_equality": "pass",
+      "sram": "pending",
+      "reused_evidence": "gcn/shape-temporal/native-controls/rank-5/result.json.gz"
+    },
+    {
+      "workload": "harris",
+      "baseline": "all-shapes-1x1",
+      "native_cycles": 871596,
+      "orbit_v11_s5_cycles": 523090,
+      "s5_cycle_reduction_from_baseline_percent": 39.98480947594987,
+      "status": "native_replayed",
+      "numeric": "pass",
+      "trace": "pass",
+      "mapper_equality": "pass",
+      "sram": "pending",
+      "reused_evidence": "harris/shape-temporal/native-controls/rank-5/result.json.gz"
+    },
+    {
+      "workload": "llama",
+      "baseline": "all-shapes-1x1",
+      "native_cycles": 563610138,
+      "orbit_v11_s5_cycles": 394200603,
+      "s5_cycle_reduction_from_baseline_percent": 30.057928979269,
+      "status": "native_replayed",
+      "numeric": "pass",
+      "trace": "pass",
+      "mapper_equality": "pass",
+      "sram": "pending",
+      "reused_evidence": "llama/shape-temporal/native-controls/rank-5/result.json.gz"
+    },
+    {
+      "workload": "lu",
+      "baseline": "all-shapes-1x1",
+      "native_cycles": 6782,
+      "orbit_v11_s5_cycles": 5438,
+      "s5_cycle_reduction_from_baseline_percent": 19.817163078737835,
+      "status": "native_replayed",
+      "numeric": "pass",
+      "trace": "pass",
+      "mapper_equality": "pass",
+      "sram": "pending",
+      "reused_evidence": "lu/shape-temporal/native-controls/rank-5/result.json.gz"
+    },
+    {
+      "workload": "radar",
+      "baseline": "all-shapes-1x1",
+      "native_cycles": 355237,
+      "orbit_v11_s5_cycles": 333755,
+      "s5_cycle_reduction_from_baseline_percent": 6.047230440522806,
+      "status": "native_replayed",
+      "numeric": "pass",
+      "trace": "pass",
+      "mapper_equality": "pass",
+      "sram": "pending",
+      "reused_evidence": "radar/shape-temporal/native-controls/rank-5/result.json.gz"
+    },
+    {
+      "workload": "raytracing",
+      "baseline": "all-shapes-1x1",
+      "native_cycles": 128138,
+      "orbit_v11_s5_cycles": 128138,
+      "s5_cycle_reduction_from_baseline_percent": 0.0,
+      "status": "native_replayed",
+      "numeric": "pass",
+      "trace": "pass",
+      "mapper_equality": "pass",
+      "sram": "pending",
+      "reused_evidence": "raytracing/shape-temporal/native-controls/rank-5/result.json.gz"
+    }
+  ]
+}

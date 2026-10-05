@@ -45,7 +45,9 @@ DEFAULT_ARCH = ROOT / "config/architectures/amoeba_4x4_full_mesh_context12.yaml"
 DEFAULT_PROTOCOL = ROOT / ".work/input0-neighborhood-publication/protocol.json"
 DEFAULT_MAPPING_CACHE = ROOT / ".work/input0-task-mapping-cache"
 DEFAULT_SRAM_CONFIG = ROOT / "config/architectures/amoeba_4x4_vectorcgra_sram.json"
-DEFAULT_NUMERIC_GATE = ROOT / ".work/selected-native-numeric-gate/run_input0_numeric.py"
+DEFAULT_NUMERIC_GATE = ROOT / "scripts/run_input0_numeric.py"
+DEFAULT_NUMERIC_REFERENCE_ROOT = ROOT / ".work/selected-native-numeric-gate"
+DEFAULT_LLAMA_HARNESS = ROOT / ".work/cpp-gate-continuation-agent/source/replica-validation/task0-task1-k2.runner.mlir"
 REPLAY_SCRIPT = ROOT / "scripts/replay_cpp_global_top5.py"
 
 STAGES = (
@@ -88,6 +90,13 @@ def infer_function(canonical: Path, explicit: str | None) -> str:
     match = re.search(r"\bfunc\.func\s+(?:public\s+)?@([^\s(]+)", text)
     if match:
         return match.group(1)
+    # Source-domain preparation emits generic operation syntax. Its nested
+    # proof witnesses escape quoted symbols, so only actual symbol attributes
+    # are considered here. Ambiguous modules still require an explicit name.
+    if text.count('"func.func"()') == 1:
+        names = re.findall(r'\bsym_name\s*=\s*"([^"\n]+)"', text)
+        if len(names) == 1:
+            return names[0]
     raise ContractError(f"cannot infer MLIR function from {canonical}; pass --function")
 
 
@@ -95,9 +104,10 @@ def source_binding(protocol: Mapping[str, Any], canonical: Path, optimizer: Path
                    architecture: Path, model_cache: Path | None,
                    cost_cache: Path | None,
                    parent_cost_file: Path | None = None,
-                   source_contract_file: Path | None = None) -> dict[str, Any]:
+                   source_contract_file: Path | None = None,
+                   inter_task_network: Path | None = None) -> dict[str, Any]:
     """Record reproducibility inputs without introducing a hash identity."""
-    return {
+    binding = {
         "schema": "orbit-neighborhood-source-binding-v1",
         "canonical_program": str(canonical.resolve()),
         "optimizer": str(optimizer.resolve()),
@@ -110,6 +120,10 @@ def source_binding(protocol: Mapping[str, Any], canonical: Path, optimizer: Path
         "protocol_schema": protocol.get("schema"),
         "identity_policy": "exact source/byte/path binding; no SHA-256",
     }
+    if inter_task_network:
+        binding["inter_task_network"] = str(inter_task_network.resolve())
+        binding["inter_task_network_text"] = inter_task_network.read_text()
+    return binding
 
 
 def _run_logged(argv: Sequence[str], directory: Path, label: str,
@@ -146,7 +160,12 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
                          max_rounds: int, max_candidates: int,
                          beam_width: int, diversity_slots: int,
                          resume: Path | None, protocol_path: Path | None = None,
-                         source_contract_file: Path | None = None) -> list[str]:
+                         source_contract_file: Path | None = None,
+                         historical_native_winner: Path | None = None,
+                         workload: str | None = None,
+                         inter_task_network: Path | None = None,
+                         decision_flow: str = "legacy",
+                         graph_budget_percent: int = 50) -> list[str]:
     """Build the sole C++ search invocation."""
     search_options = [
         f"output-dir={output_dir}",
@@ -161,10 +180,54 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
         f"diversity-slots={diversity_slots}",
         f"checkpoint={checkpoint}",
     ]
+    if decision_flow != "legacy":
+        if decision_flow not in {"joint", "sequential"}:
+            raise ContractError(f"unknown decision flow: {decision_flow}")
+        if stage != "full-joint" or previous_winner or seed_manifest or historical_native_winner:
+            raise ContractError("standalone decision flows require full-joint and a common unseeded identity")
+        if graph_budget_percent not in {25, 50, 75}:
+            raise ContractError("graph budget percent must be 25, 50 or 75")
+        search_options.extend([f"decision-flow={decision_flow}",
+                               f"graph-budget-percent={graph_budget_percent}"])
+    if protocol.get("model_namespace"):
+        search_options.append("model-namespace=" + protocol["model_namespace"])
+    # New profiles explicitly bind execution and partition caps. The frozen
+    # v11 protocol omits these options and keeps its original invocation.
+    execution = protocol.get("execution", {})
+    search = protocol.get("search", {})
+    if "supported_shape_bootstrap_policy" in search:
+        bootstrap_policy = search["supported_shape_bootstrap_policy"]
+        if bootstrap_policy != "minimum-area-supported-model-shape-v1":
+            raise ContractError(
+                "unsupported supported_shape_bootstrap_policy: "
+                f"{bootstrap_policy!r}"
+            )
+        search_options.append("bootstrap-supported-shapes=true")
+    if "scoring_workers" in execution:
+        workers = execution["scoring_workers"]
+        if not isinstance(workers, int) or isinstance(workers, bool) or not 1 <= workers <= 12:
+            raise ContractError("protocol scoring_workers must be an integer from 1 to 12")
+        search_options.append(f"scoring-workers={workers}")
+    if "max_partition_factor" in search:
+        cap = search["max_partition_factor"]
+        if cap not in (4, 8) or isinstance(cap, bool):
+            raise ContractError("protocol max_partition_factor must be 4 or 8")
+        search_options.append(f"max-partition-factor={cap}")
+    if protocol.get("source_iteration_domain", {}).get("required", False):
+        search_options.append("require-source-iteration-domain=true")
     if protocol_path:
         search_options.append(f"protocol={protocol_path}")
     if source_contract_file:
         search_options.append(f"source-contract-file={source_contract_file}")
+    active = search.get("active_transfer_arguments_by_workload", {}).get(
+        workload, search.get("active_transfer_arguments", []))
+    if active:
+        if not isinstance(active, list) or any(not isinstance(x, int) or isinstance(x, bool) or x < 0 for x in active) or len(set(active)) != len(active):
+            raise ContractError("active_transfer_arguments must be unique nonnegative integer indexes")
+        search_options.append("active-transfer-arguments=" + ",".join(str(x) for x in active))
+        search_options.append("active-transfer-require-proven=" + ("true" if search.get("active_transfer_require_proven", True) else "false"))
+    if historical_native_winner:
+        search_options.append(f"historical-native-winner={historical_native_winner}")
     if parent_cost_file:
         search_options.append(f"parent-cost-file={parent_cost_file}")
     if seed_manifest:
@@ -180,10 +243,13 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
         # exact file path.  Passing resume=<path> would be parsed as a bool
         # error and would silently defeat continuation.
         search_options.append("resume=true")
-    return [str(optimizer), str(canonical), "--verify-each",
+    command = [str(optimizer), str(canonical), "--verify-each",
             f"--architecture-spec={architecture}",
             "--search-joint-neighborhood=" + " ".join(search_options),
             "-o", str(output_dir / "search-output.mlir")]
+    if inter_task_network is not None:
+        command.append(f"--joint-inter-task-network-spec={inter_task_network}")
+    return command
 
 
 def _row_path(row: Mapping[str, Any], key: str, aliases: Sequence[str]) -> str | None:
@@ -287,7 +353,7 @@ def load_cpp_controls(path: Path, *, require_previous: bool) -> list[dict[str, A
             role = "identity"
         elif role in {"previous_winner", "previous_stage_winner", "previous_stage_measured_winner"}:
             role = "previous_stage_measured_winner"
-        if role not in {"identity", "previous_stage_measured_winner"}:
+        if role not in {"identity", "previous_stage_measured_winner", "historical_measured_winner", "search_anchor"}:
             raise ContractError(f"unsupported control role {role!r} in {path}")
         if role in by_role:
             raise ContractError(f"duplicate control role {role!r} in {path}")
@@ -300,7 +366,7 @@ def load_cpp_controls(path: Path, *, require_previous: bool) -> list[dict[str, A
     if missing:
         raise ContractError(f"C++ controls file missing required roles: {sorted(missing)}")
     # This fixed role order is a replay label, not a performance order.
-    return [by_role[role] for role in ("identity", "previous_stage_measured_winner") if role in by_role]
+    return [by_role[role] for role in ("identity", "previous_stage_measured_winner", "historical_measured_winner", "search_anchor") if role in by_role]
 
 
 def _load_replay_module():
@@ -314,12 +380,15 @@ def _load_replay_module():
 
 def _replay_args(*, optimizer: Path, architecture: Path, mapping_cache: Path,
                  output_dir: Path, graph_manifests: Path | None,
-                 manifest: Path, sram_config: Path) -> SimpleNamespace:
+                 manifest: Path, sram_config: Path,
+                 inter_task_network: Path | None = None,
+                 audit_mapper_calls: bool = False) -> SimpleNamespace:
     return SimpleNamespace(optimizer=optimizer, architecture=architecture,
                            mapping_cache=mapping_cache, output_dir=output_dir,
                            graph_manifests=graph_manifests, manifest=manifest,
                            sram_config=sram_config, reuse_mapped_root=None,
-                           jobs=1)
+                           jobs=1, inter_task_network=inter_task_network,
+                           audit_mapper_calls=audit_mapper_calls)
 
 
 def replay_one(selection: Mapping[str, Any], *, replay_module: Any,
@@ -365,12 +434,15 @@ def replay_one(selection: Mapping[str, Any], *, replay_module: Any,
 def replay_records(records: Sequence[Mapping[str, Any]], *, output_dir: Path,
                    optimizer: Path, architecture: Path, mapping_cache: Path,
                    manifest: Path, graph_manifests: Path | None,
-                   sram_config: Path, jobs: int) -> dict[str, Any]:
+                   sram_config: Path, jobs: int,
+                   inter_task_network: Path | None = None,
+                   audit_mapper_calls: bool = False) -> dict[str, Any]:
     replay_module = _load_replay_module()
     args = _replay_args(optimizer=optimizer, architecture=architecture,
                         mapping_cache=mapping_cache, output_dir=output_dir,
                         graph_manifests=graph_manifests, manifest=manifest,
-                        sram_config=sram_config)
+                        sram_config=sram_config, inter_task_network=inter_task_network,
+                        audit_mapper_calls=audit_mapper_calls)
     output_dir.mkdir(parents=True, exist_ok=True)
     values: list[dict[str, Any]] = []
     order = {(row.get("control_role"), row.get("rank"), row.get("candidate_id")): index
@@ -409,31 +481,50 @@ def replay_records(records: Sequence[Mapping[str, Any]], *, output_dir: Path,
 def run_numeric_gate(*, workload: str, stage: str, native_root: Path,
                      ranks: Sequence[int], optimizer: Path, jobs: int,
                      label_suffix: str, output_dir: Path) -> dict[str, Any]:
-    """Run the existing compiler-owned numeric gate for available ranks."""
+    """Run the tracked numeric gate in a unique stage-local evidence directory."""
     existing = [rank for rank in ranks if (native_root / f"rank-{rank}" / "native.mlir").is_file()]
     command_record: dict[str, Any] = {"status": "skipped", "ranks": list(existing)}
     if not existing:
         atomic_write(output_dir / f"numeric-{label_suffix}.command.json", command_record)
         return command_record
-    label = f"neighborhood-v3-{stage}-{label_suffix}"
-    argv = ["python3", str(DEFAULT_NUMERIC_GATE), "--workloads", workload,
+    # Keep top-five and controls separate, and allocate a fresh directory for
+    # every invocation. A failed retry cannot accidentally adopt an older
+    # numeric result from this or another protocol version.
+    numeric_output_root = (output_dir / "numeric" / label_suffix /
+                           f"attempt-{time.time_ns()}-{os.getpid()}")
+    label = f"neighborhood-{stage}-{label_suffix}"
+    argv = [sys.executable, str(DEFAULT_NUMERIC_GATE),
+            "--artifact-root", str(ROOT),
+            "--output-root", str(numeric_output_root),
+            "--reference-root", str(DEFAULT_NUMERIC_REFERENCE_ROOT),
+            "--llama-harness", str(DEFAULT_LLAMA_HARNESS),
+            "--workloads", workload,
             "--stage", label, "--native-root", str(native_root),
             "--optimizer", str(optimizer), "--ranks", *[str(rank) for rank in existing],
             "--jobs", str(max(1, jobs))]
+    llvm_build = os.environ.get("ORBIT_LLVM_BUILD")
+    if llvm_build:
+        argv.extend(["--llvm-build", llvm_build])
     command_record = _run_logged(argv, output_dir, f"numeric-{label_suffix}")
     command_record["ranks"] = existing
+    command_record["numeric_output_root"] = str(numeric_output_root)
     for rank in existing:
         result_path = native_root / f"rank-{rank}" / "result.json"
         if not result_path.is_file():
             continue
         value = json.loads(result_path.read_text())
-        evidence = ROOT / "results/input0-cpp-numeric-gates" / workload / f"{label}-rank-{rank}" / "result.json"
+        evidence = numeric_output_root / workload / f"{label}-rank-{rank}" / "result.json"
+        value["numeric_command_exit_code"] = command_record.get("exit_code")
         if evidence.is_file():
             gate = json.loads(evidence.read_text())
             value["numeric"] = gate.get("status", "pending")
             value["numeric_evidence"] = str(evidence)
             value["numeric_element_comparisons"] = gate.get("element_comparisons")
-            atomic_write(result_path, value)
+        else:
+            value["numeric"] = "incomplete"
+            value["numeric_evidence"] = str(evidence)
+            value["numeric_error"] = "numeric_gate_result_missing"
+        atomic_write(result_path, value)
     refresh_native_summary(native_root)
     return command_record
 
@@ -450,9 +541,27 @@ def refresh_native_summary(native_root: Path) -> dict[str, Any]:
     for name, field in (("numeric", "numeric"), ("sram_gate", "sram_gate")):
         values = [record.get(field, "pending") for record in records]
         summary[name] = ("pass" if values and all(value == "pass" for value in values)
-                         else "fail" if "fail" in values else "pending")
+                         else "fail" if "fail" in values
+                         else "incomplete" if "incomplete" in values
+                         else "pending")
     atomic_write(path, summary)
     return summary
+
+
+def numeric_gate_status(summary: Mapping[str, Any],
+                        command_record: Mapping[str, Any]) -> str:
+    """Keep numeric mismatches distinct from runner failures in stage output."""
+    records = summary.get("records", [])
+    statuses = [record.get("numeric", "pending") for record in records
+                if isinstance(record, Mapping)]
+    if "fail" in statuses:
+        return "fail"
+    if ("incomplete" in statuses or summary.get("numeric") == "incomplete" or
+            command_record.get("exit_code") not in (0, None)):
+        return "incomplete"
+    if statuses and all(status == "pass" for status in statuses):
+        return "pass"
+    return "pending"
 
 
 def find_output_file(directory: Path, names: Sequence[str]) -> Path:
@@ -484,6 +593,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workload", required=True)
     parser.add_argument("--stage", choices=STAGES, required=True)
+    parser.add_argument("--decision-flow", choices=("legacy", "joint", "sequential"), default="legacy")
+    parser.add_argument("--graph-budget-percent", type=int, choices=(25, 50, 75), default=50)
     parser.add_argument("--canonical", type=Path, required=True)
     parser.add_argument("--function")
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -497,12 +608,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--parent-cost-file", type=Path)
     parser.add_argument("--seed-manifest", type=Path)
     parser.add_argument("--previous-winner", type=Path)
+    parser.add_argument("--historical-native-winner", type=Path)
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--manifest", type=Path,
                         help="factored candidate manifest used by the existing replay helper")
     parser.add_argument("--graph-manifests", type=Path)
     parser.add_argument("--sram-config", type=Path, default=DEFAULT_SRAM_CONFIG)
+    parser.add_argument("--inter-task-network", type=Path)
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--max-rounds", type=int, default=20)
     parser.add_argument("--max-candidates", type=int, default=20000)
@@ -511,15 +624,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--skip-search", action="store_true",
                         help="replay an already completed C++ search directory")
     args = parser.parse_args(argv)
-    if not 1 <= args.jobs <= 10:
-        parser.error("--jobs must be between 1 and 10")
+    if not 1 <= args.jobs <= 12:
+        parser.error("--jobs must be between 1 and 12")
     if args.max_rounds <= 0 or args.max_candidates <= 0 or args.beam_width <= 0:
         parser.error("search budgets must be positive")
     for key in ("canonical", "output_dir", "optimizer", "architecture", "protocol",
                 "mapping_cache", "model_cache", "cost_cache", "seed_manifest",
                 "parent_cost_file", "source_contract_file",
-                "previous_winner", "resume", "checkpoint", "manifest",
-                "graph_manifests", "sram_config"):
+                "previous_winner", "historical_native_winner", "resume", "checkpoint", "manifest",
+                "graph_manifests", "sram_config", "inter_task_network"):
         value = getattr(args, key)
         if value is not None:
             setattr(args, key, value.resolve())
@@ -528,6 +641,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.optimizer.is_file():
         raise ContractError(f"optimizer does not exist: {args.optimizer}")
     protocol = _protocol(args.protocol)
+    if args.historical_native_winner is None:
+        history = protocol.get("historical_native_winners", {}).get(args.workload)
+        if isinstance(history, dict):
+            history = history.get(args.stage)
+        if history:
+            if not isinstance(history, str):
+                raise ContractError("historical native winner must be a selection path or a stage-to-path mapping")
+            value = Path(history)
+            args.historical_native_winner = (value if value.is_absolute() else args.protocol.parent / value).resolve()
     function = infer_function(args.canonical, args.function)
     output = args.output_dir
     output.mkdir(parents=True, exist_ok=True)
@@ -538,7 +660,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     atomic_write(output / "source-binding.json",
                  source_binding(protocol, args.canonical, args.optimizer, args.architecture,
                                 args.model_cache, args.cost_cache, args.parent_cost_file,
-                                args.source_contract_file))
+                                args.source_contract_file, args.inter_task_network))
 
     if not args.skip_search:
         command = build_search_command(
@@ -551,7 +673,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             max_rounds=args.max_rounds, max_candidates=args.max_candidates,
             beam_width=args.beam_width, diversity_slots=args.diversity_slots,
             resume=args.resume, protocol_path=args.protocol,
-            source_contract_file=args.source_contract_file)
+            source_contract_file=args.source_contract_file,
+            historical_native_winner=args.historical_native_winner, workload=args.workload,
+            inter_task_network=args.inter_task_network,
+            decision_flow=args.decision_flow, graph_budget_percent=args.graph_budget_percent)
         search_record = _run_logged(command, output, "search")
         atomic_write(output / "search-result.json", search_record)
         if search_record.get("exit_code") != 0:
@@ -569,7 +694,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                                  ("global-top5.jsonl", "top5.jsonl", "native-top5.jsonl"))
     selected, header, footer = load_cpp_selections(top5_path)
     controls_path = search_dir / "controls.jsonl"
-    controls = load_cpp_controls(controls_path, require_previous=args.stage != "shape-only")
+    controls = load_cpp_controls(controls_path, require_previous=args.decision_flow == "legacy" and args.stage != "shape-only")
+    if args.decision_flow != "legacy" and {row["control_role"] for row in controls} != {"identity", "search_anchor"}:
+        raise ContractError("standalone flows require the common identity and search_anchor validation controls")
+    if args.historical_native_winner and not any(row.get("control_role") == "historical_measured_winner" for row in controls):
+        raise ContractError("C++ did not retain the requested historical native control")
     validate_source_bindings([*selected, *controls])
     graph_manifests = args.graph_manifests
     if graph_manifests is None:
@@ -585,18 +714,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     replay_records(selected, output_dir=top5_out, optimizer=args.optimizer,
                    architecture=args.architecture, mapping_cache=args.mapping_cache,
                    manifest=manifest, graph_manifests=graph_manifests,
-                   sram_config=args.sram_config, jobs=args.jobs)
+                   sram_config=args.sram_config, jobs=args.jobs,
+                   inter_task_network=args.inter_task_network,
+                   audit_mapper_calls=args.decision_flow != "legacy")
     controls_out = output / "native-controls"
     replay_records(controls, output_dir=controls_out, optimizer=args.optimizer,
                    architecture=args.architecture, mapping_cache=args.mapping_cache,
                    manifest=manifest, graph_manifests=graph_manifests,
-                   sram_config=args.sram_config, jobs=args.jobs)
+                   sram_config=args.sram_config, jobs=args.jobs,
+                   inter_task_network=args.inter_task_network,
+                   audit_mapper_calls=args.decision_flow != "legacy")
     top5_numeric = run_numeric_gate(workload=args.workload, stage=args.stage,
                                     native_root=top5_out, ranks=range(5),
                                     optimizer=args.optimizer, jobs=args.jobs,
                                     label_suffix="top5", output_dir=output)
     control_numeric = run_numeric_gate(workload=args.workload, stage=args.stage,
-                                       native_root=controls_out, ranks=(5, 6),
+                                       native_root=controls_out, ranks=tuple(row["rank"] for row in controls),
                                        optimizer=args.optimizer, jobs=args.jobs,
                                        label_suffix="controls", output_dir=output)
     top5_summary = json.loads((top5_out / "summary.json").read_text())
@@ -606,7 +739,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 if record.get("status") == "native_replayed"
                 and record.get("mapper_equality") == "pass"
                 and record.get("independent_trace") == "pass"
-                and record.get("numeric") != "fail"
+                and (record.get("numeric") == "pass" if args.decision_flow != "legacy" else record.get("numeric") != "fail")
                 and isinstance(record.get("native_cycles"), (int, float))]
     actual_cycles = min((record["native_cycles"] for record in measured), default=None)
     stop_reason = footer.get("stop_reason") or footer.get("search_stop_reason") or header.get("stop_reason")
@@ -616,6 +749,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                    and controls_summary.get("status") == "native_replayed" else "incomplete"),
         "workload": args.workload,
         "stage": args.stage,
+        "decision_flow": args.decision_flow,
+        "graph_budget_percent": args.graph_budget_percent if args.decision_flow == "sequential" else None,
         "function": function,
         "result_label": "best-found",
         "exhaustive": False,
@@ -639,9 +774,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "production_ready": False,
         "best_found": True,
         "native_top5_status": top5_summary.get("status"),
-        "numeric": ("pass" if top5_summary.get("records") and all(record.get("numeric") == "pass" for record in top5_summary["records"])
-                    else "fail" if any(record.get("numeric") == "fail" for record in top5_summary.get("records", []))
-                    else "pending"),
+        "numeric": numeric_gate_status(top5_summary, top5_numeric),
         "trace": ("pass" if top5_summary.get("records") and all(record.get("independent_trace") == "pass" for record in top5_summary["records"])
                   else "fail" if any(record.get("independent_trace") == "fail" for record in top5_summary.get("records", []))
                   else "pending"),

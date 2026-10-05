@@ -1,0 +1,100 @@
+{
+  "schema": "orbit-input0-iteration-domain-audit-v1",
+  "audit_date": "2026-10-04",
+  "status": "corrected-domain-reruns-required",
+  "formal_performance_go": false,
+  "affected_batches": [
+    "published-v11",
+    "expanded-v12",
+    "gcn-active-footprint-probes",
+    "ray-critical-shape-probe"
+  ],
+  "validation_limit": "Numeric and independent schedule traces do not establish complete kernel-firing cardinality. Mapper II does not absorb an omitted loop bound.",
+  "confirmed_taskflow_domain_omissions": [
+    {
+      "workload": "llama",
+      "task": "Task_6",
+      "old_iterations": 81920,
+      "source_complete_iterations": 26214400,
+      "omitted_factor": 320
+    },
+    {
+      "workload": "lu",
+      "task": "Task_2",
+      "old_iterations": 8,
+      "source_complete_iterations": 512,
+      "omitted_factor": 64
+    },
+    {
+      "workload": "lu",
+      "task": "Task_5",
+      "old_iterations": 8,
+      "source_complete_iterations": 64,
+      "omitted_factor": 8
+    },
+    {
+      "workload": "lu",
+      "task": "Task_7",
+      "old_iterations": 64,
+      "source_complete_iterations": 512,
+      "omitted_factor": 8
+    },
+    {
+      "workload": "radar",
+      "task": "Task_0",
+      "old_iterations": 32,
+      "source_complete_iterations": 2048,
+      "omitted_factor": 64
+    },
+    {
+      "workload": "radar",
+      "task": "Task_1",
+      "old_iterations": 32,
+      "source_complete_iterations": 2048,
+      "omitted_factor": 64
+    },
+    {
+      "workload": "radar",
+      "task": "Task_4",
+      "old_iterations": 2048,
+      "source_complete_iterations": 131072,
+      "omitted_factor": 64
+    },
+    {
+      "workload": "radar",
+      "task": "Task_5",
+      "old_iterations": 2048,
+      "source_complete_iterations": 131072,
+      "omitted_factor": 64
+    },
+    {
+      "workload": "gcn",
+      "task": "Task_26",
+      "old_iterations": 16,
+      "source_complete_iterations": 80,
+      "omitted_factor": 5
+    }
+  ],
+  "raytracing_internal_domain": {
+    "task": "Task_13",
+    "represented_outer_extent": 1472,
+    "unrepresented_inner_extent": 8,
+    "source_loop": "static carried max/index reduction with per-ray initialization and final stores",
+    "source_perfection_skipped_for_semantics": true,
+    "complete_cost_domain_status": "pending"
+  },
+  "corrected_identity": {
+    "workload": "llama",
+    "task6_iterations": 26214400,
+    "predicted_whole_program_cycles": 747943663,
+    "native_whole_program_cycles": 746619416,
+    "numeric": "pass",
+    "mapper_equality": "pass",
+    "independent_trace": "pass",
+    "sram": "pending",
+    "iteration_domain_coverage": "pending separate source-domain guard",
+    "runtime_evidence": "results/input0-correct-domain-identity-probe/llama/result.json"
+  },
+  "corrected_pipeline": "source static affine input; affine loop perfection; Taskflow construction; hyperblock construction; task/counter classification; Neura conversion; existing public normalization passes; source-owned caller allocation/noalias proof; existing model and production scheduler",
+  "prohibited_shortcut": "No synthetic trip-count patch, model retraining, or multiplication of arbitrary phi or mirrored Neura counters."
+}

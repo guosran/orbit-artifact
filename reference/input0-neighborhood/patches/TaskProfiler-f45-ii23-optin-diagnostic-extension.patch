@@ -1,0 +1,610 @@
+--- a/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ResourceAssignmentState.h
++++ b/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ResourceAssignmentState.h
+@@ -35,6 +35,7 @@
+   int estimated_latency = 1;
+   bool dlp_replicable = false;
+   int selected_profile_index = 0;
++  int diagnostic_initial_profile_index = -1;
+   llvm::SmallVector<TaskProfile> task_profiles;
+ };
+ 
+@@ -45,9 +46,17 @@
+   // results as the candidate search space.
+   //
+   // The baseline is intentionally conservative: one standalone CGRA and one
+-  // active replica per task.
++  // active replica per task. The diagnostic option permits a task without a
++  // successful one-CGRA profile to start at its smallest successful profile.
+   explicit ResourceAssignmentState(func::FuncOp func,
+-                                   const TaskProfileMap &profile_map);
++                                   const TaskProfileMap &profile_map,
++                                   bool diagnostic_minimum_legal_profile_initialization =
++                                       false);
++
++  // Returns false when the diagnostic initialization option found a task
++  // without any successful mapper profile.
++  bool isValid() const { return invalid_task_ == nullptr; }
++  Operation *getInvalidTask() const { return invalid_task_; }
+ 
+   // Returns all per-task resource assignments in deterministic IR walk order.
+   llvm::ArrayRef<TaskResourceAssignment> getResourceAssignments() const {
+@@ -93,6 +102,7 @@
+ private:
+   llvm::SmallVector<TaskResourceAssignment> resource_assignments_;
+   llvm::DenseMap<Operation *, int> task_to_assignment_index_;
++  Operation *invalid_task_ = nullptr;
+ };
+ 
+ } // namespace taskflow
+--- a/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.h
++++ b/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.h
+@@ -50,8 +50,12 @@
+ 
+   // Profiles every task and writes a JSON profile cache. The file is refreshed
+   // after each completed candidate so long-running profiling can be inspected.
++  // When selected_tasks is nonempty, only those existing task operations are
++  // profiled and emitted in the cache.
+   LogicalResult profileFunctionToJson(func::FuncOp func,
+-                                      llvm::StringRef output_file) const;
++                                      llvm::StringRef output_file,
++                                      ArrayRef<TaskflowTaskOp> selected_tasks =
++                                          {}) const;
+ 
+   // Writes a completed profile map as a JSON cache.
+   static LogicalResult
+--- a/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ThroughputGuidedTaskOrchestration.h
++++ b/include/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ThroughputGuidedTaskOrchestration.h
+@@ -25,10 +25,13 @@
+       int grid_rows = kCgraGridRows, int grid_cols = kCgraGridCols,
+       SchedulingMode mode = SchedulingMode::SpatialTemporal,
+       std::string task_profile_json = "",
+-      int max_contexts_per_cgra = kDefaultMaxContextsPerCgra)
++      int max_contexts_per_cgra = kDefaultMaxContextsPerCgra,
++      bool diagnostic_minimum_legal_profile_initialization = false)
+       : grid_rows_(grid_rows), grid_cols_(grid_cols), mode_(mode),
+         task_profile_json_(std::move(task_profile_json)),
+-        max_contexts_per_cgra_(max_contexts_per_cgra) {}
++        max_contexts_per_cgra_(max_contexts_per_cgra),
++        diagnostic_minimum_legal_profile_initialization_(
++            diagnostic_minimum_legal_profile_initialization) {}
+ 
+   // Runs throughput-guided task orchestration and emits the selected static
+   // task orchestration metadata.
+@@ -42,6 +45,7 @@
+   SchedulingMode mode_;
+   std::string task_profile_json_;
+   int max_contexts_per_cgra_ = kDefaultMaxContextsPerCgra;
++  bool diagnostic_minimum_legal_profile_initialization_ = false;
+ };
+ 
+ } // namespace taskflow
+--- a/include/TaskflowDialect/TaskflowPasses.td
++++ b/include/TaskflowDialect/TaskflowPasses.td
+@@ -143,7 +143,13 @@
+            /*default=*/"\"\"",
+            "Optional JSON profile cache for throughput-guided orchestration. "
+            "When provided, the strategy reads task candidate profiles from "
+-           "this file instead of invoking the profiler.">];
++           "this file instead of invoking the profiler.">,
++       Option<"diagnosticMinimumLegalProfileInitialization",
++              "diagnostic-minimum-legal-profile-initialization", "bool",
++              /*default=*/"false",
++              "Diagnostic extension: if a task has no successful 1-CGRA "
++              "profile, initialize it from its smallest successful profiled "
++              "CGRA shape.">];
+   let constructor = "taskflow::createOrchestrateTaskOnCgraPass()";
+   let dependentDialects = ["mlir::affine::AffineDialect",
+                            "mlir::arith::ArithDialect",
+@@ -161,10 +167,12 @@
+       "Profiles Taskflow tasks across composed-CGRA candidates into JSON";
+   let description = [{
+     Runs the throughput-guided TaskProfiler without performing orchestration.
+-    The pass profiles every taskflow.task across rectangular composed-CGRA
+-    candidates and writes a reusable JSON cache. The file is refreshed after
+-    every completed candidate so long-running benchmark profiling can be
+-    inspected while it is still running.
++    By default the pass profiles every taskflow.task across rectangular
++    composed-CGRA candidates. An optional semicolon-separated task-names list
++    selects exact taskflow.task names for diagnostic child-task profiling.
++    The pass writes a reusable JSON cache, refreshed after every completed
++    candidate so long-running benchmark profiling can be inspected while it
++    is still running.
+   }];
+   let options =
+       [Option<"outputJson", "output-json", "std::string",
+@@ -175,7 +183,11 @@
+               "Maximum composed-CGRA candidate size to profile.">,
+        Option<"symbolBoundTripCount", "symbol-bound-trip-count", "int",
+               /*default=*/"256",
+-              "Sample trip count used for symbol-bound taskflow counters.">];
++              "Sample trip count used for symbol-bound taskflow counters.">,
++       Option<"taskNames", "task-names", "std::string",
++              /*default=*/"\"\"",
++              "Optional semicolon-separated exact Taskflow task names to "
++              "profile; empty means all tasks.">];
+   let constructor = "taskflow::createProfileTaskCandidatesPass()";
+   let dependentDialects = ["mlir::affine::AffineDialect",
+                            "mlir::arith::ArithDialect",
+--- a/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ResourceAssignmentState.cpp
++++ b/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ResourceAssignmentState.cpp
+@@ -19,7 +19,10 @@
+   return false;
+ }
+ 
+-static int getOneCgraProfileIndex(llvm::ArrayRef<TaskProfile> profiles) {
++static int getInitialProfileIndex(
++    llvm::ArrayRef<TaskProfile> profiles,
++    bool diagnostic_minimum_legal_profile_initialization,
++    bool &used_diagnostic_initialization) {
+   int one_cgra_profile_index = -1;
+   for (auto [index, profile] : llvm::enumerate(profiles)) {
+     if (profile.composed_cgra_count != 1) {
+@@ -29,23 +32,71 @@
+            "A task should have exactly one 1-CGRA profile.\n");
+     one_cgra_profile_index = static_cast<int>(index);
+   }
+-  assert(one_cgra_profile_index >= 0 &&
+-         "Initial resource assignment requires a 1-CGRA profile.\n");
+-  return one_cgra_profile_index;
+-}
+-
+-static TaskResourceAssignment
++  if (one_cgra_profile_index >= 0) {
++    return one_cgra_profile_index;
++  }
++
++  if (!diagnostic_minimum_legal_profile_initialization) {
++    assert(one_cgra_profile_index >= 0 &&
++           "Initial resource assignment requires a 1-CGRA profile.\n");
++    return one_cgra_profile_index;
++  }
++
++  // This is an explicit diagnostic extension. Start from a real mapper
++  // success, minimizing composed-CGRA count first and estimated latency
++  // second. The original profile order breaks exact ties deterministically.
++  int minimum_profile_index = -1;
++  int minimum_cgra_count = std::numeric_limits<int>::max();
++  int minimum_latency = std::numeric_limits<int>::max();
++  for (auto [index, profile] : llvm::enumerate(profiles)) {
++    if (!profile.mapper_succeeded || profile.composed_cgra_count < 1) {
++      continue;
++    }
++
++    bool better_count = profile.composed_cgra_count < minimum_cgra_count;
++    bool better_latency = profile.composed_cgra_count == minimum_cgra_count &&
++                          profile.estimated_latency < minimum_latency;
++    if (better_count || better_latency) {
++      minimum_cgra_count = profile.composed_cgra_count;
++      minimum_latency = profile.estimated_latency;
++      minimum_profile_index = static_cast<int>(index);
++    }
++  }
++  if (minimum_profile_index >= 0) {
++    used_diagnostic_initialization = true;
++  }
++  return minimum_profile_index;
++}
++
++static std::optional<TaskResourceAssignment>
+ buildTaskResourceAssignment(TaskflowTaskOp task,
+-                            ArrayRef<TaskProfile> profiles) {
++                            ArrayRef<TaskProfile> profiles,
++                            bool diagnostic_minimum_legal_profile_initialization) {
+   Operation *op = task.getOperation();
+-  assert(!profiles.empty() &&
+-         "Resource assignment requires TaskProfiler profiles.\n");
++  if (profiles.empty()) {
++    if (!diagnostic_minimum_legal_profile_initialization) {
++      assert(!profiles.empty() &&
++             "Resource assignment requires TaskProfiler profiles.\n");
++    }
++    return std::nullopt;
++  }
++
+   TaskResourceAssignment assignment;
+   assignment.task = op;
+   assignment.dlp_replicable = getBoolAttr(op, "dlp_replicable");
+   assignment.task_profiles.assign(profiles.begin(), profiles.end());
++  bool used_diagnostic_initialization = false;
+   assignment.selected_profile_index =
+-      getOneCgraProfileIndex(assignment.task_profiles);
++      getInitialProfileIndex(assignment.task_profiles,
++                             diagnostic_minimum_legal_profile_initialization,
++                             used_diagnostic_initialization);
++  if (assignment.selected_profile_index < 0) {
++    return std::nullopt;
++  }
++  if (used_diagnostic_initialization) {
++    assignment.diagnostic_initial_profile_index =
++        assignment.selected_profile_index;
++  }
+   const TaskProfile &profile =
+       assignment.task_profiles[assignment.selected_profile_index];
+   assignment.composed_cgra_count = profile.composed_cgra_count;
+@@ -55,17 +106,28 @@
+ }
+ 
+ ResourceAssignmentState::ResourceAssignmentState(
+-    func::FuncOp func, const TaskProfileMap &profile_map) {
+-  int task_index = 0;
++    func::FuncOp func, const TaskProfileMap &profile_map,
++    bool diagnostic_minimum_legal_profile_initialization) {
+   func.walk([&](TaskflowTaskOp task) {
+     auto it = profile_map.find(task);
+     ArrayRef<TaskProfile> profiles;
+     if (it != profile_map.end()) {
+       profiles = it->second;
+     }
+-    resource_assignments_.push_back(
+-        buildTaskResourceAssignment(task, profiles));
+-    task_to_assignment_index_[task.getOperation()] = task_index++;
++    std::optional<TaskResourceAssignment> assignment =
++        buildTaskResourceAssignment(
++            task, profiles,
++            diagnostic_minimum_legal_profile_initialization);
++    if (!assignment) {
++      if (!invalid_task_) {
++        invalid_task_ = task.getOperation();
++      }
++      return;
++    }
++
++    int task_index = static_cast<int>(resource_assignments_.size());
++    resource_assignments_.push_back(std::move(*assignment));
++    task_to_assignment_index_[task.getOperation()] = task_index;
+   });
+ }
+ 
+@@ -215,6 +277,24 @@
+         builder.getI32IntegerAttr(materialized_operation_count)));
+     task->setAttr("profile_info",
+                   DictionaryAttr::get(task->getContext(), profile_attrs));
++
++    if (assignment.diagnostic_initial_profile_index >= 0) {
++      const TaskProfile &initial_profile = assignment.task_profiles[
++          assignment.diagnostic_initial_profile_index];
++      llvm::SmallVector<NamedAttribute> diagnostic_attrs;
++      diagnostic_attrs.push_back(NamedAttribute(
++          StringAttr::get(task->getContext(), "composed_cgra_count"),
++          builder.getI32IntegerAttr(initial_profile.composed_cgra_count)));
++      diagnostic_attrs.push_back(NamedAttribute(
++          StringAttr::get(task->getContext(), "composed_cgra_shape"),
++          builder.getStringAttr(initial_profile.composed_cgra_shape)));
++      task->setAttr(
++          "amoeba.diagnostic_minimum_legal_profile_initialization",
++          DictionaryAttr::get(task->getContext(), diagnostic_attrs));
++    } else {
++      task->removeAttr(
++          "amoeba.diagnostic_minimum_legal_profile_initialization");
++    }
+   }
+ }
+ 
+--- a/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.cpp
++++ b/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/TaskProfiler.cpp
+@@ -48,6 +48,15 @@
+ namespace {
+ 
+ struct ProfileJsonProgress {
++  struct CandidateAttempt {
++    std::string task;
++    int candidate_index = -1;
++    int composed_cgra_count = -1;
++    std::string shape;
++    bool mapper_succeeded = false;
++    bool profile_created = false;
++  };
++
+   int expected_candidate_count = -1;
+   int completed_candidate_count = -1;
+   std::string last_task;
+@@ -55,6 +64,7 @@
+   int last_composed_cgra_count = -1;
+   std::string last_shape;
+   bool last_mapper_succeeded = false;
++  SmallVector<CandidateAttempt> candidate_attempts;
+ };
+ 
+ void writeJsonString(raw_ostream &os, StringRef value) {
+@@ -117,7 +127,8 @@
+ 
+ LogicalResult writeTaskProfileMapToJsonImpl(
+     func::FuncOp func, const TaskProfileMap &profile_map, StringRef output_file,
+-    const ProfileJsonProgress *progress) {
++    const ProfileJsonProgress *progress,
++    ArrayRef<TaskflowTaskOp> selected_tasks = {}) {
+   std::error_code error;
+   llvm::raw_fd_ostream os(output_file, error);
+   if (error) {
+@@ -127,7 +138,11 @@
+   }
+ 
+   SmallVector<TaskflowTaskOp> tasks;
+-  func.walk([&](TaskflowTaskOp task) { tasks.push_back(task); });
++  if (selected_tasks.empty()) {
++    func.walk([&](TaskflowTaskOp task) { tasks.push_back(task); });
++  } else {
++    tasks.append(selected_tasks.begin(), selected_tasks.end());
++  }
+ 
+   os << "{\n";
+   os << "  \"format\": \"amoeba-task-profile-v1\",\n";
+@@ -160,6 +175,32 @@
+       os << "  }";
+     }
+     os << ",\n";
++
++    os << "  \"candidate_attempts\": [\n";
++    for (auto [attempt_index, attempt] :
++         llvm::enumerate(progress->candidate_attempts)) {
++      os << "    {\n";
++      os << "      \"task\": ";
++      writeJsonString(os, attempt.task);
++      os << ",\n";
++      os << "      \"candidate_index_in_task\": "
++         << attempt.candidate_index << ",\n";
++      os << "      \"composed_cgra_count\": "
++         << attempt.composed_cgra_count << ",\n";
++      os << "      \"shape\": ";
++      writeJsonString(os, attempt.shape);
++      os << ",\n";
++      os << "      \"profile_created\": "
++         << (attempt.profile_created ? "true" : "false") << ",\n";
++      os << "      \"mapper_succeeded\": "
++         << (attempt.mapper_succeeded ? "true" : "false") << "\n";
++      os << "    }";
++      if (attempt_index + 1 != progress->candidate_attempts.size()) {
++        os << ",";
++      }
++      os << "\n";
++    }
++    os << "  ],\n";
+   }
+ 
+   os << "  \"tasks\": [\n";
+@@ -1446,11 +1487,16 @@
+ 
+ LogicalResult
+ TaskProfiler::profileFunctionToJson(func::FuncOp func,
+-                                    llvm::StringRef output_file) const {
++                                    llvm::StringRef output_file,
++                                    ArrayRef<TaskflowTaskOp> selected_tasks) const {
+   TaskProfileMap profile_map;
+ 
+   SmallVector<TaskflowTaskOp> tasks;
+-  func.walk([&](TaskflowTaskOp task) { tasks.push_back(task); });
++  if (selected_tasks.empty()) {
++    func.walk([&](TaskflowTaskOp task) { tasks.push_back(task); });
++  } else {
++    tasks.append(selected_tasks.begin(), selected_tasks.end());
++  }
+ 
+   int candidates_per_task = 0;
+   for (int cgra_count = 1; cgra_count <= max_composed_cgra_count_;
+@@ -1467,7 +1513,7 @@
+       candidates_per_task * static_cast<int>(tasks.size());
+   progress.completed_candidate_count = 0;
+   if (failed(writeTaskProfileMapToJsonImpl(func, profile_map, output_file,
+-                                           &progress))) {
++                                           &progress, tasks))) {
+     return failure();
+   }
+ 
+@@ -1479,6 +1525,14 @@
+             task, [&](int candidate_index, const CgraShape &shape,
+                       int composed_cgra_count,
+                       const std::optional<TaskProfile> &profile) {
++              ProfileJsonProgress::CandidateAttempt attempt;
++              attempt.task = getTaskProfileName(task);
++              attempt.candidate_index = candidate_index;
++              attempt.composed_cgra_count = composed_cgra_count;
++              attempt.shape = shape.irAttr();
++              attempt.profile_created = profile.has_value();
++              attempt.mapper_succeeded = profile && profile->mapper_succeeded;
++              progress.candidate_attempts.push_back(std::move(attempt));
+               ++progress.completed_candidate_count;
+               progress.last_task = getTaskProfileName(task);
+               progress.last_candidate_index = candidate_index;
+@@ -1490,7 +1544,7 @@
+                 profiles.push_back(*profile);
+               }
+               if (failed(writeTaskProfileMapToJsonImpl(
+-                      func, profile_map, output_file, &progress))) {
++                      func, profile_map, output_file, &progress, tasks))) {
+                 write_failed = true;
+               }
+             });
+@@ -1501,7 +1555,7 @@
+            "Incremental JSON profile cache should match profiler results.\n");
+   }
+   return writeTaskProfileMapToJsonImpl(func, profile_map, output_file,
+-                                       &progress);
++                                       &progress, tasks);
+ }
+ 
+ LogicalResult
+@@ -1666,9 +1720,9 @@
+     }
+   }
+ 
+-  assert(!profiles.empty() &&
+-         "Task profiling requires at least one mapper-valid composed-CGRA "
+-         "profile.\n");
++  // Some tasks have no mapper-valid candidate shape. Keep their failed
++  // candidate outcomes in the JSON progress report and let profile loading
++  // reject the task explicitly; do not abort the whole candidate sweep.
+   return profiles;
+ }
+ 
+--- a/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ThroughputGuidedTaskOrchestration.cpp
++++ b/lib/TaskflowDialect/Orchestration/ThroughputGuidedTaskOrchestration/ThroughputGuidedTaskOrchestration.cpp
+@@ -145,7 +145,22 @@
+     profile_map = std::move(*cached_profile_map);
+   }
+ 
+-  ResourceAssignmentState assignment_state(func, profile_map);
++  ResourceAssignmentState assignment_state(
++      func, profile_map,
++      diagnostic_minimum_legal_profile_initialization_);
++  if (!assignment_state.isValid()) {
++    Operation *task = assignment_state.getInvalidTask();
++    InFlightDiagnostic diagnostic = func.emitError();
++    diagnostic << "throughput-guided resource initialization has no "
++                  "successful mapper profile for task";
++    if (task) {
++      if (auto task_name = task->getAttrOfType<StringAttr>("task_name")) {
++        diagnostic << " '" << task_name.getValue() << "'";
++      }
++    }
++    return false;
++  }
++
+   std::optional<TaskPipelineIntervalResult> current =
+       evaluateResourceAssignment(func, assignment_state, grid_rows_, grid_cols_,
+                                  mode_, max_contexts_per_cgra_,
+--- a/lib/TaskflowDialect/Transforms/OrchestrateTaskOnCgraPass.cpp
++++ b/lib/TaskflowDialect/Transforms/OrchestrateTaskOnCgraPass.cpp
+@@ -22,7 +22,8 @@
+ 
+ std::unique_ptr<Orchestration> createOrchestrationStrategy(
+     StringRef strategy_name, int grid_rows, int grid_cols, SchedulingMode mode,
+-    StringRef task_profile_json, int max_contexts_per_cgra) {
++    StringRef task_profile_json, int max_contexts_per_cgra,
++    bool diagnostic_minimum_legal_profile_initialization) {
+   return llvm::StringSwitch<std::unique_ptr<Orchestration>>(strategy_name)
+       .Case("routing-critical-path",
+             std::make_unique<RoutingCriticalPathOrchestration>(
+@@ -30,7 +31,8 @@
+       .Case("throughput-guided",
+             std::make_unique<ThroughputGuidedTaskOrchestration>(
+                 grid_rows, grid_cols, mode, task_profile_json.str(),
+-                max_contexts_per_cgra))
++                max_contexts_per_cgra,
++                diagnostic_minimum_legal_profile_initialization))
+       .Default(nullptr);
+ }
+ 
+@@ -77,7 +79,23 @@
+                      "from this file instead of invoking the profiler."),
+       llvm::cl::init("")};
+ 
++  Option<bool> diagnosticMinimumLegalProfileInitialization{
++      *this, "diagnostic-minimum-legal-profile-initialization",
++      llvm::cl::desc(
++          "Diagnostic extension: if a task has no successful 1-CGRA profile, "
++          "initialize it from its smallest successful profiled CGRA shape."),
++      llvm::cl::init(false)};
++
+   void runOnOperation() override {
++    if (diagnosticMinimumLegalProfileInitialization.getValue() &&
++        orchestrationStrategy.getValue() != "throughput-guided") {
++      getOperation()->emitError()
++          << "diagnostic minimum-legal-profile initialization requires the "
++             "throughput-guided strategy";
++      signalPassFailure();
++      return;
++    }
++
+     SchedulingMode mode = (schedulingMode.getValue() == "spatial")
+                               ? SchedulingMode::Spatial
+                               : SchedulingMode::SpatialTemporal;
+@@ -85,7 +103,8 @@
+     std::unique_ptr<Orchestration> strategy = createOrchestrationStrategy(
+         orchestrationStrategy.getValue(), architecture.getMultiCgraRows(),
+         architecture.getMultiCgraColumns(), mode, taskProfileJson.getValue(),
+-        architecture.getMaxContextMemItems());
++        architecture.getMaxContextMemItems(),
++        diagnosticMinimumLegalProfileInitialization.getValue());
+     if (!strategy) {
+       getOperation()->emitError() << "unknown task orchestration strategy: "
+                                   << orchestrationStrategy.getValue();
+--- a/lib/TaskflowDialect/Transforms/ProfileTaskCandidatesPass.cpp
++++ b/lib/TaskflowDialect/Transforms/ProfileTaskCandidatesPass.cpp
+@@ -11,6 +11,8 @@
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/SCF/IR/SCF.h"
+ #include "mlir/Pass/Pass.h"
++
++#include <set>
+ 
+ using namespace mlir;
+ using namespace mlir::taskflow;
+@@ -56,6 +58,12 @@
+                      "counters during profiling."),
+       llvm::cl::init(256)};
+ 
++  Option<std::string> taskNames{
++      *this, "task-names",
++      llvm::cl::desc("Optional semicolon-separated exact Taskflow task names "
++                     "to profile; empty means all tasks."),
++      llvm::cl::init("")};
++
+   void runOnOperation() override {
+     if (outputJson.getValue().empty()) {
+       getOperation().emitError()
+@@ -74,10 +82,64 @@
+       return;
+     }
+ 
++    SmallVector<TaskflowTaskOp> selectedTasks;
++    StringRef requested_names = taskNames.getValue();
++    if (!requested_names.empty()) {
++      SmallVector<StringRef> requested_names_split;
++      requested_names.split(requested_names_split, ';', -1,
++                            /*KeepEmpty=*/true);
++
++      std::set<std::string> unique_names;
++      for (StringRef requested_name : requested_names_split) {
++        requested_name = requested_name.trim();
++        if (requested_name.empty()) {
++          getOperation().emitError()
++              << "task-names contains an empty task name";
++          signalPassFailure();
++          return;
++        }
++        if (!unique_names.insert(requested_name.str()).second) {
++          getOperation().emitError()
++              << "task-names contains duplicate task name '" << requested_name
++              << "'";
++          signalPassFailure();
++          return;
++        }
++      }
++
++      for (StringRef requested_name : requested_names_split) {
++        requested_name = requested_name.trim();
++        TaskflowTaskOp match;
++        unsigned match_count = 0;
++        getOperation().walk([&](TaskflowTaskOp task) {
++          if (task.getTaskName() == requested_name) {
++            match = task;
++            ++match_count;
++          }
++        });
++        if (match_count == 0) {
++          getOperation().emitError()
++              << "task-names references unknown task '" << requested_name
++              << "'";
++          signalPassFailure();
++          return;
++        }
++        if (match_count != 1) {
++          getOperation().emitError()
++              << "task-names task name '" << requested_name
++              << "' matches multiple Taskflow tasks";
++          signalPassFailure();
++          return;
++        }
++        selectedTasks.push_back(match);
++      }
++    }
++
+     TaskProfiler profiler(maxComposedCgraCount.getValue(),
+                           symbolBoundTripCount.getValue());
+     if (failed(profiler.profileFunctionToJson(getOperation(),
+-                                              outputJson.getValue()))) {
++                                              outputJson.getValue(),
++                                              selectedTasks))) {
+       signalPassFailure();
+     }
+   }
