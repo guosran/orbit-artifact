@@ -1,0 +1,238 @@
+{
+  "schema": "orbit-fission-disjoint-history-r10c-receipt-v1",
+  "status": "passed",
+  "receipt_scope": {
+    "capture": "R10c disjoint-history fission search and exact replay",
+    "validates": [
+      "ordinary typed history on a known task footprint disjoint from the fission target can be retained while generating a fission edge",
+      "fission materialization is rebuilt from the prepared source and the complete typed history is replayed",
+      "parent shape coverage is rebased across the split and the resulting complete task set is shape-covered",
+      "the exact replayed candidate matches an independently retained fresh-cost candidate witness"
+    ],
+    "does_not_claim": [
+      "a fresh performance result or completed later cohort",
+      "native mapping of the positive candidate",
+      "prediction or ranking performed by the exact replay",
+      "numeric, trace, SRAM, or formal validation",
+      "runtime exercise of every possible unknown/global-footprint rejection branch"
+    ],
+    "absolute_capture_paths_are_provenance_only": true
+  },
+  "search": {
+    "stage": "full-joint-fission",
+    "function": "fission_rebase_disjoint_history",
+    "rounds": 4,
+    "rounds_completed": 4,
+    "beam_width": 16,
+    "diversity_slots": 4,
+    "max_candidates": 4096,
+    "max_partition_factor": 8,
+    "scoring_workers": 4,
+    "parallel_score_jobs": 285,
+    "unique_complete_candidates_scored": 286,
+    "stop_reason": "no-new-legal-candidates",
+    "fission_source_replay_verified": true,
+    "fission_menu_inventory": {
+      "complete_cut_actions": 7,
+      "max_fission_actions_per_task": 64,
+      "supported_task_cuts": {
+        "Task_0": 3,
+        "Task_1": 4
+      }
+    }
+  },
+  "fission_current_edge": {
+    "count_semantics": "Counts are additive events for the current fission edge only. Candidate IDs may occur in multiple action-family path-presence sets; family counts must not be summed as global unique-candidate counts.",
+    "menu": 329,
+    "generated": 66,
+    "attempted": 66,
+    "materialized": 66,
+    "reject": 263,
+    "reject_reasons": {
+      "menu:canonical_reset": 7,
+      "menu:shape_target_overlap": 210,
+      "menu:target_already_fissioned": 25,
+      "menu:task_footprint_overlap": 21
+    },
+    "unique": 29,
+    "duplicate": 37,
+    "fresh_cost_prepared": 20,
+    "fresh_cost_scored": 20,
+    "cache_reused": 9,
+    "scheduler_calls": 29,
+    "scheduler_pass": 29,
+    "scheduler_reject": 0,
+    "archive": 66,
+    "pending_unattempted": 0,
+    "pending_unattempted_action_signatures": []
+  },
+  "positive_candidate": {
+    "candidate_id": "neighborhood-677",
+    "parent_candidate_id": "neighborhood-21",
+    "round": 1,
+    "predicted_whole_program_cycles_in_search_record": 26,
+    "candidate_edge": {
+      "action_family": "fission",
+      "action_label": "fission:Task_0:left=0,1,2",
+      "typed_primitive": {
+        "kind": "fission",
+        "first_task": "Task_0",
+        "left_nodes": [
+          0,
+          1,
+          2
+        ],
+        "axis": 0,
+        "factor": 1
+      },
+      "attempted": true,
+      "materialized": true,
+      "unique": true,
+      "duplicate": false,
+      "archive": true,
+      "cache_reused": true,
+      "fresh_cost_prepared_for_this_edge": false,
+      "fresh_cost_scored_for_this_edge": false,
+      "scheduler_calls": 1,
+      "scheduler_pass": true,
+      "reject_reason": ""
+    },
+    "preexisting_ordinary_history": [
+      {
+        "family": "shape",
+        "label": "shape:Task_1:1x2",
+        "shape_task": "Task_1",
+        "rows": 1,
+        "cols": 2,
+        "canonical_reset": false
+      }
+    ],
+    "preexisting_replication_actions": [],
+    "preexisting_tiling_actions": [],
+    "typed_action_history": {
+      "schema": "orbit-joint-neighborhood-typed-actions-v1",
+      "known": true,
+      "unknown_reason": "",
+      "canonical_fact_key_at_search_attempt": "graph-2",
+      "actions": [
+        {
+          "family": "shape",
+          "label": "shape:Task_1:1x2",
+          "shape_task": "Task_1",
+          "rows": 1,
+          "cols": 2,
+          "canonical_reset": false
+        }
+      ],
+      "fissionActions": [
+        {
+          "family": "fission",
+          "label": "fission:Task_0:left=0,1,2",
+          "primitive_kind": "fission",
+          "first_task": "Task_0",
+          "left_nodes": [
+            0,
+            1,
+            2
+          ],
+          "axis": 0,
+          "factor": 1,
+          "canonical_reset": false
+        }
+      ],
+      "generator_history_order": "The parent ordinary shape action was present before this fission edge; ordinary actions and fissionActions remain separately typed in the candidate history.",
+      "replay_order": [
+        "fission:Task_0:left=0,1,2",
+        "shape:Task_1:1x2"
+      ]
+    },
+    "rebased_initial_shapes": [
+      {
+        "task": "Task_0.split.0",
+        "rows": 1,
+        "cols": 1
+      },
+      {
+        "task": "Task_0.split.1",
+        "rows": 1,
+        "cols": 1
+      },
+      {
+        "task": "Task_1",
+        "rows": 1,
+        "cols": 1
+      }
+    ],
+    "shape_coverage_after_replay": [
+      {
+        "task": "Task_0.split.0",
+        "rows": 1,
+        "cols": 1
+      },
+      {
+        "task": "Task_0.split.1",
+        "rows": 1,
+        "cols": 1
+      },
+      {
+        "task": "Task_1",
+        "rows": 1,
+        "cols": 2
+      }
+    ],
+    "replay_result": {
+      "status": "pass",
+      "exit_code": 0,
+      "actions_applied": 2,
+      "task_count_after_shape_suffix": 3,
+      "fission_source_replay_verified": true,
+      "source_iteration_domain_verified": true,
+      "ordinary_suffix_source_partition_proof": "verified-and-refreshed",
+      "expected_candidate_exact_replay_match": true,
+      "comparison": "exact-generic-module-after-removing-only-function-graph-variant-id",
+      "native_mapping_run": false,
+      "prediction_run": false,
+      "ranking_performed": false
+    },
+    "expected_candidate_witness_origin": {
+      "candidate_id": "neighborhood-677",
+      "source_record": "search/archive.journal.jsonl",
+      "cost_catalogue": "search/costs-graph-catalogue-17.json",
+      "field": "predictor_metadata.canonical_module_witness",
+      "witness_file": "fresh-cost-positive-candidate-witness.mlir",
+      "is_synthesized_by_this_receipt": false
+    },
+    "family_best_is_separate": {
+      "candidate_id": "neighborhood-968",
+      "global_rank": 91,
+      "score": 21,
+      "candidate_path_retained": false,
+      "not_the_exact_replay_positive": true
+    }
+  },
+  "resume_archive_history": {
+    "downgrade_reason": "checkpoint_archive_history_has_no_retained_candidate_module",
+    "scored_candidate_count_downgraded_to_unknown": 122,
+    "scored_event_count_downgraded_to_unknown": 122,
+    "positive_candidate_history_source": "authenticated_pre_downgrade_journal_plus_exact_replay",
+    "positive_candidate_reauthenticated_without_mutating_downgraded_archive": true,
+    "unknown_candidates_assigned_family_by_inference": false
+  },
+  "evidence": {
+    "capture_root": "/tmp/orbit-r10c-fission-rebase-native-20261007",
+    "receipt_files": [
+      "funnel-checker-with-exact.stdout.json",
+      "exact-replay-record.json",
+      "accepted-disjoint-fission-candidate.json",
+      "external-exact-replay/source-facts.json",
+      "search/diagnostics/family-funnel.jsonl (candidate_attempt for neighborhood-677)",
+      "search/search-summary.json",
+      "search/archive.journal.jsonl (expected-witness origin)",
+      "search/costs-graph-catalogue-17.json (expected-witness origin)",
+      "fresh-cost-positive-candidate-witness.mlir"
+    ],
+    "capture_paths_are_local_provenance_not_portable_bindings": true,
+    "large_checkpoint_dump_included": false,
+    "source_or_runtime_artifacts_copied_into_this_receipt": false
+  }
+}
