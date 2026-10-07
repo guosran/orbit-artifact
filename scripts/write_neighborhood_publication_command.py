@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 from typing import Any, Mapping, Sequence
@@ -35,6 +36,13 @@ SHARED_ORBIT_SCHEDULER = {
 
 class CommandError(RuntimeError):
     """The requested launch profile is not portable or not v19-shaped."""
+
+
+def contains_machine_local_path(text: str) -> bool:
+    # Contracts embed validator source text. A bare root used by a validator
+    # such as "/home/" is not a machine binding; an actual user path is.
+    return bool(re.search(r"/(?:home|Users)/[^\s\"'\\]+", text) or
+                re.search(r"[A-Za-z]:\\\\Users\\\\[^\s\"']+", text))
 
 
 def read_json(path: Path, label: str) -> dict[str, Any]:
@@ -368,7 +376,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if protocol.get("source_commit") != contract.get("source_commit"):
         raise CommandError("protocol source_commit differs from the exact source/model contract")
     contract_text = source_contract.read_text()
-    if any(marker in contract_text for marker in ("/home/", "/Users/", "C:\\Users\\")):
+    if contains_machine_local_path(contract_text):
         raise CommandError("source contract contains a machine-local absolute path")
     source_head = git_value(source_root, "rev-parse", "HEAD")
     source_base = git_value(source_root, "rev-parse", "--verify", f"{args.source_base}^{{commit}}")
@@ -519,7 +527,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "Ray bound protocol")
         command[command.index("--config") + 1] = runtime_path(runtime_config_path, artifact_root)
     serialized_protocol = json.dumps(protocol, indent=2, sort_keys=True) + "\n"
-    if any(marker in serialized_protocol for marker in ("/home/", "/Users/", "C:\\Users\\")):
+    if contains_machine_local_path(serialized_protocol):
         raise CommandError("bound protocol contains a machine-local absolute path")
     serialized_command = json.dumps(command, indent=2) + "\n"
     write_exact(protocol_output, serialized_protocol, "bound protocol")

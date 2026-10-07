@@ -223,3 +223,11 @@ def test_five_stage_command_writer_binds_ray_override_without_changing_prepared_
     assert all("protocol" not in runtime["workloads"][w] for w in command.WORKLOADS if w != "raytracing")
     argv = json.loads(command_file.read_text())
     assert argv[argv.index("--config") + 1].endswith("input0-chain-runtime-ii23.json")
+
+
+def test_embedded_path_validator_source_is_not_a_machine_binding():
+    assert not command.contains_machine_local_path('forbidden = ("/home/", "/Users/")')
+    for text in ('{"optimizer": "/home/user/build/optimizer"}',
+                 '{"optimizer": "/Users/user/build/optimizer"}',
+                 json.dumps({"optimizer": "C:\\Users\\user\\build\\optimizer"})):
+        assert command.contains_machine_local_path(text)
