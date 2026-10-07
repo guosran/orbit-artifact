@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -11,6 +12,7 @@ import sys
 
 from neighborhood_replay import infer_function
 from replay_cpp_global_top5 import invoke, write
+import prepare_input0_source_domains as source_domains
 import validate_embedded_native_trace as trace_validator
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -135,6 +137,12 @@ def _recorded_command(record, label, argument_index=None):
 
 
 def validate_ray_canonical_proof(canonical, entry, config_base):
+    identity_value = entry.get("source_identity_record")
+    lowering_value = entry.get("canonical_lowering_record")
+    if identity_value is None and lowering_value is None:
+        raise ValueError("Ray canonical proof requires fresh native proof context")
+    if identity_value is None or lowering_value is None:
+        raise ValueError("Ray canonical legacy proof records must be supplied together")
     identity_path = _entry_proof_path(entry, "source_identity_record", config_base)
     lowering_path = _entry_proof_path(entry, "canonical_lowering_record", config_base)
     try:
@@ -198,6 +206,359 @@ def validate_ray_canonical_proof(canonical, entry, config_base):
         "original_unfissioned_input": True,
         "canonical_matches_lowered_artifact_exact_bytes": True,
     }
+
+
+def _proof_json(path, label):
+    if path.is_symlink() or not path.is_file():
+        raise ValueError(f"Ray fresh canonical proof {label} is missing or unsafe: {path}")
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError(f"Ray fresh canonical proof {label} is unreadable: {error}") from error
+    return _require_mapping(value, label)
+
+
+def _bind_ray_optimizer_and_source(protocol, args):
+    """Fail closed unless the native proof uses the protocol-pinned source and binary."""
+    if (protocol.get("model_namespace") != DIRECT_MODEL_NAMESPACE or
+            protocol.get("source_git_repository") != SOURCE_REPOSITORY or
+            not isinstance(protocol.get("source_commit"), str) or
+            not protocol.get("source_commit")):
+        raise ValueError("Ray diagnostic protocol lacks the pinned direct-model source identity")
+    optimizer_pin = protocol.get("optimizer_pin")
+    if not isinstance(optimizer_pin, str) or not optimizer_pin:
+        raise ValueError("Ray diagnostic protocol lacks its immutable optimizer pin")
+    pinned_optimizer = _protocol_file_path(optimizer_pin, "optimizer_pin")
+    if (args.optimizer.is_symlink() or args.optimizer.resolve() != pinned_optimizer or
+            not args.optimizer.is_file()):
+        raise ValueError("Ray canonical proof optimizer differs from the bound immutable optimizer pin")
+    if args.source_contract_file.is_symlink():
+        raise ValueError("Ray canonical proof source/model contract may not be a symlink")
+    source_contract_path = args.source_contract_file.resolve()
+    source_contract = _proof_json(source_contract_path, "source/model contract")
+    expected_contract_binding = protocol.get("source_contract_file")
+    if not isinstance(expected_contract_binding, str) or not expected_contract_binding:
+        raise ValueError("Ray diagnostic protocol lacks its source-contract path binding")
+    if _protocol_file_path(expected_contract_binding, "source_contract_file") != source_contract_path:
+        raise ValueError("Ray canonical proof source-contract path differs from the bound protocol")
+    if (source_contract.get("schema") != "orbit-neighborhood-exact-source-model-contract-v1" or
+            source_contract.get("source_commit") != protocol.get("source_commit") or
+            source_contract.get("published_source_commit") != protocol.get("project_source_commit") or
+            source_contract.get("model_namespace") != protocol.get("model_namespace") or
+            source_contract.get("immutable_optimizer_pin") != optimizer_pin or
+            protocol.get("project_source_commit") != protocol.get("source_commit")):
+        raise ValueError("Ray canonical proof source/model contract differs from the pinned protocol")
+    replay_payloads = source_contract.get("replay_payloads")
+    required_replay_payloads = {
+        "scripts/run_input0_all_unit_baselines.py": Path(__file__).resolve(),
+        "scripts/prepare_input0_source_domains.py": Path(source_domains.__file__).resolve(),
+    }
+    observed_replay_payloads = {}
+    if not isinstance(replay_payloads, list):
+        raise ValueError("Ray source/model contract lacks exact runtime replay payloads")
+    for row in replay_payloads:
+        if (not isinstance(row, dict) or not isinstance(row.get("path"), str) or
+                not isinstance(row.get("text"), str)):
+            raise ValueError("Ray source/model contract has a malformed runtime replay payload")
+        relative = Path(row["path"])
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError("Ray runtime replay payload paths must remain artifact-relative")
+        if row["path"] in required_replay_payloads:
+            if row["path"] in observed_replay_payloads:
+                raise ValueError("Ray source/model contract repeats a required runtime replay payload")
+            observed_replay_payloads[row["path"]] = row["text"]
+    if set(observed_replay_payloads) != set(required_replay_payloads):
+        raise ValueError("Ray source/model contract does not bind the fresh proof runner and source preparer")
+    for relative, path in required_replay_payloads.items():
+        if not path.is_file() or path.read_bytes() != observed_replay_payloads[relative].encode("utf-8"):
+            raise ValueError(f"Ray source/model contract runtime payload differs from {relative}")
+    model_payloads = source_contract.get("model_payloads")
+    if not isinstance(model_payloads, list):
+        raise ValueError("Ray source/model contract lacks exact model payloads")
+    model_ensemble = _protocol_file_path(protocol.get("model_ensemble"), "model_ensemble")
+    matching_models = [row for row in model_payloads
+                       if isinstance(row, dict) and row.get("path") == model_ensemble.name]
+    if (len(matching_models) != 1 or
+            model_ensemble.is_symlink() or not model_ensemble.is_file() or
+            matching_models[0].get("text") != model_ensemble.read_text(encoding="utf-8")):
+        raise ValueError("Ray source/model contract model payload differs from the pinned ensemble")
+    return source_contract
+
+
+def _validate_fresh_ray_preparation(canonical, prepared_source, config_base):
+    """Check that this config is the current original-Ray, unfissioned II23 preparation."""
+    config_base = config_base.resolve()
+    try:
+        canonical.resolve().relative_to(config_base)
+        prepared_source.resolve().relative_to(config_base)
+    except ValueError as error:
+        raise ValueError(
+            "Ray canonical and prepared source must belong to the fresh source-domain preparation"
+        ) from error
+    if (canonical.parent.name != "raytracing" or
+            prepared_source.parent != canonical.parent or
+            canonical.name != "canonical.mlir" or
+            prepared_source.name != "pre-neura.mlir"):
+        raise ValueError("Ray fresh config does not name the original canonical/prepared source pair")
+    top_path = config_base / "preparation.json"
+    workload_path = canonical.parent / "preparation.json"
+    top = _proof_json(top_path, "preparation record")
+    workload = _proof_json(workload_path, "Ray workload preparation record")
+    ceilings = top.get("runtime_ii_ceiling_by_workload")
+    if (top.get("schema") != "orbit-input0-neighborhood-v19-preparation-v1" or
+            top.get("status") != "prepared" or
+            "raytracing" not in top.get("workloads", []) or
+            top.get("ray_fission_split_at") != 0 or
+            top.get("training_ii_ceiling") != TRAINING_II_CEILING or
+            not isinstance(ceilings, dict) or
+            ceilings.get("raytracing") != DIAGNOSTIC_RUNTIME_II_CEILING or
+            Path(str(top.get("source_domain_output", ""))).resolve() != config_base):
+        raise ValueError("Ray top-level preparation is not the fresh original-source II23 cohort")
+    if (workload.get("workload") != "raytracing" or
+            workload.get("function") != source_domains.CONTRACTS["raytracing"]["function"] or
+            workload.get("status") != "prepared" or
+            Path(str(workload.get("canonical", ""))).resolve() != canonical.resolve() or
+            Path(str(workload.get("prepared_source_file", ""))).resolve() != prepared_source.resolve() or
+            workload.get("ray_fission_split_at") != 0 or
+            workload.get("runtime_ii_ceiling") != DIAGNOSTIC_RUNTIME_II_CEILING or
+            workload.get("training_ii_ceiling") != TRAINING_II_CEILING or
+            workload.get("complete_task_count") != len(RAY_TASKS)):
+        raise ValueError("Ray workload preparation is not the exact unfissioned original 27-task source")
+    return top_path, workload_path
+
+
+def _validate_fresh_ray_facts(path, function):
+    facts = _proof_json(path, "fresh native task census")
+    tasks = facts.get("tasks")
+    names = [item.get("task_name") for item in tasks] if isinstance(tasks, list) else None
+    if (facts.get("function") != function or
+            not isinstance(tasks, list) or len(tasks) != len(RAY_TASKS) or
+            tuple(names) != RAY_TASKS):
+        raise ValueError("fresh native Ray census differs from original Task_0..Task_26")
+    source_domains.validate_facts(path, "raytracing", expected_task_count=len(RAY_TASKS))
+    return facts
+
+
+def validate_fresh_ray_canonical_proof(canonical, entry, config_base, *, args, protocol,
+                                       proof_directory):
+    """Recreate the original 27-task Ray source with native passes and bind the result."""
+    if entry.get("source_identity_record") is not None or entry.get("canonical_lowering_record") is not None:
+        raise ValueError("fresh Ray proof cannot mix legacy source records with prepared-source evidence")
+    prepared_source = _entry_proof_path(entry, "prepared_source_file", config_base)
+    if canonical.is_symlink() or prepared_source.is_symlink():
+        raise ValueError("Ray canonical or prepared source may not be a symlink")
+    if not canonical.is_file() or not prepared_source.is_file():
+        raise ValueError("Ray canonical or prepared source is missing")
+    top_prep, workload_prep = _validate_fresh_ray_preparation(
+        canonical, prepared_source, config_base)
+    _bind_ray_optimizer_and_source(protocol, args)
+
+    inputs = source_domains.load_inputs(ROOT, ("raytracing",))
+    source_record = inputs.records["raytracing"]
+    if (source_record.get("benchmark_source") != "Evaluation/Raytracing/L3/raytracing.mlir" or
+            source_record.get("fixed_input") != 0 or
+            source_record.get("static_scalar_argument") != 0 or
+            source_record.get("static_scalar_value") != 1472 or
+            source_record.get("source_contains_complete_affine_domains") is not True):
+        raise ValueError("Ray source-domain manifest is not the original fixed-input-0 program")
+    if proof_directory.exists() or proof_directory.is_symlink():
+        raise ValueError(f"Ray fresh source-proof output must be new: {proof_directory}")
+    proof_directory.mkdir(parents=True)
+    proof_output = proof_directory / "native-repreparation"
+    generated_dir = proof_output / "raytracing"
+    generated_dir.mkdir(parents=True)
+    plan = source_domains.command_plan(
+        args.optimizer, args.architecture, inputs, "raytracing", generated_dir,
+        None, False, allow_unsupported_model_shapes=False, ray_fission_split_at=0)
+    prepared_output = generated_dir / "pre-neura.mlir"
+    if "prepare-fission-source" not in plan:
+        # Older source-domain preparer versions have no emit-fission-source
+        # switch. Recreate the exact two-pass source-owned prepared input used
+        # by current fresh configs, then feed it to the preparer's native
+        # canonical suffix rather than trusting an archived pass transcript.
+        shaped_input = plan["normalize"][1]
+        plan["prepare-fission-source"] = [
+            str(args.optimizer), shaped_input, "--verify-each", "--mlir-print-op-generic",
+            f"--architecture-spec={args.architecture}",
+            "--construct-hyperblock-from-task", "--classify-task-and-counter",
+            "-o", str(prepared_output),
+        ]
+        plan["normalize"] = list(plan["normalize"])
+        plan["normalize"][1] = str(prepared_output)
+    expected_step_names = (
+        "taskflow", "caller-noalias", "bind-caller-shapes",
+        "prepare-fission-source", "normalize", "facts", "verify-source-domain",
+    )
+    if set(plan) != set(expected_step_names):
+        raise ValueError("native Ray proof plan has unexpected or missing source-preparation steps")
+    # The source-domain helper returns an insertion-ordered dict. The fresh
+    # source-preparation pass is inserted after its existing canonical steps
+    # above, so normalize ordering before recording and executing the plan.
+    plan = {label: plan[label] for label in expected_step_names}
+    if tuple(plan) != expected_step_names:
+        raise ValueError("native Ray proof plan is not the exact unfissioned source-preparation pipeline")
+    plan_path = generated_dir / "plan.json"
+    plan_record = {
+        "schema": "orbit-ray-native-source-repreparation-plan-v1",
+        "workload": "raytracing",
+        "function": source_domains.CONTRACTS["raytracing"]["function"],
+        "expected_task_count": len(RAY_TASKS),
+        "ray_fission_split_at": 0,
+        "steps": plan,
+        "dry_run": False,
+    }
+    write(plan_path, plan_record)
+    step_records = []
+    try:
+        for label in expected_step_names:
+            step_records.append(source_domains.invoke(plan[label], generated_dir, label))
+    except source_domains.PreparationError as error:
+        raise ValueError(f"native Ray source re-preparation failed: {error}") from error
+    generated_canonical = generated_dir / "canonical.mlir"
+    generated_prepared = generated_dir / "pre-neura.mlir"
+    generated_facts = generated_dir / "facts.json"
+    facts = _validate_fresh_ray_facts(
+        generated_facts, source_domains.CONTRACTS["raytracing"]["function"])
+    source_domain_receipt_path = generated_dir / "source-iteration-domain-proof.json"
+    source_domain_receipt = {
+        "schema": "orbit-source-iteration-domain-verification-run-v1",
+        "workload": "raytracing",
+        "function": source_domains.CONTRACTS["raytracing"]["function"],
+        "status": "cpp-verifier-passed",
+        "verifier": "verify-source-iteration-domain-partitions",
+        "canonical_module": str(generated_canonical),
+        "complete_task_count": len(facts["tasks"]),
+        "task_count": len(facts["tasks"]),
+        "command": step_records[-1],
+    }
+    write(source_domain_receipt_path, source_domain_receipt)
+    summary = {
+        "schema": "orbit-ray-native-source-repreparation-v1",
+        "status": "prepared",
+        "plan": str(plan_path),
+        "steps": step_records,
+        "complete_task_count": len(facts["tasks"]),
+        "ray_fission_split_at": 0,
+    }
+    write(generated_dir / "preparation.json", summary)
+    plan_record = _proof_json(Path(str(summary.get("plan", ""))), "native re-preparation plan")
+    plan_steps = plan_record.get("steps")
+    step_records = summary.get("steps")
+    if (plan_record.get("schema") != "orbit-ray-native-source-repreparation-plan-v1" or
+            plan_record.get("workload") != "raytracing" or
+            plan_record.get("expected_task_count") != len(RAY_TASKS) or
+            plan_record.get("dry_run") is not False or
+            not isinstance(plan_steps, dict) or set(plan_steps) != set(expected_step_names) or
+            not isinstance(step_records, list) or len(step_records) != len(expected_step_names)):
+        raise ValueError("native Ray proof plan is not the exact unfissioned source-preparation pipeline")
+    for label, step in zip(expected_step_names, step_records):
+        if (not isinstance(step, dict) or step.get("exit_code") != 0 or
+                step.get("argv") != plan_steps[label]):
+            raise ValueError(f"native Ray proof step {label} did not successfully execute its recorded exact command")
+    source_domain_receipt = _proof_json(
+        source_domain_receipt_path,
+        "native source-domain verifier receipt")
+    if (source_domain_receipt.get("schema") != "orbit-source-iteration-domain-verification-run-v1" or
+            source_domain_receipt.get("status") != "cpp-verifier-passed" or
+            Path(str(source_domain_receipt.get("canonical_module", ""))).resolve() != generated_canonical.resolve() or
+            source_domain_receipt.get("task_count") != len(RAY_TASKS) or
+            source_domain_receipt.get("complete_task_count") != len(RAY_TASKS)):
+        raise ValueError("fresh native Ray source-domain verifier receipt differs from the exact 27-task canonical")
+    configured_taskflow = canonical.parent / "taskflow-affine.mlir"
+    generated_taskflow = generated_dir / "taskflow-affine.mlir"
+    if (configured_taskflow.is_symlink() or generated_taskflow.is_symlink() or
+            not configured_taskflow.is_file() or not generated_taskflow.is_file()):
+        raise ValueError("Ray fresh config lacks its source-owned taskflow input for exact native comparison")
+    try:
+        canonical_bytes = canonical.read_bytes()
+        prepared_bytes = prepared_source.read_bytes()
+        configured_taskflow_bytes = configured_taskflow.read_bytes()
+        generated_taskflow_bytes = generated_taskflow.read_bytes()
+        generated_canonical_bytes = generated_canonical.read_bytes()
+        generated_prepared_bytes = generated_prepared.read_bytes()
+    except OSError as error:
+        raise ValueError(f"Ray fresh native source/canonical artifact is unreadable: {error}") from error
+    if configured_taskflow_bytes != generated_taskflow_bytes:
+        raise ValueError("fresh native source preparation does not reproduce the configured Taskflow source bytes")
+    # Generic MLIR records the prepared-input path in source-proof attributes.
+    # Re-preparation in a fresh result directory therefore differs in that one
+    # provenance string even when the compiler output is otherwise identical.
+    # Rebase only that exact, independently compared Taskflow filename; every
+    # other byte (including any additional embedded path) must still match.
+    generated_taskflow_path = str(generated_taskflow.resolve()).encode()
+    configured_taskflow_path = str(configured_taskflow.resolve()).encode()
+    rebased_canonical_bytes = generated_canonical_bytes.replace(
+        generated_taskflow_path, configured_taskflow_path)
+    rebased_prepared_bytes = generated_prepared_bytes.replace(
+        generated_taskflow_path, configured_taskflow_path)
+    if canonical_bytes != rebased_canonical_bytes:
+        raise ValueError("fresh native source lowering differs from configured Ray canonical after exact path rebasing")
+    if prepared_bytes != rebased_prepared_bytes:
+        raise ValueError("fresh native source preparation differs from prepared_source_file after exact path rebasing")
+
+    def binding(path):
+        data = path.read_bytes()
+        return {"path": str(path.resolve()), "size_bytes": len(data),
+                "sha256": hashlib.sha256(data).hexdigest()}
+
+    def byte_binding(path, data):
+        return {"path": str(path.resolve()), "size_bytes": len(data),
+                "sha256": hashlib.sha256(data).hexdigest()}
+
+    receipt = {
+        "schema": "orbit-ray-fresh-original-canonical-source-proof-v1",
+        "proof_scope": "original-input0-unfissioned-raytracing-27-task-source",
+        "status": "pass",
+        "function": source_domains.CONTRACTS["raytracing"]["function"],
+        "task_ids": list(RAY_TASKS),
+        "task_count": len(RAY_TASKS),
+        "ray_fission_split_at": 0,
+        "runtime_ii_ceiling": DIAGNOSTIC_RUNTIME_II_CEILING,
+        "training_ii_ceiling": TRAINING_II_CEILING,
+        "source_manifest": str(inputs.manifest_path),
+        "source_input": str(inputs.source_root / source_record["input"]),
+        "source_caller_evidence": str(inputs.source_root / source_record["caller_evidence"]),
+        "source_contract": str(args.source_contract_file.resolve()),
+        "source_commit": protocol["source_commit"],
+        "model_namespace": protocol["model_namespace"],
+        "optimizer_pin": protocol["optimizer_pin"],
+        "preparation_record": str(top_prep),
+        "workload_preparation_record": str(workload_prep),
+        "native_repreparation_record": summary["plan"],
+        "native_repreparation_plan": str(summary["plan"]),
+        "native_repreparation_steps": summary["steps"],
+        "native_facts": str(generated_facts),
+        "native_source_domain_receipt": str(generated_dir / "source-iteration-domain-proof.json"),
+        "bindings": {
+            "source_input": binding(inputs.source_root / source_record["input"]),
+            "caller_evidence": binding(inputs.source_root / source_record["caller_evidence"]),
+            "configured_prepared_source": binding(prepared_source),
+            "native_prepared_source": binding(generated_prepared),
+            "path_rebased_native_prepared_source": byte_binding(generated_prepared, rebased_prepared_bytes),
+            "configured_canonical": binding(canonical),
+            "native_canonical": binding(generated_canonical),
+            "path_rebased_native_canonical": byte_binding(generated_canonical, rebased_canonical_bytes),
+            "configured_taskflow_source": binding(configured_taskflow),
+            "native_taskflow_source": binding(generated_taskflow),
+        },
+        "native_taskflow_source_matches_configured_bytes": True,
+        "native_output_path_rebase": {
+            "path_from": str(generated_taskflow.resolve()),
+            "path_to": str(configured_taskflow.resolve()),
+            "scope": "only-exact-compiler-recorded-taskflow-affine-input-path",
+        },
+        "native_steps": summary.get("steps", []),
+        "prepared_source_matches_native_recreation_after_path_rebase": True,
+        "canonical_matches_native_recreation_after_path_rebase": True,
+        "source_domain_task_ids": [task.get("task_name") for task in facts["tasks"]],
+        "source_domain_verification": "native-cpp-pass-exited-successfully",
+        "mapper_invoked": False,
+        "search_invoked": False,
+    }
+    proof_path = proof_directory / "canonical-source-proof.json"
+    write(proof_path, receipt)
+    receipt["receipt_path"] = str(proof_path)
+    return receipt
 
 
 def bound_scheduler(protocol, args, workload=None):
@@ -582,12 +943,19 @@ def measure(workload, entry, config_base, protocol, args):
         return True
 
     if ray_domain_exclusion_enabled(workload, protocol):
-        canonical_proof = validate_ray_canonical_proof(original, entry, config_base)
-        if (protocol.get("model_namespace") != DIRECT_MODEL_NAMESPACE or
-                protocol.get("source_git_repository") != SOURCE_REPOSITORY or
-                not isinstance(protocol.get("source_commit"), str) or
-                not protocol.get("source_commit")):
-            raise ValueError("Ray diagnostic protocol lacks the direct-model source identity")
+        if (entry.get("source_identity_record") is None and
+                entry.get("canonical_lowering_record") is None):
+            canonical_proof = validate_fresh_ray_canonical_proof(
+                original, entry, config_base, args=args, protocol=protocol,
+                proof_directory=directory / "canonical-source-proof")
+            result["canonical_source_proof"] = canonical_proof["receipt_path"]
+        else:
+            canonical_proof = validate_ray_canonical_proof(original, entry, config_base)
+            if (protocol.get("model_namespace") != DIRECT_MODEL_NAMESPACE or
+                    protocol.get("source_git_repository") != SOURCE_REPOSITORY or
+                    not isinstance(protocol.get("source_commit"), str) or
+                    not protocol.get("source_commit")):
+                raise ValueError("Ray diagnostic protocol lacks the direct-model source identity")
         ensemble = _protocol_file_path(protocol.get("model_ensemble"), "model_ensemble")
         if not ensemble.is_file():
             raise ValueError("Ray diagnostic protocol model ensemble is missing")
