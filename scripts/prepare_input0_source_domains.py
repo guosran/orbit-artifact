@@ -285,6 +285,8 @@ def command_plan(
     source_repository: str = MODEL_SOURCE_REPOSITORY,
     source_commit: str = MODEL_SOURCE_COMMIT,
     model_namespace: str = MODEL_NAMESPACE,
+    diagnostic_ii_ceiling: int = 20,
+    emit_fission_source: bool = False,
 ) -> dict[str, list[str]]:
     record = inputs.records[workload]
     contract = CONTRACTS[workload]
@@ -379,6 +381,15 @@ def command_plan(
             *common, "-o", str(fissioned),
         ]
         normalize_input = fissioned
+    if emit_fission_source:
+        prepared = out / "pre-neura.mlir"
+        plan["prepare-fission-source"] = [
+            str(optimizer), str(normalize_input), *common,
+            "--architecture-spec=" + str(architecture), *prep_pipeline[:2],
+            "-o", str(prepared),
+        ]
+        normalize_input = prepared
+        prep_pipeline = prep_pipeline[2:]
     plan["normalize"] = [
         str(optimizer), str(normalize_input), *common,
         "--architecture-spec=" + str(architecture), *prep_pipeline,
@@ -387,6 +398,8 @@ def command_plan(
     ordered_keys = ["taskflow", "caller-noalias", "bind-caller-shapes"]
     if workload == "raytracing" and ray_fission_split_at:
         ordered_keys.append("ray-fission")
+    if emit_fission_source:
+        ordered_keys.append("prepare-fission-source")
     ordered_keys.extend(("normalize", "facts", "verify-source-domain"))
     plan = {key: plan[key] for key in ordered_keys}
     if include_cost:
@@ -423,6 +436,7 @@ def command_plan(
                 "source-git-commit=" + source_commit,
                 "graph-variant-id=" + GRAPH_VARIANT_ID,
                 "model-namespace=" + model_namespace,
+                "diagnostic-ii-ceiling=" + str(diagnostic_ii_ceiling),
                 "cache=" + str(cache),
                 "output=" + str(cost),
             )),
@@ -661,6 +675,8 @@ def prepare_one(
     source_repository: str = MODEL_SOURCE_REPOSITORY,
     source_commit: str = MODEL_SOURCE_COMMIT,
     model_namespace: str = MODEL_NAMESPACE,
+    diagnostic_ii_ceiling: int = 20,
+    emit_fission_source: bool = False,
 ) -> dict[str, Any]:
     out = output_root / workload
     out.mkdir(parents=True, exist_ok=True)
@@ -671,7 +687,7 @@ def prepare_one(
     plan = command_plan(optimizer, architecture, inputs, workload, out, model,
                         include_cost, allow_unsupported_model_shapes,
                         active_fission_split, source_repository, source_commit,
-                        model_namespace)
+                        model_namespace, diagnostic_ii_ceiling, emit_fission_source)
     plan_path = out / "plan.json"
     plan_record = {
         "workload": workload,
@@ -702,7 +718,11 @@ def prepare_one(
         "facts": str(out / "facts.json"),
         "caller_noalias_proof": str(out / "caller-noalias-proof.json"),
         "ray_fission_split_at": active_fission_split,
+        "runtime_ii_ceiling": diagnostic_ii_ceiling,
+        "training_ii_ceiling": 20,
     }
+    if emit_fission_source:
+        summary["prepared_source_file"] = str(out / "pre-neura.mlir")
     source_correction = inputs.records[workload].get("source_correction")
     if source_correction is not None:
         summary["source_correction"] = source_correction
@@ -711,6 +731,8 @@ def prepare_one(
         labels = ["taskflow", "caller-noalias", "bind-caller-shapes"]
         if active_fission_split:
             labels.append("ray-fission")
+        if emit_fission_source:
+            labels.append("prepare-fission-source")
         labels.append("normalize")
         for label in labels:
             summary["steps"].append(invoke(plan[label], out, label))
@@ -771,6 +793,9 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Neura architecture YAML used by C++ passes.")
     parser.add_argument("--model", type=Path,
                         help="Formal model directory or ensemble.json; required for --cost-catalog.")
+    parser.add_argument("--diagnostic-ii-ceiling", type=int, choices=(20, 23), default=20)
+    parser.add_argument("--emit-fission-source", action="store_true",
+                        help="Preserve the exact source-owned pre-Neura seam for S5 replay.")
     parser.add_argument("--source-repository")
     parser.add_argument("--source-commit")
     parser.add_argument("--model-namespace")
@@ -803,6 +828,8 @@ def main(argv: list[str] | None = None) -> int:
             raise PreparationError(
                 "--ray-fission-split-at requires raytracing in --workloads"
             )
+        if args.diagnostic_ii_ceiling == 23 and selected != ["raytracing"]:
+            raise PreparationError("II23 diagnostic source preparation must select only original Ray")
         inputs = load_inputs(args.artifact_root, selected)
         optimizer = optimizer_path(args.optimizer)
         architecture = args.architecture.resolve()
@@ -820,8 +847,16 @@ def main(argv: list[str] | None = None) -> int:
                 if args.model_namespace and args.model_namespace != namespace:
                     raise PreparationError("model namespace differs from the direct 2x2 ensemble")
                 args.model_namespace = namespace
-                if metadata.get("architecture", {}).get("exact_yaml_text") != architecture.read_text():
-                    raise PreparationError("architecture bytes differ from the direct 2x2 model")
+                training = metadata.get("architecture", {}).get("exact_yaml_text")
+                if not isinstance(training, str):
+                    raise PreparationError("direct 2x2 model has no exact training architecture")
+                expected = training
+                if args.diagnostic_ii_ceiling == 23:
+                    if len(re.findall(r"(?m)^[ \t]*ctrl_mem_items: 20$", training)) != 1:
+                        raise PreparationError("II23 requires exact control-memory20 training architecture")
+                    expected = re.sub(r"(?m)^([ \t]*ctrl_mem_items: )20$", r"\g<1>23", training)
+                if expected != architecture.read_text():
+                    raise PreparationError("architecture bytes differ from the bound direct 2x2 runtime ceiling")
         args.source_repository = args.source_repository or MODEL_SOURCE_REPOSITORY
         args.source_commit = args.source_commit or MODEL_SOURCE_COMMIT
         args.model_namespace = args.model_namespace or MODEL_NAMESPACE
@@ -846,7 +881,8 @@ def main(argv: list[str] | None = None) -> int:
                                    model, args.cost_catalog, args.dry_run,
                                    args.allow_unsupported_model_shapes,
                                    args.ray_fission_split_at, args.source_repository,
-                                   args.source_commit, args.model_namespace) for w in selected]
+                                   args.source_commit, args.model_namespace,
+                                   args.diagnostic_ii_ceiling, args.emit_fission_source) for w in selected]
         else:
             with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
                 futures = {
@@ -854,7 +890,8 @@ def main(argv: list[str] | None = None) -> int:
                             model, args.cost_catalog, args.dry_run,
                             args.allow_unsupported_model_shapes,
                             args.ray_fission_split_at, args.source_repository,
-                            args.source_commit, args.model_namespace): w
+                            args.source_commit, args.model_namespace,
+                            args.diagnostic_ii_ceiling, args.emit_fission_source): w
                     for w in selected
                 }
                 for future in concurrent.futures.as_completed(futures):

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import re
 from pathlib import Path
 import sys
 import validate_original_amoeba_fixed_retiming as existing
@@ -24,7 +25,18 @@ def require(condition, message):
     if not condition:
         raise ValueError(message)
 
-def validate_profile_inventory(profiles, architecture_text):
+def validate_profile_inventory(profiles, architecture_text, diagnostic_ii_ceiling=20):
+    require(type(diagnostic_ii_ceiling) is int and diagnostic_ii_ceiling in (20, 23),
+            'common mapper runtime ceiling must be explicitly 20 or 23')
+    training = (Path(__file__).resolve().parents[1] /
+                'config/architectures/amoeba_4x4_cgra_2x2_context6.yaml').read_text()
+    expected = training if diagnostic_ii_ceiling == 20 else re.sub(
+        r'(?m)^([ \t]*ctrl_mem_items: )20$', r'\g<1>23', training)
+    require(architecture_text == expected,
+            'common mapper runtime architecture changes fields beyond the authorized control-memory ceiling')
+    fields = re.findall(r'(?m)^[ \t]*ctrl_mem_items: ([0-9]+)[ \t]*$', architecture_text)
+    require(fields == [str(diagnostic_ii_ceiling)],
+            'common mapper architecture control memory differs from runtime ceiling')
     require(profiles.get('format') == 'amoeba-task-profile-v1' and
             profiles.get('profile_provenance') == PROFILE_PROVENANCE and
             profiles.get('duration_formula') == FORMULA and
@@ -63,6 +75,7 @@ def validate_profile_inventory(profiles, architecture_text):
             require(shape in SHAPES and shape not in by_shape, name + ': duplicate/unknown profile orientation')
             cg_rows, cg_cols = existing.shape_dims(shape, name + '.shape')
             ii = existing.require_int(row.get('compiled_ii'), name + '.compiled_ii', 1)
+            require(ii <= diagnostic_ii_ceiling, name + ': mapper II exceeds runtime ceiling')
             startup = existing.require_int(row.get('structural_startup_cycles'), name + '.startup', 0)
             existing.require_int(row.get('steps'), name + '.steps', 1)
             existing.require_int(row.get('materialized_operation_count'), name + '.ops', 1)
@@ -88,8 +101,9 @@ def validate_profile_inventory(profiles, architecture_text):
         selected[name] = by_shape
     return tasks, selected
 
-def validate(ir, result, profiles, source_facts, architecture_text, network_text):
-    tasks, profile_rows = validate_profile_inventory(profiles, architecture_text)
+def validate(ir, result, profiles, source_facts, architecture_text, network_text,
+             diagnostic_ii_ceiling=20):
+    tasks, profile_rows = validate_profile_inventory(profiles, architecture_text, diagnostic_ii_ceiling)
     require(result.get('schema') == 'amoeba-original-fixed-decision-retiming-v1' and result.get('valid') is True and
             result.get('formal_go') is False and result.get('diagnostic_only') is True,
             'common retiming result is invalid or overstates formal admission')
@@ -193,17 +207,20 @@ def validate(ir, result, profiles, source_facts, architecture_text, network_text
             'mapped_whole_program_cycles': cycles, 'task_count': len(tasks),
             'dependency_count': communication['dependency_count'], 'routed_data_pairs': communication['routed_data_pairs'],
             'common_raw_mapper_profile_binding': 'pass', 'independent_source_domain_and_network_trace': 'pass',
-            'replica_timing_policy': REPLICA_POLICY, 'formal_go': False}
+            'replica_timing_policy': REPLICA_POLICY, 'formal_go': False,
+            'training_ii_ceiling': 20, 'runtime_ii_ceiling': diagnostic_ii_ceiling,
+            'runtime_extrapolation_enabled': diagnostic_ii_ceiling == 23}
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('original-mlir', 'result', 'profiles', 'source-facts', 'architecture', 'network', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--diagnostic-ii-ceiling', type=int, choices=(20, 23), default=20)
     args = parser.parse_args()
     try:
         value = validate(args.original_mlir.read_text(), json.loads(args.result.read_text()),
                          json.loads(args.profiles.read_text()), json.loads(args.source_facts.read_text()),
-                         args.architecture.read_text(), args.network.read_text())
+                         args.architecture.read_text(), args.network.read_text(), args.diagnostic_ii_ceiling)
     except (OSError, ValueError, KeyError, TypeError) as error:
         value = {'schema': 'orbit-common-amoeba-retiming-validation-v1', 'status': 'fail', 'error': str(error)}
     args.output.parent.mkdir(parents=True, exist_ok=True)

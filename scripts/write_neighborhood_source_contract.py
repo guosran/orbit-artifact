@@ -50,6 +50,19 @@ REPLAY_FILES = (
     "scripts/validate_original_amoeba_fixed_retiming.py",
     "config/architectures/amoeba_4x4_vectorcgra_sram.json",
 )
+DIRECT_REPLAY_FILES = (
+    "scripts/cleanup_neighborhood_temporaries.py",
+    "scripts/prepare_input0_source_domains.py",
+    "scripts/prepare_input0_neighborhood_reproduction.py",
+    "scripts/replay_common_amoeba_baseline.py",
+    "scripts/run_common_amoeba_profiles.py",
+    "scripts/run_input0_memory_fusion_fission_queue.py",
+    "scripts/run_neighborhood_parallel_batch.py",
+    "scripts/run_neighborhood_parallel_recovery.py",
+    "scripts/validate_common_amoeba_retiming.py",
+    "config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+    "config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+)
 MODEL_FILES = ("ensemble.json", "baseline.json", "large-operation.json", "ranking.json")
 DIRECT_2X2_SCHEMA = "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1"
 
@@ -274,6 +287,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         replay_files[-1] = _relative(artifact_root, args.sram_config, "SRAM configuration")
     if args.inter_task_network:
         replay_files.append(_relative(artifact_root, args.inter_task_network, "inter-task network configuration"))
+    if json.loads(model_payloads[0]["text"]).get("schema") == DIRECT_2X2_SCHEMA:
+        replay_files.extend(relative for relative in DIRECT_REPLAY_FILES
+                            if relative not in replay_files)
     for relative in replay_files:
         path = artifact_root / relative
         if not path.is_file():

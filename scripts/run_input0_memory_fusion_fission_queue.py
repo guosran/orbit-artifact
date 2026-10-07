@@ -77,7 +77,7 @@ OLD_GCN_RETRY_PID = 685052
 FIXED1X1_COHORT_ID = "input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006"
 RAY_DIAGNOSTIC_II_CEILING = 23
 FIXED1X1_CLOSED_STATUSES = {"complete", "complete-with-model-domain-exclusion"}
-DEFAULT_LLVM_BUILD = Path("/home/x/shiran/llvm-project/build")
+DEFAULT_LLVM_BUILD = Path(os.environ.get("ORBIT_LLVM_BUILD", str(ARTIFACT_ROOT / ".work/llvm-build")))
 RAY_TASK_IDS = tuple(f"Task_{index}" for index in range(27))
 RAY_COST_SHAPES = ((2, 2), (2, 4), (2, 6), (2, 8),
                    (4, 2), (4, 4), (6, 2), (8, 2))
@@ -240,6 +240,18 @@ def _resolve_template_path(value: Any, artifact_root: Path, field: str) -> Path:
     return _assert_no_symlink_components(Path(expanded))
 
 
+def _cohort_ids(protocol: Mapping[str, Any]) -> tuple[str, str]:
+    cohort = protocol.get("cohort_id")
+    if (not isinstance(cohort, str) or
+            not re.fullmatch(r"input0-neighborhood-2x2-[A-Za-z0-9._-]+", cohort) or
+            ".." in cohort):
+        raise QueueError("protocol must bind a safe independent input0 cohort ID")
+    fixed = cohort.replace("input0-neighborhood-", "input0-all-unit-", 1)
+    if protocol.get("fixed1x1_cohort_id") != fixed:
+        raise QueueError("protocol fixed1x1 cohort ID must match the independent cohort revision")
+    return cohort, fixed
+
+
 def _validate_protocol(protocol: Mapping[str, Any], *, artifact_root: Path,
                        optimizer: Path, source_contract: Path,
                        architecture_relative: Path = ARCHITECTURE_RELATIVE) -> None:
@@ -279,8 +291,7 @@ def _validate_protocol(protocol: Mapping[str, Any], *, artifact_root: Path,
             protocol.get("sram_capacity_config") != "${ARTIFACT_ROOT}/" + SRAM_RELATIVE.as_posix() or
             protocol.get("model_ensemble") != "${ARTIFACT_ROOT}/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json"):
         raise QueueError("protocol architecture, SRAM, or model binding differs from the accepted runtime inputs")
-    if protocol.get("fixed1x1_cohort_id") != FIXED1X1_COHORT_ID:
-        raise QueueError("protocol fixed1x1_cohort_id must bind the fresh v60/r5 baseline cohort")
+    _cohort_ids(protocol)
     if protocol.get("inter_task_network_spec") != "${ARTIFACT_ROOT}/" + NETWORK_RELATIVE.as_posix():
         raise QueueError("protocol network must resolve to the frozen runtime common network")
 
@@ -764,9 +775,7 @@ def _worker_command(*, python: str, taskset: str, runtime_root: Path,
 
 def _next_fixed1x1_root(results_root: Path, protocol: Mapping[str, Any],
                         requested: Path | None = None) -> Path:
-    cohort = protocol.get("fixed1x1_cohort_id")
-    if cohort != FIXED1X1_COHORT_ID:
-        raise QueueError("protocol fixed1x1 cohort ID differs from the v60/r5 name")
+    _, cohort = _cohort_ids(protocol)
     if requested is not None:
         selected = _assert_no_symlink_components(requested)
         if selected.name != cohort or not str(selected).startswith("/tmp/"):
@@ -881,7 +890,6 @@ def _verify_parallel_progress(results_root: Path, workload: str) -> dict[str, An
 
 def _freeze_context(args: argparse.Namespace) -> dict[str, Any]:
     root = _regular_directory(args.artifact_root, "artifact root")
-    cohort = root / ".work" / COHORT_NAME
     protocol = _regular_file(args.protocol, "bound protocol")
     config_path = _regular_file(args.config, "workload config")
     live_optimizer = _regular_file(args.optimizer, "optimizer pin", executable=True)
@@ -892,6 +900,8 @@ def _freeze_context(args: argparse.Namespace) -> dict[str, Any]:
     sram = _regular_file(root / SRAM_RELATIVE, "public SRAM config")
     public_network = _regular_file(root / NETWORK_RELATIVE, "public common network")
     protocol_json = _json(protocol)
+    cohort_id, _ = _cohort_ids(protocol_json)
+    cohort = root / ".work" / cohort_id
     _validate_protocol(protocol_json, artifact_root=root,
                        optimizer=live_optimizer, source_contract=live_source_contract)
     _validate_contract_header(live_source_contract, protocol_json)
@@ -1552,7 +1562,7 @@ def _verify_ray_model_domain_exclusion(result: Mapping[str, Any], row: Mapping[s
 def _verify_fixed1x1_results(root: Path, context: Mapping[str, Any]) -> dict[str, Any]:
     _assert_bound_files_unchanged(context)
     root = _regular_directory(root, "fixed1x1 result root")
-    if root.name != FIXED1X1_COHORT_ID:
+    if root.name != _cohort_ids(context["protocol_json"])[1]:
         raise QueueError("fixed1x1 result directory name differs from the bound protocol cohort")
     summary_path = _regular_file(root / "summary.json", "fixed1x1 summary")
     summary = _json(summary_path)
@@ -1775,7 +1785,7 @@ def _check_resume_state(context: Mapping[str, Any], state_path: Path) -> dict[st
     if not exists:
         return None
     state = _json(state_path)
-    if state.get("schema") != STATE_SCHEMA or state.get("cohort_id") != COHORT_NAME:
+    if state.get("schema") != STATE_SCHEMA or state.get("cohort_id") != _cohort_ids(context["protocol_json"])[0]:
         raise QueueError("existing result root belongs to another coordinator schema/cohort")
     for key, path in (("optimizer", context["optimizer"]),
                       ("source_contract", context["source_contract"]),
@@ -1819,7 +1829,7 @@ def _check_resume_state(context: Mapping[str, Any], state_path: Path) -> dict[st
 
 def _initial_state(context: Mapping[str, Any], plan: Mapping[str, Any],
                    args: argparse.Namespace) -> dict[str, Any]:
-    return {"schema": STATE_SCHEMA, "cohort_id": COHORT_NAME,
+    return {"schema": STATE_SCHEMA, "cohort_id": _cohort_ids(context["protocol_json"])[0],
             "optimizer": str(context["optimizer"]),
             "accepted_optimizer": str(context["live_optimizer"]),
             "source_contract": str(context["source_contract"]),
@@ -2185,6 +2195,8 @@ def _arguments(argv: Sequence[str] | None = None) -> argparse.Namespace:
                       help="launch the durable 12-CPU coordinator after all acceptance gates")
     mode.add_argument("--status", action="store_true", help="print the public runtime status JSON")
     parser.add_argument("--artifact-root", type=Path, default=ARTIFACT_ROOT)
+    parser.add_argument("--state-file", type=Path,
+                        help="distinct runtime state file for a new bound cohort; defaults to R9")
     parser.add_argument("--protocol", type=Path)
     parser.add_argument("--config", type=Path)
     parser.add_argument("--optimizer", type=Path)
@@ -2238,7 +2250,8 @@ def _fill_defaults(args: argparse.Namespace) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     args = _arguments(argv)
     _fill_defaults(args)
-    state_path = args.artifact_root / ".work/post-publication/full-input0-memory-fusion-fission-r9-original-ray-ii23-queue-v2-runtime-20261006.json"
+    state_path = (args.state_file.absolute() if args.state_file is not None else
+                  args.artifact_root / ".work/post-publication/full-input0-memory-fusion-fission-r9-original-ray-ii23-queue-v2-runtime-20261006.json")
     try:
         if args.poll_interval_seconds <= 0:
             raise QueueError("poll interval must be positive")
@@ -2249,6 +2262,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.launch and not args.host_pid_view_verified:
             raise QueueError("--launch requires --host-pid-view-verified; the default exec sandbox may hide host PIDs")
         context = _freeze_context(args)
+        if (_cohort_ids(context["protocol_json"])[0] != COHORT_NAME and
+                args.state_file is None):
+            raise QueueError("a new cohort requires --state-file to preserve R9 state")
         if args.prepare_runtime:
             manifest = _write_freeze(args, context)
             plan = _plan(args, context, runtime_ready=True,

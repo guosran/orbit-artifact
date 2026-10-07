@@ -20,7 +20,7 @@ from run_common_amoeba_profiles import now, run, write
 from validate_common_amoeba_retiming import validate_profile_inventory
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKLOADS = ('gcn', 'harris', 'llama', 'lu', 'radar')
+WORKLOADS = ('gcn', 'harris', 'llama', 'lu', 'radar', 'raytracing')
 
 
 def capture(source: Path, target: Path) -> None:
@@ -38,13 +38,18 @@ def main() -> int:
                    'architecture', 'network'):
         parser.add_argument('--' + option, type=Path, required=True)
     parser.add_argument('--llvm-build', type=Path,
-                        default=Path('/home/x/shiran/llvm-project/build'))
+                        default=Path(os.environ['ORBIT_LLVM_BUILD']) if os.environ.get('ORBIT_LLVM_BUILD') else None,
+                        required=not bool(os.environ.get('ORBIT_LLVM_BUILD')))
     parser.add_argument('--reference-root', type=Path,
                         default=ROOT / '.work/selected-native-numeric-gate')
     parser.add_argument('--cpu', type=int, default=4)
     parser.add_argument('--workloads', nargs='+', choices=WORKLOADS,
-                        default=list(WORKLOADS))
+                        default=list(WORKLOADS[:-1]))
+    parser.add_argument('--diagnostic-ii-ceiling', type=int, choices=(20, 23), default=20)
     args = parser.parse_args()
+    if ('raytracing' in args.workloads) != (args.diagnostic_ii_ceiling == 23) or (
+            args.diagnostic_ii_ceiling == 23 and args.workloads != ['raytracing']):
+        parser.error('original Ray requires a separate runtimeII23 diagnostic run')
     if args.cpu not in range(12):
         parser.error('--cpu must be in the authorized range 0–11')
     os.sched_setaffinity(0, {args.cpu})
@@ -64,6 +69,8 @@ def main() -> int:
         'allocation_policy': 'unchanged original F45 throughput-guided allocator',
         'scheduler': 'shared ORBIT production spatial-temporal scheduler',
         'replica_duration_policy': 'ceil(full common-parent mapped duration / original active replicas)',
+        'training_ii_ceiling': 20, 'runtime_ii_ceiling': args.diagnostic_ii_ceiling,
+        'runtime_extrapolation_enabled': args.diagnostic_ii_ceiling == 23,
     }
     capture(args.source_contract, args.output_root / 'source-contract.json')
     failed = False
@@ -90,7 +97,7 @@ def main() -> int:
             capture(args.network, witness / 'network.yaml')
             profiles_path = witness / 'task-profiles.json'
             profiles = json.loads(profiles_path.read_text())
-            tasks, _ = validate_profile_inventory(profiles, args.architecture.read_text())
+            tasks, _ = validate_profile_inventory(profiles, args.architecture.read_text(), args.diagnostic_ii_ceiling)
             function = profiles['function']
             canonical = witness / 'canonical.mlir'
             scheduled = witness / 'scheduled-common-input-f45.mlir'
@@ -110,6 +117,7 @@ def main() -> int:
             write(args.output_root / 'runtime.json', state)
             options = [
                 'function=' + function, 'common-parent-profile-file=' + str(profiles_path),
+                'diagnostic-ii-ceiling=' + str(args.diagnostic_ii_ceiling),
                 'common-canonical-module-file=' + str(canonical),
                 'original-f45-replica-scaling=true',
                 'reschedule-with-production-scheduler=true', 'output=' + str(retiming),
@@ -126,7 +134,7 @@ def main() -> int:
                  '--original-mlir', str(scheduled), '--result', str(retiming),
                  '--profiles', str(profiles_path), '--source-facts', str(facts),
                  '--architecture', str(args.architecture), '--network', str(args.network),
-                 '--output', str(trace)], out, 'trace')
+                 '--output', str(trace), '--diagnostic-ii-ceiling', str(args.diagnostic_ii_ceiling)], out, 'trace')
             checked = json.loads(trace.read_text())
             if checked['status'] != 'pass':
                 raise ValueError('independent trace failed')
@@ -159,6 +167,8 @@ def main() -> int:
                 'profile_mapper_optimizer': records['profile']['argv'][0],
                 'original_allocator_optimizer': records['allocator']['argv'][0],
                 'numeric_element_comparisons': numeric.get('element_comparisons'),
+                'training_ii_ceiling': 20, 'runtime_ii_ceiling': args.diagnostic_ii_ceiling,
+                'runtime_extrapolation_enabled': args.diagnostic_ii_ceiling == 23,
             }
             write(out / 'result.json', result)
             row.update(status='complete', phase='complete', native_cycles=result['native_cycles'],

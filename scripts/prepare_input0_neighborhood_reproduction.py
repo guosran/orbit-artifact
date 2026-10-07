@@ -190,7 +190,8 @@ def build_reference_libraries(
     return built
 
 
-def make_chain_config(output_root: Path, workloads: Sequence[str], model_ensemble: Path) -> Path:
+def make_chain_config(output_root: Path, workloads: Sequence[str], model_ensemble: Path,
+                      emit_fission_source: bool = False) -> Path:
     # All generated program/cost paths are relative to this config file. The
     # chain launcher resolves them from the config directory on every machine.
     config = {
@@ -201,6 +202,8 @@ def make_chain_config(output_root: Path, workloads: Sequence[str], model_ensembl
                 "canonical": f"{workload}/canonical.mlir",
                 "parent_cost_file": f"{workload}/cost-catalog.json",
                 "cost_cache": f"{workload}/ml-cache.json",
+                **({"prepared_source_file": f"{workload}/pre-neura.mlir"}
+                   if emit_fission_source else {}),
             }
             for workload in workloads
         },
@@ -223,6 +226,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--amoeba-test-root", type=Path)
     parser.add_argument("--llama-harness", type=Path)
     parser.add_argument("--workloads", nargs="+", choices=WORKLOADS, default=list(WORKLOADS))
+    parser.add_argument("--diagnostic-ii-ceiling", type=int, choices=(20, 23), default=20)
+    parser.add_argument("--emit-fission-source", action="store_true")
+    parser.add_argument("--original-ray-diagnostic-ii23", action="store_true",
+                        help="prepare the six-program cohort with only original Ray at runtime II23")
     parser.add_argument("--ray-fission-split-at", type=int, choices=range(8), default=0,
                         help="separate Ray supplement only; zero leaves the original graph")
     parser.add_argument("--jobs", type=int, default=1)
@@ -239,6 +246,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.jobs < 1 or args.jobs > 3:
         raise PreparationError("--jobs must be from 1 to 3")
     workloads = list(dict.fromkeys(args.workloads))
+    if args.original_ray_diagnostic_ii23 and (
+            set(workloads) != set(WORKLOADS) or args.diagnostic_ii_ceiling != 20
+            or args.ray_fission_split_at or not args.emit_fission_source):
+        raise PreparationError("the mixed II20/II23 cohort requires all six original programs and --emit-fission-source")
+    if args.diagnostic_ii_ceiling == 23 and workloads != ["raytracing"]:
+        raise PreparationError("II23 diagnostic preparation must select only original Ray")
     if args.ray_fission_split_at and workloads != ["raytracing"]:
         raise PreparationError("fission reproduction must use a separate Ray-only output")
     model_root = resolve_path(
@@ -246,6 +259,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     model_ensemble = validate_model_bundle(model_root)
     model_metadata = json.loads(model_ensemble.read_text())
+    if (args.original_ray_diagnostic_ii23 and model_metadata.get("schema") !=
+            "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1"):
+        raise PreparationError("the mixed II20/II23 cohort requires the direct 2x2 model")
     if model_metadata.get("schema") == "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1":
         if not args.source_repository or not args.source_commit:
             raise PreparationError("direct 2x2 preparation requires explicit --source-repository and --source-commit")
@@ -265,7 +281,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not architecture.is_file():
         raise PreparationError(f"architecture spec is missing: {architecture}")
     if (model_metadata.get("schema") == "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1"
-            and model_metadata["architecture"]["exact_yaml_text"] != architecture.read_text()):
+            and ((model_metadata["architecture"]["exact_yaml_text"] if args.diagnostic_ii_ceiling == 20
+                  else model_metadata["architecture"]["exact_yaml_text"].replace(
+                      "ctrl_mem_items: 20\n", "ctrl_mem_items: 23\n")) != architecture.read_text())):
         raise PreparationError("architecture bytes differ from the direct 2x2 model")
     output_root = resolve_path(
         args.output_root, "ORBIT_SOURCE_DOMAIN_OUTPUT",
@@ -293,26 +311,40 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--architecture", str(architecture),
         "--model", str(model_root),
         "--output-root", str(output_root),
-        "--workloads", *workloads,
         "--jobs", str(args.jobs),
         "--cost-catalog",
         "--allow-unsupported-model-shapes",
+        "--diagnostic-ii-ceiling", str(args.diagnostic_ii_ceiling),
     ]
     for name in ("source_repository", "source_commit", "model_namespace"):
         value = getattr(args, name)
         if value:
             command.extend(("--" + name.replace("_", "-"), value))
+    if args.emit_fission_source:
+        command.append("--emit-fission-source")
     if args.ray_fission_split_at:
         command.extend(("--ray-fission-split-at", str(args.ray_fission_split_at)))
     if args.dry_run:
         command.append("--dry-run")
-    process = subprocess.run(command, check=False)
-    if process.returncode:
-        raise PreparationError(
-            f"source-domain preparation failed with exit code {process.returncode}"
-        )
+    commands = [command + ["--workloads", *workloads]]
+    if args.original_ray_diagnostic_ii23:
+        ray_architecture = root / "config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml"
+        if ray_architecture.read_text() != architecture.read_text().replace(
+                "ctrl_mem_items: 20\n", "ctrl_mem_items: 23\n"):
+            raise PreparationError("Ray architecture must differ only by control-memory 20 to 23")
+        ray_command = list(command)
+        ray_command[ray_command.index("--architecture") + 1] = str(ray_architecture)
+        ray_command[ray_command.index("--diagnostic-ii-ceiling") + 1] = "23"
+        commands = [command + ["--workloads", *(name for name in workloads if name != "raytracing")],
+                    ray_command + ["--workloads", "raytracing"]]
+    for prepared_command in commands:
+        process = subprocess.run(prepared_command, check=False)
+        if process.returncode:
+            raise PreparationError(
+                f"source-domain preparation failed with exit code {process.returncode}"
+            )
 
-    chain_config = make_chain_config(output_root, workloads, model_ensemble)
+    chain_config = make_chain_config(output_root, workloads, model_ensemble, args.emit_fission_source)
     compiler = args.cxx or shutil.which("g++") or shutil.which("clang++")
     if not args.dry_run and not args.skip_reference_build and not compiler:
         raise PreparationError("no g++ or clang++ found; pass --cxx or --skip-reference-build")
@@ -334,6 +366,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         "architecture": str(architecture),
         "workloads": workloads,
         "ray_fission_split_at": args.ray_fission_split_at,
+        "runtime_ii_ceiling_by_workload": {name: (23 if args.original_ray_diagnostic_ii23
+                                                  and name == "raytracing" else args.diagnostic_ii_ceiling)
+                                           for name in workloads},
+        "training_ii_ceiling": 20 if model_metadata.get("schema") ==
+        "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1" else None,
         "cost_catalog_generation_planned": bool(args.dry_run),
         "cost_catalogs_regenerated": not args.dry_run,
         "allow_unsupported_model_shapes": True,

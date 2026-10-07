@@ -127,18 +127,25 @@ def validate_v19_protocol(protocol: Mapping[str, Any]) -> dict[str, Any]:
             raise CommandError("protocol scheduler must bind the shared ORBIT critical-path profile")
         names = tuple(item.get("name") for item in protocol.get("stages", [])
                       if isinstance(item, dict))
-        if (names != ("shape-temporal", "shape-temporal-replica",
-                      "shape-temporal-replica-tiling", "full-joint") or
-                protocol.get("stage_scheme") != "merged-spatial-temporal" or
+        scheme = protocol.get("stage_scheme")
+        expected_names = ("shape-temporal", "shape-temporal-replica",
+                          "shape-temporal-replica-tiling", "full-joint")
+        if scheme == "full-joint-fission":
+            expected_names += ("full-joint-fission",)
+            if search.get("max_fission_actions_per_task") != 64:
+                raise CommandError("full-joint-fission requires complete source cuts with cap 64")
+        if (names != expected_names or
+                scheme not in ("merged-spatial-temporal", "full-joint-fission") or
                 any(item.get("dispatch") != "critical-path" or
                     item.get("scheduling_mode") != "spatial-temporal"
                     for item in protocol.get("stages", []) if isinstance(item, dict))):
-            raise CommandError("shared ORBIT scheduler requires four independent critical-path spatial-temporal stages")
+            raise CommandError("shared ORBIT scheduler requires the declared independent critical-path spatial-temporal stages")
     return search
 
 
 def validate_chain_config(config: Mapping[str, Any],
-                          workloads: Sequence[str] = WORKLOADS) -> list[str]:
+                          workloads: Sequence[str] = WORKLOADS,
+                          *, fission: bool = False) -> list[str]:
     if config.get("schema") != "orbit-amoeba-input0-neighborhood-chain-config-v1":
         raise CommandError("chain config must use the source-domain chain schema")
     entries = config.get("workloads")
@@ -167,7 +174,12 @@ def validate_chain_config(config: Mapping[str, Any],
                 f"v19 chain config cannot import historical seed inputs for {workload}: "
                 f"{sorted(forbidden)}"
             )
-        extra = set(entry) - {"canonical", "parent_cost_file", "cost_cache"}
+        allowed = {"canonical", "parent_cost_file", "cost_cache"}
+        if fission:
+            allowed.add("prepared_source_file")
+            if entry.get("prepared_source_file") != f"{workload}/pre-neura.mlir":
+                raise CommandError(f"{workload} lacks its freshly prepared pre-Neura source")
+        extra = set(entry) - allowed
         if extra:
             raise CommandError(f"{workload} has unsupported source-domain config fields: {sorted(extra)}")
     return list(workloads)
@@ -282,7 +294,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--mapping-cache", type=Path)
     parser.add_argument("--output-root", type=Path, required=True,
                         help="fresh results namespace for this source/protocol binding")
-    parser.add_argument("--stage-scheme", choices=("merged-spatial-temporal", "historical-five"),
+    parser.add_argument("--stage-scheme", choices=("merged-spatial-temporal", "historical-five", "full-joint-fission"),
                         default="merged-spatial-temporal",
                         help="four stages using existing spatial-temporal scheduling; five only for historical replay")
     parser.add_argument("--output", type=Path,
@@ -336,7 +348,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     protocol = read_json(protocol_template, "protocol template")
     search = validate_v19_protocol(protocol)
     declared_workloads, workloads = protocol_workloads(protocol)
-    validate_chain_config(config, declared_workloads)
+    validate_chain_config(config, declared_workloads,
+                          fission=protocol.get("stage_scheme") == "full-joint-fission")
     source_contract = args.source_contract_file.resolve()
     if not source_contract.is_file():
         raise CommandError(f"source contract is missing: {source_contract}")
@@ -350,6 +363,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         expected_model = [{"path": "ensemble.json", "text": ensemble.read_text()}]
         if contract.get("model_payloads") != expected_model:
             raise CommandError("source contract model bytes differ from the direct 2x2 ensemble")
+    if protocol.get("source_commit") == "${ORBIT_SOURCE_COMMIT}":
+        protocol["source_commit"] = contract.get("source_commit")
     if protocol.get("source_commit") != contract.get("source_commit"):
         raise CommandError("protocol source_commit differs from the exact source/model contract")
     contract_text = source_contract.read_text()
@@ -399,6 +414,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         config_base, artifact_root, source_root, build_root
     ) + "/<workload>/ml-cache.json"
     protocol["publication_variant"] = "fresh independently initialized corrected-domain ablation"
+    if args.stage_scheme == "full-joint-fission" and protocol.get("stage_scheme") != "full-joint-fission":
+        raise CommandError("full-joint-fission must use an explicit five-stage source-owned template")
     if args.stage_scheme == "merged-spatial-temporal":
         names = ("shape-temporal", "shape-temporal-replica",
                  "shape-temporal-replica-tiling", "full-joint")
@@ -416,7 +433,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             if scheduler is not None else
             "fresh independently initialized four-stage spatial-temporal ablation"
         )
-    else:
+    elif args.stage_scheme == "historical-five":
         names = tuple(item["name"] for item in protocol.get("stages", []))
         if names != ("shape-only", "shape-temporal", "shape-temporal-replica",
                      "shape-temporal-replica-tiling", "full-joint"):
@@ -464,6 +481,43 @@ def main(argv: Sequence[str] | None = None) -> int:
     elif scheduler is not None:
         raise CommandError("shared ORBIT scheduler requires the common explicit inter-task network")
     protocol["model_namespace"] = contract.get("model_namespace", "formal-max4-nohash-v2-exploratory")
+    if args.stage_scheme == "full-joint-fission":
+        # Preserve the fresh preparer's input config and write a separately
+        # bound runtime config. Only original Ray uses the authorized II23
+        # architecture; every stage still starts from its own canonical input.
+        ray_architecture = artifact_root / "config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml"
+        if (model_metadata.get("schema") != "orbit-cgra-ii-per-cgra-2x2-direct-ensemble-cpp-v1"
+                or ray_architecture.read_text() != architecture.read_text().replace(
+                    "ctrl_mem_items: 20\n", "ctrl_mem_items: 23\n")):
+            raise CommandError("full-joint-fission requires the direct 2x2 model and exact Ray II23 architecture")
+        ray_catalog = read_json(config_base / config["workloads"]["raytracing"]["parent_cost_file"],
+                                "fresh Ray parent cost catalog")
+        metadata = ray_catalog.get("predictor_metadata", {})
+        diagnostic = metadata.get("diagnostic_override", {})
+        if (metadata.get("architecture_path") != str(ray_architecture.resolve())
+                or diagnostic.get("runtime_ii_ceiling") != 23
+                or diagnostic.get("training_ii_ceiling") != 20
+                or diagnostic.get("runtime_architecture_exact_yaml_text") != ray_architecture.read_text()
+                or diagnostic.get("training_architecture_exact_yaml_text") != architecture.read_text()):
+            raise CommandError("fresh Ray cost catalog must bind the selected II23 architecture and ceiling")
+        ray_protocol_output = protocol_output.with_name(protocol_output.stem + "-ray-ii23.json")
+        ray_protocol = json.loads(json.dumps(protocol))
+        ray_protocol.update(architecture=portable_binding(ray_architecture, artifact_root, source_root, build_root),
+                            diagnostic_only=True, formal_go=False, runtime_ii_ceiling=23,
+                            training_ii_ceiling=20,
+                            fixed1x1_domain_exclusion_policy="compiler-proved-runtime-II-ceiling-v1")
+        ray_protocol["fabric"]["ctrl_mem_size"] = 23
+        ray_protocol["search"]["diagnostic_ii_ceiling"] = 23
+        runtime_config = json.loads(json.dumps(config))
+        runtime_config["workloads"]["raytracing"].update(
+            architecture=os.path.relpath(ray_architecture, config_base),
+            protocol=os.path.relpath(ray_protocol_output, config_base))
+        runtime_config_path = config_path.with_name(config_path.stem + "-runtime-ii23.json")
+        write_exact(runtime_config_path, json.dumps(runtime_config, indent=2, sort_keys=True) + "\n",
+                    "runtime chain config")
+        write_exact(ray_protocol_output, json.dumps(ray_protocol, indent=2, sort_keys=True) + "\n",
+                    "Ray bound protocol")
+        command[command.index("--config") + 1] = runtime_path(runtime_config_path, artifact_root)
     serialized_protocol = json.dumps(protocol, indent=2, sort_keys=True) + "\n"
     if any(marker in serialized_protocol for marker in ("/home/", "/Users/", "C:\\Users\\")):
         raise CommandError("bound protocol contains a machine-local absolute path")
