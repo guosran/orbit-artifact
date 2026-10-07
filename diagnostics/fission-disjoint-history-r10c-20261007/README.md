@@ -1,6 +1,6 @@
 # R10c disjoint-history fission receipt
 
-This receipt records a successful, source-authenticated fission after an ordinary typed action on a disjoint task. It is evidence for the R10c rebase/replay implementation and its bounded R10c search only. It is not a new performance run or a claim that later cohorts completed.
+This receipt records a successful, source-authenticated fission after an ordinary typed action on a disjoint task. It is evidence for the R10c rebase/replay implementation and its bounded R10c search only. It uses the two-parent regression fixture `fission_rebase_disjoint_history`, rather than one of the six measured input-0 workloads. It is not a new performance run or a claim that later cohorts completed.
 
 The positive path is candidate `neighborhood-677`, whose parent was `neighborhood-21`. The parent already carried the ordinary shape action `shape:Task_1:1x2`; the generated edge fissions `Task_0` using left nodes `[0, 1, 2]`. The task footprints are disjoint. The typed history retains these in separate fields: `actions` contains the Task 1 shape and `fissionActions` contains the Task 0 cut. There are no replication or tiling actions in this witness.
 
