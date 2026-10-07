@@ -1,0 +1,156 @@
+{
+  "schema": "orbit-fusion-fission-preflight-publication-v1",
+  "status": "accepted-preflight-full-run-in-progress",
+  "date": "2026-10-07",
+  "purpose": "Publish accepted source, model-cache, canonical/census, pin, and frozen-runtime preflight evidence for the R11b input-0 fusion/fission cohort.",
+  "scope": {
+    "cohort_id": "input0-neighborhood-2x2-v62-fusion-fission-complete-20261007",
+    "publication_variant": "fresh independently initialized corrected-domain ablation",
+    "input_policy": "fixed input-0 with compile-time-proven static bounds",
+    "workload_order": [
+      "lu",
+      "harris",
+      "raytracing",
+      "gcn",
+      "llama",
+      "radar"
+    ],
+    "all_six_workloads_bound_from_start": true,
+    "five_independent_stages": true,
+    "full_run_status": "running",
+    "full_run_results_claimed": false,
+    "formal_go_or_global_optimality_claimed": false
+  },
+  "mode_contract": {
+    "search": "Source-owned C++ MLIR complete-program neighborhood beam search; rewrite legality/materialization, candidate enumeration, global ranking, and placement/temporal/communication scoring remain in C++.",
+    "python_role": "Process orchestration, tests, and machine-record table rendering only.",
+    "budget_per_workload_per_stage": {
+      "rounds": 4,
+      "unique_candidates": 4096,
+      "beam_width": 16,
+      "diversity_slots": 4,
+      "native_top_k": 5
+    },
+    "stage_initialization": "independent",
+    "identity_and_previous_winner_controls_outside_top_k": true,
+    "fusion_and_fission_in_main_ablation": true,
+    "fabric": {
+      "rows": 4,
+      "columns": 4,
+      "physical_cgra_count": 16,
+      "physical_pe_count": 64,
+      "per_cgra_pe_rows": 2,
+      "per_cgra_pe_columns": 2,
+      "context_memory_items": 6,
+      "control_memory_items": 20,
+      "max_cgras_per_task": 4
+    },
+    "model": {
+      "namespace": "orbit-per-cgra-2x2-direct-4member-v1",
+      "weights_training_ii": 20,
+      "raytracing_runtime_ii": 23,
+      "raytracing_ii23_is_separately_bound_diagnostic": true
+    },
+    "scoring": {
+      "communication": "explicit common 4x4 mesh, 1-cycle links, 32 bits/cycle",
+      "scheduler": "existing production spatial-temporal scheduler",
+      "candidate_latency": "ceil(startup_cycles + predicted_ii * (trip_count - 1))"
+    }
+  },
+  "accepted_gates": {
+    "source_proof_acceptance": {
+      "status": "accepted",
+      "checks_passed": 25,
+      "checks_total": 25,
+      "includes_expected_negative_rejections": true,
+      "evidence": "/tmp/orbit-r11b-source-proof-acceptance-20261007/summary.json"
+    },
+    "native_cache_acceptance": {
+      "status": "pass",
+      "prediction_queries": 216,
+      "all_prediction_entries_exact_equal": true,
+      "cache_bytes_exact_equal": true,
+      "strict_ii_roundtrips": [20, 23],
+      "over_bound_and_mixed_yaml_negative_controls_passed": true,
+      "global_printer_invariance_passed": true,
+      "evidence": "/tmp/orbit-r11b-native-cache-acceptance-20261007/summary.json"
+    },
+    "source_owned_canonical_and_census": {
+      "status": "accepted",
+      "workloads": {
+        "lu": {"canonical_bytes_exact": true, "census_exit_code": 0, "legal_action_count": 1},
+        "harris": {"canonical_bytes_exact": true, "census_exit_code": 0, "legal_action_count": 30},
+        "raytracing": {"canonical_bytes_exact": true, "census_exit_code": 0, "legal_action_count": 56},
+        "gcn": {"canonical_bytes_exact": true, "census_exit_code": 0, "legal_action_count": 0},
+        "llama": {"canonical_bytes_exact": true, "census_exit_code": 0, "legal_action_count": 0},
+        "radar": {"canonical_bytes_exact": true, "census_exit_code": 0, "legal_action_count": 0}
+      },
+      "evidence": "/tmp/orbit-r11b-source-owned-cohort-proofs-20261007/summary.json"
+    },
+    "targeted_native_controls": {
+      "status": "complete",
+      "shapes": ["1x2", "2x1"],
+      "search_winner_claim": false,
+      "main_curve_budget_changed": false,
+      "evidence": [
+        "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/run.json",
+        "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/run.json"
+      ]
+    },
+    "common_amoeba_original_ray": {
+      "status": "native_replayed",
+      "evidence": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/result.json"
+    }
+  },
+  "source_and_binary_provenance": {
+    "source_namespace_commit": "4547a3853452438af0a74f20342b4bc182cc9107",
+    "actual_build_source_commit": "2dd2bb327269eaff23e5dc8cdff11d968b0dda15",
+    "source_snapshot_file_count": 140,
+    "source_snapshot_utf8_bytes": 4931433,
+    "current_source140_exact_build_snapshot_bytes_equal": true,
+    "r11b_change_from_actual_build": "Checker-only correction; no implementation-file bytes changed.",
+    "immutable_r11b_optimizer_bytes": 525213552,
+    "r11b_optimizer_detached_from_build_output": true,
+    "compile_and_link_jobs": 1,
+    "r11b_full_binary_stream_exact_equal_to_r11_original_pin": true,
+    "pin_acceptance": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/r11b-pin-acceptance.json",
+    "actual_build_acceptance": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/r11-build-acceptance.json",
+    "archived_closed_r11_main_pin": {
+      "status": "archived-exact-byte-verified",
+      "archive": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11-exact-main-copies-20261007.gz",
+      "archive_bytes": 152417691,
+      "identity_policy": "Original binaries compared with the full decompressed byte stream; no digest used.",
+      "decompressed_or_rebuilt_for_this_receipt": false
+    },
+    "active_frozen_r11b_optimizer": "/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11b-20261007",
+    "active_frozen_r11b_optimizer_bytes": 525213552
+  },
+  "frozen_runtime_and_launch_binding": {
+    "prelaunch_status": "targeted-controls-and-source-gates-accepted",
+    "frozen_runtime": "/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b",
+    "freeze_manifest": "/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/freeze-manifest.json",
+    "chain_command_receipt": "/tmp/orbit-input0-fusion-fission-r11b-20261007/chain-command-frozen-r11b.json",
+    "prepared_chain_config": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/input0-chain-runtime-ii23.json",
+    "protocol": "/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/protocol-2x2-fusion-fission-r11b-20261007.json",
+    "source_model_contract": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11b-20261007.json",
+    "prelaunch_acceptance": "/tmp/orbit-input0-fusion-fission-r11b-20261007/prelaunch-acceptance.json",
+    "output_root": "/tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007",
+    "execution_constraints": {
+      "available_lanes": [8, 9, 10, 11],
+      "lanes_0_through_7": "Occupied by an independent sequential experiment and preserved.",
+      "mapper_timeout": null,
+      "main_curve_budget_changed": false
+    }
+  },
+  "historical_nonacceptance": {
+    "first_r11_build_attempt": {
+      "status": "compile-failed-no-pin-produced",
+      "source_commit": "94becdc5358db33b6738c6e5f18bf6cbfa93aa50",
+      "reason": "func::FuncOp.getSymName() returns StringRef, no getValue() member",
+      "exit_code": 1,
+      "acceptance_counts_include_this_attempt": false,
+      "evidence": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/r11-build-attempt1.json"
+    }
+  },
+  "evidence_identity_policy": "Exact file/byte comparisons and explicit file counts only; no SHA-256 or other digest claims. Local paths above are provenance pointers, not portable runtime bindings."
+}
