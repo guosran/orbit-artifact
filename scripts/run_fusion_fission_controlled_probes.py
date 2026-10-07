@@ -288,19 +288,21 @@ def _typed_action(family: str, label: str, *, primitives: Sequence[Mapping[str, 
             "canonicalReset": False}
 
 
-def fusion_actions(control: Mapping[str, Any]) -> list[dict[str, Any]]:
+def _fusion_action(control: Mapping[str, Any]) -> dict[str, Any]:
     first, second, mode = control["first"], control["second"], control["mode"]
-    fused = f"{first}.fuse.{second}"
     if control["family"] == "sibling-fusion":
-        fusion = _typed_action(
+        return _typed_action(
             "sibling-fusion", f"sibling-fuse:{first}:{second}",
             primitives=[_primitive("sibling-fusion", first, second, "sibling")])
-    else:
-        fusion = _typed_action(
-            "fusion", f"fuse:{first}:{second}:{mode}",
-            primitives=[_primitive("fusion", first, second, mode)])
-    shape = _typed_action("shape", f"shape:{fused}:1x2",
-                          shape_task=fused, rows=1, cols=2)
+    return _typed_action(
+        "fusion", f"fuse:{first}:{second}:{mode}",
+        primitives=[_primitive("fusion", first, second, mode)])
+
+
+def fusion_actions(control: Mapping[str, Any], fused_task: str) -> list[dict[str, Any]]:
+    fusion = _fusion_action(control)
+    shape = _typed_action("shape", f"shape:{fused_task}:1x2",
+                          shape_task=fused_task, rows=1, cols=2)
     return [fusion, shape]
 
 
@@ -478,7 +480,10 @@ def _history_key(value: Mapping[str, Any]) -> str:
 
 def _task_spans(module_text: str) -> dict[str, tuple[int, int, int, int, str]]:
     """Locate generic Taskflow task bodies for byte/op statistics only."""
-    pattern = re.compile(r"(?m)^\s*(?:%[\w.$-]+\s*=\s*)?\"taskflow\.task\"\(")
+    result_value = r"%[\w.$-]+(?::\d+)?"
+    result_prefix = (r"(?:" + result_value +
+                     r"(?:\s*,\s*" + result_value + r")*\s*=\s*)?")
+    pattern = re.compile(r"(?m)^\s*" + result_prefix + r"\"taskflow\.task\"\(")
     spans: dict[str, tuple[int, int, int, int, str]] = {}
     plain = _mask_strings(module_text)
     for match in pattern.finditer(module_text):
@@ -600,6 +605,102 @@ def _source_task_map(facts: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
             raise ProbeError("C++ replay facts contain a malformed source-domain task")
         result[row["task"]] = row
     return result
+
+
+def _compiler_fused_task_name(parent_facts: Mapping[str, Any],
+                              fused_facts: Mapping[str, Any],
+                              first: str, second: str) -> str:
+    """Resolve the new task from C++ task sets instead of naming convention."""
+    parent_tasks = set(_source_task_map(parent_facts))
+    fused_tasks = set(_source_task_map(fused_facts))
+    if first not in parent_tasks or second not in parent_tasks:
+        raise ProbeError("canonical C++ replay facts omit a fusion parent")
+    unchanged = parent_tasks - {first, second}
+    missing = unchanged - fused_tasks
+    if missing:
+        raise ProbeError("C++ fusion replay facts lost unrelated tasks: " +
+                         ", ".join(sorted(missing)))
+    added = fused_tasks - unchanged
+    if len(added) != 1:
+        raise ProbeError("C++ fusion replay facts do not identify exactly one "
+                         f"replacement task: {sorted(added)}")
+    fused = next(iter(added))
+    if fused in parent_tasks:
+        raise ProbeError("C++ fusion replacement task collides with a canonical task")
+    return fused
+
+
+def _verified_fission_children(parent_facts: Mapping[str, Any],
+                               split_facts: Mapping[str, Any],
+                               parent_task: str,
+                               left_nodes: Sequence[int]
+                               ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Validate C++ exact source replay and its actual child-domain bindings."""
+    if (split_facts.get("schema") != "orbit-joint-neighborhood-action-replay-facts-v1" or
+            split_facts.get("status") != "complete" or
+            split_facts.get("actions_applied") != 1 or
+            split_facts.get("source_iteration_domain_verified") is not True or
+            split_facts.get("fission_source_replay_verified") is not True):
+        raise ProbeError("C++ fission facts lack a complete exact source replay")
+
+    history = split_facts.get("action_history")
+    actions = history.get("fissionActions") if isinstance(history, dict) else None
+    if (not isinstance(history, dict) or history.get("known") is not True or
+            not isinstance(actions, list) or len(actions) != 1):
+        raise ProbeError("C++ fission facts lack one authenticated typed cut action")
+    action = actions[0]
+    primitives = action.get("primitives") if isinstance(action, dict) else None
+    if (not isinstance(action, dict) or action.get("family") != "fission" or
+            not isinstance(primitives, list) or len(primitives) != 1 or
+            not isinstance(primitives[0], dict) or
+            primitives[0].get("kind") != "fission" or
+            primitives[0].get("firstTask") != parent_task or
+            primitives[0].get("leftNodes") != list(left_nodes)):
+        raise ProbeError("C++ fission action history does not bind the selected source cut")
+
+    steps = [row for row in split_facts.get("steps", [])
+             if isinstance(row, dict) and row.get("family") == "fission"]
+    if (len(steps) != 1 or
+            steps[0].get("status") != "exact-source-replay-verified" or
+            steps[0].get("counter_domain_policy") !=
+            "retained-per-operation-not-disjoint-firing-partitions"):
+        raise ProbeError("C++ fission step lacks exact source replay verification")
+
+    parent_tasks = _source_task_map(parent_facts)
+    parent_domain = parent_tasks.get(parent_task)
+    if not isinstance(parent_domain, dict) or parent_domain.get("complete") is not True:
+        raise ProbeError("canonical C++ facts omit the complete fission parent domain")
+    split_tasks = _source_task_map(split_facts)
+    if parent_task in split_tasks:
+        raise ProbeError("C++ fission candidate still contains the unsplit parent")
+    child_names = [f"{parent_task}.split.0", f"{parent_task}.split.1"]
+    if any(name not in split_tasks for name in child_names):
+        raise ProbeError("C++ fission candidate lacks its two actual split children")
+    children = [split_tasks[name] for name in child_names]
+    for child in children:
+        witness = child.get("canonical_witness")
+        source_binding = child.get("source_control_binding")
+        current_binding = child.get("current_control_binding")
+        if (child.get("complete") is not True or
+                child.get("current_domain_status") != "certified-complete" or
+                witness != parent_domain.get("canonical_witness") or
+                child.get("source_multiplicity") != parent_domain.get("source_multiplicity") or
+                child.get("represented_multiplicity") !=
+                parent_domain.get("represented_multiplicity") or
+                child.get("current_taskflow_firing_count") !=
+                parent_domain.get("current_taskflow_firing_count") or
+                child.get("current_source_work_count") !=
+                parent_domain.get("current_source_work_count") or
+                not isinstance(witness, str) or not witness or
+                not isinstance(source_binding, str) or
+                not source_binding.startswith("amoeba-source-iteration-domain-v1\n") or
+                witness not in source_binding or
+                not isinstance(current_binding, str) or
+                not current_binding.startswith("amoeba-source-iteration-domain-v1\n") or
+                witness not in current_binding):
+            raise ProbeError(f"C++ fission child source binding/domain is incomplete: "
+                             f"{child.get('task')}")
+    return children, steps[0]
 
 
 def _resource_count(selection: Mapping[str, Any]) -> int:
@@ -838,14 +939,23 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         output_dir=probe_root / "parent-source-replay",
         action={"actions": []}, max_partition_factor=max_partition_factor,
         artifact_root=artifact_root)
-    actions = fusion_actions(control)
+    fusion_action = _fusion_action(control)
+    name_facts, name_command = _direct_replay(
+        optimizer=args.optimizer.resolve(), architecture=data["architecture"],
+        canonical=canonical, function=function, stage=FUSION_STAGE,
+        output_dir=probe_root / "fusion-name-replay",
+        action={"actions": [fusion_action]},
+        max_partition_factor=max_partition_factor, artifact_root=artifact_root)
+    fused_task = _compiler_fused_task_name(
+        parent_facts, name_facts, control["first"], control["second"])
+    actions = fusion_actions(control, fused_task)
     facts, direct_command = _direct_replay(
         optimizer=args.optimizer.resolve(), architecture=data["architecture"],
         canonical=canonical, function=function, stage=FUSION_STAGE,
         output_dir=probe_root / "typed-action", action={"actions": actions},
         max_partition_factor=max_partition_factor, artifact_root=artifact_root)
     expected_memory = {"first": control["first"], "second": control["second"],
-                       "fused": f"{control['first']}.fuse.{control['second']}"}
+                       "fused": fused_task}
     before = body_statistics(canonical)
     transformed = body_statistics(probe_root / "typed-action/replay/candidate.mlir")
     try:
@@ -862,6 +972,9 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         raise ProbeError("C++ fusion body did not produce the expected retained public-output memory counts")
     parent_source_tasks = _source_task_map(parent_facts)
     fused_source_tasks = _source_task_map(facts)
+    if _compiler_fused_task_name(parent_facts, facts, control["first"],
+                                 control["second"]) != fused_task:
+        raise ProbeError("C++ shaped fusion replay changed the compiler-resolved task name")
     if any(task not in parent_source_tasks for task in
            (expected_memory["first"], expected_memory["second"])):
         raise ProbeError("canonical C++ replay facts omit a fusion parent source domain")
@@ -961,6 +1074,8 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         "typed_actions": actions,
         "typed_action_history": transformed_selection.get("action_history"),
         "parent_source_replay": {"facts": parent_facts, "command": parent_command},
+        "fusion_name_discovery_replay": {"facts": name_facts,
+                                         "command": name_command},
         "typed_replay_facts": facts,
         "typed_replay_command": direct_command,
         "fresh_score_search": search_evidence,
@@ -1084,20 +1199,8 @@ def _fission_probe(*, args: argparse.Namespace, nr: Any, replay: Any,
             any(not isinstance(row, dict) or row.get("complete") is not True
                 for row in source_tasks)):
         raise ProbeError("C++ fission replay did not verify complete source domains for every child")
-    children = [row for row in source_tasks if isinstance(row, dict) and
-                (row.get("task", "").startswith(parent_task + ".split.") or
-                 row.get("task", "").startswith(parent_task + ".fission."))]
-    if len(children) != 2:
-        raise ProbeError(f"C++ source replay expected two actual children, found {len(children)}")
-    if any(not row.get("partition_proof") for row in children):
-        raise ProbeError("C++ source replay facts lack child partition proof bindings")
-    fission_steps = [row for row in split_facts.get("steps", [])
-                     if isinstance(row, dict) and row.get("family") == "fission"]
-    if (len(fission_steps) != 1 or
-            fission_steps[0].get("status") != "exact-source-replay-verified" or
-            split_facts.get("source_iteration_domain_verified") is not True or
-            split_facts.get("fission_source_replay_verified") is not True):
-        raise ProbeError("C++ fission action lacks exact source replay and domain proof status")
+    children, fission_step = _verified_fission_children(
+        parent_facts, split_facts, parent_task, left_nodes)
 
     binding_path = probe_root / "source-binding.json"
     binding = _source_binding(
@@ -1203,12 +1306,18 @@ def _fission_probe(*, args: argparse.Namespace, nr: Any, replay: Any,
                                    "child_source_facts": children,
                                    "coverage_and_no_duplication": {
                                        "status": "verified-by-C++-verifyTaskflowFissionReplay",
-                                       "exact_source_replay_step": fission_steps[0],
+                                       "fission_source_replay_verified":
+                                           split_facts["fission_source_replay_verified"],
+                                       "exact_source_replay_step": fission_step,
+                                       "typed_cut_action": split_facts[
+                                           "action_history"]["fissionActions"][0],
                                        "child_source_partitions": [
                                            {"task": row["task"],
                                             "represented_multiplicity": row.get("represented_multiplicity"),
                                             "source_multiplicity": row.get("source_multiplicity"),
-                                            "partition_proof": row["partition_proof"]}
+                                            "canonical_witness": row["canonical_witness"],
+                                            "source_control_binding_present": True,
+                                            "current_control_binding_present": True}
                                            for row in children]}},
         "fresh_score_search": search_evidence,
         "native_summary": replay_summary,
