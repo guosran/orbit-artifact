@@ -1,0 +1,198 @@
+{
+  "schema": "orbit-runtime-acceleration-acceptance-v2",
+  "accepted_comparisons": 9,
+  "same_search_and_validated_results": true,
+  "timing_limit": "Historical runs have different concurrent background load; reduced objective allowances. Timings are observed diagnostics, not isolated causal or full4096 speedup claims. GCN uses quota512; LU/Radar use quota4; each pair has identical configuration.",
+  "checker_contract": "Exact ordered attempts/frontiers/objective trajectories, candidate IDs and IR bytes, predictor counts/cache contents, aggregate mapper calls and full mapping input/output byte hashes, all seven native/numeric/trace gates. Only documented runtime telemetry and parallel per-rank cache attribution differ.",
+  "unit_test_count": 27,
+  "compressed_real_cells_audited": 9,
+  "cells": [
+    {
+      "workload": "lu",
+      "method": "joint",
+      "reference_cell": ".work/sequential-pilot-32-final/lu/joint",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/lu/joint",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/lu-joint.json",
+      "reference_compiler_seconds": 61.951,
+      "accelerated_compiler_seconds": 41.328,
+      "reference_search_wall_seconds": 62.3188374042511,
+      "accelerated_search_wall_seconds": 41.69834232330322,
+      "observed_compiler_speedup": 1.4990079365079365,
+      "objective_evaluations": 32,
+      "candidate_attempts": 7438,
+      "runtime_proof_cache_hits": 7125,
+      "runtime_proof_ir_print_ms": 14937,
+      "phase_elapsed_seconds": {
+        "joint": 41.328
+      }
+    },
+    {
+      "workload": "lu",
+      "method": "sequential-25",
+      "reference_cell": ".work/sequential-pilot-32-final/lu/sequential-25",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/lu/sequential-25",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/lu-sequential-25.json",
+      "reference_compiler_seconds": 22.654,
+      "accelerated_compiler_seconds": 15.238,
+      "reference_search_wall_seconds": 22.89614987373352,
+      "accelerated_search_wall_seconds": 15.450044870376587,
+      "observed_compiler_speedup": 1.486678041737761,
+      "objective_evaluations": 32,
+      "candidate_attempts": 1777,
+      "runtime_proof_cache_hits": 1619,
+      "runtime_proof_ir_print_ms": 3665,
+      "phase_elapsed_seconds": {
+        "A": 7.154,
+        "B": 8.083
+      }
+    },
+    {
+      "workload": "lu",
+      "method": "sequential-50",
+      "reference_cell": ".work/sequential-pilot-32-final/lu/sequential-50",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/lu/sequential-50",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/lu-sequential-50.json",
+      "reference_compiler_seconds": 50.115,
+      "accelerated_compiler_seconds": 35.952,
+      "reference_search_wall_seconds": 50.486666440963745,
+      "accelerated_search_wall_seconds": 36.321869134902954,
+      "observed_compiler_speedup": 1.393941922563418,
+      "objective_evaluations": 32,
+      "candidate_attempts": 5162,
+      "runtime_proof_cache_hits": 4861,
+      "runtime_proof_ir_print_ms": 10927,
+      "phase_elapsed_seconds": {
+        "A": 23.916,
+        "B": 12.035
+      }
+    },
+    {
+      "workload": "lu",
+      "method": "sequential-75",
+      "reference_cell": ".work/sequential-pilot-32-final/lu/sequential-75",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/lu/sequential-75",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/lu-sequential-75.json",
+      "reference_compiler_seconds": 61.451,
+      "accelerated_compiler_seconds": 46.173,
+      "reference_search_wall_seconds": 61.85398554801941,
+      "accelerated_search_wall_seconds": 46.57175016403198,
+      "observed_compiler_speedup": 1.330886015636844,
+      "objective_evaluations": 32,
+      "candidate_attempts": 7383,
+      "runtime_proof_cache_hits": 7027,
+      "runtime_proof_ir_print_ms": 14440,
+      "phase_elapsed_seconds": {
+        "A": 43.358,
+        "B": 2.815
+      }
+    },
+    {
+      "workload": "radar",
+      "method": "joint",
+      "reference_cell": ".work/sequential-pilot-32-final/radar/joint",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/radar/joint",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/radar-joint.json",
+      "reference_compiler_seconds": 378.71,
+      "accelerated_compiler_seconds": 286.939,
+      "reference_search_wall_seconds": 380.32072019577026,
+      "accelerated_search_wall_seconds": 288.5043075084686,
+      "observed_compiler_speedup": 1.3198275591676278,
+      "objective_evaluations": 32,
+      "candidate_attempts": 33818,
+      "runtime_proof_cache_hits": 33061,
+      "runtime_proof_ir_print_ms": 106106,
+      "phase_elapsed_seconds": {
+        "joint": 286.939
+      }
+    },
+    {
+      "workload": "radar",
+      "method": "sequential-25",
+      "reference_cell": ".work/sequential-pilot-32-final/radar/sequential-25",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/radar/sequential-25",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/radar-sequential-25.json",
+      "reference_compiler_seconds": 64.817,
+      "accelerated_compiler_seconds": 44.12,
+      "reference_search_wall_seconds": 65.37518095970154,
+      "accelerated_search_wall_seconds": 44.608916997909546,
+      "observed_compiler_speedup": 1.4691069809610153,
+      "objective_evaluations": 26,
+      "candidate_attempts": 4972,
+      "runtime_proof_cache_hits": 4709,
+      "runtime_proof_ir_print_ms": 16427,
+      "phase_elapsed_seconds": {
+        "A": 18.685,
+        "B": 25.435
+      }
+    },
+    {
+      "workload": "radar",
+      "method": "sequential-50",
+      "reference_cell": ".work/sequential-pilot-32-final/radar/sequential-50",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/radar/sequential-50",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/radar-sequential-50.json",
+      "reference_compiler_seconds": 51.626,
+      "accelerated_compiler_seconds": 35.989,
+      "reference_search_wall_seconds": 52.28197240829468,
+      "accelerated_search_wall_seconds": 36.3796820640564,
+      "observed_compiler_speedup": 1.4344938731279002,
+      "objective_evaluations": 18,
+      "candidate_attempts": 4050,
+      "runtime_proof_cache_hits": 3786,
+      "runtime_proof_ir_print_ms": 13459,
+      "phase_elapsed_seconds": {
+        "A": 19.337,
+        "B": 16.651
+      }
+    },
+    {
+      "workload": "radar",
+      "method": "sequential-75",
+      "reference_cell": ".work/sequential-pilot-32-final/radar/sequential-75",
+      "accelerated_cell": ".work/sequential-fast2-pilot-32/radar/sequential-75",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/radar-sequential-75.json",
+      "reference_compiler_seconds": 28.759,
+      "accelerated_compiler_seconds": 24.357,
+      "reference_search_wall_seconds": 29.08592391014099,
+      "accelerated_search_wall_seconds": 24.7235107421875,
+      "observed_compiler_speedup": 1.180728332717494,
+      "objective_evaluations": 10,
+      "candidate_attempts": 3023,
+      "runtime_proof_cache_hits": 2842,
+      "runtime_proof_ir_print_ms": 9472,
+      "phase_elapsed_seconds": {
+        "A": 18.74,
+        "B": 5.617
+      }
+    },
+    {
+      "workload": "gcn",
+      "method": "sequential-50",
+      "reference_cell": ".work/sequential-speed-reference-gcn-32/gcn/sequential-50",
+      "accelerated_cell": ".work/sequential-speed-fast2-gcn-32/gcn/sequential-50",
+      "equivalent": true,
+      "equivalence_report": "diagnostics/sequential-comparison-4096/runtime-fast2-equivalence/gcn-sequential-50.json",
+      "reference_compiler_seconds": 287.017,
+      "accelerated_compiler_seconds": 169.742,
+      "reference_search_wall_seconds": 288.19340085983276,
+      "accelerated_search_wall_seconds": 171.07328176498413,
+      "observed_compiler_speedup": 1.690901485784308,
+      "objective_evaluations": 21,
+      "candidate_attempts": 10221,
+      "runtime_proof_cache_hits": 10042,
+      "runtime_proof_ir_print_ms": 73989,
+      "phase_elapsed_seconds": {
+        "A": 156.397,
+        "B": 13.345
+      }
+    }
+  ]
+}

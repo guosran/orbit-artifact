@@ -1,0 +1,46 @@
+{
+  "schema": "orbit-original-ray-canonical-lowering-repair-v1",
+  "source": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-shared-scheduler-r2/source-domain-prep/raytracing/taskflow-affine-noalias-shaped.mlir",
+  "pre_neura": "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/raytracing-original-pre-neura.mlir",
+  "lowered": "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/raytracing-original-lowered.mlir",
+  "canonical": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+  "exact_r4_canonical_bytes_equal": true,
+  "original_unfissioned_input": true,
+  "commands": [
+    {
+      "label": "prefix",
+      "argv": [
+        "taskset",
+        "-c",
+        "0",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r5-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-shared-scheduler-r2/source-domain-prep/raytracing/taskflow-affine-noalias-shaped.mlir",
+        "--verify-each",
+        "--mlir-print-op-generic",
+        "--construct-hyperblock-from-task",
+        "--classify-task-and-counter",
+        "-o",
+        "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/raytracing-original-pre-neura.mlir"
+      ],
+      "exit_code": 0,
+      "stderr": "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/prefix.stderr.log"
+    },
+    {
+      "label": "lower",
+      "argv": [
+        "taskset",
+        "-c",
+        "0",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r5-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/raytracing-original-pre-neura.mlir",
+        "--verify-each",
+        "--mlir-print-op-generic",
+        "--pass-pipeline=builtin.module(convert-taskflow-to-neura,cse,lower-affine,convert-scf-to-cf,convert-cf-to-llvm{index-bitwidth=0},assign-accelerator,lower-memref-to-neura,lower-arith-to-neura,lower-builtin-to-neura,lower-llvm-to-neura,promote-input-arg-to-const,fold-constant,canonicalize-return,canonicalize-live-in,leverage-predicated-value,transform-ctrl-to-data-flow,fold-constant,insert-data-mov,bind-source-iteration-domain)",
+        "-o",
+        "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/raytracing-original-lowered.mlir"
+      ],
+      "exit_code": 0,
+      "stderr": "/home/x/shiran/project/orbit-artifact/.work/source-fission-original-ray-repair-20261006/lower.stderr.log"
+    }
+  ]
+}

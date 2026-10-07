@@ -1,0 +1,133 @@
+{
+  "fission_substitution": false,
+  "flows": [
+    {
+      "actual_mapper_calls": 0,
+      "command": {
+        "argv": [
+          "/home/x/shiran/project/orbit-artifact/.work/sequential-comparison-final/bin/mlir-amoeba-opt",
+          "/home/x/shiran/project/orbit-artifact/.work/sequential-pilot-32-final/inputs/raytracing/canonical.mlir",
+          "--verify-each",
+          "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+          "--search-joint-neighborhood=output-dir=/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/joint/search function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ stage=full-joint architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml source-repository=https://github.com/guosran/orbit.git source-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e max-rounds=64 max-candidates=32 beam-width=16 diversity-slots=4 checkpoint=/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/joint/checkpoint.json decision-flow=joint graph-budget-percent=50 model-namespace=orbit-per-cgra-2x2-direct-4member-v1 round-score-quota=4 bootstrap-supported-shapes=true scoring-workers=4 max-partition-factor=8 require-source-iteration-domain=true protocol=/home/x/shiran/project/orbit-artifact/.work/sequential-pilot-32-final/protocol.json source-contract-file=/home/x/shiran/project/orbit-artifact/.work/sequential-comparison-final/source-model-contract.json parent-cost-file=/home/x/shiran/project/orbit-artifact/.work/sequential-pilot-32-final/inputs/raytracing/cost-catalog.json model=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json cache=/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/joint/cache.json",
+          "-o",
+          "/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/joint/search/search-output.mlir",
+          "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml"
+        ],
+        "ended_unix": 1791177446.2635827,
+        "exit_code": 1,
+        "schema": "orbit-neighborhood-command-v1",
+        "started_unix": 1791177446.0088532,
+        "status": "finished",
+        "stderr": "/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/joint/search.stderr.log",
+        "stdout": "/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/joint/search.stdout.log",
+        "subprocess_timeout": null
+      },
+      "decision_flow": "joint",
+      "scheduler_invocations": 0,
+      "status": "excluded-original-Ray"
+    },
+    {
+      "actual_mapper_calls": 0,
+      "command": {
+        "argv": [
+          "/home/x/shiran/project/orbit-artifact/.work/sequential-comparison-final/bin/mlir-amoeba-opt",
+          "/home/x/shiran/project/orbit-artifact/.work/sequential-pilot-32-final/inputs/raytracing/canonical.mlir",
+          "--verify-each",
+          "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+          "--search-joint-neighborhood=output-dir=/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/sequential/search function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ stage=full-joint architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml source-repository=https://github.com/guosran/orbit.git source-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e max-rounds=64 max-candidates=32 beam-width=16 diversity-slots=4 checkpoint=/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/sequential/checkpoint.json decision-flow=sequential graph-budget-percent=50 model-namespace=orbit-per-cgra-2x2-direct-4member-v1 round-score-quota=4 bootstrap-supported-shapes=true scoring-workers=4 max-partition-factor=8 require-source-iteration-domain=true protocol=/home/x/shiran/project/orbit-artifact/.work/sequential-pilot-32-final/protocol.json source-contract-file=/home/x/shiran/project/orbit-artifact/.work/sequential-comparison-final/source-model-contract.json parent-cost-file=/home/x/shiran/project/orbit-artifact/.work/sequential-pilot-32-final/inputs/raytracing/cost-catalog.json model=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json cache=/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/sequential/cache.json",
+          "-o",
+          "/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/sequential/search/search-output.mlir",
+          "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml"
+        ],
+        "ended_unix": 1791177446.5256839,
+        "exit_code": 1,
+        "schema": "orbit-neighborhood-command-v1",
+        "started_unix": 1791177446.3116043,
+        "status": "finished",
+        "stderr": "/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/sequential/search.stderr.log",
+        "stdout": "/home/x/shiran/project/orbit-artifact/.work/sequential-ray-preflight-objective-final/sequential/search.stdout.log",
+        "subprocess_timeout": null
+      },
+      "decision_flow": "sequential",
+      "scheduler_invocations": 0,
+      "status": "excluded-original-Ray"
+    }
+  ],
+  "task_13_shape_domain": [
+    {
+      "analytical_lower_bound": 83,
+      "mapper_tile_cols": 2,
+      "mapper_tile_rows": 2,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 42,
+      "mapper_tile_cols": 4,
+      "mapper_tile_rows": 2,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 28,
+      "mapper_tile_cols": 6,
+      "mapper_tile_rows": 2,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 21,
+      "mapper_tile_cols": 8,
+      "mapper_tile_rows": 2,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 42,
+      "mapper_tile_cols": 2,
+      "mapper_tile_rows": 4,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 21,
+      "mapper_tile_cols": 4,
+      "mapper_tile_rows": 4,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 28,
+      "mapper_tile_cols": 2,
+      "mapper_tile_rows": 6,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    },
+    {
+      "analytical_lower_bound": 21,
+      "mapper_tile_cols": 2,
+      "mapper_tile_rows": 8,
+      "model_interval_max_ii": 20,
+      "status": "unsupported-model-domain",
+      "task": "Task_13",
+      "unsupported_reason": "analytical-lower-bound-exceeds-model-ceiling"
+    }
+  ],
+  "source_contract": ".work/sequential-comparison-final/source-model-contract.json",
+  "optimizer": ".work/sequential-comparison-final/bin/mlir-amoeba-opt"
+}

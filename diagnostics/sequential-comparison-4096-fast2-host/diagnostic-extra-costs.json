@@ -1,0 +1,106 @@
+{
+  "schema": "orbit-sequential-extra-diagnostic-costs-v1",
+  "role": "additional diagnostics excluded from original main and4096supplement results",
+  "smoke_cells": [
+    {
+      "result_summary": "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer-smoke-fixed/gcn/sequential-50/comparison-summary.json",
+      "objective_evaluations": 21,
+      "prediction_feature_queries": 3048,
+      "model_inferences": 3048,
+      "predictor_cache_hits": 3048,
+      "actual_task_mapper_calls": 41,
+      "native_program_evaluations": 7,
+      "search_wall_seconds": 206.4000813961029,
+      "initial_resource_feasibility_query_count": 28,
+      "validation_wall_seconds": 17.239483205601573,
+      "numeric_comparisons": 4227440
+    },
+    {
+      "result_summary": "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer-smoke-transfer/gcn/sequential-50-transfer/comparison-summary.json",
+      "objective_evaluations": 32,
+      "prediction_feature_queries": 4408,
+      "model_inferences": 4408,
+      "predictor_cache_hits": 4408,
+      "actual_task_mapper_calls": 48,
+      "native_program_evaluations": 7,
+      "search_wall_seconds": 212.98038363456726,
+      "initial_resource_feasibility_query_count": 28,
+      "validation_wall_seconds": 18.25676801847294,
+      "numeric_comparisons": 4227440
+    },
+    {
+      "result_summary": "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer-smoke-transfer/lu/sequential-50-transfer/comparison-summary.json",
+      "objective_evaluations": 32,
+      "prediction_feature_queries": 2488,
+      "model_inferences": 2488,
+      "predictor_cache_hits": 2488,
+      "actual_task_mapper_calls": 23,
+      "native_program_evaluations": 7,
+      "search_wall_seconds": 15.884423732757568,
+      "initial_resource_feasibility_query_count": 9,
+      "validation_wall_seconds": 4.997308778576553,
+      "numeric_comparisons": 28175
+    }
+  ],
+  "smoke_totals": {
+    "objective_evaluations": 85,
+    "prediction_feature_queries": 9944,
+    "model_inferences": 9944,
+    "predictor_cache_hits": 9944,
+    "actual_task_mapper_calls": 112,
+    "native_program_evaluations": 21,
+    "search_wall_seconds": 435.26488876342773,
+    "initial_resource_feasibility_query_count": 65,
+    "validation_wall_seconds": 40.493560002651066,
+    "numeric_comparisons": 8483055
+  },
+  "llama_replay": {
+    "extra_objective_evaluations": 0,
+    "extra_predictor_queries": 0,
+    "extra_mapper_calls": 0,
+    "wall_seconds": 0.8630716800689697,
+    "replayed_prefixes": [
+      2,
+      3,
+      8,
+      13
+    ]
+  },
+  "negative_option_checks": [
+    {
+      "command": [
+        "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/bin/mlir-amoeba-opt",
+        "/home/x/shiran/project/orbit-artifact/results/sequential-comparison-4096-fast2-host/inputs/gcn/canonical.mlir",
+        "--allow-unregistered-dialect",
+        "--search-joint-neighborhood=output-dir=/home/x/shiran/project/orbit-artifact/diagnostics/sequential-comparison-4096-fast2-host/budget-transfer-option-checks/joint function=not_used stage=full-joint decision-flow=joint sequential-budget-policy=transfer-unused source-contract-file=/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/source-model-contract.json",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 1,
+      "expected_rejection": "requires decision-flow=sequential",
+      "wall_seconds": 0.037738800048828125,
+      "objective_evaluations": 0,
+      "predictor_queries": 0,
+      "mapper_calls": 0
+    },
+    {
+      "command": [
+        "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/bin/mlir-amoeba-opt",
+        "/home/x/shiran/project/orbit-artifact/results/sequential-comparison-4096-fast2-host/inputs/gcn/canonical.mlir",
+        "--allow-unregistered-dialect",
+        "--search-joint-neighborhood=output-dir=/home/x/shiran/project/orbit-artifact/diagnostics/sequential-comparison-4096-fast2-host/budget-transfer-option-checks/sequential function=not_used stage=full-joint decision-flow=sequential sequential-budget-policy=invalid source-contract-file=/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/source-model-contract.json",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 1,
+      "expected_rejection": "must be fixed-split or transfer-unused",
+      "wall_seconds": 0.03817939758300781,
+      "objective_evaluations": 0,
+      "predictor_queries": 0,
+      "mapper_calls": 0
+    }
+  ],
+  "build_wall_seconds": 30.03930354118347,
+  "training_or_calibration": false,
+  "common_preparation": "reuse identical immutable canonical bytes and seeds; seed/model preparation costs remain recorded in eachinput-binding.json"
+}

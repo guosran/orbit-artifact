@@ -1,0 +1,1002 @@
+{
+  "base_commit": "99ded7396f31c71ee0946389c6946a5f58c770c6",
+  "implementation_scope": {
+    "compiler_patch_changes_only_the_three_expected_search_mapper_and_predictor_files": true,
+    "materializer_or_production_scheduler_implementation_files_touched_by_compiler_patch": [],
+    "new_standalone_materializer_or_production_scheduler_added": false,
+    "prerequisite_note": "The explicit prerequisite patch modifies the existing retiming pass and profile-cost adapter sources; it creates or deletes no files and adds no standalone materializer or production scheduler."
+  },
+  "patches": {
+    "application_order": [
+      "existing-source-prerequisite.patch",
+      "compiler-sequential.patch"
+    ],
+    "compiler_sequential": {
+      "exactly_three_expected_files": true,
+      "files": [
+        "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+        "lib/Backend/Neura/Orchestration/JointScheduling/MapJointSchedulingTasksPass.cpp",
+        "lib/Backend/Neura/Orchestration/JointScheduling/PredictAnalyticalTaskCostCatalogPass.cpp"
+      ],
+      "path": "reference/sequential-comparison/compiler-sequential.patch",
+      "sha256": "ea83b8bd871976e738f9472ade733b56b044fe15d35baa6d7377135c78035e49"
+    },
+    "existing_source_prerequisite": {
+      "exactly_five_expected_files": true,
+      "files": [
+        "include/Backend/Neura/Orchestration/SourceIterationDomain.h",
+        "lib/Backend/Neura/Orchestration/JointScheduling/ImportInput0CallerNoAliasPass.cpp",
+        "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaProfileCostAdapter.cpp",
+        "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaProfileCostAdapter.h",
+        "lib/Backend/Neura/Orchestration/JointScheduling/RetimingOriginalAmoebaFixedDecisionsPass.cpp"
+      ],
+      "path": "reference/sequential-comparison/existing-source-prerequisite.patch",
+      "sha256": "539943ef59e37b49912b3dbffcd23e3bfe486bd18e09d3491ba3d6aebf3c431d"
+    }
+  },
+  "reconstructed_worktree": {
+    "added_or_deleted_files": false,
+    "modified_file_count": 8,
+    "modified_files": [
+      "include/Backend/Neura/Orchestration/SourceIterationDomain.h",
+      "lib/Backend/Neura/Orchestration/JointScheduling/ImportInput0CallerNoAliasPass.cpp",
+      "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lib/Backend/Neura/Orchestration/JointScheduling/MapJointSchedulingTasksPass.cpp",
+      "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaProfileCostAdapter.cpp",
+      "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaProfileCostAdapter.h",
+      "lib/Backend/Neura/Orchestration/JointScheduling/PredictAnalyticalTaskCostCatalogPass.cpp",
+      "lib/Backend/Neura/Orchestration/JointScheduling/RetimingOriginalAmoebaFixedDecisionsPass.cpp"
+    ],
+    "only_expected_eight_files_modified": true,
+    "untracked_files": false
+  },
+  "reconstruction_worktree": {
+    "created_from_base_commit": "99ded7396f31c71ee0946389c6946a5f58c770c6",
+    "detached": true,
+    "path": ".work/sequential-delivery-audit",
+    "removed_after_acceptance_recording": true
+  },
+  "schema": "orbit-sequential-source-delivery-acceptance-v1",
+  "source_byte_comparison": {
+    "all_reconstructed_files_match_sequential_source_and_contract": true,
+    "files": [
+      {
+        "bytes": 4526,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/NeuraBackendPasses.h",
+        "sha256": "1605def755080348f3a03a12810be233c08dc4644ecab06834e18b3131ce8183"
+      },
+      {
+        "bytes": 60807,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/NeuraBackendPasses.td",
+        "sha256": "fb8d9ca9d0375662d027a15b531448f8e035178047a50371139a4c8774ce2658"
+      },
+      {
+        "bytes": 2967,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/AnalyticalBasedTaskOrchestration/AnalyticalBasedTaskOrchestration.h",
+        "sha256": "78bf03776a5383a2273fb1d401d1cba4b7525d069bd4cb9590ec7f124bcd63b2"
+      },
+      {
+        "bytes": 9187,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/GraphFactsIO.h",
+        "sha256": "2bdc7725fee2752c1dcb2032da944c00acccabe4461851d0e1427f4160949cc5"
+      },
+      {
+        "bytes": 4741,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/InterTaskNetwork.h",
+        "sha256": "6e583f07db1c08f05cce43f8be86c18f190aa578560aae9529a28eb56b84c5c0"
+      },
+      {
+        "bytes": 4070,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/JointSchedulingCandidateOrder.h",
+        "sha256": "bf5fea64c37e05b5b3e95ed233e65178e9de67c7912f375bc756b134e240642d"
+      },
+      {
+        "bytes": 2770,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/MapperFeatureExtractor.h",
+        "sha256": "719a7ac9c9e301f92c09f0cdccf9a9fd02923085798c7ce9472c8504ae0c664c"
+      },
+      {
+        "bytes": 2942,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/ProductionSramNativeCapacityGate.h",
+        "sha256": "7cab85e412357da0b9720b5f18b3a5930d386f393281f21e435225a07b928478"
+      },
+      {
+        "bytes": 5303,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/ProductionSramNativeUpperBound.h",
+        "sha256": "096aa93814f944e0f0279f9c4d7e4006145a67638b4fa36b3c91c9651cdbb88a"
+      },
+      {
+        "bytes": 3352,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/ProveStaticActiveTransferShapesPass.h",
+        "sha256": "8684a27ff4acd079d534fd7dfef2dc804e6a29d7fbbf814366e94a63dda53bab"
+      },
+      {
+        "bytes": 44481,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/ReplicaOutputCoordinateProof.h",
+        "sha256": "748cf7c9ec38e52f364c1f08b70e319e4bd3ee065a6d7c9d19aa388e454b7b5d"
+      },
+      {
+        "bytes": 1678,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/SourceIterationDomainPartitionProof.h",
+        "sha256": "3b502510ff23f6eaade36691d11d6dc59b6d2895cd4566e978e232bb7b0e8bf2"
+      },
+      {
+        "bytes": 9019,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/TaskCommunicationModel.h",
+        "sha256": "91694c968de7cf135cf35fb48bf463a7d3fa14ca815cbd0f263adc6669fd560b"
+      },
+      {
+        "bytes": 7577,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/TaskEdgeContract.h",
+        "sha256": "a09b59282cdcab6aa94146b2a219a529e6138c22ac0f6cb862b37702fedee720"
+      },
+      {
+        "bytes": 7192,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/JointScheduling/TaskGraphRewriteLegality.h",
+        "sha256": "0811290ce831678294d354e86eda9d5f09ae90d63aca9444701157a2143854d0"
+      },
+      {
+        "bytes": 1328,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/Orchestration.h",
+        "sha256": "715ed9ae6addd393455d43035657e2a9e1edb80eab119a71385fe88fa84d3963"
+      },
+      {
+        "bytes": 2803,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/RoutingCriticalPathOrchestration/RoutingCriticalPathOrchestration.h",
+        "sha256": "dd9c63b39df6355d58cc89e20b02a4e934e58d5889b8f8ba66e26a4c650723b0"
+      },
+      {
+        "bytes": 30174,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/SourceIterationDomain.h",
+        "sha256": "f08818ce80e9ce43e6411db6a0fc7241e9f3bc5f6a189fabfdf144ed0ac41280"
+      },
+      {
+        "bytes": 10922,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/Backend/Neura/Orchestration/orchestration_utils.h",
+        "sha256": "2fbea83794195c0915f51b67312849ee8d56842487d86e17626ca15ceed78849"
+      },
+      {
+        "bytes": 172,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/Taskflow.td",
+        "sha256": "bbc1697179fc71c90938e7bf4074cfe4af390da7f06ff0efcfc785a04d107434"
+      },
+      {
+        "bytes": 312,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowDialect.h",
+        "sha256": "26d33629dda43a3d0464ed439ec6790958b792f635277ceb9abc96f36523d28b"
+      },
+      {
+        "bytes": 759,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowDialect.td",
+        "sha256": "bf783dbf1b6a4f933097ff672a8f75750574f22920fd411f8378eb3af20c7e80"
+      },
+      {
+        "bytes": 871,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowOps.h",
+        "sha256": "283341cdc587d08e21727d8e2201a6ead548ccc57dad5833e29c1b11cb86fb5a"
+      },
+      {
+        "bytes": 12575,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowOps.td",
+        "sha256": "c82975faaf8c7d9a5bbf786803a9b1ef98a0a4f8263a0d58ac60295934b9c715"
+      },
+      {
+        "bytes": 1106,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowPasses.h",
+        "sha256": "0b76fa5f81528e20606d5d6fbcd6b11b58833bb1cae0b2c0e1eb30f1aba857f8"
+      },
+      {
+        "bytes": 2161,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowPasses.td",
+        "sha256": "a1aef79d0155c6d4d2a75baa9182165e98e59de761952d33cef36a32c30f5094"
+      },
+      {
+        "bytes": 180,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowTypes.h",
+        "sha256": "912cd05fa06775e95cef173799f2e7db2a1677b838952704d0b2ca39f3338cab"
+      },
+      {
+        "bytes": 524,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "include/TaskflowDialect/TaskflowTypes.td",
+        "sha256": "cf4b75388501ce1e1359189a322e86d47f249e31cef4abbd9efd8f341e283a41"
+      },
+      {
+        "bytes": 17878,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Conversion/TaskflowToNeura/TaskflowToNeuraPass.cpp",
+        "sha256": "73bb6f0bff740f3109c1d4f529eea178a4fe629792e806cf76907037731d621f"
+      },
+      {
+        "bytes": 27641,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/AnalyticalBasedTaskOrchestration/AnalyticalBasedTaskOrchestration.cpp",
+        "sha256": "ca4e3bbeee3338e29685118905b2e65e1645a69dc710fe8dd155c6765a682240"
+      },
+      {
+        "bytes": 52388,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalMLPInference.cpp",
+        "sha256": "04303561f7546191b5097bf2b29a197b6b2445d138de328b637f8d0c5dd112b2"
+      },
+      {
+        "bytes": 9019,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalMLPInference.h",
+        "sha256": "4e1303b50a086856751f933de902df5a2586ed0e546bd494cc51e664f8b04cbe"
+      },
+      {
+        "bytes": 28632,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCandidateCommon.cpp",
+        "sha256": "e34827c9b127e8ded6461a5115cef38b755ec598b5c0c77323fe1d9e2227c396"
+      },
+      {
+        "bytes": 4164,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCandidateCommon.h",
+        "sha256": "e34ec907524422673950338a8b05cb6c19aec3cfd69dbf7b2e531299e4c30136"
+      },
+      {
+        "bytes": 25228,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCandidateManifest.cpp",
+        "sha256": "64ea11b43ba2eff5ae053fa165562e43bb7d3aaa93cafa000c7b34878dfebfa3"
+      },
+      {
+        "bytes": 2858,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCandidateManifest.h",
+        "sha256": "6c581c60e12c7ead8420b537245c75004b537b5d20dcc94763f5c4b5f09d8d43"
+      },
+      {
+        "bytes": 20718,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCostCatalog.cpp",
+        "sha256": "6fc81f4ffaf87a0ff8b91acb108f7f838539686c056d938aead1e50f1b6425cf"
+      },
+      {
+        "bytes": 6026,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCostCatalog.h",
+        "sha256": "2f5fbd07a762f6dba0e17cb6a9ad256c38384a30a852d21b314afd398a2fdddf"
+      },
+      {
+        "bytes": 4882,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/AnalyzeRecResMiiPass.cpp",
+        "sha256": "f64141027d08517d63fc3147c3e7253e708cc29ab6405b3dbc7dd1648fb837a1"
+      },
+      {
+        "bytes": 5640,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/BindExactMemrefShapePass.cpp",
+        "sha256": "a9da53c422adc8dc3ccab9d69df0d7d21a968f4d393bc130e71bd3f822c9d5bf"
+      },
+      {
+        "bytes": 6694,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/BindSourceIterationDomainPass.cpp",
+        "sha256": "e86869b290a46d6ae3d2bf0177ce8077486773615eb2d92465907f8e134db893"
+      },
+      {
+        "bytes": 4272,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/BindStaticScalarArgumentPass.cpp",
+        "sha256": "7ce21a20a0b75a949b4e9b47646e222d022c0d6e21471caee16aeca9c270a5a9"
+      },
+      {
+        "bytes": 6239,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ClosureLegalityPreflight.h",
+        "sha256": "08699fd7b511548d0af6eefea8d3eac86726b518573e1e05c8c73df27095c46f"
+      },
+      {
+        "bytes": 55182,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/CommunicationExactScheduleSpace.cpp",
+        "sha256": "1d74ef017f7b5aaa0ad98b63f81ae84e3a808028ba655abc5f251de5d90ae393"
+      },
+      {
+        "bytes": 1846,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/CommunicationExactScheduleSpace.h",
+        "sha256": "cc591ada410c79db399b57e6458e534675463a2d32aab9a6cb4b0a4e800269e5"
+      },
+      {
+        "bytes": 21173,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/EnumerateAnalyticalTaskCandidatesPass.cpp",
+        "sha256": "cdfd3c5c9045a516134036081e730ff6d3066e6d9550f2e8bba74a4db6248a5d"
+      },
+      {
+        "bytes": 13280,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/EnumerateApplicationRewriteActionsPass.cpp",
+        "sha256": "87fe0cad7fedf1a3204e7b83d6fbf7bbed4bfea213c530b1e169a6d365a1daa4"
+      },
+      {
+        "bytes": 14156,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/EnumerateExactTaskSchedulesPass.cpp",
+        "sha256": "6bcb58be5b1406231ff59d2fd212483dbe0f43001eb73ef2e66da702fda49170"
+      },
+      {
+        "bytes": 124840,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/EnumerateJointGraphClosurePass.cpp",
+        "sha256": "3e66c6ba5db401adb719a2be1b6f6c12f20d924c9bb00dc5b271ec65e81df6a7"
+      },
+      {
+        "bytes": 89251,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/EnumerateJointSemanticRewritePass.cpp",
+        "sha256": "6d165782f87cd775ceaaf9ddafc5d09feeba39151e7f343310f5097717f100a1"
+      },
+      {
+        "bytes": 10811,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/EnumerateReplicaActionsPass.cpp",
+        "sha256": "09dfda38978c0b0dc006a8700c4c5d5a25c91d2dbc3d4daeb364aa5ac6133442"
+      },
+      {
+        "bytes": 7691,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ExactScheduleSpace.cpp",
+        "sha256": "ed852c067bbf9af775d304ed09df2be3b2a3798e4358e49ea361736aa08919a3"
+      },
+      {
+        "bytes": 3642,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ExactScheduleSpace.h",
+        "sha256": "51f9dd9e0da0095b75a3b0c252dcdd2e3227289ee65dd473da9a1fb5d5210bbb"
+      },
+      {
+        "bytes": 31489,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ExactScoreCache.h",
+        "sha256": "4e64149759137edaec9e6c8f2c40dea40da4b91c022f8ed05cca61bea08d3d47"
+      },
+      {
+        "bytes": 126697,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ExtractJointTaskGraphFactsPass.cpp",
+        "sha256": "0ce0c96a08bd0b7e3d951f2360eb7a6fbf03c19b3b60a917d19576f249138708"
+      },
+      {
+        "bytes": 8527,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/FixedScheduleVerifier.cpp",
+        "sha256": "05c810d2280361e992cfc528c8a7f2611450a8ce9960280b771c901e2a95373d"
+      },
+      {
+        "bytes": 6254,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/FixedScheduleVerifier.h",
+        "sha256": "d353610e9d4d0e03457a13ef89ad9028c6fa29f3a5cb33a58199a2f9291f05e8"
+      },
+      {
+        "bytes": 132679,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/GlobalStageRankerPass.cpp",
+        "sha256": "4482cff9e8cd948a8079e6cc0d84981c85cacce9d3e12888b630b08b7ea5e7f3"
+      },
+      {
+        "bytes": 39645,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ImportInput0CallerNoAliasPass.cpp",
+        "sha256": "195f07f2186f936281b958fda8d9c128b1f6b8851d3ae9c06157d3035b91a948"
+      },
+      {
+        "bytes": 194893,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/InheritReplicaAnalyticalTaskCostCatalogPass.cpp",
+        "sha256": "78f5d205e069103677e52af8cefcba1210fa1e85d025ff200008d27a06ffea04"
+      },
+      {
+        "bytes": 19839,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/InterTaskNetwork.cpp",
+        "sha256": "1fe94010f50bd6c79a68d3ec6468fbe802f5b4e76ea1e0ba76197d8e9e3f56a5"
+      },
+      {
+        "bytes": 74190,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+        "sha256": "6d91b6cef0acd57fffcefc7c99aba0615ba39bb156a3027a70366e4f8d93caef"
+      },
+      {
+        "bytes": 1536,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.h",
+        "sha256": "e50014d23aa47084b8dad57fcce73eee93cd9e8d23e2e2f323d75bb3659803e9"
+      },
+      {
+        "bytes": 297318,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+        "sha256": "28a535a31369a4d1350507ab6640a16c048f4f0288eae8dd54ce4f8b97e2d550"
+      },
+      {
+        "bytes": 68507,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/JointReductionRewritePasses.cpp",
+        "sha256": "b489e3deb65dd7753409b4578da752738a7c897bf8eedd35333aa27e6655b2cd"
+      },
+      {
+        "bytes": 11242,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/JointRewritePreflight.h",
+        "sha256": "c872a9872bc3d5379c2c93c98c3bee5406465befef004c288512f69151dd5a67"
+      },
+      {
+        "bytes": 132779,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/LowerJointTaskflowForHostPass.cpp",
+        "sha256": "ff32557a4ac3001c94f1830f8c98b3aea43c86f4e64b77226f13d69c15186bd1"
+      },
+      {
+        "bytes": 41502,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MapJointSchedulingTasksPass.cpp",
+        "sha256": "e07b3a88e07000ade32e9668e82a73c3916c0d47a706ef8e2182bfc95f09add8"
+      },
+      {
+        "bytes": 4240,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MapperCostAnalysis.cpp",
+        "sha256": "bb90e2a15f3624c1c02aacfced4c7c7a5ab1373a3ff7befdc815dba2c9b9ab59"
+      },
+      {
+        "bytes": 1223,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MapperCostAnalysis.h",
+        "sha256": "961246708bf3f7ae87ea2b6b75fae32308d8fcea0b9c4988cf38248e95f75791"
+      },
+      {
+        "bytes": 4063,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MapperCounterBounds.h",
+        "sha256": "53bf9118aeeb1d85c5dae67656d329af02703a68245a7b19d716b17d3945cf55"
+      },
+      {
+        "bytes": 34554,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MapperFeatureExtractor.cpp",
+        "sha256": "ebe583c1e3fb36eb8f69b224bd216e6fc40aa00c6c8a96e0a827688accc3b6a2"
+      },
+      {
+        "bytes": 23755,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeAnalyticalTaskCandidatePass.cpp",
+        "sha256": "fd98576a9cef3fa629f8a954025af1880f77c870a69424e74d943b1336fa4230"
+      },
+      {
+        "bytes": 78285,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeJointSemanticRewritePass.cpp",
+        "sha256": "513aaf34acdbc7c2d229af0f5e8c964f5905877f6d209d4ea23c077f4f72fced"
+      },
+      {
+        "bytes": 292264,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeJointTaskReplicasPass.cpp",
+        "sha256": "e5ec7206bccb351c43cbaf0b98bddf544dd2d7de102727738c77012488dcee42"
+      },
+      {
+        "bytes": 175324,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+        "sha256": "25fd1d9dc737a4b677cc9cfef905dc86817d7ad156ecb9e3b3a1a9eee2f233e6"
+      },
+      {
+        "bytes": 121923,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraKReductionPass.cpp",
+        "sha256": "c077bf08978617517b3e94f4a608e05bfdb3a8b2e924cf2f9acb1f3cbd74977a"
+      },
+      {
+        "bytes": 2367,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/NeighborhoodReplaySelection.h",
+        "sha256": "ef20ff73b01d3c9e27eed9e8bc65489f9680a3c14c78966f6232828c52c2575c"
+      },
+      {
+        "bytes": 41398,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaCtrlToDataFlowPass.cpp",
+        "sha256": "94c7d47cf92b6591a8ac1d5eec5e7b32962de4ecab6d26398dd42ffeeca41e17"
+      },
+      {
+        "bytes": 549,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaCtrlToDataFlowPass.h",
+        "sha256": "ceea1fcee58b3c94813054088f3b55d4f61034dbf888cb402e7f24fd93c6b7b7"
+      },
+      {
+        "bytes": 12814,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaFixedDecisionRetimer.cpp",
+        "sha256": "07f583cf07ddcbc3ce03cef63e483a98e424bf2b5c5d819605a8c4e8ca4ffb6b"
+      },
+      {
+        "bytes": 2533,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaFixedDecisionRetimer.h",
+        "sha256": "140636b735c45eb457b502905e76d8cfd38f6eefa9735fe0b001050f00f06a7a"
+      },
+      {
+        "bytes": 72162,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaProfileCostAdapter.cpp",
+        "sha256": "26b449cffe799cf4d5b1ffc166f5edd698c9f05fb4b2dbb2863a381676e0dcf2"
+      },
+      {
+        "bytes": 2225,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/OriginalAmoebaProfileCostAdapter.h",
+        "sha256": "3f361d31309cd2cdcc2a95aa758b09d79b38eeccfcff08ecfb100642a0b47b01"
+      },
+      {
+        "bytes": 79883,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/PredictAnalyticalTaskCostCatalogPass.cpp",
+        "sha256": "98c9d2c060264368cce78c6ea095c7b87e00c7ab573ed7e172360596ecba7676"
+      },
+      {
+        "bytes": 22447,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/PrepareJointDiagnosticCandidatePass.cpp",
+        "sha256": "172d4e9047dc10828db276e023e2a6ee926aa00c4fb4ad99345ab320075fe760"
+      },
+      {
+        "bytes": 6637,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ProductionFixedScheduleCommunication.cpp",
+        "sha256": "6a99ce3af52c344bf96505718732e07c0f4e2e3c97dc2b2ba53acb0e8cc9c66a"
+      },
+      {
+        "bytes": 2735,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ProductionFixedScheduleCommunication.h",
+        "sha256": "82717a6be1561e2739c6a57f160ca44abc79c7a32f247dc1e4da55287a67fcd3"
+      },
+      {
+        "bytes": 20729,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ProductionSchedulerAdapter.h",
+        "sha256": "4eff682cf7be265ed972a5a60fdbde7ee2ce0aea21ab44a9c22ce3e3d57e9708"
+      },
+      {
+        "bytes": 15707,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ProductionSramNativeCapacityGate.cpp",
+        "sha256": "52707ed7a9d617d8fdbe668f36e5e6735ec2e717bd56a1c2f74fbdc813ccc977"
+      },
+      {
+        "bytes": 49052,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ProductionSramNativeUpperBound.cpp",
+        "sha256": "ba9a8b87487b4df63fe93b332ff32cda1bdd40135b14bb56f8f5b1f21fe7cd00"
+      },
+      {
+        "bytes": 66496,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ProveStaticActiveTransferShapesPass.cpp",
+        "sha256": "21cf10615487024e487cdfc84fef3d2caee801cea6a0513c4f63efe3ce3e9741"
+      },
+      {
+        "bytes": 47545,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/PruneJointGraphCandidatesPass.cpp",
+        "sha256": "cfe44f14264b249dec7b8efb79538ded0ad1aec7dd84e6d92c4cbb04927d97bd"
+      },
+      {
+        "bytes": 24023,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/RebindAnalyticalTaskCostCatalogPass.cpp",
+        "sha256": "afd94a8c7cd52426aae8853cb723f91d07670f74ead04820b8a99802de15ee57"
+      },
+      {
+        "bytes": 1740,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/RectanglePairTimeBounds.h",
+        "sha256": "a0f166e0d999a0de38b78c66ea7725fcda123dec697c8fcb5f1b35b9568752d4"
+      },
+      {
+        "bytes": 36816,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ReplayJointNeighborhoodActionsPass.cpp",
+        "sha256": "06f6290185fae39a320ea99b35f7ef7b4c6cc60ca37fb8ea21207f5c5f36ccc2"
+      },
+      {
+        "bytes": 100205,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/RetimingOriginalAmoebaFixedDecisionsPass.cpp",
+        "sha256": "6119305dde7961c6d7e65461a2c38b5a5cca6407907639f0db5c919fd1466cff"
+      },
+      {
+        "bytes": 615,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/RetimingOriginalAmoebaFixedDecisionsPass.h",
+        "sha256": "2e2a81fb3d2faa05744b0bb755187a85be913b79ffc210980ce5caa4525234b1"
+      },
+      {
+        "bytes": 54807,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ScoreAnalyticalTaskCandidatesPass.cpp",
+        "sha256": "1ae997b66333abcab3f1641c5a02d78783f3160fd3dc423f25a65bad2f221240"
+      },
+      {
+        "bytes": 309834,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ScoreExactJointTaskCandidatesPass.cpp",
+        "sha256": "1c0bcc38be959cb8da28e98c94374bcecd606890b20a8763cf5ed8d520dc4bf0"
+      },
+      {
+        "bytes": 21899,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/ShapeDomainBounds.h",
+        "sha256": "b7ea024eae47d3a5ec7ea94cc7dc5efae4e43398d23de9a1d216e9e2b7732798"
+      },
+      {
+        "bytes": 10706,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/SpatialTaskCandidateSpace.cpp",
+        "sha256": "a56d2eba253c384020fbd51db704704b761d8b7d5acfb81119645bcdfeeaadd8"
+      },
+      {
+        "bytes": 5455,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/SpatialTaskCandidateSpace.h",
+        "sha256": "6c2344c2ae09fb79d849130005f0147316fc5b553635905138ca09f01b9faba0"
+      },
+      {
+        "bytes": 40707,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/TaskCommunicationModel.cpp",
+        "sha256": "a8efb66da21f691e03fea37759231ef2ed9f22ef1fd8010aebc3dcb25de1f60d"
+      },
+      {
+        "bytes": 53888,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/JointScheduling/TaskEdgeContract.cpp",
+        "sha256": "8a755b425cb4360d4ff7cbae0abcdeb43da8788af454f111162b64ac1c27d881"
+      },
+      {
+        "bytes": 122,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/Orchestration.cpp",
+        "sha256": "1c00b147c52b207b9ad1896457680f4a10a84ab5446219248085975951ceb99c"
+      },
+      {
+        "bytes": 3642,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/RoutingCriticalPathOrchestration/RoutingCriticalPathOrchestration.cpp",
+        "sha256": "616c5c464d1e461d09ae859115abee140eea1b4ed9e98cc10ba29dee14dc62af"
+      },
+      {
+        "bytes": 61875,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Orchestration/orchestration_utils.cpp",
+        "sha256": "78c5c49db995d5418a511386402e19952d496592319da5d6f90f5f82b3f777a6"
+      },
+      {
+        "bytes": 14019,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/ClassifyTaskAndCounterPass.cpp",
+        "sha256": "f14f50cb37a0363ac9c9b0da368b04fd27142f29625e7ac89630b5ded3e3b9e5"
+      },
+      {
+        "bytes": 32614,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/ConstructHyperblockFromTaskPass.cpp",
+        "sha256": "8360fee499df27a883a5c0ba3f6c3e2299e884bcf965c7cd85ef484ac959aa98"
+      },
+      {
+        "bytes": 28357,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/Optimizations/FissionRayCarriedReductionPass.cpp",
+        "sha256": "e7f83bd42393917595470f67d3aa92dc82ff7f439582daa73845eff32dab7b39"
+      },
+      {
+        "bytes": 21809,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/Optimizations/FissionTaskPass.cpp",
+        "sha256": "5f67efb8141a189d7282fabc33f52ad44aa1dd7e6fb860d436510d37d117431e"
+      },
+      {
+        "bytes": 56589,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/Optimizations/FuseTaskPass.cpp",
+        "sha256": "87be42c2b2629d76ca0870209090656d565c34e94528bc18ce000909615037b1"
+      },
+      {
+        "bytes": 79792,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/Optimizations/ResourceAwareTaskOptimizationPass.cpp",
+        "sha256": "3e247262fdff05ad6fa31ee93236ae2461be647940d2f96dfe14656ec17042a6"
+      },
+      {
+        "bytes": 14545,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/Optimizations/TileTaskPass.cpp",
+        "sha256": "2dc5e9c20e016316779bf6ec426e89d369e724976bc9edb0c2d6496ff9a728be"
+      },
+      {
+        "bytes": 6225,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Backend/Neura/Transforms/OrchestrateTasksOnAcceleratorsPass.cpp",
+        "sha256": "311dd5609ec8405810215a3c417fcbabd32a24c614d101d2297a7a4fbf14d602"
+      },
+      {
+        "bytes": 20288,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Conversion/AffineToTaskflow/AffineToTaskflowPass.cpp",
+        "sha256": "9d49152bac6df8b1b74182fa665afed52de621b0ceb6700e71c817d4bb1f2cc2"
+      },
+      {
+        "bytes": 4511,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Conversion/AffineToTaskflow/ConvertCopyToAffineLoopsPass.cpp",
+        "sha256": "a9568be729648f2852ce849724d2675bdc80b5be00826b7dd0b849a9f9a29919"
+      },
+      {
+        "bytes": 7100,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Conversion/AffineToTaskflow/FoldSubViewPass.cpp",
+        "sha256": "6734f44ef5f0eee58a9e62101bfaae7fced9b923e08c9506f87496a12d9bcb66"
+      },
+      {
+        "bytes": 24807,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/Conversion/AffineToTaskflow/RepairLuAffineDeterminantCarryPass.cpp",
+        "sha256": "b4bcbf1f7e356010f760d88aee34a750af0c07c5142c5706423e4bdcdf9e0300"
+      },
+      {
+        "bytes": 1838,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/TaskflowDialect/Taskflow.cpp",
+        "sha256": "3c91358c111a725fcae375d99a9203939a2ebf67359d1d8ccf4ace4589e9d1fb"
+      },
+      {
+        "bytes": 35060,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/TaskflowDialect/TaskflowOps.cpp",
+        "sha256": "6a289e05872285f39e97ecf4fb4c72bef703d97fc9df3b7fc6a641821486775f"
+      },
+      {
+        "bytes": 4998,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/TaskflowDialect/TaskflowPasses.cpp",
+        "sha256": "1627378ee770f272805c857ea8f7b4792fe906c7b0f82cf29da02aba04360e0a"
+      },
+      {
+        "bytes": 19120,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/TaskflowDialect/Transforms/Optimizations/AffineLoopPerfectionPass.cpp",
+        "sha256": "146c1b707e3a9f4fe5503d379243cbddbed4c6d5bc59edeeab298666c2dab6b6"
+      },
+      {
+        "bytes": 15801,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/TaskflowDialect/Transforms/Optimizations/AffineLoopTreeSerializationPass.cpp",
+        "sha256": "fbf1f2e170b4ce63ebb989fd3c83e005e8d41b0c05199420a9383bb7bd200865"
+      },
+      {
+        "bytes": 40844,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "lib/TaskflowDialect/Transforms/Optimizations/MemoryAccessStreamingFusion.cpp",
+        "sha256": "33576d9689f9ced48a5f38e82dc1a80294368c24408db2375fb8ed003c8595eb"
+      },
+      {
+        "bytes": 16915,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "thirdparty/neura/include/NeuraDialect/Architecture/Architecture.h",
+        "sha256": "bc3d0288244a460b2fd7711286f7935c867750a3f1d41d96c3b9c2dca885d215"
+      },
+      {
+        "bytes": 2081,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "thirdparty/neura/include/NeuraDialect/Architecture/ArchitectureSpec.h",
+        "sha256": "df949164310bc4383f411110ca5d514cc3b4a1acc3c6a19efe7167a4e66a9912"
+      },
+      {
+        "bytes": 26605,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "thirdparty/neura/lib/NeuraDialect/Architecture/Architecture.cpp",
+        "sha256": "6d99f1f8eab12d377bf2ca4a7dd0f99776d9e8ab08016f7cdc51ccfa130c85af"
+      },
+      {
+        "bytes": 27480,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "thirdparty/neura/lib/NeuraDialect/Transforms/Optimizations/HwAgnosticOpt/FoldConstantPass.cpp",
+        "sha256": "0535a8c9fe1f9f82b22e3b7e13265b4cf48f00ae18826383dd4992eb6667ae88"
+      },
+      {
+        "bytes": 17137,
+        "matches_contract_payload": true,
+        "matches_sequential_source": true,
+        "path": "thirdparty/neura/lib/NeuraDialect/Transforms/Optimizations/HwSpecificOpt/FuseLoopControlPass.cpp",
+        "sha256": "8d1c43f36ac5d95448659f33372b90da4c71e1681f518ad2165f01ceb876b743"
+      }
+    ]
+  },
+  "source_model_contract": {
+    "path": ".work/sequential-comparison-final/source-model-contract.json",
+    "published_source_commit": "99ded7396f31c71ee0946389c6946a5f58c770c6",
+    "schema": "orbit-neighborhood-exact-source-model-contract-v1",
+    "sha256": "8779926ebee51b1fd7f385029598b5a4ba286ed4c3dd5d5b634fa701c5534d09",
+    "source_commit": "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e",
+    "source_count": 131,
+    "source_set_sha256": "76fc55c6a31e5cd4b36094f074e069880a188a4a1dbe405f0603646055f45641",
+    "unique_source_paths": 131
+  },
+  "validation": {
+    "build_run": false,
+    "experiment_run": false,
+    "git_apply_check_compiler": "passed",
+    "git_apply_check_prerequisite": "passed",
+    "git_apply_compiler": "passed",
+    "git_apply_prerequisite": "passed",
+    "git_diff_check_exit_code": 0,
+    "git_diff_check_output": ""
+  }
+}

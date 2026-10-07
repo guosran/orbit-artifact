@@ -1,10 +1,35 @@
-# Fixed input-0 cumulative ablation
+# Fixed input-0 independently initialized ablation
 
-The active experiment is aligned to the AMOEBA paper: 4×4 CGRAs with 2×2 PEs each, using the new four-member direct model. See [reproduction instructions](INPUT0_NEIGHBORHOOD_REPRODUCIBILITY.md) and [hardware provenance](../reference/input0-neighborhood/architecture-2x2-provenance.json). The v38 main ablation is complete: 25 measured stages pass mapper, numeric and independent trace validation, and five Ray stages have source-bound model-domain exclusions. SRAM remains pending and formal GO is false.
+The latest [R9 five-stage result](../diagnostics/input0-memory-fusion-fission-r9-20261007/README.md) is complete: six original-source workloads, 30 validated native stage results, five measured fixed1x1 baselines, and one compiler-proved original-Ray fixed1x1 exclusion. S1 combines shape and spatial-temporal scheduling; S2 adds replica; S3 tiling; S4 fusion; S5 generic source fission. Each stage independently searches all enabled dimensions from the same canonical input. All S4 and S5 cycles equal the preceding stage in this run. See the [fusion/fission investigation prompt](FRESH_AGENT_FUSION_FISSION_20261007.md). Common-DFG AMOEBA results are verified for five programs; Ray remains pending. The main Ray input is the original unsplit 27-task graph, using diagnostic runtimeII23 and unchanged training/normalizationII20. Target SRAM admission remains pending; `formal_go=false`.
 
-Original Ray is explicitly out of the model domain in all five main stages. Its best allowed shape has lower-bound II 21, above the model ceiling 20. The separately authorized split-at-4 fission curve uses the same new hardware, model and 4-round/4,096-score budget.
+The four-stage v59 protocol described below is historical. Its cohort was `input0-neighborhood-2x2-v59-shared-scheduler-r2`, with the separate Ray companion `input0-ray-fission-2x2-v59-shared-scheduler-r2`. Its results require its own exact source/model binding and runtime validation. The superseded v58 queue contributes no checkpoint, LU result, or other evidence to v59. Historical records remain separately labeled.
 
-## Current paper-aligned 2×2-PE results
+Fixed1x1, S1–S4, and the new AMOEBA result use the existing ORBIT production scheduler with critical-path dispatch and the same explicit network specification. The AMOEBA run retains original F45 shape, task-count, and replica decisions; placements and dispatch are rescheduled by ORBIT, using the original full-parent F45 replica-duration estimate. ORBIT and AMOEBA preserve separate DFGs and candidate spaces. The old frozen AMOEBA baseline remains historical and does not populate the default v59 table.
+
+Each new stage starts independently from the same canonical input, with its own beam, archive, and checkpoint. It does not import another stage's measured winner, seed, rewritten graph, or search frontier. Within-stage resume uses that stage's exact binding. The search is bounded and does not exhaustively enumerate every configuration.
+
+The hardware remains aligned to the AMOEBA paper: 4×4 CGRAs with 2×2 PEs each, using the four-member direct model. See [reproduction instructions](INPUT0_NEIGHBORHOOD_REPRODUCIBILITY.md) and [hardware provenance](../reference/input0-neighborhood/architecture-2x2-provenance.json). Historical v19, v38, v57, and v58 records retain their original stage names and measurements below or in their frozen exports.
+
+## Current four-stage definition
+
+| New label | Stage name | Enabled decisions |
+| --- | --- | --- |
+| S1 | `shape-temporal` | Shape plus the ORBIT production spatial-temporal scheduler using critical-path dispatch |
+| S2 | `shape-temporal-replica` | S1 plus replica |
+| S3 | `shape-temporal-replica-tiling` | S2 plus tiling |
+| S4 | `full-joint` | S3 plus fusion |
+
+The temporal dimension here is the ORBIT production scheduler's critical-path dispatch policy. Fixed1x1, each stage, and the new retained-choice AMOEBA run use this scheduler and the same explicit network timing. The scheduler computes dependency-, resource-, and network-ready start cycles. Search does not enumerate all dispatch orders or arbitrary start times as separate candidates. Beam width 16 counts complete program candidates, not tasks.
+
+The old shape-only and shape-plus-temporal rows are merged into the new S1. Historical S1–S5 data keep their original labels and are never relabeled as the new S1–S4 curve. v59 uses fresh fixed1x1 and AMOEBA roots; historical baseline results do not fill those columns.
+
+## Historical v38 paper-aligned 2×2-PE results (warm-started)
+
+The completed v38 results below used previous-stage measured-winner warm starts and are historical cumulative diagnostics. They do not measure the independently initialized four-stage scheme.
+
+The hardware remains aligned to the AMOEBA paper: 4×4 CGRAs with 2×2 PEs each, using the four-member direct model. The v38 main ablation completed 25 measured cells with mapper, numeric, and independent trace checks, plus five Ray cells excluded by source-bound model-domain evidence. SRAM remains pending and formal GO is false.
+
+Original Ray was out of the model domain in all five historical main stages. Its best allowed shape has lower-bound II 21, above the model ceiling 20. The separately authorized split-at-4 fission curve is a separate historical supplement.
 
 The [frozen result record](../diagnostics/input0-neighborhood-2x2-v38-frozen/neighborhood-final-results.json) and [stage table](../diagnostics/input0-neighborhood-2x2-v38-frozen/neighborhood-stage-table.md) retain the C++ predicted shortlist order, measured winners and independent validation gates. [Plots and CSV](../diagnostics/input0-neighborhood-2x2-v38-frozen/plots/input0-ablation-normalized.png) use this same cohort.
 
@@ -21,7 +46,7 @@ All values are complete-program scheduling cycles using actual mapper II. The fi
 
 The separate [Ray fission result record](../diagnostics/input0-ray-fission-2x2-v38-frozen/neighborhood-final-results.json) contains S1–S5 cycles **187,013; 178,187; 172,303; 164,948; 162,005**. Each passes mapper, numeric and independent trace checks. These values do not fill the original Ray main-table exclusion.
 
-The [current original-AMOEBA summary](../reference/input0-neighborhood/evidence/2x2-original-amoeba-baselines.json) records validated cycles separately from failures under repair. GCN is **106,351**, Harris **1,072,495**, LLaMA **636,723,751**, LU **11,602**, and Radar **1,321,316** cycles; all five pass numeric, selected-body mapper binding, source-domain and independent trace checks. These are fixed-decision retimed makespans preserving the original f45 scheduler's shapes, placements, replicas and dispatch. Internal placement slots are stored separately. The records do not certify an original-paper full-flow hardware execution or formal performance GO. Multi-replica programs retain the original F45 ceiling division estimate, with unchanged mapper II and explicit `replica_timing_policy` evidence. ORBIT stage results continue to use their actual rewritten task bodies and mapped costs.
+The [frozen historical original-AMOEBA summary](../reference/input0-neighborhood/evidence/2x2-original-amoeba-baselines.json) records its validated cycles separately from failures under repair. GCN is **106,351**, Harris **1,072,495**, LLaMA **636,723,751**, LU **11,602**, and Radar **1,321,316** cycles. These values use fixed-decision retiming that preserves the original F45 scheduler's shapes, placements, replicas and dispatch. They remain historical and are not v59 shared-scheduler results. The new v59 AMOEBA result retains only original shapes, task counts and replicas; ORBIT selects placements and dispatch. Both keep their own DFGs and candidate spaces. The records do not certify an original-paper full-flow hardware execution or formal performance GO. Multi-replica programs retain the original full-parent F45 replica estimate with explicit `replica_timing_policy` evidence.
 
 ```sh
 python3 scripts/show_input0_results.py
@@ -37,7 +62,7 @@ The compact [result record](../diagnostics/neighborhood-v19-frozen/neighborhood-
 
 All 30 cells pass native replay, mapper equality, numeric comparison, and independent trace validation. SRAM passes for one cell and remains pending for 29, so this cohort is diagnostic-only and does not claim formal GO. Three descriptive protocol fields (`optimizer_pin`, `source_contract_file`, and `source_variant`) say v17 while exact runtime bindings and checkpoint payloads identify v19; the result record discloses each discrepancy and does not claim byte-identical resume under the stale descriptor.
 
-## Stages and common budget
+## Historical five-stage definitions and common search budget
 
 | Stage | Enabled dimensions | Dispatch |
 | --- | --- | --- |
@@ -47,7 +72,7 @@ All 30 cells pass native replay, mapper equality, numeric comparison, and indepe
 | S4 | Shape, replica, tiling | Critical path |
 | S5 | Shape, replica, tiling, fusion | Critical path |
 
-Each workload-stage uses at most four rounds and 4,096 unique complete candidate scores, a beam of 16 with at least four diversity positions when available, and a global predicted native shortlist of five. Identity and the previous measured winner are additional controls. Replica and cumulative tiling factors are 1, 2, 4 and 8; oriented shapes have area at most four. Repeated legal pairwise fusion can create larger fusion groups. The search does not precompute a complete rewrite closure or enumerate a Cartesian product.
+Historical workload-stage runs used at most four rounds and 4,096 unique complete candidate scores, a beam of 16 complete programs with at least four diversity positions when available, and a global predicted native shortlist of five. Independent stages retain identity as an additional control; historical v19/v38 runs also retained the previous measured winner. Replica and cumulative tiling factors are 1, 2, 4 and 8; oriented shapes have area at most four. Repeated legal pairwise fusion can create larger fusion groups. The search does not precompute a complete rewrite closure or enumerate a Cartesian product.
 
 C++ MLIR owns candidates, legality, rewrites, deduplication, cost prediction, explicit-communication production scheduling and predicted top-five ranking. Python starts and resumes processes, runs validation and renders observations. Three disjoint four-core lanes use at most twelve host cores; compilation and linking use one job.
 

@@ -224,6 +224,13 @@ class Input0NeighborhoodPortabilityTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(protocol_template.read_text(), original_template)
             bound = json.loads(bound_protocol.read_text())
+            self.assertEqual(bound["stage_scheme"], "merged-spatial-temporal")
+            self.assertEqual(bound["stage_order"], ["shape-temporal", "shape-temporal-replica",
+                             "shape-temporal-replica-tiling", "full-joint"])
+            self.assertEqual([stage["stage"] for stage in bound["stages"]], [1, 2, 3, 4])
+            self.assertTrue(all(stage["dispatch"] == "critical-path" and
+                                stage["scheduling_mode"] == "spatial-temporal"
+                                for stage in bound["stages"]))
             self.assertEqual(bound["source_commit"], "a57376e7043b1681e64e7169c5a8cb02eb192331")
             self.assertEqual(bound["project_source_commit"], source_head)
             self.assertEqual(bound["project_source_base"], source_base)
@@ -423,6 +430,9 @@ out.write_text('module {}\\n')
                 "scripts/replay_cpp_global_top5.py",
                 "scripts/validate_embedded_native_trace.py",
                 "scripts/run_input0_numeric.py",
+                "scripts/run_input0_all_unit_baselines.py",
+                "scripts/run_input0_original_amoeba_baselines.py",
+                "scripts/validate_original_amoeba_fixed_retiming.py",
                 "config/architectures/amoeba_4x4_vectorcgra_sram.json",
             ):
                 path = artifact / relative

@@ -1,0 +1,154 @@
+{
+  "schema": "orbit-tiling-search-coverage-v1",
+  "date": "2026-10-06",
+  "workload": "llama",
+  "scope": "S2 shape-temporal-replica and S3 shape-temporal-replica-tiling r3 finite-search coverage plus controlled QKV partition checks",
+  "search_runs": {
+    "s2_shape_temporal_replica": {
+      "stage": "shape-temporal-replica",
+      "search_summary": "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/search/search-summary.json",
+      "top5": "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/search/top5.jsonl",
+      "candidate_archive": {
+        "path": "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/raw-auxiliary.tar.gz",
+        "member": "search/archive.jsonl"
+      },
+      "budget": {
+        "beam_width": 16,
+        "max_rounds": 4,
+        "rounds_completed": 3,
+        "max_candidates": 4096,
+        "unique_complete_candidates_scored": 4096,
+        "native_shortlist_count": 5,
+        "exhaustive": false,
+        "stop_reason": "max-unique-candidates"
+      },
+      "qkv_replica_archive_coverage": {
+        "tasks": ["Task_0", "Task_1", "Task_2"],
+        "valid_scored_candidate_records_by_single_qkv_task_and_factor": {
+          "Task_0": {"2": 92, "4": 92, "8": 92},
+          "Task_1": {"2": 92, "4": 92, "8": 92},
+          "Task_2": {"2": 92, "4": 92, "8": 92}
+        },
+        "valid_scored_records_with_one_qkv_task_replicated": 828,
+        "records_with_two_or_more_qkv_tasks_replicated": 0,
+        "count_method": "Valid archive candidate records with no reject_reason, grouped by primary action_path replica target and factor. Each counted action path replicated exactly one of Task_0, Task_1, Task_2; other non-QKV actions could also be present.",
+        "interpretation": "The S2 archive tried QKV replica factors 2, 4, and 8 on each QKV task individually, but did not score a candidate that replicated two or all three QKV tasks together."
+      },
+      "evidence": [
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/winner.json",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/native-top5/rank-0/mapped.mlir",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/native-top5/rank-0/result.json"
+      ]
+    },
+    "s3_shape_temporal_replica_tiling": {
+      "stage": "shape-temporal-replica-tiling",
+      "search_summary": "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/search/search-summary.json",
+      "top5": "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/search/top5.jsonl",
+      "candidate_archive": {
+        "path": "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/raw-auxiliary.tar.gz",
+        "member": "search/archive.jsonl"
+      },
+      "budget": {
+        "beam_width": 16,
+        "max_rounds": 4,
+        "rounds_completed": 3,
+        "max_candidates": 4096,
+        "unique_complete_candidates_scored": 4096,
+        "native_shortlist_count": 5,
+        "exhaustive": false,
+        "stop_reason": "max-unique-candidates"
+      },
+      "tiling_archive_coverage": {
+        "single_task_tiled_candidate_records": 2398,
+        "candidates_with_two_or_more_qkv_tasks_tiled": 0,
+        "candidates_with_qkv_tiling_and_Task_7_shape_1x3": 0,
+        "interpretation": "The archived finite search contains many single-task tiling candidates, but no joint QKV-output tiling candidate and no candidate that pairs QKV tiling with Task_7's 1x3 shape."
+      },
+      "source_axis_legality": {
+        "evidence": ".work/control-variables-and-tiling-20261006/forced-tile-legality/results.json",
+        "Task_0_M_axis0_factor8_exit_code": 0,
+        "Task_0_N_axis1_factor8_exit_code": 0,
+        "interpretation": "The controlled source materializer accepts both factor-8 output axes for QKV Task_0; the missing grouped-QKV candidates are a search-coverage gap, not an axis-legality failure."
+      },
+      "evidence": [
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/winner.json",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/native-top5/rank-0/mapped.mlir",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/native-top5/rank-0/result.json"
+      ]
+    }
+  },
+  "selected_task3_comparison": {
+    "s2_replica8": {
+      "candidate_id": "neighborhood-7422",
+      "action": "replica Task_3 axis=1 factor=8",
+      "child_count": 8,
+      "child_trip_count": 3276800,
+      "actual_compiled_ii": 9,
+      "native_cycles": 595551249,
+      "evidence": [
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/search/top5.jsonl",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/native-top5/rank-0/mapped.mlir",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica/native-top5/rank-0/result.json"
+      ]
+    },
+    "s3_tile8": {
+      "candidate_id": "neighborhood-23003",
+      "action": "tile Task_3 axis=0 factor=8",
+      "child_count": 8,
+      "child_trip_count": 3276800,
+      "actual_compiled_ii": 9,
+      "native_cycles": 595551249,
+      "evidence": [
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/search/top5.jsonl",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/native-top5/rank-0/mapped.mlir",
+        "results/input0-neighborhood-2x2-v59-shared-scheduler-r3/llama/shape-temporal-replica-tiling/native-top5/rank-0/result.json"
+      ]
+    },
+    "finding": "S2 Task_3 replica8 and S3 Task_3 tile8 have the same child firing count (3,276,800), the same mapped II (9), and the same measured native makespan (595,551,249 cycles). This partition factor is shared by both stages and does not show an incremental S3 tiling advantage."
+  },
+  "controlled_qkv8_comparison": {
+    "held_control_cycles": 595551249,
+    "qkv_partitioned_cycles": 430140475,
+    "cycles_reduced": 165410774,
+    "reduction_percent": 27.7744,
+    "tiling_treatment": {
+      "path": ".work/control-variables-and-tiling-20261006/llama-qkv8-controlled/native-result.json",
+      "actions": ".work/control-variables-and-tiling-20261006/llama-qkv8-controlled/actions.json",
+      "native_cycles": 430140475,
+      "task_count": 44,
+      "numeric_status": "pass",
+      "numeric_mismatches": 0,
+      "numeric_element_comparisons": 131072,
+      "independent_trace": "pass",
+      "mapper_equality": "pass"
+    },
+    "replica_treatment": {
+      "path": ".work/control-variables-and-tiling-20261006/llama-qkvrep8-r2-controlled/native-result.json",
+      "actions": ".work/control-variables-and-tiling-20261006/llama-qkvrep8-r2-controlled/actions.json",
+      "numeric_result": ".work/control-variables-and-tiling-20261006/llama-qkvrep8-r2-controlled/numeric/llama/shape-temporal-replica-tiling-rank-0/result.json",
+      "replicated_tasks": ["Task_0", "Task_1", "Task_2"],
+      "factor": 8,
+      "native_cycles": 430140475,
+      "task_count": 44,
+      "numeric_status": "pass",
+      "numeric_mismatches": 0,
+      "numeric_element_comparisons": 131072,
+      "independent_trace": "pass",
+      "mapper_equality": "pass"
+    },
+    "interpretation": "The same 27.77% diagnostic makespan reduction is obtained by factor-8 tiling of all three QKV outputs and by factor-8 replication of all three outputs on held S2 resources. It is a partitioning gain available to both S2 and S3, not a tiling-only or S3-only gain. Both numeric gates pass; SRAM admission remains pending and neither run is production-ready.",
+    "comparison_evidence": "diagnostics/tiling-effect-root-cause-20261006/qkv-timing.json"
+  },
+  "single_qkv_barrier": {
+    "baseline_qkv_task_end_cycle": 188743680,
+    "task_0_task_1_task_2_end_at_same_cycle": true,
+    "evidence": "diagnostics/tiling-effect-root-cause-20261006/qkv-timing.json",
+    "interpretation_status": "inference",
+    "interpretation": "A prediction that partitions only one QKV output cannot lower the three-producer join barrier while the other two unchanged QKV tasks still end at 188,743,680 cycles. Any local speedup leaves the max(Q,K,V completion) bound unchanged, so it is ranked behind candidates that shorten the whole producer group; fragment overhead can make the single-output candidate worse without moving that barrier."
+  },
+  "finite_search_limitations": [
+    "Both stages stopped at 4,096 unique complete candidates with exhaustive=false. Their summaries configure max_rounds=4 but report rounds_completed=3; native verification covers the required top five, not every candidate in the full neighborhood.",
+    "The absence of grouped QKV actions in these finite archives is a search-coverage result, not proof of illegality or proof that QKV partitioning cannot improve the schedule.",
+    "A controlled all-three-QKV replica8 treatment outside the searched top five passes numeric, independent-trace, and mapper-equality gates and matches the all-three-QKV tile8 native cycles; this narrows the search gap but does not certify ranking or SRAM admission."
+  ]
+}

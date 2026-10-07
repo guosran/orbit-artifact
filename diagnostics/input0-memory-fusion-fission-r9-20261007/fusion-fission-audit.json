@@ -1,0 +1,32 @@
+{
+  "schema": "orbit-input0-r9-fusion-fission-audit-v1",
+  "status": "read-only-audit",
+  "formal_go": false,
+  "recorded_fission_cut_counts": {
+    "llama": 0,
+    "harris": 30,
+    "lu": 1,
+    "radar": 0,
+    "gcn": 0,
+    "raytracing": 56
+  },
+  "all_s4_native_shortlists_have_no_fusion_actions": true,
+  "all_s5_native_shortlist_fissionActions_empty": true,
+  "s4_and_s5_no_additional_measured_cycle_improvement": true,
+  "per_action_family_search_funnel_available": false,
+  "rejection_summary_scope": "aggregate across all action families; cannot attribute totals to fusion/fission",
+  "confirmed_search_constraint": "Fission requires actionHistory.actions.empty(): source-owned fission is a prefix before ordinary shape/replica/tile/fusion actions. Its contribution to this run is not yet proved.",
+  "source_entrypoints": [
+    "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp:1270-1316",
+    "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp:3554-3565"
+  ],
+  "evidence_paths_are_capture_provenance": true,
+  "evidence_root": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006",
+  "evidence_files": [
+    "<workload>/full-joint/search/search-summary.json",
+    "<workload>/full-joint/search/top5.jsonl",
+    "<workload>/full-joint-fission/search/search-summary.json",
+    "<workload>/full-joint-fission/search/top5.jsonl"
+  ],
+  "next_action": "Record per-family enumeration, materialization, rejection reason, scoring, beam retention, native shortlist and selection; preserve exact source/body/proof replay and unchanged budget."
+}

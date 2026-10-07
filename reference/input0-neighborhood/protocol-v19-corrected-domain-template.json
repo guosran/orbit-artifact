@@ -1,7 +1,7 @@
 {
   "schema": "orbit-amoeba-input0-neighborhood-v3",
   "active": false,
-  "scope": "Portable template for six complete-program fixed input-0 cumulative best-found ablation; fresh source and binary binding required",
+  "scope": "Portable template for independent fixed input-0 best-found ablation; each stage starts from the same canonical graph with fresh search state",
   "workloads_in_delivery_order": [
     "LLaMA",
     "LU",
@@ -98,15 +98,11 @@
     ],
     "initial_seeds": [
       "canonical identity",
-      "compatible existing legal good candidates",
-      "previous measured stage winner",
       "no-op for every enabled dimension"
     ],
-    "previous_winner_decisions": "mutable; replacement, withdrawal and alternative decisions permitted",
     "archive_retention": [
       "identity",
-      "all explored legal scored candidates",
-      "historical best and previous winner"
+      "all explored legal scored candidates"
     ],
     "initial_shapes": [
       [
@@ -214,7 +210,8 @@
     "active_transfer_require_proven": true,
     "supported_shape_bootstrap_policy": "minimum-area-supported-model-shape-v1",
     "model_domain_unsupported_policy": "source-proved LB above model ceiling is unknown cost; graph retained; supported shapes still explored",
-    "canonical_identity_shape_note": "canonical graph unchanged; start from minimum-area supported shape only if unit cost is proved outside ML interval; report all-unit unavailable separately"
+    "canonical_identity_shape_note": "canonical graph unchanged; start from minimum-area supported shape only if unit cost is proved outside ML interval; report all-unit unavailable separately",
+    "stage_initialization": "independent"
   },
   "K_modes_to_try_when_proved": [
     "sequential_state_carry",

@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import unittest
 import sys
+from contextlib import ExitStack
 from unittest.mock import patch
 from types import SimpleNamespace
 
@@ -47,6 +48,57 @@ def row(rank, candidate=None, record_type="selection", role=None):
 
 
 class NeighborhoodReplayContractTests(unittest.TestCase):
+    def test_stage_publishes_completed_numeric_gates_and_excludes_mismatches(self):
+        for rank_zero_status, expected_cycles in (("pass", 90), ("fail", 91)):
+            with self.subTest(rank_zero_status=rank_zero_status), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                canonical = base / "canonical.mlir"
+                canonical.write_text("func.func @kernel() {}\n")
+                protocol = base / "protocol.json"
+                protocol.write_text(json.dumps({"schema": "orbit-amoeba-input0-neighborhood-v3",
+                                                "search": {"stage_initialization": "independent"}}))
+                for name in ("optimizer", "architecture", "manifest"):
+                    (base / name).write_text("fixture\n")
+                output = base / "stage"
+                (output / "search").mkdir(parents=True)
+                (output / "search/top5.jsonl").write_text("\n")
+                selected = [row(rank) for rank in range(5)]
+                controls = [row(5, record_type="control", role="identity")]
+
+                def fake_replay(records, *, output_dir, **kwargs):
+                    values = [{**value, "status": "native_replayed", "numeric": "pending",
+                               "native_cycles": 90 + value["rank"], "mapper_equality": "pass",
+                               "independent_trace": "pass"} for value in records]
+                    for value in values:
+                        replay.atomic_write(output_dir / f"rank-{value['rank']}" / "result.json", value)
+                    replay.atomic_write(output_dir / "summary.json", {
+                        "status": "native_replayed", "numeric": "pending", "records": values})
+
+                def fake_numeric(*, native_root, **kwargs):
+                    for path in native_root.glob("rank-*/result.json"):
+                        value = json.loads(path.read_text())
+                        value["numeric"] = rank_zero_status if value["rank"] == 0 else "pass"
+                        replay.atomic_write(path, value)
+                    replay.refresh_native_summary(native_root)
+                    return {"exit_code": 0}
+
+                with ExitStack() as stack:
+                    stack.enter_context(patch.object(replay, "load_cpp_selections", return_value=(selected, {}, {})))
+                    stack.enter_context(patch.object(replay, "load_cpp_controls", return_value=controls))
+                    stack.enter_context(patch.object(replay, "validate_source_bindings"))
+                    stack.enter_context(patch.object(replay, "replay_records", side_effect=fake_replay))
+                    stack.enter_context(patch.object(replay, "run_numeric_gate", side_effect=fake_numeric))
+                    self.assertEqual(replay.main([
+                        "--workload", "lu", "--stage", "shape-temporal", "--skip-search",
+                        "--canonical", str(canonical), "--output-dir", str(output),
+                        "--optimizer", str(base / "optimizer"), "--architecture", str(base / "architecture"),
+                        "--protocol", str(protocol), "--manifest", str(base / "manifest")]), 0)
+                result = json.loads((output / "result.json").read_text())
+                self.assertEqual(result["numeric"], rank_zero_status)
+                self.assertEqual(result["native_top5"]["records"][0]["numeric"], rank_zero_status)
+                self.assertEqual(result["native_controls"]["numeric"], "pass")
+                self.assertEqual(result["actual_stage_cycles"], expected_cycles)
+
     def test_generic_prepared_function_with_argument_dictionaries(self):
         with tempfile.TemporaryDirectory() as directory:
             canonical = Path(directory) / "canonical.mlir"
@@ -112,6 +164,40 @@ class NeighborhoodReplayContractTests(unittest.TestCase):
         self.assertIn("parent-cost-file=/tmp/parent-costs.json", option)
         self.assertNotIn("enumerate-joint-graph-closure", option)
         self.assertNotIn("complete-cartesian", option)
+        self.assertNotIn("bootstrap-supported-shapes=true", option)
+
+        bootstrap_protocol = {
+            **protocol,
+            "search": {
+                "supported_shape_bootstrap_policy":
+                    "minimum-area-supported-model-shape-v1",
+            },
+        }
+        bootstrap = replay.build_search_command(
+            optimizer=Path("/opt/mlir-amoeba-opt"), canonical=Path("/tmp/input.mlir"),
+            output_dir=Path("/tmp/search"), function="kernel", stage="full-joint",
+            architecture=Path("/tmp/arch.yaml"), protocol=bootstrap_protocol,
+            checkpoint=Path("/tmp/checkpoint.json"), seed_manifest=None,
+            previous_winner=None, parent_cost_file=None, model_cache=None,
+            cost_cache=None, max_rounds=20, max_candidates=20000,
+            beam_width=16, diversity_slots=4, resume=None,
+        )
+        bootstrap_option = next(value for value in bootstrap
+                                if value.startswith("--search-joint-neighborhood="))
+        self.assertIn("bootstrap-supported-shapes=true", bootstrap_option)
+
+        unknown_policy = {**protocol, "search": {"supported_shape_bootstrap_policy": "other-policy"}}
+        with self.assertRaisesRegex(replay.ContractError, "unsupported supported_shape_bootstrap_policy"):
+            replay.build_search_command(
+                optimizer=Path("/opt/mlir-amoeba-opt"), canonical=Path("/tmp/input.mlir"),
+                output_dir=Path("/tmp/search"), function="kernel", stage="full-joint",
+                architecture=Path("/tmp/arch.yaml"), protocol=unknown_policy,
+                checkpoint=Path("/tmp/checkpoint.json"), seed_manifest=None,
+                previous_winner=None, parent_cost_file=None, model_cache=None,
+                cost_cache=None, max_rounds=20, max_candidates=20000,
+                beam_width=16, diversity_slots=4, resume=None,
+            )
+
         resumed = replay.build_search_command(
             optimizer=Path("/opt/mlir-amoeba-opt"), canonical=Path("/tmp/input.mlir"),
             output_dir=Path("/tmp/search"), function="kernel", stage="full-joint",
@@ -123,6 +209,116 @@ class NeighborhoodReplayContractTests(unittest.TestCase):
         resumed_option = next(value for value in resumed if value.startswith("--search-joint-neighborhood="))
         self.assertIn("resume=true", resumed_option)
         self.assertNotIn("resume=/tmp/checkpoint.json", resumed_option)
+
+    def test_diagnostic_ii_ceiling_is_explicit_and_protocol_bound(self):
+        protocol = {
+            "schema": "orbit-amoeba-input0-neighborhood-v3",
+            "source_commit": "commit",
+            "search": {
+                "diagnostic_ii_ceiling": 23,
+                "supported_shape_bootstrap_policy":
+                    "minimum-area-supported-model-shape-v1",
+            },
+        }
+        command = replay.build_search_command(
+            optimizer=Path("/opt/mlir-amoeba-opt"), canonical=Path("/tmp/input.mlir"),
+            output_dir=Path("/tmp/search"), function="kernel", stage="full-joint",
+            architecture=Path("/tmp/arch-ii23.yaml"), protocol=protocol,
+            checkpoint=Path("/tmp/checkpoint.json"), seed_manifest=None,
+            previous_winner=None, parent_cost_file=None, model_cache=None,
+            cost_cache=None, max_rounds=20, max_candidates=20000, beam_width=16,
+            diversity_slots=4, resume=None)
+        option = next(value for value in command
+                      if value.startswith("--search-joint-neighborhood="))
+        self.assertIn("diagnostic-ii-ceiling=23", option)
+        self.assertIn("bootstrap-supported-shapes=true", option)
+
+        binding = replay.source_binding(
+            protocol, Path("/tmp/input.mlir"), Path("/opt/mlir-amoeba-opt"),
+            Path("/tmp/arch-ii23.yaml"), None, None,
+            protocol_path=Path("/tmp/protocol-ii23.json"))
+        self.assertEqual(binding["diagnostic_ii_ceiling"], 23)
+        self.assertEqual(binding["protocol"], "/tmp/protocol-ii23.json")
+
+        protocol["search"].pop("supported_shape_bootstrap_policy")
+        with self.assertRaisesRegex(replay.ContractError, "requires supported_shape_bootstrap_policy"):
+            replay.build_search_command(
+                optimizer=Path("/opt/mlir-amoeba-opt"), canonical=Path("/tmp/input.mlir"),
+                output_dir=Path("/tmp/search"), function="kernel", stage="full-joint",
+                architecture=Path("/tmp/arch-ii23.yaml"), protocol=protocol,
+                checkpoint=Path("/tmp/checkpoint.json"), seed_manifest=None,
+                previous_winner=None, parent_cost_file=None, model_cache=None,
+                cost_cache=None, max_rounds=20, max_candidates=20000,
+                beam_width=16, diversity_slots=4, resume=None)
+
+    def test_full_joint_fission_search_binds_source_cap_and_rejects_seeds(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            canonical = base / "canonical.mlir"
+            canonical.write_text("module { func.func @kernel() {} }\n")
+            prepared = base / "pre-neura.mlir"
+            prepared.write_bytes(b"module { func.func @kernel() {} }\r\n")
+            protocol = {
+                "schema": "orbit-amoeba-input0-neighborhood-v3",
+                "stage_scheme": replay.FISSION_STAGE,
+                "stages": list(replay.STAGES) + [replay.FISSION_STAGE],
+                "source_commit": "commit",
+                "search": {"stage_initialization": "independent",
+                           "max_partition_factor": 8,
+                           "max_fission_actions_per_task": 64},
+            }
+            command = replay.build_search_command(
+                optimizer=base / "amoeba-opt", canonical=canonical,
+                output_dir=base / "stage/search", function="kernel",
+                stage=replay.FISSION_STAGE, architecture=base / "arch.yaml",
+                protocol=protocol, checkpoint=base / "stage/checkpoint.json",
+                seed_manifest=None, previous_winner=None, parent_cost_file=None,
+                model_cache=None, cost_cache=None, max_rounds=10,
+                max_candidates=1000, beam_width=8, diversity_slots=2,
+                resume=None, stage_initialization="independent",
+                prepared_source_file=prepared,
+                max_fission_actions_per_task=64)
+            option = next(value for value in command
+                          if value.startswith("--search-joint-neighborhood="))
+            self.assertIn(f"prepared-source-file={prepared}", option)
+            self.assertIn("max-fission-actions-per-task=64", option)
+            self.assertNotIn("seed-manifest=", option)
+            self.assertNotIn("previous-winner=", option)
+            with self.assertRaisesRegex(replay.ContractError, "differs from the bound protocol"):
+                replay.build_search_command(
+                    optimizer=base / "amoeba-opt", canonical=canonical,
+                    output_dir=base / "stage/search", function="kernel",
+                    stage=replay.FISSION_STAGE, architecture=base / "arch.yaml",
+                    protocol=protocol, checkpoint=base / "stage/checkpoint.json",
+                    seed_manifest=None, previous_winner=None, parent_cost_file=None,
+                    model_cache=None, cost_cache=None, max_rounds=10,
+                    max_candidates=1000, beam_width=8, diversity_slots=2,
+                    resume=None, stage_initialization="independent",
+                    prepared_source_file=prepared,
+                    max_fission_actions_per_task=32)
+            with self.assertRaisesRegex(replay.ContractError, "cannot import"):
+                replay.build_search_command(
+                    optimizer=base / "amoeba-opt", canonical=canonical,
+                    output_dir=base / "stage/search", function="kernel",
+                    stage=replay.FISSION_STAGE, architecture=base / "arch.yaml",
+                    protocol=protocol, checkpoint=base / "stage/checkpoint.json",
+                    seed_manifest=base / "seed.jsonl", previous_winner=None,
+                    parent_cost_file=None, model_cache=None, cost_cache=None,
+                    max_rounds=10, max_candidates=1000, beam_width=8,
+                    diversity_slots=2, resume=None,
+                    stage_initialization="independent",
+                    prepared_source_file=prepared,
+                    max_fission_actions_per_task=64)
+
+            binding = replay.source_binding(
+                protocol, canonical, base / "amoeba-opt", base / "arch.yaml",
+                None, None, prepared_source_file=prepared,
+                max_fission_actions_per_task=64)
+            self.assertEqual(binding["prepared_source_exact_text"],
+                             prepared.read_bytes().decode("utf-8"))
+            self.assertEqual(binding["prepared_source_size_bytes"],
+                             prepared.stat().st_size)
+            self.assertEqual(binding["max_fission_actions_per_task"], 64)
 
 
     def test_numeric_summary_refreshes_durable_rank_records(self):

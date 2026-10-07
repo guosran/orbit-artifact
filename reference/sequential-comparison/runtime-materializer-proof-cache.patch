@@ -1,0 +1,504 @@
+--- a/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
++++ b/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
+@@ -1972,6 +1972,8 @@
+   Option<int64_t> checkpointActions{*this, "checkpoint-actions", llvm::cl::init(128)};
+   Option<bool> runtimePendingIndex{*this, "runtime-pending-index", llvm::cl::init(true)};
+   Option<bool> runtimeFactCache{*this, "runtime-fact-cache", llvm::cl::init(true)};
++  Option<bool> runtimeMaterializerProofCache{
++      *this, "runtime-materializer-proof-cache", llvm::cl::init(true)};
+   Option<int64_t> checkpointWritePeriod{*this, "checkpoint-write-period", llvm::cl::init(32)};
+   Option<int64_t> pauseAfterCandidates{*this, "test-pause-after-candidates", llvm::cl::init(0)};
+   Option<int64_t> minimumFreeBytes{*this, "minimum-free-bytes", llvm::cl::init(16777216)};
+@@ -2012,6 +2014,13 @@
+     indexedPending.reset();
+     candidateFactCache.clear();
+     factCacheHits = factCacheMisses = 0;
++    materializerProofCacheHits = materializerProofCacheMisses = 0;
++    materializerSourceProofReuses = materializerActiveProofReuses = 0;
++    materializerShapeIdentityHits = 0;
++    materializerSeedProofCheckMilliseconds = 0;
++    materializerProofCacheLookupMilliseconds = 0;
++    materializerProofCacheIRPrintMilliseconds = 0;
++    materializerActiveRefreshMilliseconds = 0;
+     indexedPendingSelections = periodicCheckpointWindows = skippedCheckpointWrites = 0;
+     std::string error;
+     auto fatal = [&](StringRef message) {
+@@ -3276,6 +3285,7 @@
+ private:
+   struct CandidateFactCacheEntry {
+     std::string moduleIR, factKey, activeTransferWitnessID;
++    bool stableShapeIdentity = false;
+   };
+   std::deque<CandidateFactCacheEntry> candidateFactCache;
+   uint64_t factCacheHits = 0, factCacheMisses = 0;
+@@ -3312,10 +3322,74 @@
+     return bytes;
+   }
+ 
++  struct AccumulatedMillisecondsTimer {
++    uint64_t &total;
++    explicit AccumulatedMillisecondsTimer(uint64_t &counter) : total(counter) {}
++    std::chrono::steady_clock::time_point began =
++        std::chrono::steady_clock::now();
++    bool active = true;
++    void stop() {
++      if (!active)
++        return;
++      total += static_cast<uint64_t>(
++          std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - began)
++              .count());
++      active = false;
++    }
++    ~AccumulatedMillisecondsTimer() { stop(); }
++  };
++
++  bool materializerProofCacheEnabled() const {
++    return decisionFlow != "legacy" &&
++           runtimeMaterializerProofCache.getValue();
++  }
++
++  std::string printMaterializerProofIR(ModuleOp module) {
++    AccumulatedMillisecondsTimer printTimer(
++        materializerProofCacheIRPrintMilliseconds);
++    return exactFactCacheIR(module);
++  }
++
++  static bool isPureShapeAction(const NeighborhoodAction &action) {
++    return action.family == "shape" && action.primitives.empty() &&
++           !action.canonicalReset && !action.shapeTask.empty();
++  }
++
++  const CandidateFactCacheEntry *lookupMaterializerProof(StringRef moduleIR) {
++    if (!materializerProofCacheEnabled())
++      return nullptr;
++    const auto began = std::chrono::steady_clock::now();
++    const CandidateFactCacheEntry *match = nullptr;
++    for (const CandidateFactCacheEntry &entry : candidateFactCache) {
++      if (entry.moduleIR != moduleIR)
++        continue;
++      match = &entry;
++      if (entry.stableShapeIdentity)
++        break;
++    }
++    materializerProofCacheLookupMilliseconds +=
++        std::chrono::duration_cast<std::chrono::milliseconds>(
++            std::chrono::steady_clock::now() - began)
++            .count();
++    if (match)
++      ++materializerProofCacheHits;
++    else
++      ++materializerProofCacheMisses;
++    return match;
++  }
++
++  void markCandidateShapeIdentity(StringRef moduleIR) {
++    for (CandidateFactCacheEntry &entry : candidateFactCache)
++      if (entry.moduleIR == moduleIR)
++        entry.stableShapeIdentity = true;
++  }
++
+   void rememberCandidateFacts(StringRef bytes, StringRef facts, StringRef active) {
+     if (candidateFactCache.size() >= 128)
+       candidateFactCache.pop_front();
+-    candidateFactCache.push_back({bytes.str(), facts.str(), active.str()});
++    candidateFactCache.push_back(
++        {bytes.str(), facts.str(), active.str(), /*stableShapeIdentity=*/false});
+   }
+   int64_t perCgraRows = 0;
+   int64_t perCgraCols = 0;
+@@ -3764,6 +3838,10 @@
+         reason = "typed_action_history_task_set_unknown:" + taskError;
+         return false;
+       }
++      const std::string beforeActionIR =
++          materializerProofCacheEnabled() && isPureShapeAction(action)
++              ? printMaterializerProofIR(replayed.module.get())
++              : std::string();
+       std::string applyReason, diagnostic;
+       if (!applyTrustedNeighborhoodAction(
+               replayed.module.get(), canonical, functionName, action,
+@@ -3819,6 +3897,12 @@
+       }
+       recordTypedAction(replayed.actionHistory, action, beforeNames,
+                         afterNames);
++      if (!beforeActionIR.empty()) {
++        const std::string afterActionIR =
++            printMaterializerProofIR(replayed.module.get());
++        if (beforeActionIR == afterActionIR)
++          markCandidateShapeIdentity(afterActionIR);
++      }
+       if (useMemo)
+         rememberTypedActionReplayPrefix(actionBytes, actionIndex + 1,
+                                         replayed);
+@@ -3875,9 +3959,12 @@
+     if (!history.known ||
+         history.actions.size() < frozenPrefixActions.size())
+       return false;
++    auto exactActionBytes = [](const NeighborhoodAction &action) {
++      return jsonText(json::Value(typedActionObject(action)));
++    };
+     for (size_t index = 0; index < frozenPrefixActions.size(); ++index)
+-      if (actionSignature(history.actions[index]) !=
+-          actionSignature(frozenPrefixActions[index]))
++      if (exactActionBytes(history.actions[index]) !=
++          exactActionBytes(frozenPrefixActions[index]))
+         return false;
+     for (size_t index = frozenPrefixActions.size();
+          index < history.actions.size(); ++index)
+@@ -4236,6 +4323,11 @@
+       reason = "action_source_task_set_unknown";
+       return NeighborMaterialization::Rejected;
+     }
++    const bool shapeTransactionCandidate =
++        materializerProofCacheEnabled() && isPureShapeAction(action);
++    const std::string beforeActionIR = shapeTransactionCandidate
++                                           ? printMaterializerProofIR(child.module.get())
++                                           : std::string();
+     if (!applyTrustedNeighborhoodAction(
+             child.module.get(), canonical, functionName, action,
+             child.shapes, reason, diagnostic,
+@@ -4270,6 +4362,11 @@
+                    : child.rejectReason;
+       return NeighborMaterialization::Rejected;
+     }
++    const std::string afterActionIR =
++        shapeTransactionCandidate ? printMaterializerProofIR(child.module.get())
++                                  : std::string();
++    const bool stableShapeIdentity =
++        shapeTransactionCandidate && beforeActionIR == afterActionIR;
+ 
+     if (action.canonicalReset) {
+       SearchState::TypedActionHistory resetHistory;
+@@ -4301,6 +4398,8 @@
+                                   : NeighborMaterialization::Fatal;
+       }
+     }
++    if (stableShapeIdentity && child.actionHistory.known)
++      markCandidateShapeIdentity(afterActionIR);
+     return NeighborMaterialization::Applied;
+   }
+ 
+@@ -4339,13 +4438,27 @@
+   }
+ 
+   bool refreshActiveTransferFactsAfterTrustedRewrite(func::FuncOp function,
+-                                                     std::string &error) const {
++                                                     std::string &error) {
+     if (activeTransferArguments.empty())
+       return true;
+     if (!function) {
+       error = "active-transfer rewrite has no selected function";
+       return false;
+     }
++    if (materializerProofCacheEnabled()) {
++      ModuleOp module = function->getParentOfType<ModuleOp>();
++      if (module) {
++        const std::string moduleIR = printMaterializerProofIR(module);
++        const CandidateFactCacheEntry *entry =
++            lookupMaterializerProof(moduleIR);
++        if (entry && !entry->activeTransferWitnessID.empty()) {
++          ++materializerActiveProofReuses;
++          return true;
++        }
++      }
++    }
++    AccumulatedMillisecondsTimer refreshTimer(
++        materializerActiveRefreshMilliseconds);
+     for (unsigned index = 0; index < function.getNumArguments(); ++index) {
+       if (!isa<MemRefType>(function.getArgument(index).getType()))
+         continue;
+@@ -4369,17 +4482,51 @@
+                                       std::vector<NeighborhoodShape> &shapes,
+                                       std::string &reason,
+                                       std::string &diagnostic,
+-                                      unsigned maxPartitionFactor) const {
++                                      unsigned maxPartitionFactor) {
++    const bool useProofCache =
++        materializerProofCacheEnabled() &&
++        (sourceDomainEnabled || !activeTransferArguments.empty());
++    const std::string inputIR =
++        useProofCache ? printMaterializerProofIR(cloned) : std::string();
++    const CandidateFactCacheEntry *proofEntry =
++        useProofCache ? lookupMaterializerProof(inputIR) : nullptr;
++    const bool activeSeedProofCached =
++        proofEntry && !activeTransferArguments.empty() &&
++        !proofEntry->activeTransferWitnessID.empty();
++    if (isPureShapeAction(action) && proofEntry &&
++        proofEntry->stableShapeIdentity) {
++      ++materializerShapeIdentityHits;
++      if (sourceDomainEnabled)
++        ++materializerSourceProofReuses;
++      if (activeSeedProofCached)
++        ++materializerActiveProofReuses;
++      return applyNeighborhoodAction(cloned, canonical, selectedFunction,
++                                     action, shapes, reason, diagnostic,
++                                     maxPartitionFactor);
++    }
+     if (!sourceDomainEnabled)
+       return applyActiveTransferNeighborhoodAction(cloned, canonical,
+-          selectedFunction, action, shapes, reason, diagnostic, maxPartitionFactor);
++          selectedFunction, action, shapes, reason, diagnostic,
++          maxPartitionFactor, activeSeedProofCached);
+     std::string error;
+     auto child = selectTaskFunction(cloned, selectedFunction, error);
+-    if (failed(child) || failed(verifySourceIterationDomainPartition(
+-            sourceDomainCanonical, *child, error))) {
++    bool sourceSeedProofCached = proofEntry != nullptr;
++    if (failed(child)) {
+       reason = "source_iteration_domain_seed_unproven"; diagnostic = error;
+       return false;
+     }
++    if (!sourceSeedProofCached) {
++      AccumulatedMillisecondsTimer sourceTimer(
++          materializerSeedProofCheckMilliseconds);
++      if (failed(verifySourceIterationDomainPartition(sourceDomainCanonical,
++                                                      *child, error))) {
++        reason = "source_iteration_domain_seed_unproven";
++        diagnostic = error;
++        return false;
++      }
++    } else {
++      ++materializerSourceProofReuses;
++    }
+     auto suspend = [](ModuleOp module) {
+       module.walk([&](taskflow::TaskflowTaskOp task) {
+         task->removeAttr(kSourceIterationDomainAttr);
+@@ -4394,14 +4541,24 @@
+     OwningOpRef<ModuleOp> actionCanonical = canonical.clone();
+     suspend(cloned); suspend(*actionCanonical);
+     if (!applyActiveTransferNeighborhoodAction(cloned, *actionCanonical,
+-          selectedFunction, action, shapes, reason, diagnostic, maxPartitionFactor))
++          selectedFunction, action, shapes, reason, diagnostic,
++          maxPartitionFactor, activeSeedProofCached))
+       return false;
+     child = selectTaskFunction(cloned, selectedFunction, error);
+-    if (failed(child) || failed(proveAndRefreshSourceIterationDomainPartition(
+-            sourceDomainCanonical, *child, error))) {
++    if (failed(child)) {
+       reason = "source_iteration_domain_rewrite_unproven"; diagnostic = error;
+       return false;
+     }
++    {
++      AccumulatedMillisecondsTimer sourceTimer(
++          materializerSeedProofCheckMilliseconds);
++      if (failed(proveAndRefreshSourceIterationDomainPartition(
++              sourceDomainCanonical, *child, error))) {
++        reason = "source_iteration_domain_rewrite_unproven";
++        diagnostic = error;
++        return false;
++      }
++    }
+     return true;
+   }
+ 
+@@ -4411,7 +4568,8 @@
+                                       std::vector<NeighborhoodShape> &shapes,
+                                       std::string &reason,
+                                       std::string &diagnostic,
+-                                      unsigned maxPartitionFactor) const {
++                                      unsigned maxPartitionFactor,
++                                      bool seedProofAlreadyVerified) {
+     if (activeTransferArguments.empty())
+       return applyNeighborhoodAction(cloned, canonical, selectedFunction,
+                                      action, shapes, reason, diagnostic,
+@@ -4431,11 +4589,14 @@
+     // Keep logical_transfer_shape intact: it is the conservative capacity
+     // fallback used while completion joins are being rebuilt.
+     std::set<unsigned> savedArguments;
++    AccumulatedMillisecondsTimer activeSeedTimer(
++        materializerSeedProofCheckMilliseconds);
+     for (unsigned index = 0; index < function->getNumArguments(); ++index) {
+       if (!hasStaticActiveTransferShapeFacts(*function, index))
+         continue;
+       std::string proofError;
+-      if (failed(verifyStaticActiveTransferShapeProof(*function, index,
++      if (!seedProofAlreadyVerified &&
++          failed(verifyStaticActiveTransferShapeProof(*function, index,
+                                                       &proofError))) {
+         reason = "active_transfer_seed_invalid";
+         diagnostic =
+@@ -4444,6 +4605,8 @@
+       }
+       savedArguments.insert(index);
+     }
++    if (seedProofAlreadyVerified && !savedArguments.empty())
++      ++materializerActiveProofReuses;
+ 
+     // Canonical-reset actions clone the canonical module inside the action
+     // controller, so verify and suspend its derived facts too. The original
+@@ -4493,6 +4656,7 @@
+         canonicalFunction->removeArgAttr(index, "amoeba.active_transfer_proof");
+       }
+     }
++    activeSeedTimer.stop();
+ 
+     for (unsigned index : savedArguments) {
+       if (index >= function->getNumArguments())
+@@ -4651,7 +4815,7 @@
+     const bool useFactCache = decisionFlow != "legacy" && runtimeFactCache;
+     if (useFactCache) {
+       factCacheIR = exactFactCacheIR(state.module.get());
+-      for (const auto &entry : candidateFactCache) {
++      for (const CandidateFactCacheEntry &entry : candidateFactCache) {
+         if (entry.moduleIR != factCacheIR)
+           continue;
+         FailureOr<SmallVector<TaskMetadata>> cachedMetadata =
+@@ -4674,6 +4838,8 @@
+       }
+       ++factCacheMisses;
+     }
++    AccumulatedMillisecondsTimer proofCheckTimer(
++        materializerSeedProofCheckMilliseconds);
+     if (sourceDomainEnabled && failed(verifySourceIterationDomainPartition(
+             sourceDomainCanonical, *selected, error))) {
+       state.rejectReason = "source_iteration_domain_unproven:" + error;
+@@ -4703,6 +4869,7 @@
+       error.clear();
+       return true;
+     }
++    proofCheckTimer.stop();
+     std::string factsDiagnostic;
+     if (!extractStructuralFacts(state.module.get(), function, outputDirectory,
+                                 serial, state.factKey, state.rejectReason,
+@@ -5594,6 +5761,8 @@
+       objectBinding["runtime_bookkeeping"] = json::Object{
+           {"pending_index", runtimePendingIndex.getValue()},
+           {"exact_ir_fact_cache", runtimeFactCache.getValue()},
++          {"runtime_materializer_proof_cache",
++           runtimeMaterializerProofCache.getValue()},
+           {"checkpoint_write_period", checkpointWritePeriod.getValue()},
+           {"checkpoint_action_batch_boundary", checkpointActions.getValue()}};
+       if (decisionFlow == "sequential")
+@@ -6178,6 +6347,24 @@
+          int64_t(typedActionReplayCacheMisses)},
+         {"typed_action_replay_skipped_steps",
+          int64_t(typedActionReplaySkippedSteps)},
++        {"runtime_materializer_proof_cache_hits",
++         int64_t(materializerProofCacheHits)},
++        {"runtime_materializer_proof_cache_misses",
++         int64_t(materializerProofCacheMisses)},
++        {"runtime_materializer_source_proof_reuses",
++         int64_t(materializerSourceProofReuses)},
++        {"runtime_materializer_active_proof_reuses",
++         int64_t(materializerActiveProofReuses)},
++        {"runtime_materializer_shape_identity_hits",
++         int64_t(materializerShapeIdentityHits)},
++        {"runtime_materializer_seed_proof_check_milliseconds",
++         int64_t(materializerSeedProofCheckMilliseconds)},
++        {"runtime_materializer_proof_cache_lookup_milliseconds",
++         int64_t(materializerProofCacheLookupMilliseconds)},
++        {"runtime_materializer_proof_cache_ir_print_milliseconds",
++         int64_t(materializerProofCacheIRPrintMilliseconds)},
++        {"runtime_materializer_active_refresh_milliseconds",
++         int64_t(materializerActiveRefreshMilliseconds)},
+         {"parallel_preparation_milliseconds", parallelPreparationMilliseconds},
+         {"parallel_scoring_milliseconds", parallelScoringMilliseconds},
+         {"parallel_commit_milliseconds", parallelCommitMilliseconds},
+@@ -6227,9 +6414,35 @@
+         root->getInteger("typed_action_replay_cache_misses").value_or(0);
+     const int64_t savedReplaySkippedSteps =
+         root->getInteger("typed_action_replay_skipped_steps").value_or(0);
++    const int64_t savedMaterializerProofHits =
++        root->getInteger("runtime_materializer_proof_cache_hits").value_or(0);
++    const int64_t savedMaterializerProofMisses =
++        root->getInteger("runtime_materializer_proof_cache_misses").value_or(0);
++    const int64_t savedSourceProofReuses =
++        root->getInteger("runtime_materializer_source_proof_reuses").value_or(0);
++    const int64_t savedActiveProofReuses =
++        root->getInteger("runtime_materializer_active_proof_reuses").value_or(0);
++    const int64_t savedShapeIdentityHits =
++        root->getInteger("runtime_materializer_shape_identity_hits").value_or(0);
++    const int64_t savedSeedProofMilliseconds =
++        root->getInteger("runtime_materializer_seed_proof_check_milliseconds")
++            .value_or(0);
++    const int64_t savedLookupMilliseconds =
++        root->getInteger("runtime_materializer_proof_cache_lookup_milliseconds")
++            .value_or(0);
++    const int64_t savedIRPrintMilliseconds =
++        root->getInteger("runtime_materializer_proof_cache_ir_print_milliseconds")
++            .value_or(0);
++    const int64_t savedRefreshMilliseconds =
++        root->getInteger("runtime_materializer_active_refresh_milliseconds")
++            .value_or(0);
+     if (savedReplayCacheHits < 0 || savedReplayCacheMisses < 0 ||
+-        savedReplaySkippedSteps < 0) {
+-      error = "checkpoint typed-action replay cache counters are negative";
++        savedReplaySkippedSteps < 0 || savedMaterializerProofHits < 0 ||
++        savedMaterializerProofMisses < 0 || savedSourceProofReuses < 0 ||
++        savedActiveProofReuses < 0 || savedShapeIdentityHits < 0 ||
++        savedSeedProofMilliseconds < 0 || savedLookupMilliseconds < 0 ||
++        savedIRPrintMilliseconds < 0 || savedRefreshMilliseconds < 0) {
++      error = "checkpoint search cache counters are negative";
+       return false;
+     }
+     typedActionReplayCacheHits =
+@@ -6238,6 +6451,24 @@
+         static_cast<uint64_t>(savedReplayCacheMisses);
+     typedActionReplaySkippedSteps =
+         static_cast<uint64_t>(savedReplaySkippedSteps);
++    materializerProofCacheHits =
++        static_cast<uint64_t>(savedMaterializerProofHits);
++    materializerProofCacheMisses =
++        static_cast<uint64_t>(savedMaterializerProofMisses);
++    materializerSourceProofReuses =
++        static_cast<uint64_t>(savedSourceProofReuses);
++    materializerActiveProofReuses =
++        static_cast<uint64_t>(savedActiveProofReuses);
++    materializerShapeIdentityHits =
++        static_cast<uint64_t>(savedShapeIdentityHits);
++    materializerSeedProofCheckMilliseconds =
++        static_cast<uint64_t>(savedSeedProofMilliseconds);
++    materializerProofCacheLookupMilliseconds =
++        static_cast<uint64_t>(savedLookupMilliseconds);
++    materializerProofCacheIRPrintMilliseconds =
++        static_cast<uint64_t>(savedIRPrintMilliseconds);
++    materializerActiveRefreshMilliseconds =
++        static_cast<uint64_t>(savedRefreshMilliseconds);
+     auto savedRound = root->getInteger("round"), serial = root->getInteger("next_serial"),
+          count = root->getInteger("scored_candidates"), rejected = root->getInteger("rejected_candidates"),
+          roundCount = root->getInteger("round_scored_candidates"),
+@@ -6724,8 +6955,28 @@
+         {"schema", kSearchSchema}, {"search_scope", kSearchScope}, {"function", function},
+         {"runtime_pending_index", decisionFlow != "legacy" && runtimePendingIndex},
+         {"runtime_fact_cache", decisionFlow != "legacy" && runtimeFactCache},
++        {"runtime_materializer_proof_cache",
++         materializerProofCacheEnabled()},
+         {"runtime_fact_cache_hits", int64_t(factCacheHits)},
+         {"runtime_fact_cache_misses", int64_t(factCacheMisses)},
++        {"runtime_materializer_proof_cache_hits",
++         int64_t(materializerProofCacheHits)},
++        {"runtime_materializer_proof_cache_misses",
++         int64_t(materializerProofCacheMisses)},
++        {"runtime_materializer_source_proof_reuses",
++         int64_t(materializerSourceProofReuses)},
++        {"runtime_materializer_active_proof_reuses",
++         int64_t(materializerActiveProofReuses)},
++        {"runtime_materializer_shape_identity_hits",
++         int64_t(materializerShapeIdentityHits)},
++        {"runtime_materializer_seed_proof_check_milliseconds",
++         int64_t(materializerSeedProofCheckMilliseconds)},
++        {"runtime_materializer_proof_cache_lookup_milliseconds",
++         int64_t(materializerProofCacheLookupMilliseconds)},
++        {"runtime_materializer_proof_cache_ir_print_milliseconds",
++         int64_t(materializerProofCacheIRPrintMilliseconds)},
++        {"runtime_materializer_active_refresh_milliseconds",
++         int64_t(materializerActiveRefreshMilliseconds)},
+         {"runtime_indexed_action_selections", int64_t(indexedPendingSelections)},
+         {"checkpoint_write_period", decisionFlow == "legacy" ? int64_t(1) : checkpointWritePeriod.getValue()},
+         {"periodic_checkpoint_windows", int64_t(periodicCheckpointWindows)},
+@@ -6938,6 +7189,14 @@
+   std::string journalPath, bindingPath, historicalNativeWinnerBoundBytes;
+   std::optional<std::string> interTaskNetworkSpecOverrideBytes;
+   uint64_t journalBytes = 0, journalArchiveCount = 0, duplicateCandidates = 0;
++  uint64_t materializerProofCacheHits = 0, materializerProofCacheMisses = 0;
++  uint64_t materializerSourceProofReuses = 0;
++  uint64_t materializerActiveProofReuses = 0;
++  uint64_t materializerShapeIdentityHits = 0;
++  uint64_t materializerSeedProofCheckMilliseconds = 0;
++  uint64_t materializerProofCacheLookupMilliseconds = 0;
++  uint64_t materializerProofCacheIRPrintMilliseconds = 0;
++  uint64_t materializerActiveRefreshMilliseconds = 0;
+   double jointHalfBudgetAnchorScore = std::numeric_limits<double>::infinity();
+   std::string jointHalfBudgetAnchorId;
+   uint64_t objectiveCacheHits = 0;

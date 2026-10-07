@@ -41,7 +41,7 @@ def main() -> int:
     preflight.mkdir(parents=True)
     command = replay.build_search_command(
         optimizer=options.optimizer, canonical=canonical, output_dir=preflight,
-        function=replay.infer_function(canonical, None), stage="shape-only",
+        function=replay.infer_function(canonical, None), stage=chain.protocol_stages(protocol)[0],
         architecture=options.architecture, protocol=protocol,
         checkpoint=preflight / "checkpoint.json", seed_manifest=None,
         previous_winner=None, parent_cost_file=catalog, model_cache=model,

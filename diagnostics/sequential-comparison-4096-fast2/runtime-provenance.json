@@ -1,0 +1,54 @@
+{
+  "schema": "orbit-sequential-runtime-primary-provenance-v2",
+  "runtime_accepted_pairs": 9,
+  "targeted_tests_passed": 27,
+  "objective_allowance_unchanged": 4096,
+  "main_split": "50/50",
+  "sensitivity_splits": [
+    "25/75",
+    "75/25"
+  ],
+  "per_cell_scoring_workers": 4,
+  "concurrent_cells": 1,
+  "validation_budget": "5 shortlist + identity + search_anchor; same fresh private mapper cache",
+  "primary_results_available": false,
+  "old_batch_excluded": "results/sequential-comparison-4096-final",
+  "launch": "results/sequential-comparison-4096-fast2/launch.json",
+  "files": [
+    {
+      "path": "reference/sequential-comparison/runtime-acceleration.patch",
+      "sha256": "7c74993de1501a794df81075733c1b42b452f1c0c3d4355e0b23d492ce78427f",
+      "size": 38618
+    },
+    {
+      "path": "reference/sequential-comparison/runtime-materializer-proof-cache.patch",
+      "sha256": "53b024b80d5420f7b8312008e6c2abab23112ceab11ce2c290f8c32b1da0adf5",
+      "size": 23790
+    },
+    {
+      "path": "reference/sequential-comparison/runtime-fast2-build-provenance.json",
+      "sha256": "4ce1aa181a11ca6cb4fd7d6855b3305075a31aec320ed8d4ed84042abf2536f3",
+      "size": 39325
+    },
+    {
+      "path": "diagnostics/sequential-comparison-4096/runtime-fast2-acceptance.json",
+      "sha256": "f3c987b25cad8fe305522059cc429cf41cb169ae624ddfe2011e7a3d2d9f2e5c",
+      "size": 8556
+    },
+    {
+      "path": "diagnostics/sequential-comparison-4096/runtime-gzip-real-cell-audit.json",
+      "sha256": "3ba2ee9390f71cc6fdfc639adc7ac4c8b815ae602559e4a11b386dee8b8fb7e4",
+      "size": 2055
+    },
+    {
+      "path": "diagnostics/sequential-comparison-4096/runtime-storage-compaction.json",
+      "sha256": "1c078220ade4d137d2432c252e2ca189480236b379f08d631679d2ffb8208833",
+      "size": 28287
+    },
+    {
+      "path": "diagnostics/sequential-comparison-4096/extra-initialization-and-validation-costs.json",
+      "sha256": "d8c9b0ebac806d18b7768ac035c5c3e8c1bc867f79c2bd81579381460ff7747b",
+      "size": 63425
+    }
+  ]
+}

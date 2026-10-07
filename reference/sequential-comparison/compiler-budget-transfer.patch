@@ -1,0 +1,114 @@
+--- a/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
++++ b/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
+@@ -1911,6 +1911,11 @@
+   Option<std::string> stage{*this, "stage", llvm::cl::init("")};
+   Option<std::string> decisionFlow{*this, "decision-flow",
+                                    llvm::cl::init("legacy")};
++  Option<std::string> sequentialBudgetPolicy{
++      *this, "sequential-budget-policy",
++      llvm::cl::desc("Sequential budget allocation: "
++                      "fixed-split or transfer-unused"),
++      llvm::cl::init("fixed-split")};
+   Option<int64_t> graphBudgetPercent{*this, "graph-budget-percent",
+                                      llvm::cl::init(50)};
+   Option<std::string> parentCostFile{*this, "parent-cost-file",
+@@ -1998,6 +2003,7 @@
+     phaseARoundsCompleted = phaseBRoundsCompleted = 0;
+     phaseAElapsedMilliseconds = phaseBElapsedMilliseconds = 0;
+     phaseJointElapsedMilliseconds = 0;
++    transferredEvaluationCount = 0;
+     phaseEvaluationCounts.clear();
+     phaseActionAttempts.clear();
+     phaseActionMaterialized.clear();
+@@ -2045,6 +2051,16 @@
+       fatal("standalone joint and sequential decision flows require stage=full-joint");
+       return;
+     }
++    if (sequentialBudgetPolicy != "fixed-split" &&
++        sequentialBudgetPolicy != "transfer-unused") {
++      fatal("sequential-budget-policy must be fixed-split or transfer-unused");
++      return;
++    }
++    if (decisionFlow != "sequential" &&
++        sequentialBudgetPolicy == "transfer-unused") {
++      fatal("sequential-budget-policy=transfer-unused requires decision-flow=sequential");
++      return;
++    }
+     if (decisionFlow != "legacy" &&
+         (!seedManifest.empty() || !previousWinner.empty() ||
+          !historicalNativeWinner.empty())) {
+@@ -3226,6 +3242,15 @@
+                              ? (globalRound() >= maxRounds ? "max-rounds"
+                                                    : "phase-budget-exhausted")
+                              : stopReason;
++      if (sequentialBudgetPolicy == "transfer-unused" &&
++          phaseAStopReason == "no-new-legal-candidates") {
++        const uint64_t actualPhaseAEvaluations = phaseEvaluationCounts["A"];
++        if (actualPhaseAEvaluations < phaseABudget) {
++          transferredEvaluationCount =
++              phaseABudget - actualPhaseAEvaluations;
++          phaseBBudget += transferredEvaluationCount;
++        }
++      }
+       phaseStartedAt = std::chrono::steady_clock::now();
+       if (!beginSequentialPhaseB(canonical, functionName, outputDir, archive,
+                                  beam, generated, pending, pendingCursor,
+@@ -5765,8 +5790,11 @@
+            runtimeMaterializerProofCache.getValue()},
+           {"checkpoint_write_period", checkpointWritePeriod.getValue()},
+           {"checkpoint_action_batch_boundary", checkpointActions.getValue()}};
+-      if (decisionFlow == "sequential")
++      if (decisionFlow == "sequential") {
+         objectBinding["graph_budget_percent"] = graphBudgetPercent.getValue();
++        objectBinding["sequential_budget_policy"] =
++            sequentialBudgetPolicy.getValue();
++      }
+     }
+     // Network costs are independent of mapper-II cache entries, but the
+     // production schedule depends on this exact resource. Bind its bytes
+@@ -6915,8 +6943,16 @@
+     json::Object phaseEvaluations;
+     json::Object phaseCandidateAttempts;
+     json::Object phaseActionCounts;
++    const uint64_t nominalPhaseBBudget =
++        decisionFlow == "sequential"
++            ? totalEvaluationBudget - phaseABudget
++            : 0;
++    const uint64_t effectivePhaseABudget =
++        decisionFlow == "sequential" && transferredEvaluationCount
++            ? phaseEvaluationCounts["A"]
++            : phaseABudget;
+     if (decisionFlow == "sequential") {
+-      phaseBudgets["A"] = static_cast<int64_t>(phaseABudget);
++      phaseBudgets["A"] = static_cast<int64_t>(effectivePhaseABudget);
+       phaseBudgets["B"] = static_cast<int64_t>(phaseBBudget);
+       phaseEvaluations["A"] = static_cast<int64_t>(phaseEvaluationCounts["A"]);
+       phaseEvaluations["B"] = static_cast<int64_t>(phaseEvaluationCounts["B"]);
+@@ -7048,6 +7084,19 @@
+       metadata["action_frontier_trace_file"] = "action-frontiers.jsonl";
+       metadata["graph_budget_percent"] = graphBudgetPercent.getValue();
+       if (decisionFlow == "sequential") {
++        if (sequentialBudgetPolicy == "transfer-unused") {
++          metadata["sequential_budget_policy"] =
++              sequentialBudgetPolicy.getValue();
++          metadata["nominal_phase_budgets"] = json::Object{
++              {"A", static_cast<int64_t>(phaseABudget)},
++              {"B", static_cast<int64_t>(nominalPhaseBBudget)}};
++          metadata["effective_phase_budgets"] = json::Object{
++              {"A", static_cast<int64_t>(effectivePhaseABudget)},
++              {"B", static_cast<int64_t>(phaseBBudget)}};
++          metadata["transferred_evaluation_count"] =
++              static_cast<int64_t>(transferredEvaluationCount);
++          metadata["phase_a_stop_reason"] = phaseAStopReason;
++        }
+         metadata["phase_elapsed_seconds"] = json::Object{
+             {"A", phaseAElapsedMilliseconds / 1000.0},
+             {"B", phaseBElapsedMilliseconds / 1000.0}};
+@@ -7211,6 +7260,7 @@
+   int64_t phaseJointElapsedMilliseconds = 0;
+   int64_t incumbentCycles = std::numeric_limits<int64_t>::max();
+   uint64_t totalEvaluationBudget = 0, phaseABudget = 0, phaseBBudget = 0;
++  uint64_t transferredEvaluationCount = 0;
+   std::string activeSearchPhase = "legacy";
+   std::string phaseAAnchorCandidateId, phaseAStopReason;
+   bool phaseBFrozen = false;

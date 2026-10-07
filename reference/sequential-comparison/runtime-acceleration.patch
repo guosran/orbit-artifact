@@ -1,0 +1,809 @@
+diff --git a/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp b/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
+index ed92347..f559abe 100644
+--- a/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
++++ b/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
+@@ -48,6 +48,7 @@
+ #include <algorithm>
+ #include <cmath>
+ #include <chrono>
++#include <deque>
+ #include <fstream>
+ #include <cstdint>
+ #include <filesystem>
+@@ -1415,6 +1416,75 @@ static void prioritizeNextPendingActionFamily(
+                 pending.begin() + selected + 1);
+ }
+ 
++// Selecting one item by a stable rotation leaves all other items in their
++// original relative order. Keep that order as immutable ordinals instead of
++// rescanning and moving an entire frontier for each attempted action. Scores
++// (including reservations within a batch) and ties are still resolved exactly
++// as in prioritizeNextPendingActionFamily above.
++class IndexedPendingFamilies {
++public:
++  IndexedPendingFamilies(const std::vector<PendingNeighbor> &pending,
++                         size_t cursor)
++      : original(pending), consumed(pending.size(), false),
++        firstCursor(cursor), nextCursor(cursor), sourceData(pending.data()) {
++    for (size_t index = cursor; index < original.size(); ++index)
++      byFamily[original[index].action.family].push_back(index);
++  }
++
++  void prioritize(std::vector<PendingNeighbor> &pending, size_t cursor,
++                  const std::map<std::string, uint64_t> &successful,
++                  const std::map<std::string, uint64_t> &reserved) {
++    assert(cursor == nextCursor && cursor < original.size());
++    uint64_t bestScore = std::numeric_limits<uint64_t>::max();
++    size_t ordinal = std::numeric_limits<size_t>::max();
++    auto chosen = byFamily.end();
++    for (auto it = byFamily.begin(); it != byFamily.end(); ++it) {
++      auto done = successful.find(it->first);
++      auto held = reserved.find(it->first);
++      const uint64_t score =
++          (done == successful.end() ? 0 : done->second) +
++          (held == reserved.end() ? 0 : held->second);
++      const size_t first = it->second.front();
++      if (score < bestScore || (score == bestScore && first < ordinal)) {
++        bestScore = score;
++        ordinal = first;
++        chosen = it;
++      }
++    }
++    assert(chosen != byFamily.end());
++    pending[cursor] = original[ordinal];
++    consumed[ordinal] = true;
++    chosen->second.pop_front();
++    if (chosen->second.empty())
++      byFamily.erase(chosen);
++    ++nextCursor;
++  }
++
++  bool matches(ArrayRef<PendingNeighbor> pending, size_t cursor) const {
++    return pending.data() == sourceData && pending.size() == original.size() &&
++           cursor == nextCursor;
++  }
++
++  // Checkpoints retain the exact legacy vector: chosen prefix followed by
++  // the untouched relative order of all remaining items. Thus restoration
++  // needs no new schema or acceleration-specific continuation state.
++  template <typename Emit>
++  void snapshot(ArrayRef<PendingNeighbor> pending, Emit emit) const {
++    for (size_t index = 0; index < nextCursor; ++index)
++      emit(pending[index]);
++    for (size_t index = firstCursor; index < original.size(); ++index)
++      if (!consumed[index])
++        emit(original[index]);
++  }
++
++private:
++  std::vector<PendingNeighbor> original;
++  std::vector<bool> consumed;
++  std::map<std::string, std::deque<size_t>> byFamily;
++  size_t firstCursor, nextCursor;
++  const PendingNeighbor *sourceData;
++};
++
+ // A worker receives only immutable, source-owned score inputs.  In particular,
+ // it never receives the parent-context module, cost cache, catalogue path, or
+ // diagnostic handler.  The owner commits the result in pending-frontier order.
+@@ -1900,6 +1970,9 @@ public:
+       llvm::cl::init("config/protocols/amoeba_input0_neighborhood_v3.json")};
+   Option<std::string> sourceContractFile{*this, "source-contract-file", llvm::cl::init("")};
+   Option<int64_t> checkpointActions{*this, "checkpoint-actions", llvm::cl::init(128)};
++  Option<bool> runtimePendingIndex{*this, "runtime-pending-index", llvm::cl::init(true)};
++  Option<bool> runtimeFactCache{*this, "runtime-fact-cache", llvm::cl::init(true)};
++  Option<int64_t> checkpointWritePeriod{*this, "checkpoint-write-period", llvm::cl::init(32)};
+   Option<int64_t> pauseAfterCandidates{*this, "test-pause-after-candidates", llvm::cl::init(0)};
+   Option<int64_t> minimumFreeBytes{*this, "minimum-free-bytes", llvm::cl::init(16777216)};
+   // One preserves the pre-existing serial scorer exactly.  Values above one
+@@ -1907,9 +1980,12 @@ public:
+   // preparation and identity decisions have been committed by the owner.
+   Option<int64_t> scoringWorkers{*this, "scoring-workers", llvm::cl::init(1)};
+   Option<int64_t> maxPartitionFactor{*this, "max-partition-factor", llvm::cl::init(4)};
++  Option<bool> runtimeReplayCache{*this, "runtime-replay-cache",
++                                  llvm::cl::init(true)};
+ 
+   void runOnOperation() override {
+     ModuleOp canonical = getOperation();
++    clearTypedActionReplayMemo();
+     operationStarted = std::chrono::steady_clock::now();
+     phaseStartedAt = operationStarted;
+     phaseBFrozen = false;
+@@ -1933,6 +2009,10 @@ public:
+     incumbentCycles = std::numeric_limits<int64_t>::max();
+     resourceLegalityQueries = 0;
+     resourceLegalitySupportedFallbacks = 0;
++    indexedPending.reset();
++    candidateFactCache.clear();
++    factCacheHits = factCacheMisses = 0;
++    indexedPendingSelections = periodicCheckpointWindows = skippedCheckpointWrites = 0;
+     std::string error;
+     auto fatal = [&](StringRef message) {
+       canonical.emitError() << message;
+@@ -1944,7 +2024,7 @@ public:
+         (graphBudgetPercent != 25 && graphBudgetPercent != 50 &&
+          graphBudgetPercent != 75) ||
+         maxRounds <= 0 || roundScoreQuota < 0 || maxCandidates <= 0 || beamWidth <= 0 ||
+-        diversitySlots <= 0 || diversitySlots > beamWidth || checkpointActions <= 0 ||
++        diversitySlots <= 0 || diversitySlots > beamWidth || checkpointActions <= 0 || checkpointWritePeriod <= 0 ||
+         minimumFreeBytes < 0 || scoringWorkers <= 0 ||
+         scoringWorkers > kMaxScoringWorkers ||
+         (maxPartitionFactor != 4 && maxPartitionFactor != 8) ||
+@@ -2667,15 +2747,16 @@ public:
+       }
+       std::map<std::string, uint64_t> remainingPendingFamilies =
+           pendingActionFamilyCounts(pending, pendingCursor);
++      indexedPending.reset();
++      if (decisionFlow != "legacy" && runtimePendingIndex)
++        indexedPending = std::make_unique<IndexedPendingFamilies>(pending, pendingCursor);
+       if (scoringWorkers <= 1) {
+       while (pendingCursor < pending.size() &&
+              currentPhaseEvaluations() < currentPhaseBudget() &&
+              scoredCount < totalEvaluationBudget &&
+              roundScoredCount < roundScoreLimit) {
+-        prioritizeNextPendingActionFamily(pending, pendingCursor,
+-                                          successfulFamilyScores,
+-                                          noReservedFamilyScores,
+-                                          remainingPendingFamilies);
++        prioritizePending(pending, pendingCursor, successfulFamilyScores,
++                          noReservedFamilyScores, remainingPendingFamilies);
+         const auto &neighbor = pending[pendingCursor];
+         const std::string actionFamily = neighbor.action.family;
+         if (neighbor.parent >= beam.size()) { fatal("checkpoint pending parent outside beam"); return; }
+@@ -2802,7 +2883,7 @@ public:
+         consumePendingActionFamily(remainingPendingFamilies, actionFamily);
+         bool pause = pauseAfterCandidates > 0 && scoredCount >= static_cast<uint64_t>(pauseAfterCandidates);
+         if (actionsSinceCheckpoint >= static_cast<uint64_t>(checkpointActions) || pause) {
+-          if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
++          if (writePeriodicCheckpoint(pause) && !saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
+               canonicalFactKey, archive, beam, generated, pending, pendingCursor,
+               pause ? "explicit-pause" : "", error)) { fatal(error); return; }
+           actionsSinceCheckpoint = 0;
+@@ -2852,10 +2933,8 @@ public:
+           const auto preparationBegan = std::chrono::steady_clock::now();
+           while (cursor < pending.size() && jobs.size() < batchScoreLimit &&
+                  items.size() < batchItemLimit) {
+-            prioritizeNextPendingActionFamily(pending, cursor,
+-                                              successfulFamilyScores,
+-                                              reservedFamilyScores,
+-                                              remainingPendingFamilies);
++            prioritizePending(pending, cursor, successfulFamilyScores,
++                              reservedFamilyScores, remainingPendingFamilies);
+             const PendingNeighbor &neighbor = pending[cursor];
+             if (neighbor.parent >= beam.size()) {
+               fatal("checkpoint pending parent outside beam");
+@@ -3091,7 +3170,7 @@ public:
+           if (actionsSinceCheckpoint >=
+                   static_cast<uint64_t>(checkpointActions) ||
+               pause) {
+-            if (!saveCheckpoint(
++            if (writePeriodicCheckpoint(pause) && !saveCheckpoint(
+                     checkpointPath, round, nextSerial, scoredCount,
+                     rejectedCount, canonicalFactKey, archive, beam, generated,
+                     pending, pendingCursor, pause ? "explicit-pause" : "",
+@@ -3112,6 +3191,7 @@ public:
+           currentPhaseEvaluations() >= currentPhaseBudget())
+         break;
+       ++round; pending.clear(); pendingCursor = 0;
++      indexedPending.reset();
+       remainingPendingFamilies.clear();
+       successfulFamilyScores.clear();
+       roundScoredCount = 0;
+@@ -3194,6 +3274,49 @@ public:
+   }
+ 
+ private:
++  struct CandidateFactCacheEntry {
++    std::string moduleIR, factKey, activeTransferWitnessID;
++  };
++  std::deque<CandidateFactCacheEntry> candidateFactCache;
++  uint64_t factCacheHits = 0, factCacheMisses = 0;
++  uint64_t indexedPendingSelections = 0, periodicCheckpointWindows = 0;
++  uint64_t skippedCheckpointWrites = 0;
++  std::unique_ptr<IndexedPendingFamilies> indexedPending;
++
++  void prioritizePending(std::vector<PendingNeighbor> &pending, size_t cursor,
++                         const std::map<std::string, uint64_t> &successful,
++                         const std::map<std::string, uint64_t> &reserved,
++                         const std::map<std::string, uint64_t> &remaining) {
++    if (indexedPending) {
++      indexedPending->prioritize(pending, cursor, successful, reserved);
++      ++indexedPendingSelections;
++    } else {
++      prioritizeNextPendingActionFamily(pending, cursor, successful, reserved, remaining);
++    }
++  }
++
++  bool writePeriodicCheckpoint(bool pause) {
++    ++periodicCheckpointWindows;
++    if (pause || decisionFlow == "legacy" || checkpointWritePeriod <= 1 ||
++        periodicCheckpointWindows % checkpointWritePeriod.getValue() == 0)
++      return true;
++    ++skippedCheckpointWrites;
++    return false;
++  }
++
++  static std::string exactFactCacheIR(ModuleOp module) {
++    std::string bytes;
++    llvm::raw_string_ostream stream(bytes);
++    module.print(stream, OpPrintingFlags().printGenericOpForm());
++    stream.flush();
++    return bytes;
++  }
++
++  void rememberCandidateFacts(StringRef bytes, StringRef facts, StringRef active) {
++    if (candidateFactCache.size() >= 128)
++      candidateFactCache.pop_front();
++    candidateFactCache.push_back({bytes.str(), facts.str(), active.str()});
++  }
+   int64_t perCgraRows = 0;
+   int64_t perCgraCols = 0;
+   std::string effectiveArchitectureContract;
+@@ -3309,6 +3432,211 @@ private:
+     }
+   }
+ 
++  struct TypedActionReplayMemoEntry {
++    std::vector<std::string> actionPrefixBytes;
++    std::string moduleIR;
++    std::vector<NeighborhoodShape> shapes;
++    std::string key;
++    std::string factKey;
++    SearchState::TypedActionHistory actionHistory;
++    uint64_t lastUse = 0;
++    size_t retainedBytes = 0;
++  };
++
++  static constexpr size_t kTypedActionReplayMemoMaxEntries = 64;
++  static constexpr size_t kTypedActionReplayMemoMaxBytes = 128 * 1024 * 1024;
++
++  void clearTypedActionReplayMemoEntries() {
++    typedActionReplayMemoEntries.clear();
++    typedActionReplayMemoBytes = 0;
++    typedActionReplayMemoClock = 0;
++    typedActionReplayMemoContextKey.clear();
++  }
++
++  void clearTypedActionReplayMemo() {
++    clearTypedActionReplayMemoEntries();
++    typedActionReplayMemoCanonical = nullptr;
++    typedActionReplayMemoContext = nullptr;
++    typedActionReplayMemoCanonicalIR.clear();
++    typedActionReplayMemoFunction.clear();
++    typedActionReplayMemoOutputDirectory.clear();
++    typedActionReplayMemoOptionsKey.clear();
++    typedActionReplayCacheHits = 0;
++    typedActionReplayCacheMisses = 0;
++    typedActionReplaySkippedSteps = 0;
++  }
++
++  static void appendLengthPrefixed(std::string &target, StringRef value) {
++    target += std::to_string(value.size());
++    target += ':';
++    if (!value.empty())
++      target.append(value.data(), value.size());
++  }
++
++  std::string buildTypedActionReplayMemoOptionsKey() const {
++    json::Array activeArguments;
++    for (unsigned index : activeTransferArguments)
++      activeArguments.push_back(static_cast<int64_t>(index));
++    return jsonText(json::Value(json::Object{
++        {"decision_flow", decisionFlow.getValue()},
++        {"max_partition_factor", maxPartitionFactor.getValue()},
++        {"source_domain_enabled", sourceDomainEnabled},
++        {"active_transfer_arguments", std::move(activeArguments)},
++        {"active_transfer_arguments_text", activeTransferArgumentsText.getValue()},
++        {"active_transfer_require_proven", activeTransferRequireProven.getValue()}}));
++  }
++
++  std::string ensureTypedActionReplayMemoContext(
++      ModuleOp canonical, StringRef functionName, StringRef outputDirectory,
++      const SearchState::TypedActionHistory &history) {
++    // The cache is private to this pass invocation.  The input module is not
++    // mutated by search: candidates are cloned before materialization.  Bind
++    // its exact generic-printed bytes once, together with every option that
++    // changes trusted action application or proof validation.
++    const std::string optionsKey = buildTypedActionReplayMemoOptionsKey();
++    if (typedActionReplayMemoCanonical != canonical.getOperation() ||
++        typedActionReplayMemoContext != canonical.getContext() ||
++        typedActionReplayMemoFunction != functionName ||
++        typedActionReplayMemoOutputDirectory != outputDirectory ||
++        typedActionReplayMemoOptionsKey != optionsKey) {
++      clearTypedActionReplayMemoEntries();
++      typedActionReplayMemoCanonical = canonical.getOperation();
++      typedActionReplayMemoContext = canonical.getContext();
++      typedActionReplayMemoCanonicalIR = neighborhoodReplaySourceText(canonical);
++      typedActionReplayMemoFunction = functionName.str();
++      typedActionReplayMemoOutputDirectory = outputDirectory.str();
++      typedActionReplayMemoOptionsKey = optionsKey;
++    }
++
++    json::Array initialShapes;
++    for (const NeighborhoodShape &shape : history.initialShapes)
++      initialShapes.push_back(shapeObject(shape));
++    std::string context;
++    appendLengthPrefixed(context, "orbit-typed-action-replay-prefix-v1");
++    appendLengthPrefixed(context, typedActionReplayMemoCanonicalIR);
++    appendLengthPrefixed(context, typedActionReplayMemoFunction);
++    appendLengthPrefixed(context, typedActionReplayMemoOutputDirectory);
++    appendLengthPrefixed(context, typedActionReplayMemoOptionsKey);
++    appendLengthPrefixed(context, history.canonicalFactKey);
++    appendLengthPrefixed(
++        context, jsonText(json::Value(std::move(initialShapes))));
++    if (context != typedActionReplayMemoContextKey) {
++      clearTypedActionReplayMemoEntries();
++      typedActionReplayMemoContextKey = std::move(context);
++    }
++    return typedActionReplayMemoContextKey;
++  }
++
++  static size_t typedActionReplayMemoEntryBytes(
++      const TypedActionReplayMemoEntry &entry) {
++    size_t bytes = sizeof(entry) + entry.moduleIR.size() + entry.key.size() +
++                   entry.factKey.size();
++    for (const std::string &action : entry.actionPrefixBytes)
++      bytes += sizeof(action) + action.size();
++    for (const NeighborhoodShape &shape : entry.shapes)
++      bytes += sizeof(shape) + shape.task.size();
++    bytes += entry.actionHistory.actions.size() *
++             sizeof(NeighborhoodAction);
++    for (const NeighborhoodAction &action : entry.actionHistory.actions) {
++      bytes += action.family.size() + action.label.size() +
++               action.shapeTask.size();
++      for (const NeighborhoodPrimitive &primitive : action.primitives)
++        bytes += primitive.kind.size() + primitive.firstTask.size() +
++                 primitive.secondTask.size() + primitive.mode.size();
++    }
++    return bytes;
++  }
++
++  void eraseTypedActionReplayMemoEntry(size_t index) {
++    if (index >= typedActionReplayMemoEntries.size())
++      return;
++    typedActionReplayMemoBytes -=
++        typedActionReplayMemoEntries[index].retainedBytes;
++    typedActionReplayMemoEntries.erase(
++        typedActionReplayMemoEntries.begin() + index);
++  }
++
++  std::optional<size_t> findTypedActionReplayMemoPrefix(
++      ArrayRef<std::string> actionBytes) {
++    std::optional<size_t> best;
++    size_t bestPrefixLength = 0;
++    for (size_t index = 0; index < typedActionReplayMemoEntries.size();
++         ++index) {
++      const TypedActionReplayMemoEntry &entry =
++          typedActionReplayMemoEntries[index];
++      const size_t prefixLength = entry.actionPrefixBytes.size();
++      if (prefixLength > actionBytes.size() ||
++          (best && prefixLength <= bestPrefixLength) ||
++          !std::equal(entry.actionPrefixBytes.begin(),
++                      entry.actionPrefixBytes.end(), actionBytes.begin()))
++        continue;
++      best = index;
++      bestPrefixLength = prefixLength;
++    }
++    if (best)
++      typedActionReplayMemoEntries[*best].lastUse =
++          ++typedActionReplayMemoClock;
++    return best;
++  }
++
++  void rememberTypedActionReplayPrefix(
++      ArrayRef<std::string> actionBytes, size_t prefixLength,
++      const SearchState &replayed) {
++    if (!replayed.module || replayed.key.empty() || replayed.factKey.empty() ||
++        prefixLength > actionBytes.size() ||
++        replayed.actionHistory.actions.size() != prefixLength)
++      return;
++
++    TypedActionReplayMemoEntry entry;
++    entry.actionPrefixBytes.assign(actionBytes.begin(),
++                                   actionBytes.begin() + prefixLength);
++    entry.moduleIR = neighborhoodReplaySourceText(replayed.module.get());
++    entry.shapes = replayed.shapes;
++    entry.key = replayed.key;
++    entry.factKey = replayed.factKey;
++    entry.actionHistory = replayed.actionHistory;
++    entry.lastUse = ++typedActionReplayMemoClock;
++    entry.retainedBytes = typedActionReplayMemoEntryBytes(entry);
++    if (entry.retainedBytes > kTypedActionReplayMemoMaxBytes)
++      return;
++
++    for (size_t index = 0; index < typedActionReplayMemoEntries.size();
++         ++index) {
++      TypedActionReplayMemoEntry &previous =
++          typedActionReplayMemoEntries[index];
++      if (previous.actionPrefixBytes != entry.actionPrefixBytes)
++        continue;
++      if (previous.moduleIR == entry.moduleIR &&
++          previous.key == entry.key && previous.factKey == entry.factKey &&
++          shapeSignature(previous.shapes) == shapeSignature(entry.shapes)) {
++        previous.lastUse = entry.lastUse;
++        return;
++      }
++      // An identical exact input prefix produced different state bytes.  Do
++      // not let memoized outputs authorize any later replay in this context.
++      clearTypedActionReplayMemoEntries();
++      return;
++    }
++
++    while (!typedActionReplayMemoEntries.empty() &&
++           (typedActionReplayMemoEntries.size() >=
++                kTypedActionReplayMemoMaxEntries ||
++            typedActionReplayMemoBytes >
++                kTypedActionReplayMemoMaxBytes - entry.retainedBytes)) {
++      auto oldest = std::min_element(
++          typedActionReplayMemoEntries.begin(),
++          typedActionReplayMemoEntries.end(),
++          [](const TypedActionReplayMemoEntry &lhs,
++             const TypedActionReplayMemoEntry &rhs) {
++            return lhs.lastUse < rhs.lastUse;
++          });
++      eraseTypedActionReplayMemoEntry(
++          static_cast<size_t>(oldest - typedActionReplayMemoEntries.begin()));
++    }
++    typedActionReplayMemoBytes += entry.retainedBytes;
++    typedActionReplayMemoEntries.push_back(std::move(entry));
++  }
++
+   bool replayTypedActionHistory(
+       const SearchState::TypedActionHistory &history, ModuleOp canonical,
+       StringRef functionName, StringRef outputDirectory, uint64_t serial,
+@@ -3322,62 +3650,110 @@ private:
+       return false;
+     }
+     replayed = SearchState();
+-    replayed.module = canonical.clone();
+-    replayed.shapes = history.initialShapes;
+-    replayed.actionHistory = portableActionHistory(history);
+-    for (const NeighborhoodShape &shape : replayed.shapes)
+-      if (shape.rows <= 0 || shape.cols <= 0 || shape.rows > 4 ||
+-          shape.cols > 4 || shape.rows * shape.cols > 4) {
+-        reason = "typed_action_history_initial_shape_outside_area_four";
+-        return false;
+-      }
+-    if (!prepareInitialActiveTransferFacts(replayed.module.get(), functionName,
+-                                           reason)) {
+-      reason = "typed_action_history_initial_proof_unsupported:" + reason;
+-      return false;
+-    }
+-    std::vector<std::string> names;
++    const bool useMemo = runtimeReplayCache.getValue() &&
++                         decisionFlow != "legacy";
+     std::string taskError;
+-    FailureOr<func::FuncOp> canonicalFunction =
+-        selectTaskFunction(replayed.module.get(), functionName, taskError);
+-    if (failed(canonicalFunction)) {
+-      reason = "typed_action_history_initial_function_missing:" + taskError;
+-      return false;
+-    }
+-    FailureOr<SmallVector<TaskMetadata>> canonicalMetadata =
+-        collectAnalyticalTaskMetadata(*canonicalFunction, taskError);
+-    if (!collectHistoryTaskNames(replayed.module.get(), functionName, names,
+-                                 taskError) ||
+-        failed(canonicalMetadata) ||
+-        !sameTaskSet(*canonicalMetadata, replayed.shapes)) {
+-      reason = "typed_action_history_initial_shapes_do_not_cover_canonical_tasks";
+-      if (!taskError.empty())
+-        reason += ":" + taskError;
+-      return false;
+-    }
+-    if (!prepareCandidateKey(replayed, functionName, outputDirectory, serial,
+-                             fatalError)) {
+-      if (!fatalStorageError(fatalError)) {
+-        reason = "typed_action_history_canonical_facts_unavailable:" +
+-                 fatalError;
+-        fatalError.clear();
++    std::vector<std::string> actionBytes;
++    size_t firstAction = 0;
++    bool memoHit = false;
++    if (useMemo) {
++      actionBytes.reserve(history.actions.size());
++      for (const NeighborhoodAction &action : history.actions)
++        actionBytes.push_back(
++            jsonText(json::Value(typedActionObject(action))));
++      (void)ensureTypedActionReplayMemoContext(
++          canonical, functionName, outputDirectory, history);
++      if (std::optional<size_t> cachedIndex =
++              findTypedActionReplayMemoPrefix(actionBytes)) {
++        const TypedActionReplayMemoEntry &cached =
++            typedActionReplayMemoEntries[*cachedIndex];
++        OwningOpRef<ModuleOp> cachedModule = parseSourceString<ModuleOp>(
++            cached.moduleIR, canonical.getContext());
++        if (cachedModule &&
++            cached.actionHistory.actions.size() ==
++                cached.actionPrefixBytes.size()) {
++          replayed.module = std::move(cachedModule);
++          replayed.shapes = cached.shapes;
++          replayed.key = cached.key;
++          replayed.factKey = cached.factKey;
++          replayed.actionHistory = cached.actionHistory;
++          firstAction = cached.actionPrefixBytes.size();
++          memoHit = true;
++          ++typedActionReplayCacheHits;
++          typedActionReplaySkippedSteps += firstAction;
++        } else {
++          clearTypedActionReplayMemoEntries();
++          ++typedActionReplayCacheMisses;
++        }
++      } else {
++        ++typedActionReplayCacheMisses;
+       }
+-      return false;
+     }
+-    if (replayed.key.empty() ||
+-        replayed.factKey != history.canonicalFactKey) {
+-      reason = replayed.rejectReason.empty()
+-                   ? "typed_action_history_canonical_fact_key_mismatch"
+-                   : "typed_action_history_canonical_facts_unknown:" +
+-                         replayed.rejectReason;
+-      return false;
++
++    if (!memoHit) {
++      replayed = SearchState();
++      replayed.module = canonical.clone();
++      replayed.shapes = history.initialShapes;
++      replayed.actionHistory = portableActionHistory(history);
++      for (const NeighborhoodShape &shape : replayed.shapes)
++        if (shape.rows <= 0 || shape.cols <= 0 || shape.rows > 4 ||
++            shape.cols > 4 || shape.rows * shape.cols > 4) {
++          reason = "typed_action_history_initial_shape_outside_area_four";
++          return false;
++        }
++      if (!prepareInitialActiveTransferFacts(replayed.module.get(),
++                                             functionName, reason)) {
++        reason = "typed_action_history_initial_proof_unsupported:" + reason;
++        return false;
++      }
++      std::vector<std::string> names;
++      FailureOr<func::FuncOp> canonicalFunction =
++          selectTaskFunction(replayed.module.get(), functionName, taskError);
++      if (failed(canonicalFunction)) {
++        reason = "typed_action_history_initial_function_missing:" + taskError;
++        return false;
++      }
++      FailureOr<SmallVector<TaskMetadata>> canonicalMetadata =
++          collectAnalyticalTaskMetadata(*canonicalFunction, taskError);
++      if (!collectHistoryTaskNames(replayed.module.get(), functionName, names,
++                                   taskError) ||
++          failed(canonicalMetadata) ||
++          !sameTaskSet(*canonicalMetadata, replayed.shapes)) {
++        reason = "typed_action_history_initial_shapes_do_not_cover_canonical_tasks";
++        if (!taskError.empty())
++          reason += ":" + taskError;
++        return false;
++      }
++      if (!prepareCandidateKey(replayed, functionName, outputDirectory, serial,
++                               fatalError)) {
++        if (!fatalStorageError(fatalError)) {
++          reason = "typed_action_history_canonical_facts_unavailable:" +
++                   fatalError;
++          fatalError.clear();
++        }
++        return false;
++      }
++      if (replayed.key.empty() ||
++          replayed.factKey != history.canonicalFactKey) {
++        reason = replayed.rejectReason.empty()
++                     ? "typed_action_history_canonical_fact_key_mismatch"
++                     : "typed_action_history_canonical_facts_unknown:" +
++                           replayed.rejectReason;
++        return false;
++      }
++
++      replayed.actionHistory = portableActionHistory(history);
++      replayed.actionHistory.actions.clear();
++      replayed.actionHistory.dependencies.clear();
++      replayed.actionHistory.taskProducers.clear();
++      if (useMemo)
++        rememberTypedActionReplayPrefix(actionBytes, /*prefixLength=*/0,
++                                        replayed);
+     }
+ 
+-    replayed.actionHistory = portableActionHistory(history);
+-    replayed.actionHistory.actions.clear();
+-    replayed.actionHistory.dependencies.clear();
+-    replayed.actionHistory.taskProducers.clear();
+-    for (const NeighborhoodAction &action : history.actions) {
++    for (size_t actionIndex = firstAction;
++         actionIndex < history.actions.size(); ++actionIndex) {
++      const NeighborhoodAction &action = history.actions[actionIndex];
+       if (action.family == "lineage-replacement") {
+         reason = "typed_action_history_contains_nonreplayable_lineage_replacement";
+         return false;
+@@ -3443,6 +3819,9 @@ private:
+       }
+       recordTypedAction(replayed.actionHistory, action, beforeNames,
+                         afterNames);
++      if (useMemo)
++        rememberTypedActionReplayPrefix(actionBytes, actionIndex + 1,
++                                        replayed);
+     }
+     return true;
+   }
+@@ -3618,6 +3997,7 @@ private:
+     beam.push_back(std::move(anchor));
+     generated.clear();
+     pending.clear();
++    indexedPending.reset();
+     pendingCursor = 0;
+     round = 0;
+     roundScoredCount = 0;
+@@ -4261,6 +4641,39 @@ private:
+       error.clear();
+       return true;
+     }
++    // Exact, unnormalized IR bytes bind the entire successful structural and
++    // source-domain proof. Shapes are external to this IR, so coverage and
++    // the resource part of the dedup key must still be checked on every hit.
++    // The cache is private to one invocation with fixed canonical input,
++    // function, source-domain and active-transfer settings. Failures are never
++    // cached, and a changed replica/fusion/tiling body cannot reuse a proof.
++    std::string factCacheIR;
++    const bool useFactCache = decisionFlow != "legacy" && runtimeFactCache;
++    if (useFactCache) {
++      factCacheIR = exactFactCacheIR(state.module.get());
++      for (const auto &entry : candidateFactCache) {
++        if (entry.moduleIR != factCacheIR)
++          continue;
++        FailureOr<SmallVector<TaskMetadata>> cachedMetadata =
++            collectAnalyticalTaskMetadata(*selected, error);
++        if (failed(cachedMetadata))
++          return false;
++        if (!sameTaskSet(*cachedMetadata, state.shapes)) {
++          state.rejectReason = "shape_state_does_not_cover_task_set";
++          error.clear();
++          return true;
++        }
++        ++factCacheHits;
++        state.factKey = entry.factKey;
++        state.key = state.factKey + "|" + shapeSignature(state.shapes);
++        if (!entry.activeTransferWitnessID.empty())
++          state.key += "|active-transfer-proof:" + entry.activeTransferWitnessID;
++        (*selected)->setAttr("amoeba.graph_variant_id",
++            StringAttr::get(state.module->getContext(), state.factKey));
++        return true;
++      }
++      ++factCacheMisses;
++    }
+     if (sourceDomainEnabled && failed(verifySourceIterationDomainPartition(
+             sourceDomainCanonical, *selected, error))) {
+       state.rejectReason = "source_iteration_domain_unproven:" + error;
+@@ -4344,6 +4757,12 @@ private:
+       state.key += "|active-transfer-proof:" + activeTransferWitnessID;
+     (*selected)->setAttr("amoeba.graph_variant_id",
+                         StringAttr::get(state.module->getContext(), state.factKey));
++    if (useFactCache) {
++      rememberCandidateFacts(factCacheIR, state.factKey, activeTransferWitnessID);
++      const std::string resultingIR = exactFactCacheIR(state.module.get());
++      if (resultingIR != factCacheIR)
++        rememberCandidateFacts(resultingIR, state.factKey, activeTransferWitnessID);
++    }
+     return true;
+   }
+ 
+@@ -5165,12 +5584,18 @@ private:
+         {"beam_width", beamWidth.getValue()}, {"diversity_slots", diversitySlots.getValue()},
+         {"scoring_workers", scoringWorkers.getValue()},
+         {"max_partition_factor", maxPartitionFactor.getValue()},
++        {"runtime_replay_cache", runtimeReplayCache.getValue()},
+         {"tie_key_policy", "cost-numeric-shape-schedule-graph-key-v1"},
+         {"search_contract", kSearchSchema}, {"checkpoint_contract", kCheckpointSchema}};
+     if (roundScoreQuota.getValue() != 0)
+       objectBinding["round_score_quota"] = roundScoreQuota.getValue();
+     if (decisionFlow != "legacy") {
+       objectBinding["decision_flow"] = decisionFlow.getValue();
++      objectBinding["runtime_bookkeeping"] = json::Object{
++          {"pending_index", runtimePendingIndex.getValue()},
++          {"exact_ir_fact_cache", runtimeFactCache.getValue()},
++          {"checkpoint_write_period", checkpointWritePeriod.getValue()},
++          {"checkpoint_action_batch_boundary", checkpointActions.getValue()}};
+       if (decisionFlow == "sequential")
+         objectBinding["graph_budget_percent"] = graphBudgetPercent.getValue();
+     }
+@@ -5718,9 +6143,15 @@ private:
+     json::Array beams, generatedStates, neighbors, graphCosts, witnesses;
+     for (const auto &state : beam) beams.push_back(stateObject(state));
+     for (const auto &state : generated) generatedStates.push_back(stateObject(state));
+-    for (const auto &neighbor : pending)
++    auto emitNeighbor = [&](const PendingNeighbor &neighbor) {
+       neighbors.push_back(json::Object{{"parent", int64_t(neighbor.parent)},
+                                        {"action", actionObject(neighbor.action)}});
++    };
++    if (indexedPending && indexedPending->matches(pending, pendingCursor))
++      indexedPending->snapshot(pending, emitNeighbor);
++    else
++      for (const auto &neighbor : pending)
++        emitNeighbor(neighbor);
+     // Seen failed scoring keys survive restore too. Their canonical graph may
+     // lack a score, so reconstructing seen solely from valid rows is unsafe.
+     for (const auto &entry : graphCostPaths)
+@@ -5741,6 +6172,12 @@ private:
+         {"production_scheduler_calls", int64_t(productionSchedulerCalls)},
+         {"scoring_workers", scoringWorkers.getValue()},
+         {"max_partition_factor", maxPartitionFactor.getValue()},
++        {"typed_action_replay_cache_hits",
++         int64_t(typedActionReplayCacheHits)},
++        {"typed_action_replay_cache_misses",
++         int64_t(typedActionReplayCacheMisses)},
++        {"typed_action_replay_skipped_steps",
++         int64_t(typedActionReplaySkippedSteps)},
+         {"parallel_preparation_milliseconds", parallelPreparationMilliseconds},
+         {"parallel_scoring_milliseconds", parallelScoringMilliseconds},
+         {"parallel_commit_milliseconds", parallelCommitMilliseconds},
+@@ -5784,6 +6221,23 @@ private:
+     const auto *root = parsed->getAsObject();
+     if (!root || !parseCheckpointHeader(*root, functionName, stage, sourceRepository,
+         sourceCommit, architecturePath, protocolFile, error)) return false;
++    const int64_t savedReplayCacheHits =
++        root->getInteger("typed_action_replay_cache_hits").value_or(0);
++    const int64_t savedReplayCacheMisses =
++        root->getInteger("typed_action_replay_cache_misses").value_or(0);
++    const int64_t savedReplaySkippedSteps =
++        root->getInteger("typed_action_replay_skipped_steps").value_or(0);
++    if (savedReplayCacheHits < 0 || savedReplayCacheMisses < 0 ||
++        savedReplaySkippedSteps < 0) {
++      error = "checkpoint typed-action replay cache counters are negative";
++      return false;
++    }
++    typedActionReplayCacheHits =
++        static_cast<uint64_t>(savedReplayCacheHits);
++    typedActionReplayCacheMisses =
++        static_cast<uint64_t>(savedReplayCacheMisses);
++    typedActionReplaySkippedSteps =
++        static_cast<uint64_t>(savedReplaySkippedSteps);
+     auto savedRound = root->getInteger("round"), serial = root->getInteger("next_serial"),
+          count = root->getInteger("scored_candidates"), rejected = root->getInteger("rejected_candidates"),
+          roundCount = root->getInteger("round_scored_candidates"),
+@@ -6268,6 +6722,14 @@ private:
+                   phaseActionAttempts["joint"] + 1;
+     json::Object metadata{
+         {"schema", kSearchSchema}, {"search_scope", kSearchScope}, {"function", function},
++        {"runtime_pending_index", decisionFlow != "legacy" && runtimePendingIndex},
++        {"runtime_fact_cache", decisionFlow != "legacy" && runtimeFactCache},
++        {"runtime_fact_cache_hits", int64_t(factCacheHits)},
++        {"runtime_fact_cache_misses", int64_t(factCacheMisses)},
++        {"runtime_indexed_action_selections", int64_t(indexedPendingSelections)},
++        {"checkpoint_write_period", decisionFlow == "legacy" ? int64_t(1) : checkpointWritePeriod.getValue()},
++        {"periodic_checkpoint_windows", int64_t(periodicCheckpointWindows)},
++        {"skipped_periodic_checkpoint_writes", int64_t(skippedCheckpointWrites)},
+         {"decision_flow", decisionFlow.getValue()},
+         {"stage", stageName}, {"source_repository", repository}, {"source_commit", commit},
+         {"architecture_path", architecture}, {"protocol_path", protocol},
+@@ -6308,6 +6770,14 @@ private:
+         {"native_top5_required", true}, {"numeric_trace_sram_separate", true},
+         {"native_shortlist_count", int64_t(ranked.size())}};
+     if (decisionFlow != "legacy") {
++      metadata["runtime_replay_cache_enabled"] =
++          runtimeReplayCache.getValue();
++      metadata["typed_action_replay_cache_hits"] =
++          static_cast<int64_t>(typedActionReplayCacheHits);
++      metadata["typed_action_replay_cache_misses"] =
++          static_cast<int64_t>(typedActionReplayCacheMisses);
++      metadata["typed_action_replay_skipped_steps"] =
++          static_cast<int64_t>(typedActionReplaySkippedSteps);
+       json::Object phaseObjectiveHits;
+       for (const auto &entry : phaseObjectiveCacheHits)
+         phaseObjectiveHits[entry.first] = static_cast<int64_t>(entry.second);
+@@ -6501,6 +6971,19 @@ private:
+   uint64_t parallelModuleCacheHits = 0;
+   uint64_t parallelModuleCacheMisses = 0;
+   uint64_t parallelScoredJobs = 0;
++  std::vector<TypedActionReplayMemoEntry> typedActionReplayMemoEntries;
++  size_t typedActionReplayMemoBytes = 0;
++  uint64_t typedActionReplayMemoClock = 0;
++  uint64_t typedActionReplayCacheHits = 0;
++  uint64_t typedActionReplayCacheMisses = 0;
++  uint64_t typedActionReplaySkippedSteps = 0;
++  Operation *typedActionReplayMemoCanonical = nullptr;
++  MLIRContext *typedActionReplayMemoContext = nullptr;
++  std::string typedActionReplayMemoCanonicalIR;
++  std::string typedActionReplayMemoFunction;
++  std::string typedActionReplayMemoOutputDirectory;
++  std::string typedActionReplayMemoOptionsKey;
++  std::string typedActionReplayMemoContextKey;
+   func::FuncOp sourceDomainCanonical;
+   bool sourceDomainEnabled = false;
+   SmallVector<unsigned, 8> activeTransferArguments;

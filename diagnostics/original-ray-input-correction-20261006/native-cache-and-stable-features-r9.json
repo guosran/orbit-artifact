@@ -1,0 +1,194 @@
+{
+  "status": "pass",
+  "optimizer": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+  "records": [
+    {
+      "label": "space",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+        "--enumerate-analytical-task-candidates=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ output=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl factored-output=true search-policy=complete-cartesian max-cgras-per-task=4 graph-variant-id=identity",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 0,
+      "expected_error": null,
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "first23",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache23.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-first.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=23",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 0,
+      "expected_error": null,
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "readback23",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache23.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-readback.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=23",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 0,
+      "expected_error": null,
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "reject-above23",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache-too-high23.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-invalid23.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=23",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 1,
+      "expected_error": "ML cache contains an invalid entry",
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "first20",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6 architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache20.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-first20.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=20",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 0,
+      "expected_error": null,
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "readback20",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6 architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache20.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-readback20.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=20",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 0,
+      "expected_error": null,
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "reject-above20",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6 architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache-too-high20.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-invalid20.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=20",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 1,
+      "expected_error": "ML cache contains an invalid entry",
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "reject-mixed-yaml",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache-mixed-yaml.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-mixed.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=23",
+        "--mlir-print-op-generic",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 1,
+      "expected_error": "architecture_text",
+      "pass": true,
+      "pass_": true
+    },
+    {
+      "label": "global-printer-invariance",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/raytracing/canonical.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml",
+        "--joint-inter-task-network-spec=/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--predict-analytical-task-cost-catalog=function=_Z15raytracing_funciPKiS0_S0_S0_S0_S0_S0_S0_S0_S0_PiS1_S1_S1_S1_S1_S1_S1_S1_PA8_iS1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_S1_ space-file=/tmp/orbit-r9-native-cache-acceptance-20261006/space.jsonl ensemble-file=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json checkpoint-dir=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2 architecture-contract=neura-architecture-v1:amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml source-git-repository=https://github.com/guosran/orbit.git source-git-commit=6a1b6fcf6e155651e96b3b881565ad58fdf0c03e graph-variant-id=identity model-namespace=orbit-per-cgra-2x2-direct-4member-v1 cache=/tmp/orbit-r9-native-cache-acceptance-20261006/cache-custom23.json output=/tmp/orbit-r9-native-cache-acceptance-20261006/catalog-custom.json allow-unsupported-above-model-ceiling=true diagnostic-ii-ceiling=23",
+        "-o",
+        "/dev/null"
+      ],
+      "exit_code": 0,
+      "all216_prediction_entries_exact_equal": true,
+      "cache_bytes_exact_equal": true,
+      "pass": true
+    }
+  ],
+  "runtime20_and23_roundtrip_and_negative_controls": true,
+  "global_printer_invariance": true
+}

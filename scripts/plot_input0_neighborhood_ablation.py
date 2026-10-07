@@ -13,8 +13,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 
-STAGES = ("shape-only", "shape-temporal", "shape-temporal-replica",
-          "shape-temporal-replica-tiling", "full-joint")
+from render_neighborhood_table import resolve_stage_order
+
 DIRECT_WORKLOADS = (("gcn", "GCN"), ("harris", "Harris"), ("llama", "LLaMA"),
                     ("lu", "LU"), ("radar", "Radar"), ("raytracing", "Raytracing"))
 COLORS = ("#d55e00", "#0072b2", "#009e73", "#cc79a7", "#e69f00", "#555555")
@@ -49,13 +49,15 @@ def _load_rows(document: dict) -> tuple[dict, dict, bool, bool]:
         if key in by_cell:
             raise ValueError(f"duplicate stage value: {key}")
         by_cell[key] = row
-    required = {(workload, stage) for workload, _ in workloads for stage in STAGES}
+    stage_order = resolve_stage_order(document,
+                                      observed_stages=[stage for _, stage in by_cell])
+    required = {(workload, stage) for workload, _ in workloads for stage in stage_order}
     if set(by_cell) != required:
-        raise ValueError("the plot requires exactly the configured five-stage workload table")
+        raise ValueError(f"the plot requires exactly the configured {len(stage_order)}-stage workload table")
 
     values = {}
     for workload, _ in workloads:
-        stages = [by_cell[workload, stage] for stage in STAGES]
+        stages = [by_cell[workload, stage] for stage in stage_order]
         if workload == "raytracing" and excluded_ray:
             for row in stages:
                 if row.get("status") != "unsupported_model_domain" or \
@@ -88,6 +90,14 @@ def main() -> int:
     args = parser.parse_args()
     document = json.loads(args.table.read_text())
     _, values, excluded_ray, supplement = _load_rows(document)
+    stage_order = resolve_stage_order(document,
+                                      observed_stages=[row.get("stage") for row in document.get("rows", [])
+                                                       if isinstance(row, dict)])
+    stage_labels = [f"S{index}" for index in range(1, len(stage_order) + 1)]
+    final_label = stage_labels[-1]
+    stage_count_description = f"{len(stage_order)}-stage"
+    stage_description = ("Four-stage merged-spatial-temporal" if len(stage_order) == 4
+                         else "Historical five-stage")
     if supplement:
         plot_workloads = (("raytracing", "Raytracing · fission"),)
         name_tag = "input0-ray-fission-supplement"
@@ -95,17 +105,17 @@ def main() -> int:
     elif excluded_ray:
         plot_workloads = tuple(item for item in DIRECT_WORKLOADS if item[0] != "raytracing")
         name_tag = "input0-ablation"
-        title_tag = "Five-stage input-0 ablation · Raytracing model-domain N/A"
+        title_tag = f"{stage_description} input-0 ablation · Raytracing model-domain N/A"
     else:
         plot_workloads = tuple(DIRECT_WORKLOADS)
         name_tag = "input0-ablation"
-        title_tag = "Five-stage input-0 ablation · lower is better"
+        title_tag = f"{stage_description} input-0 ablation · lower is better"
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     plt.rcParams.update({"font.size": 10, "axes.spines.top": False,
                          "axes.spines.right": False, "svg.fonttype": "none",
                          "pdf.fonttype": 42, "savefig.dpi": 220})
-    x = list(range(1, 6))
+    x = list(range(1, len(stage_order) + 1))
     if excluded_ray:
         fig, axes = plt.subplots(1, 3, figsize=(14, 4.8),
                                  gridspec_kw={"width_ratios": [1.65, 1, 0.7]},
@@ -126,11 +136,11 @@ def main() -> int:
                    marker=MARKERS[index], linewidth=1.8)
         improvements[workload] = 100 * (series[0] - series[-1]) / series[0]
     curve_padding = max(0.5, (max(normalized_values) - min(normalized_values)) * 0.12)
-    curve.set(xticks=x, xticklabels=["S1", "S2", "S3", "S4", "S5"],
+    curve.set(xticks=x, xticklabels=stage_labels,
               ylim=(min(normalized_values) - curve_padding,
                     max(normalized_values) + curve_padding),
-              xlabel="Cumulative stage", ylabel="Whole-program cycles (% of S1)",
-              title="Five-stage normalized cycles")
+              xlabel="Stage", ylabel="Whole-program cycles (% of S1)",
+              title=f"{stage_count_description} normalized cycles")
     curve.grid(axis="y", alpha=0.2)
     curve.legend(ncol=2 if len(plot_workloads) > 1 else 1, loc="lower left", frameon=False)
 
@@ -143,7 +153,7 @@ def main() -> int:
                                  min([0, *improvement_values])) * 0.2)
     reduction.set(xlim=(min([0, *improvement_values]) - reduction_padding,
                         max([0, *improvement_values]) + reduction_padding),
-                  xlabel="Cycle reduction from S1 (%)", title="S5 relative to S1")
+                  xlabel="Cycle reduction from S1 (%)", title=f"{final_label} relative to S1")
     reduction.grid(axis="x", alpha=0.2)
     for bar, value in zip(bars, improvement_values):
         label = f"{value:.4f}%" if 0 < value < 0.01 else f"{value:.2f}%"
@@ -165,12 +175,12 @@ def main() -> int:
         workload, name = plot_workloads[0]
         series = values[workload]
         axis.plot(x, series, marker=MARKERS[0], color=COLORS[0], linewidth=2)
-        axis.set(xticks=x, xticklabels=["S1", "S2", "S3", "S4", "S5"],
-                 ylabel="Cycles", title="Raytracing · five-stage fission")
+        axis.set(xticks=x, xticklabels=stage_labels,
+                 ylabel="Cycles", title=f"Raytracing · {stage_count_description} fission")
         axis.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
         axis.ticklabel_format(axis="y", style="sci", scilimits=(-3, 4), useOffset=False)
         axis.grid(axis="y", alpha=0.2)
-        axis.text(0.02, 0.03, f"S1: {series[0]:,}\nS5: {series[-1]:,}",
+        axis.text(0.02, 0.03, f"S1: {series[0]:,}\n{final_label}: {series[-1]:,}",
                   transform=axis.transAxes, fontsize=9,
                   bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "none"})
         fig.suptitle("Raytracing fission supplement · native mapper II", fontsize=12)
@@ -186,12 +196,12 @@ def main() -> int:
                 axis.axis("on")
                 series = values[workload]
                 axis.plot(x, series, marker=MARKERS[index], color=COLORS[index], linewidth=2)
-                axis.set(xticks=x, xticklabels=["S1", "S2", "S3", "S4", "S5"], ylabel="Cycles",
-                         title=f"{name} · S5 reduction {improvements[workload]:.4f}%")
+                axis.set(xticks=x, xticklabels=stage_labels, ylabel="Cycles",
+                         title=f"{name} · {final_label} reduction {improvements[workload]:.4f}%")
                 axis.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
                 axis.ticklabel_format(axis="y", style="sci", scilimits=(-3, 4), useOffset=False)
                 axis.grid(axis="y", alpha=0.2)
-                axis.text(0.02, 0.03, f"S1: {series[0]:,}\nS5: {series[-1]:,}",
+                axis.text(0.02, 0.03, f"S1: {series[0]:,}\n{final_label}: {series[-1]:,}",
                           transform=axis.transAxes, fontsize=9,
                           bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "none"})
             axes_flat[-1].axis("on")
@@ -206,12 +216,12 @@ def main() -> int:
             for index, ((workload, name), axis) in enumerate(zip(plot_workloads, axes.flat)):
                 series = values[workload]
                 axis.plot(x, series, marker=MARKERS[index], color=COLORS[index], linewidth=2)
-                axis.set(xticks=x, xticklabels=["S1", "S2", "S3", "S4", "S5"], ylabel="Cycles",
-                         title=f"{name} · S5 reduction {improvements[workload]:.4f}%")
+                axis.set(xticks=x, xticklabels=stage_labels, ylabel="Cycles",
+                         title=f"{name} · {final_label} reduction {improvements[workload]:.4f}%")
                 axis.yaxis.set_major_formatter(ScalarFormatter(useOffset=False))
                 axis.ticklabel_format(axis="y", style="sci", scilimits=(-3, 4), useOffset=False)
                 axis.grid(axis="y", alpha=0.2)
-                axis.text(0.02, 0.03, f"S1: {series[0]:,}\nS5: {series[-1]:,}",
+                axis.text(0.02, 0.03, f"S1: {series[0]:,}\n{final_label}: {series[-1]:,}",
                           transform=axis.transAxes, fontsize=9,
                           bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "none"})
             fig.suptitle("Absolute whole-program cycles · each panel uses its own scale", fontsize=12)
@@ -220,10 +230,10 @@ def main() -> int:
     csv_name = "input0-ray-fission-supplement-values.csv" if supplement else "input0-ablation-values.csv"
     with (args.output_dir / csv_name).open("w", newline="") as output:
         writer = csv.writer(output)
-        writer.writerow(["workload", "S1", "S2", "S3", "S4", "S5", "S5_cycle_reduction_percent"])
+        writer.writerow(["workload", *stage_labels, f"{final_label}_cycle_reduction_percent"])
         for workload, name in (plot_workloads if supplement else DIRECT_WORKLOADS):
             if workload not in values:
-                writer.writerow([name, "", "", "", "", "", ""])
+                writer.writerow([name, *("" for _ in stage_labels), ""])
             else:
                 writer.writerow([name, *values[workload], improvements[workload]])
     print(args.output_dir)

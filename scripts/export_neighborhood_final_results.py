@@ -16,7 +16,15 @@ import sys
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable, Mapping
 
-from render_neighborhood_table import STAGES, _native_cycles, render_markdown, stage_row
+from render_neighborhood_table import (
+    LEGACY_STAGES,
+    STAGES,
+    _native_cycles,
+    render_markdown,
+    resolve_stage_order,
+    stage_row,
+    stage_scheme_for_order,
+)
 
 
 EXPECTED_STAGE_SCHEMA = "orbit-neighborhood-stage-result-v1"
@@ -28,6 +36,8 @@ EXPECTED_CHECKPOINT_SCHEMAS = {
 }
 FINAL_SCHEMA = "orbit-neighborhood-final-results-v1"
 TABLE_SCHEMA = "orbit-neighborhood-stage-table-v1"
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_COHORT = "input0-neighborhood-2x2-v58-merged-stages"
 EXPECTED_STALE_PROTOCOL_FIELDS = {
     "optimizer_pin": ".work/post-publication/mlir-amoeba-opt-v17-source-domain-final",
     "source_contract_file": ".work/post-publication/source-model-contract-v17-source-domain.json",
@@ -1003,7 +1013,8 @@ def _unsupported_detail_row(workload: str, stage: str,
     }
 
 
-def _load_matrix(results_root: Path, protocol: Mapping[str, Any]) -> tuple[list[tuple[str, str, dict[str, Any]]], list[str]]:
+def _load_matrix(results_root: Path, protocol: Mapping[str, Any]
+                 ) -> tuple[list[tuple[str, str, dict[str, Any]]], list[str], tuple[str, ...]]:
     names = protocol.get("workloads_in_delivery_order")
     if not isinstance(names, list):
         raise ExportError("protocol workloads must be a list")
@@ -1017,18 +1028,20 @@ def _load_matrix(results_root: Path, protocol: Mapping[str, Any]) -> tuple[list[
     elif len(names) != 6:
         raise ExportError("direct-model protocol must list exactly six workloads")
     workloads = [str(name).lower() for name in names]
-    protocol_stages = [item.get("name") for item in protocol.get("stages", []) if isinstance(item, Mapping)]
-    if tuple(protocol_stages) != tuple(STAGES):
-        raise ExportError("protocol stage order does not match the common neighborhood renderer")
+    observed_stages = [path.parent.name for path in results_root.glob("*/*/result.json")]
+    try:
+        stage_order = resolve_stage_order(protocol, observed_stages=observed_stages)
+    except ValueError as exc:
+        raise ExportError(str(exc)) from exc
     excluded_workload = "raytracing" if excluded is not None else None
     expected = {(workload, stage) for workload in workloads if workload != excluded_workload
-                for stage in STAGES}
+                for stage in stage_order}
     present: list[tuple[str, str, dict[str, Any]]] = []
     missing: list[str] = []
     for workload in workloads:
         if workload == excluded_workload:
             continue
-        for stage in STAGES:
+        for stage in stage_order:
             path = results_root / workload / stage / "result.json"
             if not path.is_file():
                 missing.append(f"{workload}/{stage}")
@@ -1041,7 +1054,7 @@ def _load_matrix(results_root: Path, protocol: Mapping[str, Any]) -> tuple[list[
             extras.append(rel.as_posix())
     if extras:
         raise ExportError("unexpected stage result cells: " + ", ".join(sorted(extras)))
-    return present, missing
+    return present, missing, stage_order
 
 
 def _read_protocol(path: Path, repo_root: Path) -> dict[str, Any]:
@@ -1085,14 +1098,14 @@ def export(results_root: Path, protocol_path: Path, repo_root: Path,
         results_root.relative_to(repo_root)
     except ValueError as exc:
         raise ExportError("--results-root must be within --repository-root") from exc
-    matrix, missing = _load_matrix(results_root, protocol)
+    matrix, missing, stage_order = _load_matrix(results_root, protocol)
     if missing:
-        prefix = "incomplete six-by-five cohort" if exclusion is None and \
+        prefix = f"incomplete six-by-{len(stage_order)} cohort" if exclusion is None and \
             protocol.get("experiment_kind") != "ray-fission-supplement" else "incomplete measured cohort"
         raise ExportError(prefix + "; missing: " + ", ".join(missing))
-    expected_measured_cells = len(protocol["workloads_in_delivery_order"]) * len(STAGES)
+    expected_measured_cells = len(protocol["workloads_in_delivery_order"]) * len(stage_order)
     if exclusion is not None:
-        expected_measured_cells -= len(STAGES)
+        expected_measured_cells -= len(stage_order)
     if len(matrix) != expected_measured_cells:
         raise ExportError(f"expected exactly {expected_measured_cells} measured stage records; found {len(matrix)}")
     provenance = validate_cohort(protocol, protocol_path, matrix, repo_root)
@@ -1114,18 +1127,18 @@ def export(results_root: Path, protocol_path: Path, repo_root: Path,
     diagnostic_reasons: list[str] = []
     for workload in [str(name).lower() for name in protocol["workloads_in_delivery_order"]]:
         if exclusion is not None and workload == "raytracing":
-            for stage in STAGES:
+            for stage in stage_order:
                 rows.append(_unsupported_table_row(workload, stage))
                 detail_rows.append(_unsupported_detail_row(workload, stage, exclusion_summary))
             continue
-        s1_result = by_workload[workload][STAGES[0]]
+        s1_result = by_workload[workload][stage_order[0]]
         s1_candidate_records = [*s1_result.get("native_top5", {}).get("records", []),
                                 *s1_result.get("native_controls", {}).get("records", [])]
         s1_values = [record["native_cycles"] for record in s1_candidate_records
                      if _native_cycles(record) is not None]
         s1 = min(s1_values)
         previous = None
-        for stage in STAGES:
+        for stage in stage_order:
             result = by_workload[workload][stage]
             shared = _stage_row_with_order(result, s1, previous)
             table_row = _table_row(result, shared, repo_root)
@@ -1147,7 +1160,10 @@ def export(results_root: Path, protocol_path: Path, repo_root: Path,
         "protocol_schema": protocol.get("schema"),
         "cell_count": len(detail_rows),
         "workload_order": [str(name).lower() for name in protocol["workloads_in_delivery_order"]],
-        "stage_order": list(STAGES),
+        "stage_scheme": (protocol.get("stage_scheme")
+                         if isinstance(protocol.get("stage_scheme"), str)
+                         else stage_scheme_for_order(stage_order)),
+        "stage_order": list(stage_order),
         "experiment_kind": protocol.get("experiment_kind", "direct-model-neighborhood"),
         "model_domain_exclusions": ({"raytracing": exclusion_summary}
                                      if exclusion_summary is not None else {}),
@@ -1161,6 +1177,8 @@ def export(results_root: Path, protocol_path: Path, repo_root: Path,
     table_document = {
         "schema": TABLE_SCHEMA,
         "protocol": protocol.get("schema"),
+        "stage_scheme": output["stage_scheme"],
+        "stage_order": list(stage_order),
         "experiment_kind": protocol.get("experiment_kind", "direct-model-neighborhood"),
         "model_domain_exclusions": ({"raytracing": exclusion_summary}
                                      if exclusion_summary is not None else {}),
@@ -1187,7 +1205,7 @@ def export(results_root: Path, protocol_path: Path, repo_root: Path,
             ready = all(row["status"] == "native_replayed" and row["numeric"] == "pass" and
                         row["trace"] == "pass" and isinstance(row["native_stage_cycles"], int) and
                         row["native_stage_cycles"] > 0 for row in measured_rows) and \
-                    (not exclusion or len(excluded_rows) == len(STAGES))
+                    (not exclusion or len(excluded_rows) == len(stage_order))
             if ready:
                 if plot_script is None:
                     raise ExportError("--render-plots requires --plot-script")
@@ -1207,19 +1225,24 @@ def export(results_root: Path, protocol_path: Path, repo_root: Path,
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results-root", type=Path, required=True,
+    parser.add_argument("--results-root", type=Path,
+                        default=REPOSITORY_ROOT / "results" / DEFAULT_COHORT,
                         help="results/<cohort> containing <workload>/<stage>/result.json")
-    parser.add_argument("--protocol", type=Path, required=True,
+    parser.add_argument("--protocol", type=Path,
+                        default=REPOSITORY_ROOT / ".work" / DEFAULT_COHORT / "protocol-bound.json",
                         help="the exact frozen neighborhood protocol file")
-    parser.add_argument("--repository-root", type=Path, required=True,
+    parser.add_argument("--repository-root", type=Path, default=REPOSITORY_ROOT,
                         help="artifact repository root; exported paths become relative to it")
-    parser.add_argument("--output-dir", type=Path, required=True,
+    parser.add_argument("--output-dir", type=Path,
+                        default=REPOSITORY_ROOT / "diagnostics" / DEFAULT_COHORT,
                         help="new output directory; existing paths are never overwritten")
     parser.add_argument("--render-plots", action="store_true",
                         help="run the existing plotter if its native/numeric/trace gates pass")
     parser.add_argument("--plot-script", type=Path,
                         help="existing plot_input0_neighborhood_ablation.py")
+    default_domain_evidence = REPOSITORY_ROOT / "results" / DEFAULT_COHORT / "model-domain-evidence.json"
     parser.add_argument("--model-domain-evidence", type=Path,
+                        default=default_domain_evidence if default_domain_evidence.is_file() else None,
                         help="C++-verified exact evidence for the Task_13 Raytracing exclusion")
     args = parser.parse_args(argv)
     try:

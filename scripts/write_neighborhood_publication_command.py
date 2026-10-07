@@ -26,6 +26,11 @@ V19_SEARCH = {
 }
 MODEL_COST_SOURCE_COMMIT = "a57376e7043b1681e64e7169c5a8cb02eb192331"
 MODEL_FILES = ("ensemble.json", "baseline.json", "large-operation.json", "ranking.json")
+SHARED_ORBIT_SCHEDULER = {
+    "backend": "orbit-production",
+    "dispatch_policy": "critical-path",
+    "timing": "common-explicit-network",
+}
 
 
 class CommandError(RuntimeError):
@@ -116,6 +121,19 @@ def validate_v19_protocol(protocol: Mapping[str, Any]) -> dict[str, Any]:
     for key, expected in expected_execution.items():
         if execution.get(key) != expected:
             raise CommandError(f"v19 execution.{key} must be {expected}")
+    scheduler = protocol.get("scheduler")
+    if scheduler is not None:
+        if not isinstance(scheduler, dict) or scheduler != SHARED_ORBIT_SCHEDULER:
+            raise CommandError("protocol scheduler must bind the shared ORBIT critical-path profile")
+        names = tuple(item.get("name") for item in protocol.get("stages", [])
+                      if isinstance(item, dict))
+        if (names != ("shape-temporal", "shape-temporal-replica",
+                      "shape-temporal-replica-tiling", "full-joint") or
+                protocol.get("stage_scheme") != "merged-spatial-temporal" or
+                any(item.get("dispatch") != "critical-path" or
+                    item.get("scheduling_mode") != "spatial-temporal"
+                    for item in protocol.get("stages", []) if isinstance(item, dict))):
+            raise CommandError("shared ORBIT scheduler requires four independent critical-path spatial-temporal stages")
     return search
 
 
@@ -264,6 +282,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--mapping-cache", type=Path)
     parser.add_argument("--output-root", type=Path, required=True,
                         help="fresh results namespace for this source/protocol binding")
+    parser.add_argument("--stage-scheme", choices=("merged-spatial-temporal", "historical-five"),
+                        default="merged-spatial-temporal",
+                        help="four stages using existing spatial-temporal scheduling; five only for historical replay")
     parser.add_argument("--output", type=Path,
                         help="local JSON argv file; defaults below .work/input0-neighborhood-v19")
     return parser
@@ -348,6 +369,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     config_base = config_path.parent.resolve()
     output_root = args.output_root.resolve()
+    scheduler = protocol.get("scheduler")
+    if scheduler is not None:
+        expected_cohort = protocol.get("cohort_id")
+        if not isinstance(expected_cohort, str) or output_root.name != expected_cohort:
+            raise CommandError("shared ORBIT output root must match the fresh protocol cohort_id")
     mapping_cache = (args.mapping_cache or artifact_root / ".work/input0-task-mapping-cache").resolve()
     mapping_cache.mkdir(parents=True, exist_ok=True)
     sram_config = (args.sram_config or artifact_root / "config/architectures/amoeba_4x4_vectorcgra_sram.json").resolve()
@@ -372,7 +398,35 @@ def main(argv: Sequence[str] | None = None) -> int:
     protocol["ML_cache"] = portable_binding(
         config_base, artifact_root, source_root, build_root
     ) + "/<workload>/ml-cache.json"
-    protocol["publication_variant"] = "fresh corrected-domain source-owned reproduction"
+    protocol["publication_variant"] = "fresh independently initialized corrected-domain ablation"
+    if args.stage_scheme == "merged-spatial-temporal":
+        names = ("shape-temporal", "shape-temporal-replica",
+                 "shape-temporal-replica-tiling", "full-joint")
+        dimensions = ("shape", "replica", "tiling", "fusion")
+        protocol["stages"] = [
+            {"stage": index + 1, "name": name,
+             "dimensions": list(dimensions[:index + 1]),
+             "dispatch": "critical-path", "scheduling_mode": "spatial-temporal"}
+            for index, name in enumerate(names)
+        ]
+        protocol["stage_scheme"] = args.stage_scheme
+        protocol["stage_order"] = list(names)
+        protocol["publication_variant"] = (
+            "fresh independently initialized four-stage shared ORBIT communication-aware scheduler ablation"
+            if scheduler is not None else
+            "fresh independently initialized four-stage spatial-temporal ablation"
+        )
+    else:
+        names = tuple(item["name"] for item in protocol.get("stages", []))
+        if names != ("shape-only", "shape-temporal", "shape-temporal-replica",
+                     "shape-temporal-replica-tiling", "full-joint"):
+            raise CommandError("historical-five requires a five-stage protocol template")
+    protocol["search"]["stage_initialization"] = "independent"
+    protocol["search"]["initial_seeds"] = ["canonical identity", "no-op for every enabled dimension"]
+    protocol["search"]["archive_retention"] = ["identity", "all explored legal scored candidates"]
+    protocol["search"].pop("previous_winner_decisions", None)
+    if "control_candidate_archive_retention" in protocol:
+        protocol["control_candidate_archive_retention"] = ["identity"]
 
     command = [
         sys.executable,
@@ -392,6 +446,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         # The coordinator replaces this serial placeholder with its per-lane
         # mapper job count. Search itself stays C++-owned.
         "--jobs", "1",
+        "--stage-initialization", "independent",
         "--max-rounds", str(search["max_rounds"]),
         "--max-candidates", str(search["max_unique_complete_candidates_scored"]),
         "--beam-width", str(search["beam_width"]),
@@ -401,8 +456,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         network_path = args.inter_task_network.resolve()
         if not network_path.is_file():
             raise CommandError(f"inter-task network configuration is missing: {network_path}")
+        if scheduler is not None and network_path != (
+                artifact_root / "config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml").resolve():
+            raise CommandError("shared ORBIT scheduler must keep the common explicit network bytes unchanged")
         command.extend(("--inter-task-network", runtime_path(network_path, artifact_root)))
         protocol["inter_task_network_spec"] = portable_binding(network_path, artifact_root, source_root, build_root)
+    elif scheduler is not None:
+        raise CommandError("shared ORBIT scheduler requires the common explicit inter-task network")
     protocol["model_namespace"] = contract.get("model_namespace", "formal-max4-nohash-v2-exploratory")
     serialized_protocol = json.dumps(protocol, indent=2, sort_keys=True) + "\n"
     if any(marker in serialized_protocol for marker in ("/home/", "/Users/", "C:\\Users\\")):

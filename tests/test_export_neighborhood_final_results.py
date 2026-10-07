@@ -13,6 +13,7 @@ WORK_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(WORK_ROOT / "scripts"))
 
 from export_neighborhood_final_results import ExportError, STAGES, export  # noqa: E402
+from render_neighborhood_table import LEGACY_STAGES, main as render_stage_table  # noqa: E402
 
 
 WORKLOADS = ["llama", "lu", "harris", "radar", "gcn", "raytracing"]
@@ -32,8 +33,8 @@ def write_json(path: Path, value: Any) -> str:
     return content
 
 
-def make_fixture(root: Path) -> tuple[Path, Path, Path]:
-    """Build a complete tiny six-by-five cohort with exact checkpoint payloads."""
+def make_fixture(root: Path, stages: tuple[str, ...] = STAGES) -> tuple[Path, Path, Path]:
+    """Build a complete tiny cohort with exact checkpoint payloads."""
     repo = root / "artifact"
     repo.mkdir(parents=True)
     protocol_path = repo / ".work/post-publication/protocol-v19-corrected-neighborhood.json"
@@ -48,7 +49,7 @@ def make_fixture(root: Path) -> tuple[Path, Path, Path]:
         "architecture": "${ARTIFACT_ROOT}/" + ARCH,
         "model_namespace": "fixture-model-namespace",
         "model_ensemble": MODEL,
-        "stages": [{"stage": index, "name": name} for index, name in enumerate(STAGES, start=1)],
+        "stages": [{"stage": index, "name": name} for index, name in enumerate(stages, start=1)],
         "search": {
             "max_rounds": 4,
             "max_unique_complete_candidates_scored": 4096,
@@ -115,7 +116,7 @@ def make_fixture(root: Path) -> tuple[Path, Path, Path]:
         binding_text = write_json(binding_path, binding)
         _ = binding_text
 
-        for stage in STAGES:
+        for stage_index, stage in enumerate(stages):
             stage_dir = repo / "results/input0-neighborhood-v19-corrected" / workload / stage
             stage_dir.mkdir(parents=True, exist_ok=True)
             source_binding_path = stage_dir / "source-binding.json"
@@ -190,7 +191,9 @@ def make_fixture(root: Path) -> tuple[Path, Path, Path]:
                     "candidate_id": cid,
                     "graph_variant_id": gid,
                     "status": "mapper_failed" if failed else "native_replayed",
-                    "native_cycles": None if failed else (70 if rank == 2 else 100 + rank),
+                    "native_cycles": None if failed else (100 - 10 * stage_index
+                                                           if rank == 2 else
+                                                           120 - 10 * stage_index + rank),
                     "mapper_equality": "fail" if failed else "pass",
                     "prediction_mapper_equal": False,
                     "prediction_start_equality": True,
@@ -232,7 +235,7 @@ def make_fixture(root: Path) -> tuple[Path, Path, Path]:
             native_control = {
                 "rank": 5, "control_role": "canonical-identity", "candidate_id": control_id,
                 "graph_variant_id": "graph-identity", "status": "native_replayed",
-                "native_cycles": 120, "mapper_equality": "pass", "independent_trace": "pass",
+                "native_cycles": 140 - 10 * stage_index, "mapper_equality": "pass", "independent_trace": "pass",
                 "numeric": "pass", "numeric_element_comparisons": 16,
                 "numeric_command_exit_code": 0, "sram_gate": "pending", "sram_blocker": "pending",
                 "production_ready": False,
@@ -256,7 +259,7 @@ def make_fixture(root: Path) -> tuple[Path, Path, Path]:
                 "function": f"fixture_{workload}", "protocol": str(protocol_path.resolve()),
                 "source_binding": str(source_binding_path.resolve()),
                 "checkpoint": str(checkpoint_path.resolve()),
-                "actual_stage_cycles": 70,
+                "actual_stage_cycles": 100 - 10 * stage_index,
                 "actual_stage_cycle_source": "minimum whole-program native cycles across measured top5 and controls",
                 "top5": top5, "controls": [control_config],
                 "native_top5_status": "native_replayed",
@@ -355,7 +358,7 @@ def make_domain_exception_fixture(root: Path) -> tuple[Path, Path, Path, Path]:
         "ensemble": ensemble, "inter_task_network": network_path,
         "protocol": protocol_path,
     }
-    source_binding_path = results / "gcn" / "shape-only" / "source-binding.json"
+    source_binding_path = results / "gcn" / STAGES[0] / "source-binding.json"
     source_binding = json.loads(source_binding_path.read_text())
     source_binding["canonical_program"] = str(canonical.resolve())
     source_binding["parent_cost_file"] = str(catalog_path.resolve())
@@ -402,13 +405,15 @@ class FinalResultsExporterTest(unittest.TestCase):
     def test_full_export_preserves_configuration_failure_and_is_portable(self) -> None:
         output_dir = self.case / "published"
         result = export(self.results, self.protocol, self.repo, output_dir)
-        self.assertEqual(result["cell_count"], 30)
+        self.assertEqual(result["cell_count"], 24)
         self.assertEqual(result["publication_readiness"], "diagnostic_only")
         self.assertFalse(result["formal_go"])
         discrepancies = result["provenance"]["protocol_metadata_discrepancy"]
         self.assertEqual({item["field"] for item in discrepancies},
                          {"optimizer_pin", "source_contract_file", "source_variant"})
-        self.assertEqual(len(result["rows"]), 30)
+        self.assertEqual(result["stage_order"], list(STAGES))
+        self.assertEqual(result["stage_scheme"], "merged-spatial-temporal")
+        self.assertEqual(len(result["rows"]), 24)
         self.assertTrue(all(row["actual_winner_configuration"] is not None for row in result["rows"]))
         self.assertTrue(all(row["actual_winner"]["candidate_id"] ==
                             row["actual_winner_configuration"]["candidate_id"]
@@ -420,6 +425,7 @@ class FinalResultsExporterTest(unittest.TestCase):
                          [item["candidate_id"] for item in target["predicted_top5_configuration"]])
         self.assertEqual(target["actual_winner"]["candidate_id"],
                          "cand-llama-full-joint-2")
+        self.assertEqual(target["relative_to_s1_cycles"], -30)
         families = set(target["actual_winner_configuration"]["action_families"])
         self.assertTrue({"shape", "replica", "tiling", "fusion"}.issubset(families))
         self.assertTrue(target["actual_winner_configuration"]["shape_configuration"])
@@ -436,8 +442,49 @@ class FinalResultsExporterTest(unittest.TestCase):
         self.assertNotIn("argv", final_text)
         self.assertNotRegex(final_text, r"(?i)\b[0-9a-f]{40,64}\b")
         table = json.loads((output_dir / "neighborhood-stage-table.json").read_text())
-        self.assertEqual(len(table["rows"]), 30)
+        self.assertEqual(table["stage_order"], list(STAGES))
+        self.assertEqual(len(table["rows"]), 24)
         self.assertTrue((output_dir / "neighborhood-stage-table.md").is_file())
+
+        rendered_dir = self.case / "four-stage-rendered"
+        render_stage_table(["--results-root", str(self.results), "--workloads", "llama",
+                            "--output-dir", str(rendered_dir)])
+        rendered = json.loads((rendered_dir / "neighborhood-stage-table.json").read_text())
+        self.assertEqual(rendered["stage_order"], list(STAGES))
+        rendered_rows = rendered["rows"]
+        self.assertEqual(rendered_rows[0]["stage"], "shape-temporal")
+        self.assertEqual(rendered_rows[0]["native_stage_cycles"], 100)
+        self.assertEqual(rendered_rows[1]["relative_to_s1_cycles"], -10)
+
+    def test_historical_five_stage_export_and_renderer_keep_original_s1_s5(self) -> None:
+        repo, protocol, results = make_fixture(self.case / "historical-five-stage",
+                                                stages=LEGACY_STAGES)
+        output_dir = self.case / "historical-five-stage-export"
+        result = export(results, protocol, repo, output_dir, render_plots=True,
+                        plot_script=WORK_ROOT / "scripts/plot_input0_neighborhood_ablation.py")
+        self.assertEqual(result["stage_order"], list(LEGACY_STAGES))
+        self.assertEqual(result["stage_scheme"], "historical-five-stage")
+        target = next(row for row in result["rows"]
+                      if row["workload"] == "llama" and row["stage"] == "full-joint")
+        self.assertEqual(target["relative_to_s1_cycles"], -40)
+        table = json.loads((output_dir / "neighborhood-stage-table.json").read_text())
+        self.assertEqual(table["stage_order"], list(LEGACY_STAGES))
+        plot_svg = (output_dir / "plots/input0-ablation-normalized.svg").read_text()
+        self.assertIn("Historical five-stage", plot_svg)
+        with (output_dir / "plots/input0-ablation-values.csv").open(newline="") as source:
+            rows = list(csv.DictReader(source))
+        self.assertEqual(rows[0]["S1"], "100")
+        self.assertEqual(rows[0]["S5"], "60")
+
+        rendered_dir = repo / "historical-table-rendered"
+        render_stage_table(["--results-root", str(results), "--workloads", "llama",
+                            "--output-dir", str(rendered_dir)])
+        rendered = json.loads((rendered_dir / "neighborhood-stage-table.json").read_text())
+        self.assertEqual(rendered["stage_order"], list(LEGACY_STAGES))
+        rendered_rows = rendered["rows"]
+        self.assertEqual(rendered_rows[0]["stage"], "shape-only")
+        self.assertEqual(rendered_rows[0]["native_stage_cycles"], 100)
+        self.assertEqual(rendered_rows[1]["relative_to_s1_cycles"], -10)
 
     def test_missing_stage_refuses_without_writing_output(self) -> None:
         missing = self.results / "gcn" / "full-joint" / "result.json"
@@ -445,7 +492,7 @@ class FinalResultsExporterTest(unittest.TestCase):
         missing.unlink()
         target = self.case / "missing-output"
         try:
-            with self.assertRaisesRegex(ExportError, "incomplete six-by-five cohort"):
+            with self.assertRaisesRegex(ExportError, "incomplete six-by-4 cohort"):
                 export(self.results, self.protocol, self.repo, target)
             self.assertFalse(target.exists())
         finally:
@@ -464,10 +511,10 @@ class FinalResultsExporterTest(unittest.TestCase):
         repo, protocol, results, evidence = make_domain_exception_fixture(self.case / "exception")
         output = self.case / "exception-output"
         result = export(results, protocol, repo, output, model_domain_evidence=evidence)
-        self.assertEqual(result["cell_count"], 30)
-        self.assertEqual(sum(row["status"] == "native_replayed" for row in result["rows"]), 25)
+        self.assertEqual(result["cell_count"], 24)
+        self.assertEqual(sum(row["status"] == "native_replayed" for row in result["rows"]), 20)
         ray_rows = [row for row in result["rows"] if row["workload"] == "raytracing"]
-        self.assertEqual(len(ray_rows), 5)
+        self.assertEqual(len(ray_rows), 4)
         self.assertTrue(all(row["status"] == "unsupported_model_domain" and
                             row["actual_stage_cycles"] is None and
                             row["native_top5_status"] == "not_run" for row in ray_rows))
@@ -549,8 +596,8 @@ class FinalResultsExporterTest(unittest.TestCase):
         main_csv = main_output / "plots/input0-ablation-values.csv"
         with main_csv.open(newline="") as source:
             main_rows = {row["workload"]: row for row in csv.DictReader(source)}
-        self.assertEqual([main_rows["Raytracing"][f"S{i}"] for i in range(1, 6)],
-                         ["", "", "", "", ""])
+        self.assertEqual([main_rows["Raytracing"][f"S{i}"] for i in range(1, 5)],
+                         ["", "", "", ""])
         self.assertTrue((main_output / "plots/input0-ablation-normalized.png").is_file())
         main_svg = (main_output / "plots/input0-ablation-normalized.svg").read_text()
         self.assertIn("Raytracing", main_svg)
@@ -568,7 +615,7 @@ class FinalResultsExporterTest(unittest.TestCase):
         fission_output = self.case / "plot-fission-output"
         fission_result = export(results, protocol, repo, fission_output, render_plots=True,
                                 plot_script=WORK_ROOT / "scripts/plot_input0_neighborhood_ablation.py")
-        self.assertEqual(fission_result["cell_count"], 5)
+        self.assertEqual(fission_result["cell_count"], 4)
         fission_plot = fission_output / "plots/input0-ray-fission-supplement-normalized.svg"
         self.assertTrue(fission_plot.is_file())
         self.assertIn("fission", fission_plot.read_text().lower())
@@ -577,7 +624,7 @@ class FinalResultsExporterTest(unittest.TestCase):
             fission_rows = list(csv.DictReader(source))
         self.assertEqual(len(fission_rows), 1)
         self.assertEqual(fission_rows[0]["workload"], "Raytracing · fission")
-        self.assertTrue(all(fission_rows[0][f"S{i}"] for i in range(1, 6)))
+        self.assertTrue(all(fission_rows[0][f"S{i}"] for i in range(1, 5)))
 
 
 if __name__ == "__main__":

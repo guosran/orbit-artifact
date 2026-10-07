@@ -37,6 +37,121 @@ F45_REPLICA_TIMING_POLICY = {
     "child_mapper_profiles_used": False,
     "status": "original-f45-scheduler-estimate",
 }
+PRODUCTION_SCHEDULER_POLICY = {
+    "backend": "orbit-production",
+    "dispatch_policy": "critical-path",
+    "timing": "common-explicit-network",
+}
+MAX_CONTEXTS_PER_CGRA = 6
+
+
+def _has_production_scheduler_reschedule(result: dict[str, Any]) -> bool:
+    trace = result.get("fixed_decision_trace")
+    fields = {"scheduler", "shared_scheduler_resource_only",
+              "production_scheduler_decisions"}
+    return any(fields.intersection(record)
+               for record in (result, trace) if isinstance(record, dict))
+
+
+def _validate_production_scheduler_contract(
+        result: dict[str, Any], trace: dict[str, Any],
+        explicit_f45_replica_mode: bool) -> dict[str, Any] | None:
+    if not _has_production_scheduler_reschedule(result):
+        return None
+    if not explicit_f45_replica_mode:
+        raise ValueError("production-scheduler rescheduling requires explicit original F45 replica timing policy")
+    for label, record in (("result", result), ("fixed trace", trace)):
+        if (record.get("scheduler") != PRODUCTION_SCHEDULER_POLICY
+                or record.get("shared_scheduler_resource_only") is not True):
+            raise ValueError(f"{label} omits or changes the production scheduler policy")
+    result_decisions = result.get("production_scheduler_decisions")
+    trace_decisions = trace.get("production_scheduler_decisions")
+    expected_fields = {"dispatch_order", "task_schedule"}
+    if (not isinstance(result_decisions, dict)
+            or set(result_decisions) != expected_fields
+            or not isinstance(trace_decisions, dict)
+            or set(trace_decisions) != expected_fields
+            or result_decisions != trace_decisions):
+        raise ValueError("result and fixed trace production-scheduler decisions are missing or differ")
+    dispatch = result_decisions.get("dispatch_order")
+    schedule = result_decisions.get("task_schedule")
+    if (not isinstance(dispatch, list)
+            or not all(isinstance(task, str) and task for task in dispatch)
+            or len(dispatch) != len(set(dispatch))
+            or not isinstance(schedule, list)
+            or any(not isinstance(row, dict) for row in schedule)):
+        raise ValueError("production-scheduler dispatch or task schedule is malformed")
+    if (result.get("dispatch_order") != dispatch
+            or trace.get("dispatch_order") != dispatch
+            or result.get("task_schedule") != schedule
+            or trace.get("task_schedule") != schedule):
+        raise ValueError("production-scheduler decisions differ from result/trace schedule fields")
+    return result_decisions
+
+
+def _validate_production_scheduler_task_cells(
+        schedule: dict[str, Any], task: str, selected_rows: int,
+        selected_cols: int, selected_count: int,
+        active_replicas: int) -> list[dict[str, int]]:
+    raw_cells = schedule.get("occupied_cells")
+    if not isinstance(raw_cells, list) or not raw_cells:
+        raise ValueError(f"{task}: production schedule omits occupied cells")
+    grouped: dict[int, list[dict[str, int]]] = {}
+    used_coordinates: set[tuple[int, int]] = set()
+    for index, raw in enumerate(raw_cells):
+        if not isinstance(raw, dict):
+            raise ValueError(f"{task}: production schedule cell {index} is malformed")
+        row = require_int(raw.get("row"), f"{task}.cell.row", 0)
+        col = require_int(raw.get("col"), f"{task}.cell.col", 0)
+        replica_id = require_int(raw.get("replica_id"), f"{task}.cell.replica_id", 0)
+        context_id = require_int(raw.get("context_id"), f"{task}.cell.context_id", 0)
+        if row >= 4 or col >= 4 or context_id >= MAX_CONTEXTS_PER_CGRA:
+            raise ValueError(f"{task}: production schedule cell is outside the fabric or six-context capacity")
+        if (row, col) in used_coordinates:
+            raise ValueError(f"{task}: two replicas occupy the same production scheduler cell")
+        used_coordinates.add((row, col))
+        grouped.setdefault(replica_id, []).append({
+            "row": row, "col": col, "replica_id": replica_id,
+            "context_id": context_id,
+        })
+    if set(grouped) != set(range(active_replicas)):
+        raise ValueError(f"{task}: production schedule changed the original active replica count")
+    primary: tuple[int, int] | None = None
+    for replica_id in range(active_replicas):
+        cells = grouped[replica_id]
+        coordinates = {(cell["row"], cell["col"]) for cell in cells}
+        if len(coordinates) != selected_count:
+            raise ValueError(f"{task}: production replica changed the selected CGRA count")
+        row = min(cell["row"] for cell in cells)
+        col = min(cell["col"] for cell in cells)
+        expected = {
+            (r, c)
+            for r in range(row, row + selected_rows)
+            for c in range(col, col + selected_cols)
+        }
+        if coordinates != expected:
+            raise ValueError(f"{task}: production replica does not use the selected profile orientation")
+        if row + selected_rows > 4 or col + selected_cols > 4:
+            raise ValueError(f"{task}: production replica is outside the 4x4 fabric")
+        if replica_id == 0:
+            primary = (row, col)
+    if primary is None:
+        raise ValueError(f"{task}: production schedule omits replica zero")
+    if (schedule.get("row"), schedule.get("col"),
+            schedule.get("rows"), schedule.get("cols")) != (
+                primary[0], primary[1], selected_rows, selected_cols):
+        raise ValueError(f"{task}: production schedule summary differs from replica zero geometry")
+    if ("active_replicas" in schedule
+            and schedule.get("active_replicas") != active_replicas):
+        raise ValueError(f"{task}: production schedule active replica count differs from original")
+    if ("cgra_count" in schedule
+            and schedule.get("cgra_count") != selected_count):
+        raise ValueError(f"{task}: production schedule CGRA count differs from selected profile")
+    if ("cgra_shape" in schedule
+            and schedule.get("cgra_shape") != f"{selected_rows}x{selected_cols}"):
+        raise ValueError(f"{task}: production schedule shape differs from selected profile")
+    return [cell for replica_id in range(active_replicas)
+            for cell in grouped[replica_id]]
 
 
 def validate_diagnostic_ii_contract(metadata: dict[str, Any],
@@ -300,7 +415,7 @@ def _cells_by_replica(source: dict[str, Any], label: str) -> tuple[list[dict[str
         if not isinstance(row, dict):
             raise ValueError(f"{label}: original scheduler placement {index} is malformed")
         context_id = require_int(row.get("context_id"), f"{label}.placement.context_id", 0)
-        if context_id >= 6:
+        if context_id >= MAX_CONTEXTS_PER_CGRA:
             raise ValueError(f"{label}: original placement context id is outside the six-context CGRA")
         cell = {
             "row": require_int(row.get("row"), f"{label}.placement.row", 0),
@@ -1736,6 +1851,9 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
              source_domain_facts: dict[str, Any] | None = None,
              replica_profile_evidence: dict[str, Any] | None = None,
              materialized_source_facts: dict[str, Any] | None = None) -> dict[str, Any]:
+    if (replica_profile_evidence is not None
+            and _has_production_scheduler_reschedule(result)):
+        raise ValueError("production-scheduler rescheduling does not support expanded child mode")
     if replica_profile_evidence is not None:
         if materialized_source_facts is None:
             raise ValueError("expanded replica validation requires independently extracted materialized source facts")
@@ -1780,6 +1898,9 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
                 or trace_policy != F45_REPLICA_TIMING_POLICY
                 or trace_policy != result_policy):
             raise ValueError("explicit original F45 replica timing policy is missing, mismatched, or unsupported")
+    production_scheduler_decisions = _validate_production_scheduler_contract(
+        result, trace, explicit_f45_replica_mode)
+    production_scheduler_mode = production_scheduler_decisions is not None
     if trace.get("candidate_id") != result.get("candidate_id"):
         raise ValueError("fixed trace candidate identity differs from retimed result")
     trace_coverage_pair = (
@@ -2063,13 +2184,19 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
     root_schedule_rows = task_map(result.get("task_schedule"), "retimed task schedule")
     if set(schedule_rows) != task_names or set(root_schedule_rows) != task_names:
         raise ValueError("fixed trace schedule does not cover exactly the original tasks")
-    if result.get("dispatch_order") != source_dispatch or trace.get("dispatch_order") != source_dispatch:
+    output_dispatch = source_dispatch
+    if production_scheduler_mode:
+        output_dispatch = production_scheduler_decisions["dispatch_order"]
+        if set(output_dispatch) != task_names or len(output_dispatch) != len(task_names):
+            raise ValueError("production-scheduler dispatch does not cover exactly the original tasks")
+    elif result.get("dispatch_order") != source_dispatch or trace.get("dispatch_order") != source_dispatch:
         raise ValueError("retimed dispatch order differs from original dispatch")
 
     legal_profile_shapes = EXPECTED_SHAPES
     schedule_intervals: dict[str, tuple[int, int]] = {}
     task_cells: dict[str, set[tuple[int, int]]] = {}
     occupancy: dict[tuple[int, int], list[tuple[int, int, str]]] = {}
+    context_uses: dict[tuple[int, int], list[tuple[int, int, str]]] = {}
     expected_decision_keys = {"selected_profile_shape", "actual_placed_shape", "actual_placed_row", "actual_placed_col", "active_replicas", "selected_cgra_count", "dispatch_index", "actual_cells", "context_ids", "original_scheduler_start_internal", "original_scheduler_end_internal", "original_scheduler_duration_internal", "original_profile_duration_cycles"}
 
     for dispatch_index, name in enumerate(source_dispatch):
@@ -2275,18 +2402,49 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
         cols = require_int(schedule.get("cols"), f"{name}.cols", 1)
         row = require_int(schedule.get("row"), f"{name}.row", 0)
         col = require_int(schedule.get("col"), f"{name}.col", 0)
-        if rows != actual_rows or cols != actual_cols or row != min(row_set) or col != min(col_set) or end - start != duration or schedule.get("duration_cycles") != duration:
-            raise ValueError(f"{name}: retimed schedule changes fixed geometry or duration")
+        if end - start != duration or schedule.get("duration_cycles") != duration:
+            raise ValueError(f"{name}: retimed schedule duration differs from the mapped duration")
         scheduled_cells = schedule.get("occupied_cells")
-        if scheduled_cells != source_cells or root_schedule != schedule:
-            raise ValueError(f"{name}: fixed trace schedule cells differ from original baseline")
-        if row + rows > 4 or col + cols > 4:
-            raise ValueError(f"{name}: retimed rectangle is outside 4x4 fabric")
+        if root_schedule != schedule:
+            raise ValueError(f"{name}: result and fixed trace schedules differ")
+        if production_scheduler_mode:
+            cells_for_schedule = _validate_production_scheduler_task_cells(
+                schedule, name, selected_rows, selected_cols, selected_count,
+                source_active_replicas)
+            output_cell_coords = {(cell["row"], cell["col"])
+                                  for cell in cells_for_schedule}
+            if len(output_cell_coords) != len(cells_for_schedule):
+                raise ValueError(f"{name}: production schedule repeats an occupied cell")
+            for cell in cells_for_schedule:
+                context_uses.setdefault((cell["row"], cell["col"]), []).append(
+                    (cell["context_id"], start, name))
+            cells = output_cell_coords
+        else:
+            if (rows != actual_rows or cols != actual_cols
+                    or row != min(row_set) or col != min(col_set)):
+                raise ValueError(f"{name}: retimed schedule changes fixed geometry")
+            if scheduled_cells != source_cells:
+                raise ValueError(f"{name}: fixed trace schedule cells differ from original baseline")
+            if row + rows > 4 or col + cols > 4:
+                raise ValueError(f"{name}: retimed rectangle is outside 4x4 fabric")
+            cells = {(cell["row"], cell["col"]) for cell in source_cells}
         schedule_intervals[name] = (start, end)
-        cells = {(cell["row"], cell["col"]) for cell in source_cells}
         task_cells[name] = cells
         for cell in cells:
             occupancy.setdefault(cell, []).append((start, end, name))
+
+    if production_scheduler_mode:
+        dispatch_index_by_task = {name: index for index, name in enumerate(output_dispatch)}
+        for cell, uses in context_uses.items():
+            if len(uses) > MAX_CONTEXTS_PER_CGRA:
+                raise ValueError(f"production scheduler exceeds six contexts on CGRA {cell}")
+            contexts = [context_id for context_id, _, _ in uses]
+            if len(set(contexts)) != len(contexts):
+                raise ValueError(f"production scheduler reuses a context on CGRA {cell}")
+            ordered = sorted(uses, key=lambda item: (
+                item[1], dispatch_index_by_task[item[2]]))
+            if [item[0] for item in ordered] != list(range(len(ordered))):
+                raise ValueError(f"production scheduler context ids are not coherent on CGRA {cell}")
 
     if max(end for _, end in schedule_intervals.values()) != result.get("mapped_whole_program_cycles") or result.get("predicted_whole_program_cycles") != result.get("mapped_whole_program_cycles"):
         raise ValueError("retimed makespan differs from task intervals")
@@ -2336,7 +2494,7 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
             data_edges_by_pair.setdefault((producer, consumer), []).append(edge)
     if edge_ids != set(range(len(dependencies))):
         raise ValueError("typed dependency IDs are not a contiguous source-edge inventory")
-    dispatch_index = {name: index for index, name in enumerate(source_dispatch)}
+    dispatch_index = {name: index for index, name in enumerate(output_dispatch)}
     if any(dispatch_index[producer] >= dispatch_index[consumer] for producer, consumer in predecessor_pairs):
         raise ValueError("original dispatch order is not predecessor-ready")
     if result.get("replayed_communication_edges") != len(predecessor_pairs):
@@ -2421,7 +2579,7 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
     expected_route_pairs = {pair for pair, edges in data_edges_by_pair.items() if sum(edge["payload_bits"] for edge in edges) > 0}
     if route_pairs != expected_route_pairs:
         raise ValueError("positive-payload data edge aggregation and route inventory differ")
-    for name in source_dispatch:
+    for name in output_dispatch:
         incoming = [pair for pair in predecessor_pairs if pair[1] == name]
         dependency_ready = max(
             (route_ready[pair] if pair in route_ready else schedule_intervals[pair[0]][1] for pair in incoming),
@@ -2435,7 +2593,7 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
         if any(left[1] > right[0] for left, right in zip(ordered, ordered[1:])):
             raise ValueError(f"network resource intervals overlap on {resource}")
 
-    return {
+    summary = {
         "schema": "orbit-original-amoeba-fixed-retiming-validation-v1",
         "status": "pass",
         "function": function,
@@ -2449,6 +2607,10 @@ def validate(ir: str, result: dict[str, Any], body_proof: dict[str, Any],
         "iteration_domain_coverage_status": result.get("iteration_domain_coverage_status"),
         "iteration_domain_coverage_verified": result.get("iteration_domain_coverage_verified"),
     }
+    if production_scheduler_mode:
+        summary["scheduler"] = dict(PRODUCTION_SCHEDULER_POLICY)
+        summary["shared_scheduler_resource_only"] = True
+    return summary
 
 
 def main() -> int:

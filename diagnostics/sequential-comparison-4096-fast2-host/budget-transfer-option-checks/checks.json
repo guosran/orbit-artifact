@@ -1,0 +1,34 @@
+[
+  {
+    "command": [
+      "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/bin/mlir-amoeba-opt",
+      "/home/x/shiran/project/orbit-artifact/results/sequential-comparison-4096-fast2-host/inputs/gcn/canonical.mlir",
+      "--allow-unregistered-dialect",
+      "--search-joint-neighborhood=output-dir=/home/x/shiran/project/orbit-artifact/diagnostics/sequential-comparison-4096-fast2-host/budget-transfer-option-checks/joint function=not_used stage=full-joint decision-flow=joint sequential-budget-policy=transfer-unused source-contract-file=/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/source-model-contract.json",
+      "-o",
+      "/dev/null"
+    ],
+    "exit_code": 1,
+    "expected_rejection": "requires decision-flow=sequential",
+    "wall_seconds": 0.037738800048828125,
+    "objective_evaluations": 0,
+    "predictor_queries": 0,
+    "mapper_calls": 0
+  },
+  {
+    "command": [
+      "/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/bin/mlir-amoeba-opt",
+      "/home/x/shiran/project/orbit-artifact/results/sequential-comparison-4096-fast2-host/inputs/gcn/canonical.mlir",
+      "--allow-unregistered-dialect",
+      "--search-joint-neighborhood=output-dir=/home/x/shiran/project/orbit-artifact/diagnostics/sequential-comparison-4096-fast2-host/budget-transfer-option-checks/sequential function=not_used stage=full-joint decision-flow=sequential sequential-budget-policy=invalid source-contract-file=/home/x/shiran/project/orbit-artifact/.work/sequential-budget-transfer/source-model-contract.json",
+      "-o",
+      "/dev/null"
+    ],
+    "exit_code": 1,
+    "expected_rejection": "must be fixed-split or transfer-unused",
+    "wall_seconds": 0.03817939758300781,
+    "objective_evaluations": 0,
+    "predictor_queries": 0,
+    "mapper_calls": 0
+  }
+]

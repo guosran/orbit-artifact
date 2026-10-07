@@ -1,0 +1,322 @@
+{
+  "schema": "orbit-input0-qkv-tiling-timing-audit-v1",
+  "workload": "llama",
+  "comparison": "corrected QKV factor-8 tiling vs held native control",
+  "source_files": {
+    "qkv8_native_mlir": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-qkv8-controlled/native/rank-0/native.mlir",
+    "qkv8_native_result": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-qkv8-controlled/native-result.json",
+    "qkv8_numeric_result": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-qkv8-controlled/numeric/llama/shape-temporal-replica-tiling-rank-0/result.json",
+    "qkv8_source_facts": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-qkv8-controlled/typed-replay/source-facts.json",
+    "control_native_mlir": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-control-controlled/native/rank-0/native.mlir",
+    "control_native_result": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-control-controlled/native-result.json",
+    "control_numeric_result": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-control-controlled/numeric/llama/shape-temporal-replica-tiling-rank-0/result.json",
+    "control_source_facts": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261006/llama-control-controlled/typed-replay/source-facts.json"
+  },
+  "cycle_comparison": {
+    "control_cycles": 595551249,
+    "qkv8_cycles": 430140475,
+    "cycles_reduced": 165410774,
+    "reduction_percent_of_control": 27.7744,
+    "qkv0_qkv1_control_end_cycle": 188743680,
+    "qkv0_qkv1_qkv8_end_cycle": 23592960,
+    "qkv2_qkv8_end_cycle": 47185920,
+    "downstream_task6_and_task7_durations_unchanged": true
+  },
+  "control": {
+    "candidate_id": "diagnostic-control",
+    "native_cycles": 595551249,
+    "predicted_cycles": 506543796,
+    "native_schedule_task_count": 23,
+    "source_facts_task_count": 23,
+    "gates": {
+      "numeric": "pass",
+      "numeric_mismatches": 0,
+      "numeric_element_comparisons": 131072,
+      "independent_trace": "pass",
+      "mapper_equality": "pass",
+      "prediction_mapper_equal": false,
+      "prediction_start_equality": false,
+      "production_ready": false,
+      "ranking_certified": false,
+      "sram_gate": "pending",
+      "sram_blocker": "target_sram_capacity_unestablished",
+      "sram_capacity_evaluated": false,
+      "fixed_location_equality": "scheduler-selected",
+      "scheduler_backend": "orchestrate-tasks-on-accelerators",
+      "replay_timing_policy": "production-scheduler-with-mapped-durations",
+      "status": "native_replayed"
+    },
+    "task_timing": {
+      "task_0": {
+        "count": 1,
+        "start_min": 0,
+        "start_max": 0,
+        "end_min": 188743680,
+        "end_max": 188743680,
+        "durations": [
+          188743680
+        ]
+      },
+      "task_1": {
+        "count": 1,
+        "start_min": 0,
+        "start_max": 0,
+        "end_min": 188743680,
+        "end_max": 188743680,
+        "durations": [
+          188743680
+        ]
+      },
+      "task_2": {
+        "count": 1,
+        "start_min": 0,
+        "start_max": 0,
+        "end_min": 188743680,
+        "end_max": 188743680,
+        "durations": [
+          188743680
+        ]
+      },
+      "task_3_replica": {
+        "count": 8,
+        "start_min": 188874753,
+        "start_max": 189136902,
+        "end_min": 218365953,
+        "end_max": 218628102,
+        "durations": [
+          29491200
+        ]
+      },
+      "task_4": {
+        "count": 1,
+        "start_min": 218640902,
+        "start_max": 218640902,
+        "end_min": 219460104,
+        "end_max": 219460104,
+        "durations": [
+          819202
+        ]
+      },
+      "task_5": {
+        "count": 1,
+        "start_min": 219722760,
+        "start_max": 219722760,
+        "end_min": 220029962,
+        "end_max": 220029962,
+        "durations": [
+          307202
+        ]
+      },
+      "task_6": {
+        "count": 1,
+        "start_min": 220292106,
+        "start_max": 220292106,
+        "end_min": 403792908,
+        "end_max": 403792908,
+        "durations": [
+          183500802
+        ]
+      },
+      "task_7": {
+        "count": 1,
+        "start_min": 403923980,
+        "start_max": 403923980,
+        "end_min": 571696141,
+        "end_max": 571696141,
+        "durations": [
+          167772161
+        ]
+      },
+      "task_8_replica": {
+        "count": 8,
+        "start_min": 571958285,
+        "start_max": 571958286,
+        "end_min": 595551248,
+        "end_max": 595551249,
+        "durations": [
+          23592963
+        ]
+      }
+    }
+  },
+  "qkv8": {
+    "candidate_id": "diagnostic-qkv8",
+    "native_cycles": 430140475,
+    "predicted_cycles": 353208512,
+    "native_schedule_task_count": 44,
+    "source_facts_task_count": 44,
+    "gates": {
+      "numeric": "pass",
+      "numeric_mismatches": 0,
+      "numeric_element_comparisons": 131072,
+      "independent_trace": "pass",
+      "mapper_equality": "pass",
+      "prediction_mapper_equal": false,
+      "prediction_start_equality": false,
+      "production_ready": false,
+      "ranking_certified": false,
+      "sram_gate": "pending",
+      "sram_blocker": "target_sram_capacity_unestablished",
+      "sram_capacity_evaluated": false,
+      "fixed_location_equality": "scheduler-selected",
+      "scheduler_backend": "orchestrate-tasks-on-accelerators",
+      "replay_timing_policy": "production-scheduler-with-mapped-durations",
+      "status": "native_replayed"
+    },
+    "task_timing": {
+      "task_0_tile": {
+        "count": 8,
+        "start_min": 0,
+        "start_max": 0,
+        "end_min": 23592960,
+        "end_max": 23592960,
+        "durations": [
+          23592960
+        ]
+      },
+      "task_1_tile": {
+        "count": 8,
+        "start_min": 0,
+        "start_max": 0,
+        "end_min": 23592960,
+        "end_max": 23592960,
+        "durations": [
+          23592960
+        ]
+      },
+      "task_2_tile": {
+        "count": 8,
+        "start_min": 23592960,
+        "start_max": 23592960,
+        "end_min": 47185920,
+        "end_max": 47185920,
+        "durations": [
+          23592960
+        ]
+      },
+      "task_3_replica": {
+        "count": 8,
+        "start_min": 23633932,
+        "start_max": 23726128,
+        "end_min": 53125132,
+        "end_max": 53217328,
+        "durations": [
+          29491200
+        ]
+      },
+      "task_4": {
+        "count": 1,
+        "start_min": 53230128,
+        "start_max": 53230128,
+        "end_min": 54049330,
+        "end_max": 54049330,
+        "durations": [
+          819202
+        ]
+      },
+      "task_5": {
+        "count": 1,
+        "start_min": 54311986,
+        "start_max": 54311986,
+        "end_min": 54619188,
+        "end_max": 54619188,
+        "durations": [
+          307202
+        ]
+      },
+      "task_6": {
+        "count": 1,
+        "start_min": 54881332,
+        "start_max": 54881332,
+        "end_min": 238382134,
+        "end_max": 238382134,
+        "durations": [
+          183500802
+        ]
+      },
+      "task_7": {
+        "count": 1,
+        "start_min": 238513206,
+        "start_max": 238513206,
+        "end_min": 406285367,
+        "end_max": 406285367,
+        "durations": [
+          167772161
+        ]
+      },
+      "task_8_replica": {
+        "count": 8,
+        "start_min": 406547511,
+        "start_max": 406547512,
+        "end_min": 430140474,
+        "end_max": 430140475,
+        "durations": [
+          23592963
+        ]
+      }
+    },
+    "qkv_trip_conservation": {
+      "Task_0_tile": {
+        "child_count": 8,
+        "per_child_current_taskflow_firing_count": [
+          2621440
+        ],
+        "per_child_current_source_work_count": [
+          2621440
+        ],
+        "source_multiplicity": [
+          20971520
+        ],
+        "sum_current_taskflow_firing_count": 20971520,
+        "sum_current_source_work_count": 20971520,
+        "actual_schedule_child_duration_cycles": [
+          23592960
+        ],
+        "derived_actual_ii_cycles_per_firing": [
+          9
+        ]
+      },
+      "Task_1_tile": {
+        "child_count": 8,
+        "per_child_current_taskflow_firing_count": [
+          2621440
+        ],
+        "per_child_current_source_work_count": [
+          2621440
+        ],
+        "source_multiplicity": [
+          20971520
+        ],
+        "sum_current_taskflow_firing_count": 20971520,
+        "sum_current_source_work_count": 20971520,
+        "actual_schedule_child_duration_cycles": [
+          23592960
+        ],
+        "derived_actual_ii_cycles_per_firing": [
+          9
+        ]
+      },
+      "Task_2_tile": {
+        "child_count": 8,
+        "per_child_current_taskflow_firing_count": [
+          2621440
+        ],
+        "per_child_current_source_work_count": [
+          2621440
+        ],
+        "source_multiplicity": [
+          20971520
+        ],
+        "sum_current_taskflow_firing_count": 20971520,
+        "sum_current_source_work_count": 20971520,
+        "actual_schedule_child_duration_cycles": [
+          23592960
+        ],
+        "derived_actual_ii_cycles_per_firing": [
+          9
+        ]
+      }
+    }
+  },
+  "interpretation": "QKV partitioning preserves source work and maps every child at derived actual II 9. The Q/K producer groups finish at 23,592,960 cycles, and V finishes at 47,185,920; the control Q/K/V tasks finish at 188,743,680. This releases downstream work much earlier. Task_6 and Task_7 retain exactly the same measured durations in both runs, so the makespan gain comes from compressing the QKV producer phase and moving the downstream critical chain earlier, not making those later kernels faster. Numeric, independent trace, and mapper-equality gates pass for both; SRAM admission remains pending, so neither result is marked production-ready or ranking-certified."
+}

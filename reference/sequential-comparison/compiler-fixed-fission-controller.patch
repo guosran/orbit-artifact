@@ -1,0 +1,3625 @@
+--- a/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
++++ b/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp
+@@ -45,11 +45,13 @@
+ #include "llvm/Support/LineIterator.h"
+ #include "llvm/Support/MemoryBuffer.h"
+ #include "llvm/Support/Path.h"
++#include "llvm/Support/SHA256.h"
+ #include "llvm/Support/raw_ostream.h"
+ 
+ #include <algorithm>
+ #include <cmath>
+ #include <chrono>
++#include <deque>
+ #include <fstream>
+ #include <cstdint>
+ #include <filesystem>
+@@ -81,6 +83,10 @@
+     "orbit-static-active-transfer-proof-v1";
+ constexpr StringLiteral kActiveTransferWitnessEncoding =
+     "exact-byte-interned-active-transfer-v1";
++constexpr StringLiteral kGraphResourceInitializationPolicy =
++    "joint-structural-affected-tasks-only-first-supported-formal-shape;sequential-phase-a-all-tasks-current-shape-else-first-supported-formal-shape;pure-shape-and-replica-actions-no-fallback;v1";
++constexpr StringLiteral kTypedActionReplayMemoPolicy =
++    "disabled-until-exact-action-prefix-restoration-is-proven-v1";
+ constexpr StringLiteral kDirectPerCgra2x2ArchitectureContract =
+     "neura-architecture-v1:amoeba_4x4_cgra_2x2_context6";
+ constexpr StringLiteral kDiagnostic23ArchitectureContract =
+@@ -414,10 +420,16 @@
+   SmallVector<TaskShapeChoice> choices;
+   SmallVector<int64_t> durations;
+   SmallVector<TaskShapeCost> costs;
++  // Transient provenance for resource feasibility. This is set from the
++  // action being materialized, never inherited from a parent's graph edit.
++  bool graphResourceInitialization = false;
++  std::vector<std::string> graphResourceInitializationTasks;
++  std::string explicitGraphResourceShapeTask;
+   std::string costPath;
+   std::vector<std::string> controlRoles;
+   bool control = false;
+   bool keyReserved = false;
++  bool duplicateAfterResourceNormalization = false;
+   bool scored = false;
+ };
+ 
+@@ -921,7 +933,8 @@
+     StringRef architectureTransferCatalog, StringRef modelNamespace,
+     int64_t diagnosticIICeiling,
+     bool allowUnsupportedAboveModelCeiling,
+-    std::string &costPath, std::string &error, bool &fatalFailure) {
++    std::string &costPath, std::string &error, bool &fatalFailure,
++    StringRef auditContext = "") {
+   fatalFailure = false;
+   if (modelFile.empty() || cacheFile.empty() || architectureContract.empty() ||
+       architecturePath.empty() || sourceRepository.empty() ||
+@@ -955,6 +968,8 @@
+       " model-namespace=" + quoteOption(modelNamespace) +
+       " cache=" + quoteOption(cacheFile) + " output=" +
+       quoteOption(costPath);
++  if (!auditContext.empty())
++    outputOptions += " audit-context=" + quoteOption(auditContext);
+   if (diagnosticIICeiling == 23)
+     outputOptions += " diagnostic-ii-ceiling=23";
+   if (allowUnsupportedAboveModelCeiling)
+@@ -999,14 +1014,24 @@
+ }
+ 
+ static bool writeModule(ModuleOp module, StringRef path, std::string &error) {
++  std::string bytes;
++  llvm::raw_string_ostream stream(bytes);
++  module.print(stream, OpPrintingFlags().printGenericOpForm());
++  stream << "\n";
++  stream.flush();
+   return writeAtomically(
+       path,
+       [&](llvm::raw_ostream &stream) {
+-        module.print(stream, OpPrintingFlags().printGenericOpForm());
+-        stream << "\n";
++        stream << bytes;
+         return true;
+       },
+       error);
++}
++
++static std::string sha256Hex(StringRef bytes) {
++  llvm::SHA256 hasher;
++  hasher.update(bytes);
++  return llvm::toHex(hasher.final(), /*LowerCase=*/true);
+ }
+ 
+ 
+@@ -1259,10 +1284,13 @@
+ 
+ static uint64_t perRoundScoreQuota(uint64_t scoredCount,
+                                    uint64_t maxCandidates,
+-                                   int64_t roundsRemaining) {
++                                   int64_t roundsRemaining,
++                                   uint64_t fixedQuota = 0) {
+   if (roundsRemaining <= 0 || scoredCount >= maxCandidates)
+     return 0;
+   const uint64_t remaining = maxCandidates - scoredCount;
++  if (fixedQuota)
++    return std::min(remaining, fixedQuota);
+   const uint64_t divisor = static_cast<uint64_t>(roundsRemaining);
+   return remaining / divisor + (remaining % divisor != 0 ? 1 : 0);
+ }
+@@ -1272,7 +1300,8 @@
+     unsigned round, unsigned maxPartitionFactor,
+     ModuleOp preparedTaskflowSource, uint64_t maxFissionActionsPerTask,
+     ArrayRef<NeighborhoodAction> canonicalFissionActions,
+-    std::string &enumerationError) {
++    StringRef decisionFlow, StringRef phase,
++    json::Object *frontierCounts, std::string &enumerationError) {
+   enumerationError.clear();
+   const bool fissionStage =
+       stage == "full-joint-fission" || stage == "s6" ||
+@@ -1282,6 +1311,10 @@
+   using FamilyMap = std::map<std::string, TargetMap>;
+   std::vector<FamilyMap> grouped(beam.size());
+   std::set<std::string> familyNames;
++  uint64_t enumerated = 0, retained = 0, filteredShape = 0,
++           filteredReplica = 0, filteredGraph = 0, projectedMixed = 0,
++           deduplicatedProjection = 0, retainedResource = 0,
++           retainedGraph = 0;
+ 
+   for (auto indexed : llvm::enumerate(beam)) {
+     std::string actionEnumerationError;
+@@ -1315,7 +1348,66 @@
+       }), actions.end());
+     }
+     FamilyMap &families = grouped[indexed.index()];
++    std::set<std::string> projectedSignatures;
+     for (NeighborhoodAction &action : actions) {
++      ++enumerated;
++      if (decisionFlow == "sequential" && phase == "A") {
++        if (action.family == "shape") {
++          ++filteredShape;
++          continue;
++        }
++        const bool hadReplicaPrimitive = llvm::any_of(
++            action.primitives, [](const NeighborhoodPrimitive &primitive) {
++              return primitive.kind == "replica" ||
++                     primitive.kind == "replication";
++            });
++        action.primitives.erase(
++            std::remove_if(action.primitives.begin(), action.primitives.end(),
++                           [](const NeighborhoodPrimitive &primitive) {
++                             return primitive.kind == "replica" ||
++                                    primitive.kind == "replication";
++                           }),
++            action.primitives.end());
++        const bool hadShape = !action.shapeTask.empty();
++        action.shapeTask.clear();
++        action.shapeRows = 0;
++        action.shapeCols = 0;
++        if (action.family == "replica" ||
++            (action.primitives.empty() && (hadShape || hadReplicaPrimitive))) {
++          ++filteredReplica;
++          continue;
++        }
++        if (hadShape || hadReplicaPrimitive) {
++          ++projectedMixed;
++          std::string label = "projected:" + action.family;
++          for (const NeighborhoodPrimitive &primitive : action.primitives)
++            label += ":" + primitive.kind + ":" + primitive.firstTask + ":" +
++                     primitive.secondTask + ":" + primitive.mode + ":" +
++                     std::to_string(primitive.axis) + ":" +
++                     std::to_string(primitive.factor);
++          action.label = std::move(label);
++        }
++        if (!projectedSignatures.insert(actionSignature(action)).second) {
++          ++deduplicatedProjection;
++          continue;
++        }
++      } else if (decisionFlow == "sequential" && phase == "B") {
++        if (action.family != "shape" && action.family != "replica" &&
++            action.family != "lineage-replacement") {
++          ++filteredGraph;
++          continue;
++        }
++        if (action.family != "lineage-replacement" && action.canonicalReset) {
++          ++filteredGraph;
++          continue;
++        }
++      }
++      ++retained;
++      if (action.family == "shape" || action.family == "replica" ||
++          (phase == "B" && action.family == "lineage-replacement"))
++        ++retainedResource;
++      else
++        ++retainedGraph;
+       const std::string family = action.family;
+       const std::string target = actionTargetKey(action);
+       const uint64_t targetCycles =
+@@ -1329,6 +1421,26 @@
+       queued.signature = actionSignature(queued.action);
+       familyNames.insert(family);
+     }
++  }
++
++  if (frontierCounts) {
++    (*frontierCounts)["phase"] = phase.str();
++    (*frontierCounts)["decision_flow"] = decisionFlow.str();
++    (*frontierCounts)["round"] = static_cast<int64_t>(round);
++    (*frontierCounts)["enumerated"] = static_cast<int64_t>(enumerated);
++    (*frontierCounts)["retained"] = static_cast<int64_t>(retained);
++    (*frontierCounts)["retained_resource"] =
++        static_cast<int64_t>(retainedResource);
++    (*frontierCounts)["retained_graph"] =
++        static_cast<int64_t>(retainedGraph);
++    (*frontierCounts)["filtered_shape"] = static_cast<int64_t>(filteredShape);
++    (*frontierCounts)["filtered_replica"] =
++        static_cast<int64_t>(filteredReplica);
++    (*frontierCounts)["filtered_graph"] = static_cast<int64_t>(filteredGraph);
++    (*frontierCounts)["projected_mixed"] =
++        static_cast<int64_t>(projectedMixed);
++    (*frontierCounts)["deduplicated_projection"] =
++        static_cast<int64_t>(deduplicatedProjection);
+   }
+ 
+   std::vector<std::map<std::string, ParentFamilyActionStream>> streams(
+@@ -1446,6 +1558,75 @@
+                 pending.begin() + selected + 1);
+ }
+ 
++// Selecting one item by a stable rotation leaves all other items in their
++// original relative order. Keep that order as immutable ordinals instead of
++// rescanning and moving an entire frontier for each attempted action. Scores
++// (including reservations within a batch) and ties are still resolved exactly
++// as in prioritizeNextPendingActionFamily above.
++class IndexedPendingFamilies {
++public:
++  IndexedPendingFamilies(const std::vector<PendingNeighbor> &pending,
++                         size_t cursor)
++      : original(pending), consumed(pending.size(), false),
++        firstCursor(cursor), nextCursor(cursor), sourceData(pending.data()) {
++    for (size_t index = cursor; index < original.size(); ++index)
++      byFamily[original[index].action.family].push_back(index);
++  }
++
++  void prioritize(std::vector<PendingNeighbor> &pending, size_t cursor,
++                  const std::map<std::string, uint64_t> &successful,
++                  const std::map<std::string, uint64_t> &reserved) {
++    assert(cursor == nextCursor && cursor < original.size());
++    uint64_t bestScore = std::numeric_limits<uint64_t>::max();
++    size_t ordinal = std::numeric_limits<size_t>::max();
++    auto chosen = byFamily.end();
++    for (auto it = byFamily.begin(); it != byFamily.end(); ++it) {
++      auto done = successful.find(it->first);
++      auto held = reserved.find(it->first);
++      const uint64_t score =
++          (done == successful.end() ? 0 : done->second) +
++          (held == reserved.end() ? 0 : held->second);
++      const size_t first = it->second.front();
++      if (score < bestScore || (score == bestScore && first < ordinal)) {
++        bestScore = score;
++        ordinal = first;
++        chosen = it;
++      }
++    }
++    assert(chosen != byFamily.end());
++    pending[cursor] = original[ordinal];
++    consumed[ordinal] = true;
++    chosen->second.pop_front();
++    if (chosen->second.empty())
++      byFamily.erase(chosen);
++    ++nextCursor;
++  }
++
++  bool matches(ArrayRef<PendingNeighbor> pending, size_t cursor) const {
++    return pending.data() == sourceData && pending.size() == original.size() &&
++           cursor == nextCursor;
++  }
++
++  // Checkpoints retain the exact legacy vector: chosen prefix followed by
++  // the untouched relative order of all remaining items. Thus restoration
++  // needs no new schema or acceleration-specific continuation state.
++  template <typename Emit>
++  void snapshot(ArrayRef<PendingNeighbor> pending, Emit emit) const {
++    for (size_t index = 0; index < nextCursor; ++index)
++      emit(pending[index]);
++    for (size_t index = firstCursor; index < original.size(); ++index)
++      if (!consumed[index])
++        emit(original[index]);
++  }
++
++private:
++  std::vector<PendingNeighbor> original;
++  std::vector<bool> consumed;
++  std::map<std::string, std::deque<size_t>> byFamily;
++  size_t firstCursor, nextCursor;
++  const PendingNeighbor *sourceData;
++};
++
+ // A worker receives only immutable, source-owned score inputs.  In particular,
+ // it never receives the parent-context module, cost cache, catalogue path, or
+ // diagnostic handler.  The owner commits the result in pending-frontier order.
+@@ -1471,6 +1652,8 @@
+ struct ParallelBatchItem {
+   size_t pendingIndex = 0;
+   std::string actionFamily;
++  NeighborhoodAction action;
++  bool materialized = false;
+   ParallelBatchItemKind kind = ParallelBatchItemKind::Rejected;
+   size_t jobIndex = 0;
+   SearchState state;
+@@ -1783,6 +1966,12 @@
+   json::Object object = archiveObject(stateRecord(state));
+   object["module_ir"] = neighborhoodReplaySourceText(state.module.get());
+   object["key_reserved"] = state.keyReserved;
++  object["graph_resource_initialization"] =
++      state.graphResourceInitialization;
++  object["graph_resource_initialization_tasks"] =
++      stringArray(state.graphResourceInitializationTasks);
++  object["explicit_graph_resource_shape_task"] =
++      state.explicitGraphResourceShapeTask;
+   return object;
+ }
+ 
+@@ -1803,6 +1992,17 @@
+   state.control = record.control; state.controlRoles = std::move(record.controlRoles);
+   state.score = record.score; state.scored = record.valid;
+   state.keyReserved = object.getBoolean("key_reserved").value_or(true);
++  state.graphResourceInitialization =
++      object.getBoolean("graph_resource_initialization").value_or(false);
++  if (const json::Array *tasks =
++          object.getArray("graph_resource_initialization_tasks")) {
++    if (!parseStringArray(tasks, state.graphResourceInitializationTasks)) {
++      error = "checkpoint graph resource initialization task list is malformed";
++      return false;
++    }
++  }
++  state.explicitGraphResourceShapeTask =
++      object.getString("explicit_graph_resource_shape_task").value_or("").str();
+   return true;
+ }
+ static bool parseStageFixed(StringRef stage) {
+@@ -1878,6 +2078,15 @@
+   Option<std::string> outputDir{*this, "output-dir", llvm::cl::init("")};
+   Option<std::string> functionName{*this, "function", llvm::cl::init("")};
+   Option<std::string> stage{*this, "stage", llvm::cl::init("")};
++  Option<std::string> decisionFlow{*this, "decision-flow",
++                                   llvm::cl::init("legacy")};
++  Option<std::string> sequentialBudgetPolicy{
++      *this, "sequential-budget-policy",
++      llvm::cl::desc("Sequential budget allocation: "
++                      "fixed-split or transfer-unused"),
++      llvm::cl::init("fixed-split")};
++  Option<int64_t> graphBudgetPercent{*this, "graph-budget-percent",
++                                     llvm::cl::init(50)};
+   Option<std::string> parentCostFile{*this, "parent-cost-file",
+                                      llvm::cl::init("")};
+   Option<std::string> architecturePath{*this, "architecture-path",
+@@ -1925,6 +2134,9 @@
+                      "minimum-area supported model shape"),
+       llvm::cl::init(false)};
+   Option<int64_t> maxRounds{*this, "max-rounds", llvm::cl::init(kDefaultRounds)};
++  Option<int64_t> roundScoreQuota{*this, "round-score-quota",
++      llvm::cl::desc("Fixed objective evaluations per frontier; zero retains the legacy adaptive quota"),
++      llvm::cl::init(0)};
+   Option<int64_t> maxCandidates{*this, "max-candidates",
+                                 llvm::cl::init(kDefaultCandidates)};
+   Option<int64_t> beamWidth{*this, "beam-width", llvm::cl::init(kDefaultBeam)};
+@@ -1937,6 +2149,11 @@
+       llvm::cl::init("config/protocols/amoeba_input0_neighborhood_v3.json")};
+   Option<std::string> sourceContractFile{*this, "source-contract-file", llvm::cl::init("")};
+   Option<int64_t> checkpointActions{*this, "checkpoint-actions", llvm::cl::init(128)};
++  Option<bool> runtimePendingIndex{*this, "runtime-pending-index", llvm::cl::init(true)};
++  Option<bool> runtimeFactCache{*this, "runtime-fact-cache", llvm::cl::init(true)};
++  Option<bool> runtimeMaterializerProofCache{
++      *this, "runtime-materializer-proof-cache", llvm::cl::init(true)};
++  Option<int64_t> checkpointWritePeriod{*this, "checkpoint-write-period", llvm::cl::init(32)};
+   Option<int64_t> pauseAfterCandidates{*this, "test-pause-after-candidates", llvm::cl::init(0)};
+   Option<int64_t> minimumFreeBytes{*this, "minimum-free-bytes", llvm::cl::init(16777216)};
+   // One preserves the pre-existing serial scorer exactly.  Values above one
+@@ -1948,17 +2165,62 @@
+                                          llvm::cl::init("")};
+   Option<int64_t> maxFissionActionsPerTask{
+       *this, "max-fission-actions-per-task", llvm::cl::init(64)};
++  Option<bool> runtimeReplayCache{*this, "runtime-replay-cache",
++                                  llvm::cl::init(true)};
+ 
+   void runOnOperation() override {
+     ModuleOp canonical = getOperation();
++    clearTypedActionReplayMemo();
++    operationStarted = std::chrono::steady_clock::now();
++    phaseStartedAt = operationStarted;
++    phaseBFrozen = false;
++    frozenPrefixActions.clear();
++    frozenFissionActions.clear();
++    frozenInitialShapes.clear();
++    frozenCanonicalFactKey.clear();
++    phaseAKeys.clear();
++    phaseAAnchorCandidateId.clear();
++    phaseAStopReason.clear();
++    phaseARoundsCompleted = phaseBRoundsCompleted = 0;
++    phaseAElapsedMilliseconds = phaseBElapsedMilliseconds = 0;
++    phaseJointElapsedMilliseconds = 0;
++    transferredEvaluationCount = 0;
++    phaseEvaluationCounts.clear();
++    phaseActionAttempts.clear();
++    phaseActionMaterialized.clear();
++    phaseActionLegal.clear();
++    phaseActionDeduplicated.clear();
++    phaseActionFailed.clear();
++    budgetTraceLines.clear();
++    actionAttemptTraceLines.clear();
++    actionFrontierTraceLines.clear();
++    crossPhaseDedupPromotionTraceLines.clear();
++    incumbentCycles = std::numeric_limits<int64_t>::max();
++    resourceLegalityQueries = 0;
++    resourceLegalitySupportedFallbacks = 0;
++    indexedPending.reset();
++    candidateFactCache.clear();
++    factCacheHits = factCacheMisses = 0;
++    materializerProofCacheHits = materializerProofCacheMisses = 0;
++    materializerSourceProofReuses = materializerActiveProofReuses = 0;
++    materializerShapeIdentityHits = 0;
++    materializerSeedProofCheckMilliseconds = 0;
++    materializerProofCacheLookupMilliseconds = 0;
++    materializerProofCacheIRPrintMilliseconds = 0;
++    materializerActiveRefreshMilliseconds = 0;
++    indexedPendingSelections = periodicCheckpointWindows = skippedCheckpointWrites = 0;
+     std::string error;
+     auto fatal = [&](StringRef message) {
+       canonical.emitError() << message;
+       signalPassFailure();
+     };
+     if (outputDir.empty() || functionName.empty() || stage.empty() ||
+-        maxRounds <= 0 || maxCandidates <= 0 || beamWidth <= 0 ||
+-        diversitySlots <= 0 || diversitySlots > beamWidth || checkpointActions <= 0 ||
++        (decisionFlow != "legacy" && decisionFlow != "joint" &&
++         decisionFlow != "sequential") ||
++        (graphBudgetPercent != 25 && graphBudgetPercent != 50 &&
++         graphBudgetPercent != 75) ||
++        maxRounds <= 0 || roundScoreQuota < 0 || maxCandidates <= 0 || beamWidth <= 0 ||
++        diversitySlots <= 0 || diversitySlots > beamWidth || checkpointActions <= 0 || checkpointWritePeriod <= 0 ||
+         minimumFreeBytes < 0 || scoringWorkers <= 0 ||
+         scoringWorkers > kMaxScoringWorkers ||
+         (maxPartitionFactor != 4 && maxPartitionFactor != 8) ||
+@@ -1979,6 +2241,36 @@
+       fatal("diagnostic-ii-ceiling=23 requires the direct per-CGRA 2x2 "
+             "model namespace, bootstrap-supported-shapes=true, and no "
+             "architecture-transfer-catalog");
++      return;
++    }
++    const bool fullJointDecisionStage =
++        stage == "full-joint" || stageNumber(stage) == 6;
++    if (decisionFlow != "legacy" && !fullJointDecisionStage) {
++      fatal("standalone joint and sequential decision flows require stage=full-joint or full-joint-fission");
++      return;
++    }
++    if (sequentialBudgetPolicy != "fixed-split" &&
++        sequentialBudgetPolicy != "transfer-unused") {
++      fatal("sequential-budget-policy must be fixed-split or transfer-unused");
++      return;
++    }
++    if (decisionFlow != "sequential" &&
++        sequentialBudgetPolicy == "transfer-unused") {
++      fatal("sequential-budget-policy=transfer-unused requires decision-flow=sequential");
++      return;
++    }
++    if (decisionFlow != "legacy" &&
++        (!seedManifest.empty() || !previousWinner.empty() ||
++         !historicalNativeWinner.empty())) {
++      fatal("standalone joint and sequential decision flows start from the bound identity and do not accept staged or historical winner seeds");
++      return;
++    }
++    if (decisionFlow == "sequential" && resume) {
++      fatal("decision-flow=sequential does not support checkpoint resume because its phase-A anchor and phase-B frozen prefix are in-memory state");
++      return;
++    }
++    if (decisionFlow == "sequential" && pauseAfterCandidates > 0) {
++      fatal("decision-flow=sequential does not support pausing between phase checkpoints");
+       return;
+     }
+     if (!stageNumber(stage)) { fatal("unknown cumulative ablation stage"); return; }
+@@ -2046,8 +2338,31 @@
+         return;
+       }
+     }
+-    if (!parseStageFixed(stage) && maxCandidates < 2) {
++    if (decisionFlow == "sequential" && maxCandidates < 2) {
++      fatal("sequential search budget must leave at least one evaluation for each fixed phase allowance");
++      return;
++    }
++    if (decisionFlow == "legacy" && !parseStageFixed(stage) && maxCandidates < 2) {
+       fatal("S2-S5 candidate budget must accommodate identity and a neighbor"); return;
++    }
++    totalEvaluationBudget = static_cast<uint64_t>(maxCandidates.getValue());
++    phaseABudget = totalEvaluationBudget;
++    phaseBBudget = 0;
++    nominalPhaseBBudget = 0;
++    effectivePhaseABudget = phaseABudget;
++    if (decisionFlow == "sequential") {
++      phaseABudget = totalEvaluationBudget *
++                     static_cast<uint64_t>(graphBudgetPercent.getValue()) / 100;
++      phaseBBudget = totalEvaluationBudget - phaseABudget;
++      nominalPhaseBBudget = phaseBBudget;
++      effectivePhaseABudget = phaseABudget;
++      if (!phaseABudget || !phaseBBudget) {
++        fatal("graph-budget-percent must leave a positive fixed evaluation budget for both phases");
++        return;
++      }
++      activeSearchPhase = "A";
++    } else {
++      activeSearchPhase = decisionFlow == "joint" ? "joint" : "legacy";
+     }
+     // Each ablation may start directly from its canonical identity. Importing
+     // a previous measured winner is optional for historical warm-start runs.
+@@ -2202,7 +2517,8 @@
+               sourceCommit, architectureTransferCatalog, modelNamespace,
+               diagnosticIICeiling,
+               /*allowUnsupportedAboveModelCeiling=*/true, canonicalCostPath,
+-              error, fatalPredictorFailure)) {
++              error, fatalPredictorFailure,
++              decisionFlow == "legacy" ? "" : activeSearchPhase)) {
+         fatal("cannot generate canonical supported-shape catalogue: " + error);
+         return;
+       }
+@@ -2336,6 +2652,15 @@
+       if (!restoreCheckpoint(canonical, checkpointPath, binding, round, nextSerial,
+           scoredCount, rejectedCount, canonicalFactKey, archive, beam, generated,
+           pending, pendingCursor, seenKeys, error)) { fatal(error); return; }
++      if (decisionFlow != "legacy")
++        phaseEvaluationCounts[activeSearchPhase] = scoredCount;
++      if (decisionFlow == "joint") {
++        for (const auto &record : archive)
++          if (llvm::is_contained(record.controlRoles, std::string("search_anchor"))) {
++            jointHalfBudgetAnchorId = record.id;
++            jointHalfBudgetAnchorScore = record.score;
++          }
++      }
+       // The prefix is derived from the exact restored archive. Rebuilding it
+       // once avoids storing a second authoritative ranking in the checkpoint.
+       for (size_t index = 0; index < archive.size(); ++index)
+@@ -2345,6 +2670,8 @@
+       identity.id = "neighborhood-" + std::to_string(nextSerial++);
+       identity.module = canonical.clone(); identity.shapes = canonicalIdentityShapes;
+       identity.control = true; identity.controlRoles.push_back("identity");
++      if (decisionFlow == "joint")
++        identity.controlRoles.push_back("search_anchor");
+       if (!prepareInitialActiveTransferFacts(identity.module.get(), functionName,
+                                              error)) {
+         fatal(error);
+@@ -2365,7 +2692,8 @@
+       seenKeys.insert(identity.key); identity.keyReserved = true;
+       if (!evaluateCandidate(identity, canonical, functionName, stage, outputDir,
+           candidatesDir, canonicalFactKey, costCacheLoaded, costCache, 0,
+-          scoredCount, /*chargeRoundQuota=*/false, nextSerial, error) ||
++          scoredCount, /*chargeRoundQuota=*/false, nextSerial, error,
++          &seenKeys) ||
+           !identity.scored) {
+         fatal(error.empty() ? "canonical identity cost/schedule unknown: " + identity.rejectReason : error); return;
+       }
+@@ -2627,8 +2955,16 @@
+           }
+           if (!evaluateCandidate(seed, canonical, functionName, stage, outputDir,
+               candidatesDir, canonicalFactKey, costCacheLoaded, costCache, 0,
+-              scoredCount, /*chargeRoundQuota=*/false, nextSerial, error))
++              scoredCount, /*chargeRoundQuota=*/false, nextSerial, error,
++              &seenKeys))
+             return false;
++          if (seed.duplicateAfterResourceNormalization) {
++            if (!mergeDuplicate(seed, canonical, functionName, archive,
++                                outputDir, candidatesDir, nextSerial, error))
++              return false;
++            ++imported;
++            continue;
++          }
+           if (required && !seed.scored) {
+             error = (strictHistoricalSelection
+                          ? "historical native winner could not be rescored: "
+@@ -2653,9 +2989,15 @@
+       beam = selectBeam(std::move(beam), beamWidth, diversitySlots);
+       if (!retainCanonicalBeam(beam, archive, error)) { fatal(error); return; }
+       roundScoredCount = 0;
++      const uint64_t initialPhaseBudget =
++          decisionFlow == "sequential" ? phaseABudget : totalEvaluationBudget;
++      const uint64_t initialPhaseEvaluations =
++          decisionFlow == "sequential"
++              ? phaseEvaluationCounts[activeSearchPhase]
++              : scoredCount;
+       roundScoreLimit = perRoundScoreQuota(
+-          scoredCount, static_cast<uint64_t>(maxCandidates.getValue()),
+-          maxRounds.getValue() - round);
++          initialPhaseEvaluations, initialPhaseBudget,
++          maxRounds.getValue() - round, roundScoreQuota.getValue());
+       if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
+           canonicalFactKey, archive, beam, generated, pending, pendingCursor, "", error)) { fatal(error); return; }
+     }
+@@ -2665,34 +3007,72 @@
+     auto began = std::chrono::steady_clock::now();
+     const int64_t previousElapsed = elapsedMilliseconds;
+     uint64_t actionsSinceCheckpoint = 0;
+-    while (round < maxRounds && scoredCount < static_cast<uint64_t>(maxCandidates)) {
++    auto currentPhaseBudget = [&]() -> uint64_t {
++      if (decisionFlow == "sequential")
++        return activeSearchPhase == "A" ? phaseABudget : phaseBBudget;
++      return totalEvaluationBudget;
++    };
++    auto currentPhaseEvaluations = [&]() -> uint64_t {
++      return decisionFlow == "sequential"
++                 ? phaseEvaluationCounts[activeSearchPhase]
++                 : scoredCount;
++    };
++    auto globalRound = [&]() -> int64_t {
++      return round + (decisionFlow == "sequential" && activeSearchPhase == "B"
++                          ? phaseARoundsCompleted
++                          : 0);
++    };
++    while (true) {
++    while (globalRound() < maxRounds &&
++           currentPhaseEvaluations() < currentPhaseBudget() &&
++           scoredCount < totalEvaluationBudget) {
+       if (beam.empty()) { stopReason = "no-new-legal-candidates"; break; }
+       if (pending.empty()) {
+         generated.clear(); pendingCursor = 0;
+         std::string actionEnumerationError;
++        if (decisionFlow == "sequential") {
++          if (activeSearchPhase == "A")
++            phaseARoundsCompleted =
++                std::max<int64_t>(phaseARoundsCompleted, round + 1);
++          else
++            phaseBRoundsCompleted =
++                std::max<int64_t>(phaseBRoundsCompleted, round + 1);
++        }
++        json::Object frontierCounts;
++        const unsigned registryRound = static_cast<unsigned>(
++            round + (decisionFlow == "sequential" && activeSearchPhase == "B"
++                         ? phaseARoundsCompleted
++                         : 0));
+         pending = enumerateBalancedPendingNeighbors(
+-            beam, functionName, stage, static_cast<unsigned>(round),
++            beam, functionName, stage, registryRound,
+             static_cast<unsigned>(maxPartitionFactor.getValue()),
+             preparedTaskflowSource.get(),
+             static_cast<uint64_t>(maxFissionActionsPerTask.getValue()),
+-            canonicalFissionActions, actionEnumerationError);
++            canonicalFissionActions, decisionFlow, activeSearchPhase,
++            &frontierCounts, actionEnumerationError);
+         if (!actionEnumerationError.empty()) {
+           fatal(actionEnumerationError);
+           return;
+         }
++        frontierCounts["phase_round"] = round;
++        frontierCounts["global_action_menu_round"] = registryRound;
++        actionFrontierTraceLines.push_back(
++            jsonText(json::Value(std::move(frontierCounts))) + "\n");
+         if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
+             canonicalFactKey, archive, beam, generated, pending, pendingCursor, "", error)) { fatal(error); return; }
+       }
+       std::map<std::string, uint64_t> remainingPendingFamilies =
+           pendingActionFamilyCounts(pending, pendingCursor);
++      indexedPending.reset();
++      if (decisionFlow != "legacy" && runtimePendingIndex)
++        indexedPending = std::make_unique<IndexedPendingFamilies>(pending, pendingCursor);
+       if (scoringWorkers <= 1) {
+       while (pendingCursor < pending.size() &&
+-             scoredCount < static_cast<uint64_t>(maxCandidates) &&
++             currentPhaseEvaluations() < currentPhaseBudget() &&
++             scoredCount < totalEvaluationBudget &&
+              roundScoredCount < roundScoreLimit) {
+-        prioritizeNextPendingActionFamily(pending, pendingCursor,
+-                                          successfulFamilyScores,
+-                                          noReservedFamilyScores,
+-                                          remainingPendingFamilies);
++        prioritizePending(pending, pendingCursor, successfulFamilyScores,
++                          noReservedFamilyScores, remainingPendingFamilies);
+         const auto &neighbor = pending[pendingCursor];
+         const std::string actionFamily = neighbor.action.family;
+         if (neighbor.parent >= beam.size()) { fatal("checkpoint pending parent outside beam"); return; }
+@@ -2703,6 +3083,10 @@
+         child.path.push_back(actionSignature(neighbor.action));
+         child.shapes = parent.shapes; child.module = parent.module->clone();
+         std::string reason, diagnostic, materializeError;
++        std::string actionOutcome = "not-materialized";
++        bool actionMaterialized = false;
++        bool freezeVerified = false;
++        bool actionLegal = false;
+         NeighborMaterialization materialization = materializeNeighbor(
+             child, parent, canonical, functionName, outputDir,
+             neighbor.action, canonicalFactKey, nextSerial, reason, diagnostic,
+@@ -2711,50 +3095,111 @@
+           fatal(materializeError);
+           return;
+         }
++        actionMaterialized = materialization == NeighborMaterialization::Applied;
+         if (materialization == NeighborMaterialization::Rejected) {
++          actionOutcome = "rejected:" +
++                          (reason.empty() ? "unsupported_or_unknown_action"
++                                          : reason);
+           ++rejectedCount; appendRejected(archive, child,
+               (reason.empty() ? "unsupported_or_unknown_action" : reason) + ":" + diagnostic, round);
+         } else {
+           if (!child.key.empty() && child.rejectReason.empty()) {
+             if (!seenKeys.insert(child.key).second) {
++              actionOutcome = "canonical-duplicate";
+               ++rejectedCount;
++              bool promoted = false;
+               if (!mergeDuplicate(child, canonical, functionName, archive,
+-                                  outputDir, candidatesDir, nextSerial, error)) {
++                                  outputDir, candidatesDir, nextSerial, error,
++                                  &promoted, round)) {
+                 fatal(error);
+                 return;
+               }
++              if (promoted) {
++                actionOutcome = "cross-phase-canonical-duplicate-promoted";
++                freezeVerified = true;
++                actionLegal = true;
++                ++successfulFamilyScores[neighbor.action.family];
++                generated.push_back(std::move(child));
++                generated = selectBeam(std::move(generated), beamWidth,
++                                       diversitySlots);
++              }
+             } else {
+               child.keyReserved = true;
++              bool duplicateAfterNormalization = false;
++              bool promotedAfterNormalization = false;
++              bool appendedArchiveRecord = false;
+               if (!evaluateCandidate(child, canonical, functionName, stage, outputDir,
+                   candidatesDir, canonicalFactKey, costCacheLoaded, costCache,
+                   round, scoredCount, /*chargeRoundQuota=*/true, nextSerial,
+-                  error) ||
+-                  !registerCandidate(child, archive, seenKeys, rejectedCount, candidatesDir, error)) { fatal(error); return; }
+-              archive.back().round = round;
++                  error, &seenKeys)) { fatal(error); return; }
++              if (child.duplicateAfterResourceNormalization) {
++                duplicateAfterNormalization = true;
++                actionOutcome = "canonical-duplicate-after-resource-normalization";
++                ++rejectedCount;
++                if (!mergeDuplicate(child, canonical, functionName, archive,
++                                    outputDir, candidatesDir, nextSerial,
++                                    error, &promotedAfterNormalization, round)) {
++                  fatal(error);
++                  return;
++                }
++                if (promotedAfterNormalization)
++                  actionOutcome =
++                      "cross-phase-canonical-duplicate-promoted-after-resource-normalization";
++              } else if (!registerCandidate(child, archive, seenKeys,
++                                            rejectedCount, candidatesDir,
++                                            error)) {
++                fatal(error);
++                return;
++              } else {
++                appendedArchiveRecord = true;
++              }
++              if (actionOutcome == "not-materialized")
++                actionOutcome = child.scored ? "scored" :
++                    (child.rejectReason.empty() ? "resource-rejected"
++                                                : child.rejectReason);
++              if (appendedArchiveRecord ||
++                  !(decisionFlow == "sequential" &&
++                    activeSearchPhase == "B" &&
++                    duplicateAfterNormalization))
++                archive.back().round = round;
++              freezeVerified = activeSearchPhase == "B" && hasFrozenPrefix(child.actionHistory);
++              actionLegal = child.scored;
+               if (child.scored) {
+                 ++successfulFamilyScores[neighbor.action.family];
+-                generated.push_back(std::move(child));
+-                // Keep the expansion frontier bounded rather than serializing
+-                // every evaluated program in a round. Four diverse slots remain
+-                // available independently of the twelve cost-selected slots.
+-                generated = selectBeam(std::move(generated), beamWidth, diversitySlots);
++                if (!(decisionFlow == "sequential" &&
++                      activeSearchPhase == "B" &&
++                      duplicateAfterNormalization &&
++                      !promotedAfterNormalization)) {
++                  generated.push_back(std::move(child));
++                  // Keep the expansion frontier bounded rather than serializing
++                  // every evaluated program in a round. Four diverse slots remain
++                  // available independently of the twelve cost-selected slots.
++                  generated = selectBeam(std::move(generated), beamWidth,
++                                         diversitySlots);
++                }
+               }
+             }
+           } else if (child.key.empty() && child.rejectReason.empty()) {
++            actionOutcome = "rejected:active_transfer_proof_unsupported";
+             ++rejectedCount;
+             appendRejected(archive, child,
+                            "active_transfer_proof_unsupported:"
+                                "proof preparation returned no candidate key",
+                            round);
+           } else if (child.key.empty()) {
++            actionOutcome = "rejected:" + child.rejectReason;
+             ++rejectedCount; appendRejected(archive, child, child.rejectReason, round);
+           }
+         }
++              appendActionAttempt(
++            activeSearchPhase, neighbor.action, actionOutcome,
++            actionMaterialized, actionLegal,
++            freezeVerified);
+         ++pendingCursor; ++actionsSinceCheckpoint;
+         consumePendingActionFamily(remainingPendingFamilies, actionFamily);
+         bool pause = pauseAfterCandidates > 0 && scoredCount >= static_cast<uint64_t>(pauseAfterCandidates);
+         if (actionsSinceCheckpoint >= static_cast<uint64_t>(checkpointActions) || pause) {
+-          if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
++          if (writePeriodicCheckpoint(pause) && !saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
+               canonicalFactKey, archive, beam, generated, pending, pendingCursor,
+               pause ? "explicit-pause" : "", error)) { fatal(error); return; }
+           actionsSinceCheckpoint = 0;
+@@ -2769,11 +3214,13 @@
+             static_cast<unsigned>(scoringWorkers.getValue());
+         const DialectRegistry &workerRegistry =
+             canonical.getContext()->getDialectRegistry();
+-        while (pendingCursor < pending.size() &&
+-               scoredCount < static_cast<uint64_t>(maxCandidates) &&
++      while (pendingCursor < pending.size() &&
++               currentPhaseEvaluations() < currentPhaseBudget() &&
++               scoredCount < totalEvaluationBudget &&
+                roundScoredCount < roundScoreLimit) {
+-          const uint64_t scoreBudget =
+-              static_cast<uint64_t>(maxCandidates) - scoredCount;
++          const uint64_t scoreBudget = std::min(
++              totalEvaluationBudget - scoredCount,
++              currentPhaseBudget() - currentPhaseEvaluations());
+           const uint64_t roundScoreBudget =
+               roundScoreLimit - roundScoredCount;
+           const uint64_t pauseBudget =
+@@ -2802,10 +3249,8 @@
+           const auto preparationBegan = std::chrono::steady_clock::now();
+           while (cursor < pending.size() && jobs.size() < batchScoreLimit &&
+                  items.size() < batchItemLimit) {
+-            prioritizeNextPendingActionFamily(pending, cursor,
+-                                              successfulFamilyScores,
+-                                              reservedFamilyScores,
+-                                              remainingPendingFamilies);
++            prioritizePending(pending, cursor, successfulFamilyScores,
++                              reservedFamilyScores, remainingPendingFamilies);
+             const PendingNeighbor &neighbor = pending[cursor];
+             if (neighbor.parent >= beam.size()) {
+               fatal("checkpoint pending parent outside beam");
+@@ -2822,6 +3267,7 @@
+             ParallelBatchItem item;
+             item.pendingIndex = cursor;
+             item.actionFamily = neighbor.action.family;
++            item.action = neighbor.action;
+             item.state = std::move(child);
+             std::string reason, diagnostic, materializeError;
+             NeighborMaterialization materialization = materializeNeighbor(
+@@ -2832,6 +3278,8 @@
+               fatal(materializeError);
+               return;
+             }
++            item.materialized =
++                materialization == NeighborMaterialization::Applied;
+             if (materialization == NeighborMaterialization::Rejected) {
+               item.kind = ParallelBatchItemKind::Rejected;
+               item.state.rejectReason =
+@@ -2848,6 +3296,7 @@
+                 // be merged immediately at the same ordered commit point.
+                 item.kind = ParallelBatchItemKind::Duplicate;
+               } else {
++                const std::string reservedKey = item.state.key;
+                 item.state.keyReserved = true;
+                 if (!prepareParallelCandidate(
+                         item.state, canonical, functionName, stage, outputDir,
+@@ -2856,7 +3305,17 @@
+                   fatal(error);
+                   return;
+                 }
+-                if (item.state.rejectReason.empty() &&
++                if (item.state.key != reservedKey) {
++                  seenKeys.erase(reservedKey);
++                  item.state.keyReserved = false;
++                  if (!seenKeys.insert(item.state.key).second) {
++                    item.kind = ParallelBatchItemKind::Duplicate;
++                  } else {
++                    item.state.keyReserved = true;
++                  }
++                }
++                if (item.kind != ParallelBatchItemKind::Duplicate &&
++                    item.state.rejectReason.empty() &&
+                     !item.state.choices.empty()) {
+                   item.kind = ParallelBatchItemKind::Score;
+                   ParallelScoreJob job;
+@@ -2870,7 +3329,7 @@
+                   item.jobIndex = jobs.size();
+                   jobs.push_back(std::move(job));
+                   ++reservedFamilyScores[item.actionFamily];
+-                } else {
++                } else if (item.kind != ParallelBatchItemKind::Duplicate) {
+                   item.kind = ParallelBatchItemKind::Rejected;
+                 }
+               }
+@@ -2931,6 +3390,12 @@
+           for (ParallelBatchItem &item : items) {
+             SearchState &child = item.state;
+             if (item.kind == ParallelBatchItemKind::Rejected) {
++              appendActionAttempt(
++                  activeSearchPhase, item.action,
++                  "rejected:" + child.rejectReason,
++                  item.materialized, false,
++                  activeSearchPhase == "B" &&
++                      hasFrozenPrefix(child.actionHistory));
+               ++rejectedCount;
+               appendRejected(archive, child,
+                              child.rejectReason.empty()
+@@ -2939,10 +3404,29 @@
+                              round);
+             } else if (item.kind == ParallelBatchItemKind::Duplicate) {
+               ++rejectedCount;
++              bool promoted = false;
+               if (!mergeDuplicate(child, canonical, functionName, archive,
+-                                  outputDir, candidatesDir, nextSerial, error)) {
++                                  outputDir, candidatesDir, nextSerial, error,
++                                  &promoted, round)) {
+                 fatal(error);
+                 return;
++              }
++              if (promoted) {
++                appendActionAttempt(
++                    activeSearchPhase, item.action,
++                    "cross-phase-canonical-duplicate-promoted",
++                    item.materialized, true,
++                    hasFrozenPrefix(child.actionHistory));
++                ++successfulFamilyScores[item.actionFamily];
++                generated.push_back(std::move(child));
++                generated = selectBeam(std::move(generated), beamWidth,
++                                       diversitySlots);
++              } else {
++                appendActionAttempt(
++                    activeSearchPhase, item.action, "canonical-duplicate",
++                    item.materialized, false,
++                    activeSearchPhase == "B" &&
++                        hasFrozenPrefix(child.actionHistory));
+               }
+             } else {
+               ParallelScoreResult &result = results[item.jobIndex];
+@@ -2950,12 +3434,15 @@
+               // when the unchanged scheduler rejects the candidate.
+               ++scoredCount;
+               ++productionSchedulerCalls;
++              if (decisionFlow != "legacy")
++                ++phaseEvaluationCounts[activeSearchPhase];
+               ++roundScoredCount;
+               if (result.scored) {
+                 child.schedule = std::move(result.schedule);
+                 child.score = child.schedule.makespan;
+                 child.scored = true;
+                 child.rejectReason.clear();
++                incumbentCycles = std::min(incumbentCycles, child.score);
+                 ++successfulFamilyScores[item.actionFamily];
+               } else {
+                 child.rejectReason = "production_scheduler_rejected";
+@@ -2963,6 +3450,17 @@
+                   child.rejectReason += ":" + result.error;
+                 child.scored = false;
+               }
++              appendBudgetTrace(
++                  child, result.scored, scoredCount,
++                  result.scored ? StringRef("scored")
++                                : StringRef("production-scheduler-rejected"));
++              appendActionAttempt(
++                  activeSearchPhase, item.action,
++                  result.scored ? StringRef("scored")
++                                : StringRef("production-scheduler-rejected"),
++                  item.materialized, result.scored,
++                  activeSearchPhase == "B" &&
++                      hasFrozenPrefix(child.actionHistory));
+               if (!registerCandidate(child, archive, seenKeys, rejectedCount,
+                                      candidatesDir, error)) {
+                 fatal(error);
+@@ -2988,7 +3486,7 @@
+           if (actionsSinceCheckpoint >=
+                   static_cast<uint64_t>(checkpointActions) ||
+               pause) {
+-            if (!saveCheckpoint(
++            if (writePeriodicCheckpoint(pause) && !saveCheckpoint(
+                     checkpointPath, round, nextSerial, scoredCount,
+                     rejectedCount, canonicalFactKey, archive, beam, generated,
+                     pending, pendingCursor, pause ? "explicit-pause" : "",
+@@ -3005,15 +3503,17 @@
+         }
+       }
+       if (stopReason == "explicit-pause" ||
+-          scoredCount >= static_cast<uint64_t>(maxCandidates))
++          scoredCount >= totalEvaluationBudget ||
++          currentPhaseEvaluations() >= currentPhaseBudget())
+         break;
+       ++round; pending.clear(); pendingCursor = 0;
++      indexedPending.reset();
+       remainingPendingFamilies.clear();
+       successfulFamilyScores.clear();
+       roundScoredCount = 0;
+       roundScoreLimit = perRoundScoreQuota(
+-          scoredCount, static_cast<uint64_t>(maxCandidates.getValue()),
+-          maxRounds.getValue() - round);
++          currentPhaseEvaluations(), currentPhaseBudget(),
++          maxRounds.getValue() - globalRound(), roundScoreQuota.getValue());
+       if (generated.empty()) { stopReason = "no-new-legal-candidates"; break; }
+       beam = selectBeam(std::move(generated), beamWidth, diversitySlots);
+       if (!retainCanonicalBeam(beam, archive, error)) { fatal(error); return; }
+@@ -3021,9 +3521,73 @@
+       if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
+           canonicalFactKey, archive, beam, generated, pending, pendingCursor, "", error)) { fatal(error); return; }
+     }
+-    if (stopReason.empty()) stopReason = round >= maxRounds ? "max-rounds" : "max-unique-candidates";
+-    elapsedMilliseconds = previousElapsed + std::chrono::duration_cast<std::chrono::milliseconds>(
+-        std::chrono::steady_clock::now() - began).count();
++    if (stopReason == "explicit-pause")
++      break;
++    if (decisionFlow == "sequential" && activeSearchPhase == "A" &&
++        scoredCount < totalEvaluationBudget) {
++      phaseAElapsedMilliseconds =
++          std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - phaseStartedAt)
++              .count();
++      phaseAStopReason = stopReason.empty()
++                             ? (globalRound() >= maxRounds ? "max-rounds"
++                                                   : "phase-budget-exhausted")
++                             : stopReason;
++      if (sequentialBudgetPolicy == "transfer-unused" &&
++          phaseAStopReason == "no-new-legal-candidates") {
++        const uint64_t actualPhaseAEvaluations = phaseEvaluationCounts["A"];
++        if (actualPhaseAEvaluations < phaseABudget) {
++          transferredEvaluationCount =
++              phaseABudget - actualPhaseAEvaluations;
++          phaseBBudget += transferredEvaluationCount;
++        }
++      }
++      phaseStartedAt = std::chrono::steady_clock::now();
++      if (!beginSequentialPhaseB(canonical, functionName, outputDir, archive,
++                                 beam, generated, pending, pendingCursor,
++                                 nextSerial, round, error)) {
++        fatal(error);
++        return;
++      }
++      stopReason.clear();
++      successfulFamilyScores.clear();
++      if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount,
++                          rejectedCount, canonicalFactKey, archive, beam,
++                          generated, pending, pendingCursor, "", error)) {
++        fatal(error);
++        return;
++      }
++      continue;
++    }
++    if (decisionFlow == "sequential" && activeSearchPhase == "B") {
++      phaseBElapsedMilliseconds =
++          std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - phaseStartedAt)
++              .count();
++    }
++    break;
++    }
++    if (stopReason.empty()) {
++      if (decisionFlow == "sequential" &&
++          currentPhaseEvaluations() >= currentPhaseBudget())
++        stopReason = "phase-budget-exhausted";
++      else
++        stopReason = globalRound() >= maxRounds ? "max-rounds"
++                                        : "max-unique-candidates";
++    }
++    if (decisionFlow == "sequential")
++      stopReason = "sequential:" + phaseAStopReason + ";phase-b=" +
++                   (stopReason.empty() ? std::string("complete") : stopReason);
++    if (decisionFlow == "joint")
++      phaseJointElapsedMilliseconds =
++          std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - operationStarted)
++              .count();
++    elapsedMilliseconds = decisionFlow == "legacy"
++        ? previousElapsed + std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - began).count()
++        : std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - operationStarted).count();
+     if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,
+         canonicalFactKey, archive, beam, generated, pending, pendingCursor, stopReason, error)) { fatal(error); return; }
+     if (!writeOutputs(outputDir, checkpointPath, functionName, stage,
+@@ -3035,6 +3599,114 @@
+   }
+ 
+ private:
++  struct CandidateFactCacheEntry {
++    std::string moduleIR, factKey, activeTransferWitnessID;
++    bool stableShapeIdentity = false;
++  };
++  std::deque<CandidateFactCacheEntry> candidateFactCache;
++  uint64_t factCacheHits = 0, factCacheMisses = 0;
++  uint64_t indexedPendingSelections = 0, periodicCheckpointWindows = 0;
++  uint64_t skippedCheckpointWrites = 0;
++  std::unique_ptr<IndexedPendingFamilies> indexedPending;
++
++  void prioritizePending(std::vector<PendingNeighbor> &pending, size_t cursor,
++                         const std::map<std::string, uint64_t> &successful,
++                         const std::map<std::string, uint64_t> &reserved,
++                         const std::map<std::string, uint64_t> &remaining) {
++    if (indexedPending) {
++      indexedPending->prioritize(pending, cursor, successful, reserved);
++      ++indexedPendingSelections;
++    } else {
++      prioritizeNextPendingActionFamily(pending, cursor, successful, reserved, remaining);
++    }
++  }
++
++  bool writePeriodicCheckpoint(bool pause) {
++    ++periodicCheckpointWindows;
++    if (pause || decisionFlow == "legacy" || checkpointWritePeriod <= 1 ||
++        periodicCheckpointWindows % checkpointWritePeriod.getValue() == 0)
++      return true;
++    ++skippedCheckpointWrites;
++    return false;
++  }
++
++  static std::string exactFactCacheIR(ModuleOp module) {
++    std::string bytes;
++    llvm::raw_string_ostream stream(bytes);
++    module.print(stream, OpPrintingFlags().printGenericOpForm());
++    stream.flush();
++    return bytes;
++  }
++
++  struct AccumulatedMillisecondsTimer {
++    uint64_t &total;
++    explicit AccumulatedMillisecondsTimer(uint64_t &counter) : total(counter) {}
++    std::chrono::steady_clock::time_point began =
++        std::chrono::steady_clock::now();
++    bool active = true;
++    void stop() {
++      if (!active)
++        return;
++      total += static_cast<uint64_t>(
++          std::chrono::duration_cast<std::chrono::milliseconds>(
++              std::chrono::steady_clock::now() - began)
++              .count());
++      active = false;
++    }
++    ~AccumulatedMillisecondsTimer() { stop(); }
++  };
++
++  bool materializerProofCacheEnabled() const {
++    return decisionFlow != "legacy" &&
++           runtimeMaterializerProofCache.getValue();
++  }
++
++  std::string printMaterializerProofIR(ModuleOp module) {
++    AccumulatedMillisecondsTimer printTimer(
++        materializerProofCacheIRPrintMilliseconds);
++    return exactFactCacheIR(module);
++  }
++
++  static bool isPureShapeAction(const NeighborhoodAction &action) {
++    return action.family == "shape" && action.primitives.empty() &&
++           !action.canonicalReset && !action.shapeTask.empty();
++  }
++
++  const CandidateFactCacheEntry *lookupMaterializerProof(StringRef moduleIR) {
++    if (!materializerProofCacheEnabled())
++      return nullptr;
++    const auto began = std::chrono::steady_clock::now();
++    const CandidateFactCacheEntry *match = nullptr;
++    for (const CandidateFactCacheEntry &entry : candidateFactCache) {
++      if (entry.moduleIR != moduleIR)
++        continue;
++      match = &entry;
++      if (entry.stableShapeIdentity)
++        break;
++    }
++    materializerProofCacheLookupMilliseconds +=
++        std::chrono::duration_cast<std::chrono::milliseconds>(
++            std::chrono::steady_clock::now() - began)
++            .count();
++    if (match)
++      ++materializerProofCacheHits;
++    else
++      ++materializerProofCacheMisses;
++    return match;
++  }
++
++  void markCandidateShapeIdentity(StringRef moduleIR) {
++    for (CandidateFactCacheEntry &entry : candidateFactCache)
++      if (entry.moduleIR == moduleIR)
++        entry.stableShapeIdentity = true;
++  }
++
++  void rememberCandidateFacts(StringRef bytes, StringRef facts, StringRef active) {
++    if (candidateFactCache.size() >= 128)
++      candidateFactCache.pop_front();
++    candidateFactCache.push_back(
++        {bytes.str(), facts.str(), active.str(), /*stableShapeIdentity=*/false});
++  }
+   int64_t perCgraRows = 0;
+   int64_t perCgraCols = 0;
+   std::string effectiveArchitectureContract;
+@@ -3280,6 +3952,225 @@
+     }
+   }
+ 
++  struct TypedActionReplayMemoEntry {
++    std::vector<std::string> actionPrefixBytes;
++    std::string moduleIR;
++    std::vector<NeighborhoodShape> shapes;
++    std::string key;
++    std::string factKey;
++    SearchState::TypedActionHistory actionHistory;
++    uint64_t lastUse = 0;
++    size_t retainedBytes = 0;
++  };
++
++  static constexpr size_t kTypedActionReplayMemoMaxEntries = 64;
++  static constexpr size_t kTypedActionReplayMemoMaxBytes = 128 * 1024 * 1024;
++
++  void clearTypedActionReplayMemoEntries() {
++    typedActionReplayMemoEntries.clear();
++    typedActionReplayMemoBytes = 0;
++    typedActionReplayMemoClock = 0;
++    typedActionReplayMemoContextKey.clear();
++  }
++
++  void clearTypedActionReplayMemo() {
++    clearTypedActionReplayMemoEntries();
++    typedActionReplayMemoCanonical = nullptr;
++    typedActionReplayMemoContext = nullptr;
++    typedActionReplayMemoCanonicalIR.clear();
++    typedActionReplayMemoFunction.clear();
++    typedActionReplayMemoOutputDirectory.clear();
++    typedActionReplayMemoOptionsKey.clear();
++    typedActionReplayCacheHits = 0;
++    typedActionReplayCacheMisses = 0;
++    typedActionReplaySkippedSteps = 0;
++  }
++
++  static void appendLengthPrefixed(std::string &target, StringRef value) {
++    target += std::to_string(value.size());
++    target += ':';
++    if (!value.empty())
++      target.append(value.data(), value.size());
++  }
++
++  std::string buildTypedActionReplayMemoOptionsKey() const {
++    json::Array activeArguments;
++    for (unsigned index : activeTransferArguments)
++      activeArguments.push_back(static_cast<int64_t>(index));
++    return jsonText(json::Value(json::Object{
++        {"decision_flow", decisionFlow.getValue()},
++        {"max_partition_factor", maxPartitionFactor.getValue()},
++        {"source_domain_enabled", sourceDomainEnabled},
++        {"active_transfer_arguments", std::move(activeArguments)},
++        {"active_transfer_arguments_text", activeTransferArgumentsText.getValue()},
++        {"active_transfer_require_proven", activeTransferRequireProven.getValue()}}));
++  }
++
++  std::string ensureTypedActionReplayMemoContext(
++      ModuleOp canonical, ModuleOp effectiveCanonical,
++      StringRef functionName, StringRef outputDirectory,
++      const SearchState::TypedActionHistory &history) {
++    // The cache is private to this pass invocation.  The input module is not
++    // mutated by search: candidates are cloned before materialization.  Bind
++    // its exact generic-printed bytes once, together with every option that
++    // changes trusted action application or proof validation.
++    const std::string optionsKey = buildTypedActionReplayMemoOptionsKey();
++    if (typedActionReplayMemoCanonical != canonical.getOperation() ||
++        typedActionReplayMemoContext != canonical.getContext() ||
++        typedActionReplayMemoFunction != functionName ||
++        typedActionReplayMemoOutputDirectory != outputDirectory ||
++        typedActionReplayMemoOptionsKey != optionsKey) {
++      clearTypedActionReplayMemoEntries();
++      typedActionReplayMemoCanonical = canonical.getOperation();
++      typedActionReplayMemoContext = canonical.getContext();
++      typedActionReplayMemoCanonicalIR = neighborhoodReplaySourceText(canonical);
++      typedActionReplayMemoFunction = functionName.str();
++      typedActionReplayMemoOutputDirectory = outputDirectory.str();
++      typedActionReplayMemoOptionsKey = optionsKey;
++    }
++
++    json::Array initialShapes;
++    for (const NeighborhoodShape &shape : history.initialShapes)
++      initialShapes.push_back(shapeObject(shape));
++    json::Array fissionActions;
++    for (const NeighborhoodAction &action : history.fissionActions)
++      fissionActions.push_back(typedActionObject(action));
++    std::string context;
++    appendLengthPrefixed(context, "orbit-typed-action-replay-prefix-v1");
++    appendLengthPrefixed(context, typedActionReplayMemoCanonicalIR);
++    appendLengthPrefixed(context, typedActionReplayMemoFunction);
++    appendLengthPrefixed(context, typedActionReplayMemoOutputDirectory);
++    appendLengthPrefixed(context, typedActionReplayMemoOptionsKey);
++    appendLengthPrefixed(context, history.canonicalFactKey);
++    appendLengthPrefixed(
++        context, jsonText(json::Value(std::move(fissionActions))));
++    appendLengthPrefixed(context,
++                         neighborhoodReplaySourceText(effectiveCanonical));
++    appendLengthPrefixed(
++        context, jsonText(json::Value(std::move(initialShapes))));
++    if (context != typedActionReplayMemoContextKey) {
++      clearTypedActionReplayMemoEntries();
++      typedActionReplayMemoContextKey = std::move(context);
++    }
++    return typedActionReplayMemoContextKey;
++  }
++
++  static size_t typedActionReplayMemoEntryBytes(
++      const TypedActionReplayMemoEntry &entry) {
++    size_t bytes = sizeof(entry) + entry.moduleIR.size() + entry.key.size() +
++                   entry.factKey.size();
++    for (const std::string &action : entry.actionPrefixBytes)
++      bytes += sizeof(action) + action.size();
++    for (const NeighborhoodShape &shape : entry.shapes)
++      bytes += sizeof(shape) + shape.task.size();
++    bytes += entry.actionHistory.actions.size() *
++             sizeof(NeighborhoodAction);
++    bytes += entry.actionHistory.fissionActions.size() *
++             sizeof(NeighborhoodAction);
++    auto accountAction = [&](const NeighborhoodAction &action) {
++      bytes += action.family.size() + action.label.size() +
++               action.shapeTask.size();
++      for (const NeighborhoodPrimitive &primitive : action.primitives)
++        bytes += primitive.kind.size() + primitive.firstTask.size() +
++                 primitive.secondTask.size() + primitive.mode.size();
++    };
++    for (const NeighborhoodAction &action : entry.actionHistory.actions)
++      accountAction(action);
++    for (const NeighborhoodAction &action : entry.actionHistory.fissionActions)
++      accountAction(action);
++    return bytes;
++  }
++
++  void eraseTypedActionReplayMemoEntry(size_t index) {
++    if (index >= typedActionReplayMemoEntries.size())
++      return;
++    typedActionReplayMemoBytes -=
++        typedActionReplayMemoEntries[index].retainedBytes;
++    typedActionReplayMemoEntries.erase(
++        typedActionReplayMemoEntries.begin() + index);
++  }
++
++  std::optional<size_t> findTypedActionReplayMemoPrefix(
++      ArrayRef<std::string> actionBytes) {
++    std::optional<size_t> best;
++    size_t bestPrefixLength = 0;
++    for (size_t index = 0; index < typedActionReplayMemoEntries.size();
++         ++index) {
++      const TypedActionReplayMemoEntry &entry =
++          typedActionReplayMemoEntries[index];
++      const size_t prefixLength = entry.actionPrefixBytes.size();
++      if (prefixLength > actionBytes.size() ||
++          (best && prefixLength <= bestPrefixLength) ||
++          !std::equal(entry.actionPrefixBytes.begin(),
++                      entry.actionPrefixBytes.end(), actionBytes.begin()))
++        continue;
++      best = index;
++      bestPrefixLength = prefixLength;
++    }
++    if (best)
++      typedActionReplayMemoEntries[*best].lastUse =
++          ++typedActionReplayMemoClock;
++    return best;
++  }
++
++  void rememberTypedActionReplayPrefix(
++      ArrayRef<std::string> actionBytes, size_t prefixLength,
++      const SearchState &replayed) {
++    if (!replayed.module || replayed.key.empty() || replayed.factKey.empty() ||
++        prefixLength > actionBytes.size() ||
++        replayed.actionHistory.actions.size() != prefixLength)
++      return;
++
++    TypedActionReplayMemoEntry entry;
++    entry.actionPrefixBytes.assign(actionBytes.begin(),
++                                   actionBytes.begin() + prefixLength);
++    entry.moduleIR = neighborhoodReplaySourceText(replayed.module.get());
++    entry.shapes = replayed.shapes;
++    entry.key = replayed.key;
++    entry.factKey = replayed.factKey;
++    entry.actionHistory = replayed.actionHistory;
++    entry.lastUse = ++typedActionReplayMemoClock;
++    entry.retainedBytes = typedActionReplayMemoEntryBytes(entry);
++    if (entry.retainedBytes > kTypedActionReplayMemoMaxBytes)
++      return;
++
++    for (size_t index = 0; index < typedActionReplayMemoEntries.size();
++         ++index) {
++      TypedActionReplayMemoEntry &previous =
++          typedActionReplayMemoEntries[index];
++      if (previous.actionPrefixBytes != entry.actionPrefixBytes)
++        continue;
++      if (previous.moduleIR == entry.moduleIR &&
++          previous.key == entry.key && previous.factKey == entry.factKey &&
++          shapeSignature(previous.shapes) == shapeSignature(entry.shapes)) {
++        previous.lastUse = entry.lastUse;
++        return;
++      }
++      // An identical exact input prefix produced different state bytes.  Do
++      // not let memoized outputs authorize any later replay in this context.
++      clearTypedActionReplayMemoEntries();
++      return;
++    }
++
++    while (!typedActionReplayMemoEntries.empty() &&
++           (typedActionReplayMemoEntries.size() >=
++                kTypedActionReplayMemoMaxEntries ||
++            typedActionReplayMemoBytes >
++                kTypedActionReplayMemoMaxBytes - entry.retainedBytes)) {
++      auto oldest = std::min_element(
++          typedActionReplayMemoEntries.begin(),
++          typedActionReplayMemoEntries.end(),
++          [](const TypedActionReplayMemoEntry &lhs,
++             const TypedActionReplayMemoEntry &rhs) {
++            return lhs.lastUse < rhs.lastUse;
++          });
++      eraseTypedActionReplayMemoEntry(
++          static_cast<size_t>(oldest - typedActionReplayMemoEntries.begin()));
++    }
++    typedActionReplayMemoBytes += entry.retainedBytes;
++    typedActionReplayMemoEntries.push_back(std::move(entry));
++  }
++
+   bool replayTypedActionHistory(
+       const SearchState::TypedActionHistory &history, ModuleOp canonical,
+       StringRef functionName, StringRef outputDirectory, uint64_t serial,
+@@ -3299,6 +4190,49 @@
+         reason = "typed_action_history_effective_canonical_unavailable";
+       return false;
+     }
++    // Prefix reuse previously restored exact generic IR bytes but still
++    // admitted a task-name mismatch during authenticated history replay.
++    // Keep comparison-flow replay exact until the cache can prove that every
++    // restored prefix is the result of its matching typed actions.
++    const bool useMemo = false;
++    std::string taskError;
++    std::vector<std::string> actionBytes;
++    size_t firstAction = 0;
++    bool memoHit = false;
++    if (useMemo) {
++      actionBytes.reserve(history.actions.size());
++      for (const NeighborhoodAction &action : history.actions)
++        actionBytes.push_back(
++            jsonText(json::Value(typedActionObject(action))));
++      (void)ensureTypedActionReplayMemoContext(
++          canonical, effectiveCanonical.get(), functionName, outputDirectory,
++          history);
++      if (std::optional<size_t> cachedIndex =
++              findTypedActionReplayMemoPrefix(actionBytes)) {
++        const TypedActionReplayMemoEntry &cached =
++            typedActionReplayMemoEntries[*cachedIndex];
++        OwningOpRef<ModuleOp> cachedModule = parseSourceString<ModuleOp>(
++            cached.moduleIR, canonical.getContext());
++        if (cachedModule &&
++            cached.actionHistory.actions.size() ==
++                cached.actionPrefixBytes.size()) {
++          replayed.module = std::move(cachedModule);
++          replayed.shapes = cached.shapes;
++          replayed.key = cached.key;
++          replayed.factKey = cached.factKey;
++          replayed.actionHistory = cached.actionHistory;
++          firstAction = cached.actionPrefixBytes.size();
++          memoHit = true;
++          ++typedActionReplayCacheHits;
++          typedActionReplaySkippedSteps += firstAction;
++        } else {
++          clearTypedActionReplayMemoEntries();
++          ++typedActionReplayCacheMisses;
++        }
++      } else {
++        ++typedActionReplayCacheMisses;
++      }
++    }
+     for (const NeighborhoodAction &fission : history.fissionActions) {
+       if (stageNumber(stage) != 6 ||
+           !llvm::any_of(canonicalFissionActions,
+@@ -3310,48 +4244,49 @@
+         return false;
+       }
+     }
+-    replayed = SearchState();
+-    replayed.module = effectiveCanonical->clone();
+-    replayed.shapes = history.initialShapes;
+-    replayed.actionHistory = portableActionHistory(history);
+-    for (const NeighborhoodShape &shape : replayed.shapes)
+-      if (shape.rows <= 0 || shape.cols <= 0 || shape.rows > 4 ||
+-          shape.cols > 4 || shape.rows * shape.cols > 4) {
+-        reason = "typed_action_history_initial_shape_outside_area_four";
++    if (!memoHit) {
++      replayed = SearchState();
++      replayed.module = effectiveCanonical->clone();
++      replayed.shapes = history.initialShapes;
++      replayed.actionHistory = portableActionHistory(history);
++      for (const NeighborhoodShape &shape : replayed.shapes)
++        if (shape.rows <= 0 || shape.cols <= 0 || shape.rows > 4 ||
++            shape.cols > 4 || shape.rows * shape.cols > 4) {
++          reason = "typed_action_history_initial_shape_outside_area_four";
++          return false;
++        }
++      if (!prepareInitialActiveTransferFacts(replayed.module.get(), functionName,
++                                             reason)) {
++        reason = "typed_action_history_initial_proof_unsupported:" + reason;
+         return false;
+       }
+-    if (!prepareInitialActiveTransferFacts(replayed.module.get(), functionName,
+-                                           reason)) {
+-      reason = "typed_action_history_initial_proof_unsupported:" + reason;
+-      return false;
+-    }
+-    std::vector<std::string> names;
+-    std::string taskError;
+-    FailureOr<func::FuncOp> canonicalFunction =
+-        selectTaskFunction(replayed.module.get(), functionName, taskError);
+-    if (failed(canonicalFunction)) {
+-      reason = "typed_action_history_initial_function_missing:" + taskError;
+-      return false;
+-    }
+-    FailureOr<SmallVector<TaskMetadata>> canonicalMetadata =
+-        collectAnalyticalTaskMetadata(*canonicalFunction, taskError);
+-    if (!collectHistoryTaskNames(replayed.module.get(), functionName, names,
+-                                 taskError) ||
+-        failed(canonicalMetadata) ||
+-        !sameTaskSet(*canonicalMetadata, replayed.shapes)) {
+-      reason = "typed_action_history_initial_shapes_do_not_cover_canonical_tasks";
+-      if (!taskError.empty())
+-        reason += ":" + taskError;
+-      return false;
+-    }
+-    if (!prepareCandidateKey(replayed, functionName, outputDirectory, serial,
+-                             fatalError)) {
+-      if (!fatalStorageError(fatalError)) {
+-        reason = "typed_action_history_canonical_facts_unavailable:" +
+-                 fatalError;
+-        fatalError.clear();
+-      }
+-      return false;
++      std::vector<std::string> names;
++      FailureOr<func::FuncOp> canonicalFunction =
++          selectTaskFunction(replayed.module.get(), functionName, taskError);
++      if (failed(canonicalFunction)) {
++        reason = "typed_action_history_initial_function_missing:" + taskError;
++        return false;
++      }
++      FailureOr<SmallVector<TaskMetadata>> canonicalMetadata =
++          collectAnalyticalTaskMetadata(*canonicalFunction, taskError);
++      if (!collectHistoryTaskNames(replayed.module.get(), functionName, names,
++                                   taskError) ||
++          failed(canonicalMetadata) ||
++          !sameTaskSet(*canonicalMetadata, replayed.shapes)) {
++        reason = "typed_action_history_initial_shapes_do_not_cover_canonical_tasks";
++        if (!taskError.empty())
++          reason += ":" + taskError;
++        return false;
++      }
++      if (!prepareCandidateKey(replayed, functionName, outputDirectory, serial,
++                               fatalError)) {
++        if (!fatalStorageError(fatalError)) {
++          reason = "typed_action_history_canonical_facts_unavailable:" +
++                   fatalError;
++          fatalError.clear();
++        }
++        return false;
++      }
+     }
+     const bool replayPendingFissionKey =
+         !history.fissionActions.empty() &&
+@@ -3372,7 +4307,12 @@
+     replayed.actionHistory.actions.clear();
+     replayed.actionHistory.dependencies.clear();
+     replayed.actionHistory.taskProducers.clear();
+-    for (const NeighborhoodAction &action : history.actions) {
++    if (useMemo && !memoHit)
++      rememberTypedActionReplayPrefix(actionBytes, /*prefixLength=*/0,
++                                      replayed);
++    for (size_t actionIndex = firstAction;
++         actionIndex < history.actions.size(); ++actionIndex) {
++      const NeighborhoodAction &action = history.actions[actionIndex];
+       if (action.family == "lineage-replacement" ||
+           action.family == "fission") {
+         reason = "typed_action_history_contains_nonreplayable_lineage_replacement";
+@@ -3384,6 +4324,10 @@
+         reason = "typed_action_history_task_set_unknown:" + taskError;
+         return false;
+       }
++      const std::string beforeActionIR =
++          materializerProofCacheEnabled() && isPureShapeAction(action)
++              ? printMaterializerProofIR(replayed.module.get())
++              : std::string();
+       std::string applyReason, diagnostic;
+       if (!applyTrustedNeighborhoodAction(
+               replayed.module.get(), effectiveCanonical.get(), functionName, action,
+@@ -3439,6 +4383,15 @@
+       }
+       recordTypedAction(replayed.actionHistory, action, beforeNames,
+                         afterNames);
++      if (!beforeActionIR.empty()) {
++        const std::string afterActionIR =
++            printMaterializerProofIR(replayed.module.get());
++        if (beforeActionIR == afterActionIR)
++          markCandidateShapeIdentity(afterActionIR);
++      }
++      if (useMemo)
++        rememberTypedActionReplayPrefix(actionBytes, actionIndex + 1,
++                                        replayed);
+     }
+     return true;
+   }
+@@ -3475,6 +4428,248 @@
+     return true;
+   }
+ 
++  static bool isResourceHistoryAction(const NeighborhoodAction &action) {
++    if (action.canonicalReset) return false;
++    if (action.family == "shape")
++      return action.primitives.empty() && !action.shapeTask.empty() &&
++             action.shapeRows > 0 && action.shapeCols > 0;
++    if (action.family == "replica")
++      return action.shapeTask.empty() && !action.primitives.empty() &&
++             llvm::all_of(action.primitives, [](const auto &primitive) {
++               return primitive.kind == "replica";
++             });
++    return false;
++  }
++
++  bool hasFrozenPrefix(const SearchState::TypedActionHistory &history) const {
++    if (!history.known ||
++        history.actions.size() < frozenPrefixActions.size() ||
++        history.fissionActions.size() != frozenFissionActions.size() ||
++        shapeSignature(history.initialShapes) !=
++            shapeSignature(frozenInitialShapes) ||
++        history.canonicalFactKey != frozenCanonicalFactKey)
++      return false;
++    auto exactActionBytes = [](const NeighborhoodAction &action) {
++      return jsonText(json::Value(typedActionObject(action)));
++    };
++    for (size_t index = 0; index < frozenPrefixActions.size(); ++index)
++      if (exactActionBytes(history.actions[index]) !=
++          exactActionBytes(frozenPrefixActions[index]))
++        return false;
++    for (size_t index = 0; index < frozenFissionActions.size(); ++index)
++      if (exactActionBytes(history.fissionActions[index]) !=
++          exactActionBytes(frozenFissionActions[index]))
++        return false;
++    for (size_t index = frozenPrefixActions.size();
++         index < history.actions.size(); ++index)
++      if (!isResourceHistoryAction(history.actions[index]))
++        return false;
++    return true;
++  }
++
++  bool isSequentialFinalRecord(const ArchiveRecord &record) const {
++    return record.valid && hasFrozenPrefix(record.actionHistory);
++  }
++
++  bool authenticateSequentialPhaseBState(SearchState &candidate,
++                                          ModuleOp canonical,
++                                          StringRef function,
++                                          StringRef outputDirectory,
++                                          uint64_t serial,
++                                          std::string &reason,
++                                          std::string &fatalError) {
++    if (!phaseBFrozen || !authenticateTypedActionHistory(
++                             candidate, canonical, function,
++                             outputDirectory, serial, fatalError))
++      return false;
++    if (!hasFrozenPrefix(candidate.actionHistory)) {
++      reason = "sequential_frozen_graph_prefix_or_resource_suffix_mismatch";
++      return false;
++    }
++    return true;
++  }
++
++  bool beginSequentialPhaseB(
++      ModuleOp canonical, StringRef function, StringRef outputDirectory,
++      std::vector<ArchiveRecord> &archive, std::vector<SearchState> &beam,
++      std::vector<SearchState> &generated,
++      std::vector<PendingNeighbor> &pending, uint64_t &pendingCursor,
++      uint64_t &nextSerial, int64_t &round, std::string &error) {
++    ArchiveRecord *best = nullptr;
++    for (ArchiveRecord &record : archive) {
++      if (!record.valid || !phaseAKeys.count(record.key))
++        continue;
++      if (!best || archiveLess(record, *best))
++        best = &record;
++    }
++    if (!best || best->candidatePath.empty()) {
++      error = "phase A has no retained legal candidate module for the phase-B anchor";
++      return false;
++    }
++
++    SearchState anchor;
++    anchor.id = best->id;
++    anchor.parentId = best->parentId;
++    anchor.key = best->key;
++    anchor.factKey = best->factKey;
++    anchor.path = best->path;
++    anchor.shapes = best->shapes;
++    anchor.actionHistory = portableActionHistory(best->actionHistory);
++    anchor.module = parseSourceFile<ModuleOp>(best->candidatePath,
++                                              canonical.getContext());
++    if (!anchor.module) {
++      error = "phase-A anchor module snapshot does not parse";
++      return false;
++    }
++    anchor.choices = best->choices;
++    anchor.durations = best->durations;
++    anchor.costs = best->costs;
++    anchor.schedule = best->schedule;
++    anchor.costPath = best->costPath;
++    anchor.score = best->score;
++    anchor.scored = true;
++    anchor.keyReserved = true;
++    if (!authenticateTypedActionHistory(anchor, canonical, function,
++                                        outputDirectory, nextSerial,
++                                        error) ||
++        !anchor.actionHistory.known) {
++      if (error.empty())
++        error = "phase-A anchor typed action history could not be authenticated";
++      return false;
++    }
++    SearchState replayed;
++    std::string replayReason, replayError;
++    if (!replayTypedActionHistory(anchor.actionHistory, canonical, function,
++                                  outputDirectory, nextSerial,
++                                  replayed, replayReason, replayError)) {
++      error = replayError.empty()
++                  ? "phase-A anchor prefix replay failed: " + replayReason
++                  : replayError;
++      return false;
++    }
++    if (replayed.key != anchor.key || replayed.factKey != anchor.factKey ||
++        shapeSignature(replayed.shapes) != shapeSignature(anchor.shapes) ||
++        neighborhoodReplaySourceText(replayed.module.get()) !=
++            neighborhoodReplaySourceText(anchor.module.get())) {
++      error = "phase-A action prefix does not reproduce the retained anchor module and resource shapes";
++      return false;
++    }
++    frozenPrefixActions = anchor.actionHistory.actions;
++    frozenFissionActions = anchor.actionHistory.fissionActions;
++    frozenInitialShapes = anchor.actionHistory.initialShapes;
++    frozenCanonicalFactKey = anchor.actionHistory.canonicalFactKey;
++    phaseAAnchorCandidateId = anchor.id;
++
++    if (!llvm::is_contained(best->controlRoles,
++                            std::string("search_anchor")))
++      best->controlRoles.push_back("search_anchor");
++    best->control = true;
++    ControlRoleProvenance provenance;
++    provenance.candidatePath = best->candidatePath;
++    provenance.path = best->path;
++    provenance.actionHistory = portableActionHistory(best->actionHistory);
++    best->controlRoleProvenance["search_anchor"] = std::move(provenance);
++    dirtyJournalIndices.insert(static_cast<size_t>(best - archive.data()));
++
++    phaseBFrozen = true;
++    activeSearchPhase = "B";
++    ++objectiveCacheHits;
++    ++phaseObjectiveCacheHits["B"];
++    anchor.control = false;
++    anchor.controlRoles.clear();
++    beam.clear();
++    beam.push_back(std::move(anchor));
++    generated.clear();
++    pending.clear();
++    indexedPending.reset();
++    pendingCursor = 0;
++    round = 0;
++    roundScoredCount = 0;
++    roundScoreLimit = perRoundScoreQuota(
++        0, phaseBBudget, maxRounds.getValue() - phaseARoundsCompleted,
++        roundScoreQuota.getValue());
++    rankedArchivePrefix.clear();
++    for (size_t index = 0; index < archive.size(); ++index)
++      if (isSequentialFinalRecord(archive[index]))
++        insertRankedArchiveIndex(index, archive);
++    return true;
++  }
++
++  void appendBudgetTrace(const SearchState &state, bool scored,
++                         uint64_t cumulativeEvaluations,
++                         StringRef status) {
++    if (decisionFlow == "legacy")
++      return;
++    json::Object event{
++        {"schema", "orbit-search-budget-trace-v1"},
++        {"phase", activeSearchPhase},
++        {"candidate_id", state.id},
++        {"cumulative_evaluations",
++         static_cast<int64_t>(cumulativeEvaluations)},
++        {"elapsed_seconds",
++         std::chrono::duration<double>(std::chrono::steady_clock::now() -
++                                       operationStarted)
++                 .count()},
++        {"scheduler_invoked", true},
++        {"status", status.str()},
++        {"score_cycles", scored ? json::Value(state.score)
++                                : json::Value(nullptr)},
++        {"incumbent_cycles", incumbentCycles ==
++                                      std::numeric_limits<int64_t>::max()
++                                  ? json::Value(nullptr)
++                                  : json::Value(incumbentCycles)}};
++    budgetTraceLines.push_back(jsonText(json::Value(std::move(event))) + "\n");
++  }
++
++  void appendActionAttempt(StringRef phase, const NeighborhoodAction &action,
++                           StringRef outcome, bool materialized, bool legal,
++                           bool freezeVerified) {
++    if (decisionFlow == "legacy")
++      return;
++    const std::string phaseName = phase.str();
++    ++phaseActionAttempts[phaseName];
++    const bool duplicate = outcome.contains("duplicate");
++    if (materialized)
++      ++phaseActionMaterialized[phaseName];
++    if (duplicate)
++      ++phaseActionDeduplicated[phaseName];
++    if (legal)
++      ++phaseActionLegal[phaseName];
++    if (!legal && !duplicate)
++      ++phaseActionFailed[phaseName];
++    json::Object event{
++        {"schema", "orbit-search-action-attempt-v1"},
++        {"phase", phase.str()},
++        {"action", typedActionObject(action)},
++        {"action_signature", actionSignature(action)},
++        {"outcome", outcome.str()},
++        {"materialized", materialized},
++        {"accepted", legal},
++        {"legal", legal},
++        {"frozen_prefix_verified", freezeVerified}};
++    actionAttemptTraceLines.push_back(
++        jsonText(json::Value(std::move(event))) + "\n");
++  }
++
++  bool appendImplicitShapeFallback(SearchState &state,
++                                   ArrayRef<std::string> taskNames,
++                                   StringRef task, int64_t rows,
++                                   int64_t cols) {
++    if (!state.actionHistory.known)
++      return false;
++    NeighborhoodAction action;
++    action.family = "shape";
++    action.label = (Twine("resource-fallback:") + task + ":" +
++                    Twine(rows) + "x" + Twine(cols))
++                       .str();
++    action.shapeTask = task.str();
++    action.shapeRows = rows;
++    action.shapeCols = cols;
++    recordTypedAction(state.actionHistory, action, taskNames, taskNames);
++    state.path.push_back(actionSignature(action));
++    return true;
++  }
++
+   bool replayLineageReplacement(
+       SearchState &child, const SearchState &parent, ModuleOp canonical,
+       StringRef functionName, StringRef outputDirectory,
+@@ -3491,15 +4686,51 @@
+     }
+     const std::string &target = action.primitives.front().firstTask;
+     auto producer = parent.actionHistory.taskProducers.find(target);
+-    if (producer == parent.actionHistory.taskProducers.end() ||
+-        producer->second >= parent.actionHistory.actions.size() ||
+-        parent.actionHistory.dependencies.size() !=
+-            parent.actionHistory.actions.size()) {
++    if (parent.actionHistory.dependencies.size() !=
++        parent.actionHistory.actions.size()) {
+       reason = "lineage_replacement_target_has_no_authenticated_producer:" +
+                target;
+       return false;
+     }
+-    std::set<uint64_t> removed{producer->second};
++    std::optional<uint64_t> producerIndex;
++    if (producer != parent.actionHistory.taskProducers.end() &&
++        producer->second < parent.actionHistory.actions.size())
++      producerIndex = producer->second;
++    if (decisionFlow == "sequential" && activeSearchPhase == "B") {
++      // Shape actions preserve task names and therefore are not represented
++      // in the generic taskProducers map. Include the latest suffix resource
++      // action that directly addresses this task so B can withdraw its own
++      // shape or replica choices without changing the frozen A prefix.
++      for (uint64_t index = frozenPrefixActions.size();
++           index < parent.actionHistory.actions.size(); ++index) {
++        const NeighborhoodAction &candidate =
++            parent.actionHistory.actions[index];
++        bool targetsTask = candidate.family == "shape" &&
++                           candidate.shapeTask == target;
++        if (candidate.family == "replica")
++          targetsTask = llvm::any_of(
++              candidate.primitives,
++              [&](const NeighborhoodPrimitive &primitive) {
++                return primitive.firstTask == target ||
++                       primitive.secondTask == target;
++              });
++        if (targetsTask &&
++            (!producerIndex || index > *producerIndex))
++          producerIndex = index;
++      }
++      if (!producerIndex || *producerIndex < frozenPrefixActions.size() ||
++          !isResourceHistoryAction(
++              parent.actionHistory.actions[*producerIndex])) {
++        reason = "sequential_resource_replacement_removes_no_suffix_action";
++        return false;
++      }
++    }
++    if (!producerIndex) {
++      reason = "lineage_replacement_target_has_no_authenticated_producer:" +
++               target;
++      return false;
++    }
++    std::set<uint64_t> removed{*producerIndex};
+     bool changed = true;
+     while (changed) {
+       changed = false;
+@@ -3517,6 +4748,16 @@
+         }
+       }
+     }
++    if (decisionFlow == "sequential" && activeSearchPhase == "B") {
++      for (uint64_t index : removed) {
++        if (index < frozenPrefixActions.size() ||
++            index >= parent.actionHistory.actions.size() ||
++            !isResourceHistoryAction(parent.actionHistory.actions[index])) {
++          reason = "sequential_frozen_prefix_replacement_forbidden";
++          return false;
++        }
++      }
++    }
+     SearchState::TypedActionHistory filtered =
+         portableActionHistory(parent.actionHistory);
+     filtered.actions.clear();
+@@ -3552,6 +4793,15 @@
+       uint64_t serial, std::string &reason, std::string &diagnostic,
+       std::string &fatalError) {
+     child.actionHistory = parent.actionHistory;
++    child.graphResourceInitialization =
++        !action.canonicalReset &&
++        (action.family == "fission" ||
++         llvm::any_of(action.primitives, [](const NeighborhoodPrimitive &primitive) {
++           return primitive.kind != "replica" &&
++                  primitive.kind != "replication";
++         }));
++    child.graphResourceInitializationTasks.clear();
++    child.explicitGraphResourceShapeTask = action.shapeTask;
+     if (action.family == "fission") {
+       if (stageNumber(stage) != 6 || !preparedTaskflowSource ||
+           !parent.actionHistory.known ||
+@@ -3597,6 +4847,11 @@
+       // task names keep the parent's already validated shape assignments.
+       // This transfers only shape choices; the changed graph gets fresh costs.
+       synchronizeShapes(*splitFunction, parent.shapes, child.shapes);
++      for (const NeighborhoodShape &shape : child.shapes)
++        if (llvm::none_of(parent.shapes, [&](const NeighborhoodShape &prior) {
++              return prior.task == shape.task;
++            }))
++          child.graphResourceInitializationTasks.push_back(shape.task);
+       child.key.clear();
+       child.factKey.clear();
+       child.rejectReason.clear();
+@@ -3622,6 +4877,18 @@
+                                     fatalError))
+         return fatalError.empty() ? NeighborMaterialization::Rejected
+                                   : NeighborMaterialization::Fatal;
++      if (decisionFlow == "sequential" && activeSearchPhase == "B") {
++        std::string historyReason;
++        if (!authenticateSequentialPhaseBState(
++                child, canonical, functionName, outputDirectory, serial,
++                historyReason, fatalError)) {
++          reason = historyReason.empty()
++                       ? "sequential_phase_b_history_authentication_failed"
++                       : historyReason;
++          return fatalError.empty() ? NeighborMaterialization::Rejected
++                                    : NeighborMaterialization::Fatal;
++        }
++      }
+       return NeighborMaterialization::Applied;
+     }
+ 
+@@ -3639,6 +4906,11 @@
+         return NeighborMaterialization::Fatal;
+       return NeighborMaterialization::Rejected;
+     }
++    const bool shapeTransactionCandidate =
++        materializerProofCacheEnabled() && isPureShapeAction(action);
++    const std::string beforeActionIR = shapeTransactionCandidate
++                                           ? printMaterializerProofIR(child.module.get())
++                                           : std::string();
+     if (!applyTrustedNeighborhoodAction(
+             child.module.get(), effectiveCanonical.get(), functionName, action,
+             child.shapes, reason, diagnostic,
+@@ -3659,8 +4931,39 @@
+       reason = "active_transfer_proof_unsupported:" + diagnostic;
+       return NeighborMaterialization::Rejected;
+     }
++    std::vector<std::string> structurallyAffectedResultNames;
++    if (!collectHistoryTaskNames(child.module.get(), functionName,
++                                 structurallyAffectedResultNames,
++                                 diagnostic)) {
++      reason = "action_result_task_set_unknown";
++      return NeighborMaterialization::Rejected;
++    }
+     std::vector<NeighborhoodShape> priorShapes = child.shapes;
+     synchronizeShapes(*function, priorShapes, child.shapes);
++    if (child.graphResourceInitialization) {
++      auto recordAffectedTask = [&](StringRef name) {
++        if (name.empty() ||
++            std::find(structurallyAffectedResultNames.begin(),
++                      structurallyAffectedResultNames.end(), name.str()) ==
++                structurallyAffectedResultNames.end() ||
++            llvm::is_contained(child.graphResourceInitializationTasks,
++                               name.str()))
++          return;
++        child.graphResourceInitializationTasks.push_back(name.str());
++      };
++      // Include affected operations even when a rewrite keeps their names, as
++      // well as newly materialized names such as tiled or fission children.
++      for (const NeighborhoodPrimitive &primitive : action.primitives) {
++        if (primitive.kind == "replica" || primitive.kind == "replication")
++          continue;
++        recordAffectedTask(primitive.firstTask);
++        recordAffectedTask(primitive.secondTask);
++      }
++      for (const NeighborhoodShape &shape : child.shapes)
++        if (std::find(beforeNames.begin(), beforeNames.end(), shape.task) ==
++            beforeNames.end())
++          recordAffectedTask(shape.task);
++    }
+     child.key.clear();
+     child.factKey.clear();
+     child.rejectReason.clear();
+@@ -3673,6 +4976,11 @@
+                    : child.rejectReason;
+       return NeighborMaterialization::Rejected;
+     }
++    const std::string afterActionIR =
++        shapeTransactionCandidate ? printMaterializerProofIR(child.module.get())
++                                  : std::string();
++    const bool stableShapeIdentity =
++        shapeTransactionCandidate && beforeActionIR == afterActionIR;
+ 
+     if (action.canonicalReset) {
+       SearchState::TypedActionHistory resetHistory;
+@@ -3703,6 +5011,20 @@
+                           afterNames);
+       }
+     }
++    if (decisionFlow == "sequential" && activeSearchPhase == "B") {
++      std::string historyReason;
++      if (!authenticateSequentialPhaseBState(
++              child, canonical, functionName, outputDirectory, serial,
++              historyReason, fatalError)) {
++        reason = historyReason.empty()
++                     ? "sequential_phase_b_history_authentication_failed"
++                     : historyReason;
++        return fatalError.empty() ? NeighborMaterialization::Rejected
++                                  : NeighborMaterialization::Fatal;
++      }
++    }
++    if (stableShapeIdentity && child.actionHistory.known)
++      markCandidateShapeIdentity(afterActionIR);
+     return NeighborMaterialization::Applied;
+   }
+ 
+@@ -3741,13 +5063,27 @@
+   }
+ 
+   bool refreshActiveTransferFactsAfterTrustedRewrite(func::FuncOp function,
+-                                                     std::string &error) const {
++                                                     std::string &error) {
+     if (activeTransferArguments.empty())
+       return true;
+     if (!function) {
+       error = "active-transfer rewrite has no selected function";
+       return false;
+     }
++    if (materializerProofCacheEnabled()) {
++      ModuleOp module = function->getParentOfType<ModuleOp>();
++      if (module) {
++        const std::string moduleIR = printMaterializerProofIR(module);
++        const CandidateFactCacheEntry *entry =
++            lookupMaterializerProof(moduleIR);
++        if (entry && !entry->activeTransferWitnessID.empty()) {
++          ++materializerActiveProofReuses;
++          return true;
++        }
++      }
++    }
++    AccumulatedMillisecondsTimer refreshTimer(
++        materializerActiveRefreshMilliseconds);
+     for (unsigned index = 0; index < function.getNumArguments(); ++index) {
+       if (!isa<MemRefType>(function.getArgument(index).getType()))
+         continue;
+@@ -3771,19 +5107,49 @@
+                                       std::vector<NeighborhoodShape> &shapes,
+                                       std::string &reason,
+                                       std::string &diagnostic,
+-                                      unsigned maxPartitionFactor) const {
++                                      unsigned maxPartitionFactor) {
++    const bool useProofCache =
++        materializerProofCacheEnabled() &&
++        (sourceDomainEnabled || !activeTransferArguments.empty());
++    const std::string inputIR =
++        useProofCache ? printMaterializerProofIR(cloned) : std::string();
++    const CandidateFactCacheEntry *proofEntry =
++        useProofCache ? lookupMaterializerProof(inputIR) : nullptr;
++    const bool activeSeedProofCached =
++        proofEntry && !activeTransferArguments.empty() &&
++        !proofEntry->activeTransferWitnessID.empty();
++    if (isPureShapeAction(action) && proofEntry &&
++        proofEntry->stableShapeIdentity) {
++      ++materializerShapeIdentityHits;
++      if (sourceDomainEnabled)
++        ++materializerSourceProofReuses;
++      if (activeSeedProofCached)
++        ++materializerActiveProofReuses;
++      return applyNeighborhoodAction(cloned, canonical, selectedFunction,
++                                     action, shapes, reason, diagnostic,
++                                     maxPartitionFactor);
++    }
+     if (!sourceDomainEnabled)
+       return applyActiveTransferNeighborhoodAction(cloned, canonical,
+-          selectedFunction, action, shapes, reason, diagnostic, maxPartitionFactor);
++          selectedFunction, action, shapes, reason, diagnostic,
++          maxPartitionFactor, activeSeedProofCached);
+     std::string error;
+-    FailureOr<func::FuncOp> domainCanonical =
+-        selectTaskFunction(canonical, selectedFunction, error);
+     auto child = selectTaskFunction(cloned, selectedFunction, error);
+-    if (failed(domainCanonical) || failed(child) ||
+-        failed(verifySourceIterationDomainPartition(
+-            *domainCanonical, *child, error))) {
++    if (failed(child)) {
+       reason = "source_iteration_domain_seed_unproven"; diagnostic = error;
+       return false;
++    }
++    if (!proofEntry) {
++      AccumulatedMillisecondsTimer sourceTimer(
++          materializerSeedProofCheckMilliseconds);
++      if (failed(verifySourceIterationDomainPartition(sourceDomainCanonical,
++                                                      *child, error))) {
++        reason = "source_iteration_domain_seed_unproven";
++        diagnostic = error;
++        return false;
++      }
++    } else {
++      ++materializerSourceProofReuses;
+     }
+     auto suspend = [](ModuleOp module) {
+       module.walk([&](taskflow::TaskflowTaskOp task) {
+@@ -3799,13 +5165,23 @@
+     OwningOpRef<ModuleOp> actionCanonical = canonical.clone();
+     suspend(cloned); suspend(*actionCanonical);
+     if (!applyActiveTransferNeighborhoodAction(cloned, *actionCanonical,
+-          selectedFunction, action, shapes, reason, diagnostic, maxPartitionFactor))
++          selectedFunction, action, shapes, reason, diagnostic,
++          maxPartitionFactor, activeSeedProofCached))
+       return false;
+     child = selectTaskFunction(cloned, selectedFunction, error);
+-    if (failed(child) || failed(proveAndRefreshSourceIterationDomainPartition(
+-            *domainCanonical, *child, error))) {
++    if (failed(child)) {
+       reason = "source_iteration_domain_rewrite_unproven"; diagnostic = error;
+       return false;
++    }
++    {
++      AccumulatedMillisecondsTimer sourceTimer(
++          materializerSeedProofCheckMilliseconds);
++      if (failed(proveAndRefreshSourceIterationDomainPartition(
++              sourceDomainCanonical, *child, error))) {
++        reason = "source_iteration_domain_rewrite_unproven";
++        diagnostic = error;
++        return false;
++      }
+     }
+     return true;
+   }
+@@ -3816,7 +5192,8 @@
+                                       std::vector<NeighborhoodShape> &shapes,
+                                       std::string &reason,
+                                       std::string &diagnostic,
+-                                      unsigned maxPartitionFactor) const {
++                                      unsigned maxPartitionFactor,
++                                      bool seedProofAlreadyVerified = false) {
+     if (activeTransferArguments.empty())
+       return applyNeighborhoodAction(cloned, canonical, selectedFunction,
+                                      action, shapes, reason, diagnostic,
+@@ -3836,11 +5213,14 @@
+     // Keep logical_transfer_shape intact: it is the conservative capacity
+     // fallback used while completion joins are being rebuilt.
+     std::set<unsigned> savedArguments;
++    AccumulatedMillisecondsTimer activeSeedTimer(
++        materializerSeedProofCheckMilliseconds);
+     for (unsigned index = 0; index < function->getNumArguments(); ++index) {
+       if (!hasStaticActiveTransferShapeFacts(*function, index))
+         continue;
+       std::string proofError;
+-      if (failed(verifyStaticActiveTransferShapeProof(*function, index,
++      if (!seedProofAlreadyVerified &&
++          failed(verifyStaticActiveTransferShapeProof(*function, index,
+                                                       &proofError))) {
+         reason = "active_transfer_seed_invalid";
+         diagnostic =
+@@ -3849,6 +5229,8 @@
+       }
+       savedArguments.insert(index);
+     }
++    if (seedProofAlreadyVerified && !savedArguments.empty())
++      ++materializerActiveProofReuses;
+ 
+     // Canonical-reset actions clone the canonical module inside the action
+     // controller, so verify and suspend its derived facts too. The original
+@@ -3898,6 +5280,7 @@
+         canonicalFunction->removeArgAttr(index, "amoeba.active_transfer_proof");
+       }
+     }
++    activeSeedTimer.stop();
+ 
+     for (unsigned index : savedArguments) {
+       if (index >= function->getNumArguments())
+@@ -4046,6 +5429,37 @@
+       error.clear();
+       return true;
+     }
++    // Exact IR bytes bind prior successful structural and proof validation.
++    // Shapes remain external, so task coverage is checked for every hit.
++    std::string factCacheIR;
++    const bool useFactCache = decisionFlow != "legacy" && runtimeFactCache;
++    if (useFactCache) {
++      factCacheIR = exactFactCacheIR(state.module.get());
++      for (const CandidateFactCacheEntry &entry : candidateFactCache) {
++        if (entry.moduleIR != factCacheIR)
++          continue;
++        FailureOr<SmallVector<TaskMetadata>> cachedMetadata =
++            collectAnalyticalTaskMetadata(*selected, error);
++        if (failed(cachedMetadata))
++          return false;
++        if (!sameTaskSet(*cachedMetadata, state.shapes)) {
++          state.rejectReason = "shape_state_does_not_cover_task_set";
++          error.clear();
++          return true;
++        }
++        ++factCacheHits;
++        state.factKey = entry.factKey;
++        state.key = state.factKey + "|" + shapeSignature(state.shapes);
++        if (!entry.activeTransferWitnessID.empty())
++          state.key += "|active-transfer-proof:" + entry.activeTransferWitnessID;
++        (*selected)->setAttr("amoeba.graph_variant_id",
++            StringAttr::get(state.module->getContext(), state.factKey));
++        return true;
++      }
++      ++factCacheMisses;
++    }
++    AccumulatedMillisecondsTimer proofCheckTimer(
++        materializerSeedProofCheckMilliseconds);
+     if (sourceDomainEnabled) {
+       func::FuncOp domainCanonical = sourceDomainCanonical;
+       OwningOpRef<ModuleOp> effectiveCanonical;
+@@ -4102,6 +5516,7 @@
+       error.clear();
+       return true;
+     }
++    proofCheckTimer.stop();
+     std::string factsDiagnostic;
+     if (!extractStructuralFacts(state.module.get(), function, outputDirectory,
+                                 serial, state.factKey, state.rejectReason,
+@@ -4156,6 +5571,12 @@
+       state.key += "|active-transfer-proof:" + activeTransferWitnessID;
+     (*selected)->setAttr("amoeba.graph_variant_id",
+                         StringAttr::get(state.module->getContext(), state.factKey));
++    if (useFactCache) {
++      rememberCandidateFacts(factCacheIR, state.factKey, activeTransferWitnessID);
++      const std::string resultingIR = exactFactCacheIR(state.module.get());
++      if (resultingIR != factCacheIR)
++        rememberCandidateFacts(resultingIR, state.factKey, activeTransferWitnessID);
++    }
+     return true;
+   }
+ 
+@@ -4232,7 +5653,8 @@
+                   architectureTransferCatalog, modelNamespace,
+                   diagnosticIICeiling,
+                   bootstrapSupportedShapes, state.costPath, error,
+-                  fatalPredictorFailure)) {
++                  fatalPredictorFailure,
++                  decisionFlow == "legacy" ? "" : activeSearchPhase)) {
+             if (fatalPredictorFailure || fatalStorageError(error))
+               return false;
+             state.rejectReason = "current_graph_cost_unknown:" + error;
+@@ -4261,6 +5683,16 @@
+       activeCostCache = cached->second.get();
+     }
+ 
++    if (activeCostCache &&
++        !enforceSequentialResourceLegality(state, function, outputDirectory,
++                                           *metadata, *activeCostCache, serial,
++                                           error))
++      return false;
++    if (!state.rejectReason.empty()) {
++      error.clear();
++      return true;
++    }
++
+     std::map<std::string, const NeighborhoodShape *> shapeMap;
+     for (const NeighborhoodShape &shape : state.shapes)
+       shapeMap[shape.task] = &shape;
+@@ -4325,6 +5757,98 @@
+     return true;
+   }
+ 
++  bool enforceSequentialResourceLegality(
++      SearchState &state, StringRef function, StringRef outputDirectory,
++      ArrayRef<TaskMetadata> metadata, TaskShapeCostCache &activeCostCache,
++      uint64_t serial, std::string &error) {
++    const bool sequentialPhaseA =
++        decisionFlow == "sequential" && activeSearchPhase == "A";
++    const bool jointStructuralInitialization =
++        decisionFlow == "joint" && state.graphResourceInitialization;
++    if (!sequentialPhaseA && !jointStructuralInitialization)
++      return true;
++    std::map<std::string, size_t> shapeIndices;
++    for (size_t index = 0; index < state.shapes.size(); ++index)
++      shapeIndices[state.shapes[index].task] = index;
++    std::vector<std::string> names;
++    names.reserve(metadata.size());
++    for (const TaskMetadata &task : metadata)
++      names.push_back(task.name);
++
++    bool changed = false;
++    for (const TaskMetadata &task : metadata) {
++      if (jointStructuralInitialization &&
++          (!llvm::is_contained(state.graphResourceInitializationTasks,
++                               task.name) ||
++           task.name == state.explicitGraphResourceShapeTask))
++        continue;
++      auto shapeIndex = shapeIndices.find(task.name);
++      if (shapeIndex == shapeIndices.end()) {
++        state.rejectReason = "shape_state_does_not_cover_task_set";
++        return true;
++      }
++      NeighborhoodShape &shape = state.shapes[shapeIndex->second];
++      auto query = [&](int64_t rows, int64_t cols) {
++        int64_t mapperRows = 0, mapperCols = 0;
++        if (!cgraShapeToMapperTileShape(rows, cols, perCgraRows, perCgraCols,
++                                        mapperRows, mapperCols))
++          return static_cast<const TaskShapeCost *>(nullptr);
++        TaskShapeChoice choice{
++            task.name, task.tripCount,
++            RectShape{rows, cols, mapperRows, mapperCols}};
++        std::string costError;
++        const uint64_t oldHits = activeCostCache.hits();
++        const uint64_t oldMisses = activeCostCache.misses();
++        const TaskShapeCost *cost =
++            activeCostCache.get(choice, costError);
++        costCacheHits += activeCostCache.hits() - oldHits;
++        costCacheMisses += activeCostCache.misses() - oldMisses;
++        ++resourceLegalityQueries;
++        return cost;
++      };
++      const TaskShapeCost *current = query(shape.rows, shape.cols);
++      if (current && current->supported)
++        continue;
++
++      bool foundSupported = false;
++      for (unsigned index = 0; index < 8; ++index) {
++        const int64_t rows = kFormalMax4CgraRows[index];
++        const int64_t cols = kFormalMax4CgraCols[index];
++        if (rows == shape.rows && cols == shape.cols)
++          continue;
++        const TaskShapeCost *candidate = query(rows, cols);
++        if (!candidate || !candidate->supported)
++          continue;
++        shape.rows = rows;
++        shape.cols = cols;
++        foundSupported = true;
++        changed = true;
++        ++resourceLegalitySupportedFallbacks;
++        if (!appendImplicitShapeFallback(state, names, task.name, rows, cols)) {
++          state.rejectReason =
++              "sequential_resource_fallback_requires_authenticated_action_history";
++          return true;
++        }
++        break;
++      }
++      if (!foundSupported) {
++        state.rejectReason = "no_supported_resource_shape:" + task.name;
++        return true;
++      }
++    }
++
++    if (changed) {
++      state.key.clear();
++      state.factKey.clear();
++      state.rejectReason.clear();
++      if (!prepareCandidateKey(state, function, outputDirectory, serial, error))
++        return false;
++      if (state.key.empty())
++        return true;
++    }
++    return true;
++  }
++
+   bool evaluateCandidate(SearchState &state, ModuleOp canonical,
+                          StringRef function, StringRef stageName,
+                          StringRef outputDirectory, StringRef candidatesDirectory,
+@@ -4332,7 +5856,8 @@
+                          TaskShapeCostCache &costCache,
+                          int64_t round, uint64_t &scoredCount,
+                          bool chargeRoundQuota,
+-                         uint64_t serial, std::string &error) {
++                         uint64_t serial, std::string &error,
++                         std::set<std::string> *reservedCandidateKeys = nullptr) {
+     FailureOr<func::FuncOp> selected = selectTaskFunction(
+         state.module.get(), function, error);
+     if (failed(selected))
+@@ -4390,7 +5915,8 @@
+                   architectureTransferCatalog, modelNamespace,
+                   diagnosticIICeiling,
+                   bootstrapSupportedShapes, state.costPath, error,
+-                  fatalPredictorFailure)) {
++                  fatalPredictorFailure,
++                  decisionFlow == "legacy" ? "" : activeSearchPhase)) {
+             if (fatalPredictorFailure || fatalStorageError(error)) return false;
+             state.rejectReason = "current_graph_cost_unknown:" + error;
+             state.scored = false; error.clear(); return true;
+@@ -4413,6 +5939,32 @@
+       state.costPath = graphCostPaths[graphCostKey]; activeCostCache = cached->second.get();
+     }
+ 
++    const std::string keyBeforeResourceNormalization = state.key;
++    if (activeCostCache &&
++        !enforceSequentialResourceLegality(state, function, outputDirectory,
++                                           *metadata, *activeCostCache, serial,
++                                           error)) {
++      state.scored = false;
++      return false;
++    }
++    if (!state.rejectReason.empty()) {
++      state.scored = false;
++      error.clear();
++      return true;
++    }
++    if (state.key != keyBeforeResourceNormalization &&
++        reservedCandidateKeys) {
++      reservedCandidateKeys->erase(keyBeforeResourceNormalization);
++      state.keyReserved = false;
++      if (!reservedCandidateKeys->insert(state.key).second) {
++        state.duplicateAfterResourceNormalization = true;
++        state.rejectReason = "canonical_duplicate_after_resource_normalization";
++        state.scored = false;
++        return true;
++      }
++      state.keyReserved = true;
++    }
++
+     std::map<std::string, const NeighborhoodShape *> shapeMap;
+     for (const NeighborhoodShape &shape : state.shapes)
+       shapeMap[shape.task] = &shape;
+@@ -4482,6 +6034,8 @@
+     std::string scheduleError;
+     ++scoredCount;
+     ++productionSchedulerCalls;
++    if (decisionFlow != "legacy")
++      ++phaseEvaluationCounts[activeSearchPhase];
+     if (chargeRoundQuota)
+       ++roundScoredCount;
+     if (!scheduleWithAmoebaProductionPass(
+@@ -4491,11 +6045,15 @@
+       if (!scheduleError.empty())
+         state.rejectReason += ":" + scheduleError;
+       state.scored = false;
++      appendBudgetTrace(state, false, scoredCount,
++                        "production-scheduler-rejected");
+       error.clear();
+       return true;
+     }
+     state.score = state.schedule.makespan;
+     state.scored = true;
++    incumbentCycles = std::min(incumbentCycles, state.score);
++    appendBudgetTrace(state, true, scoredCount, "scored");
+     (void)round;
+     (void)candidatesDirectory;
+     return true;
+@@ -4514,6 +6072,11 @@
+                                                 : state.rejectReason,
+                      0);
+       return true;
++    }
++    if (decisionFlow == "sequential" && activeSearchPhase == "B" &&
++        phaseBFrozen && !hasFrozenPrefix(state.actionHistory)) {
++      error = "phase-B candidate escaped the exact frozen action, fission, or initial-resource history";
++      return false;
+     }
+     if (!state.keyReserved && !seenKeys.insert(state.key).second) {
+       ++rejectedCount;
+@@ -4554,12 +6117,42 @@
+     record.score = state.score;
+     record.valid = true;
+     record.round = state.path.empty() ? 0 : 1;
++    // Give both flows one intermediate incumbent validation control. Joint's
++    // anchor is its best legal result within the same half-budget boundary as
++    // the primary Sequential A stage; this never changes its search frontier.
++    const ArchiveRecord *oldJointAnchor = nullptr;
++    if (decisionFlow == "joint")
++      for (const auto &old : archive)
++        if (old.id == jointHalfBudgetAnchorId) oldJointAnchor = &old;
++    if (decisionFlow == "joint" &&
++        productionSchedulerCalls <= totalEvaluationBudget / 2 &&
++        (!oldJointAnchor || archiveLess(record, *oldJointAnchor))) {
++      for (size_t index = 0; index < archive.size(); ++index) {
++        auto &old = archive[index];
++        if (old.id != jointHalfBudgetAnchorId) continue;
++        old.controlRoles.erase(std::remove(old.controlRoles.begin(),
++            old.controlRoles.end(), std::string("search_anchor")), old.controlRoles.end());
++        old.controlRoleProvenance.erase("search_anchor");
++        old.control = !old.controlRoles.empty();
++        if (!old.control && !old.candidatePath.empty() &&
++            !llvm::is_contained(rankedArchivePrefix, index)) {
++          obsoleteCandidatePaths.push_back(old.candidatePath);
++          old.candidatePath.clear();
++        }
++        dirtyJournalIndices.insert(index);
++      }
++      jointHalfBudgetAnchorScore = state.score;
++      jointHalfBudgetAnchorId = state.id;
++      record.control = true;
++      if (!llvm::is_contained(record.controlRoles, std::string("search_anchor")))
++        record.controlRoles.push_back("search_anchor");
++    }
+     // Keep materialized IR bounded to candidates that can currently enter
+     // native top-5.  A candidate that is outside this cutoff can never enter
+     // it later because archive scores are immutable and only more rows are
+     // added.  This avoids a full 20k-module snapshot while retaining every
+     // final replay input.
+-    bool keepModule = state.control || rankedArchivePrefix.size() < 5;
++    bool keepModule = record.control || rankedArchivePrefix.size() < 5;
+     if (!keepModule) {
+       keepModule = archiveLess(record, archive[rankedArchivePrefix.back()]);
+     }
+@@ -4580,6 +6173,8 @@
+     }
+     const std::vector<size_t> previousPrefix = rankedArchivePrefix;
+     archive.push_back(std::move(record));
++    if (decisionFlow == "sequential" && activeSearchPhase == "A")
++      phaseAKeys.insert(archive.back().key);
+     insertRankedArchiveIndex(archive.size() - 1, archive);
+     // Only a previous top-5 entry can lose a non-control replay snapshot.
+     // Controls stay live regardless of their predicted rank.
+@@ -4595,6 +6190,9 @@
+ 
+   void insertRankedArchiveIndex(size_t index,
+                                const std::vector<ArchiveRecord> &archive) {
++    if (decisionFlow == "sequential" && phaseBFrozen &&
++        !isSequentialFinalRecord(archive[index]))
++      return;
+     auto position = std::lower_bound(
+         rankedArchivePrefix.begin(), rankedArchivePrefix.end(), index,
+         [&](size_t left, size_t right) {
+@@ -4608,14 +6206,18 @@
+                            ArrayRef<ArchiveRecord> archive,
+                            std::string &error) {
+     const ArchiveRecord *identity = nullptr;
++    const std::string retainedRole =
++        decisionFlow == "sequential" && phaseBFrozen ? "search_anchor"
++                                                       : "identity";
+     for (const auto &record : archive)
+-      if (record.valid && llvm::is_contained(record.controlRoles,
+-                                            std::string("identity"))) {
++      if (record.valid && llvm::is_contained(record.controlRoles, retainedRole)) {
+         identity = &record;
+         break;
+       }
+     if (!identity || identity->candidatePath.empty()) {
+-      error = "canonical identity control lacks its immutable source snapshot";
++      error = retainedRole == "identity"
++                  ? "canonical identity control lacks its immutable source snapshot"
++                  : "phase-A search anchor lacks its immutable source snapshot";
+       return false;
+     }
+     for (const auto &state : beam)
+@@ -4799,6 +6401,8 @@
+         search ? search->getString("supported_shape_bootstrap_policy")
+                : std::nullopt;
+     if (!search || search->getInteger("max_rounds") != maxRounds.getValue() ||
++        search->getInteger("round_score_quota").value_or(0) !=
++            roundScoreQuota.getValue() ||
+         search->getInteger("max_unique_complete_candidates_scored") != maxCandidates.getValue() ||
+         search->getInteger("beam_width") != beamWidth.getValue() ||
+         search->getInteger("diversity_min_slots") != diversitySlots.getValue() ||
+@@ -4847,12 +6451,17 @@
+         {"beam_width", beamWidth.getValue()}, {"diversity_slots", diversitySlots.getValue()},
+         {"scoring_workers", scoringWorkers.getValue()},
+         {"max_partition_factor", maxPartitionFactor.getValue()},
++        {"runtime_replay_cache_requested", runtimeReplayCache.getValue()},
++        {"runtime_replay_cache_enabled", false},
++        {"typed_action_replay_memo_policy", kTypedActionReplayMemoPolicy},
+         {"tie_key_policy", "cost-numeric-shape-schedule-graph-key-v1"},
+         {"search_contract", kSearchSchema},
+         {"checkpoint_contract",
+          checkpointSchemaForCeiling(diagnosticIICeiling.getValue())}};
+     if (diagnosticIICeiling == 23)
+       objectBinding["diagnostic_ii_ceiling"] = diagnosticIICeiling.getValue();
++    if (roundScoreQuota.getValue() != 0)
++      objectBinding["round_score_quota"] = roundScoreQuota.getValue();
+     if (stageNumber(stage) == 6) {
+       objectBinding["prepared_source_file"] = preparedSourceFile.getValue();
+       objectBinding["prepared_source_exact_bytes"] =
+@@ -4863,6 +6472,23 @@
+           maxFissionActionsPerTask.getValue();
+       objectBinding["fission_source_replay"] =
+           "orbit-taskflow-fission-source-replay-v1";
++    }
++    if (decisionFlow != "legacy") {
++      objectBinding["decision_flow"] = decisionFlow.getValue();
++      objectBinding["graph_resource_initialization_policy"] =
++          kGraphResourceInitializationPolicy;
++      objectBinding["runtime_bookkeeping"] = json::Object{
++          {"pending_index", runtimePendingIndex.getValue()},
++          {"exact_ir_fact_cache", runtimeFactCache.getValue()},
++          {"runtime_materializer_proof_cache",
++           runtimeMaterializerProofCache.getValue()},
++          {"checkpoint_write_period", checkpointWritePeriod.getValue()},
++          {"checkpoint_action_batch_boundary", checkpointActions.getValue()}};
++      if (decisionFlow == "sequential") {
++        objectBinding["graph_budget_percent"] = graphBudgetPercent.getValue();
++        objectBinding["sequential_budget_policy"] =
++            sequentialBudgetPolicy.getValue();
++      }
+     }
+     // Network costs are independent of mapper-II cache entries, but the
+     // production schedule depends on this exact resource. Bind its bytes
+@@ -4950,12 +6576,318 @@
+     return true;
+   }
+ 
++  bool rebindCachedRecordVocabulary(
++      const ArchiveRecord &record, func::FuncOp targetFunction,
++      ArrayRef<NeighborhoodShape> expectedShapes,
++      bool requireTargetTaskNames,
++      SmallVectorImpl<TaskShapeChoice> &reboundChoices,
++      std::vector<NeighborhoodShape> &reboundShapes,
++      std::string &error) {
++    std::string metadataError;
++    FailureOr<SmallVector<TaskMetadata>> metadata =
++        collectAnalyticalTaskMetadata(targetFunction, metadataError);
++    if (failed(metadata)) {
++      error = metadataError.empty()
++                  ? "cross-phase cached score target task metadata is unknown"
++                  : "cross-phase cached score target task metadata is unknown: " +
++                        metadataError;
++      return false;
++    }
++    const size_t taskCount = metadata->size();
++    if (taskCount == 0 || expectedShapes.size() != taskCount ||
++        record.shapes.size() != taskCount ||
++        record.choices.size() != taskCount ||
++        record.costs.size() != taskCount ||
++        record.durations.size() != taskCount ||
++        record.schedule.dispatch.size() != taskCount ||
++        record.schedule.placements.size() != taskCount ||
++        record.score <= 0 || record.schedule.makespan != record.score) {
++      error = "cross-phase cached score task, cost, duration, or schedule counts disagree";
++      return false;
++    }
++    if (requireTargetTaskNames && !sameTaskSet(*metadata, expectedShapes)) {
++      error = "authenticated phase-B shapes do not match the target module task order";
++      return false;
++    }
++
++    std::set<unsigned> dispatchTasks;
++    for (unsigned task : record.schedule.dispatch)
++      if (task >= taskCount || !dispatchTasks.insert(task).second) {
++        error = "cross-phase cached production dispatch is not a task permutation";
++        return false;
++      }
++    std::set<unsigned> placementTasks;
++    for (const ExactSchedulePlacement &placement : record.schedule.placements)
++      if (placement.task >= taskCount || placement.start < 0 ||
++          placement.end <= placement.start ||
++          (placement.task < record.durations.size() &&
++           placement.end - placement.start !=
++               record.durations[placement.task]) ||
++          !placementTasks.insert(placement.task).second) {
++        error = "cross-phase cached production placement is incomplete or malformed";
++        return false;
++      }
++
++    reboundChoices.clear();
++    reboundShapes.clear();
++    for (size_t index = 0; index < taskCount; ++index) {
++      const TaskMetadata &task = (*metadata)[index];
++      const TaskShapeChoice &cachedChoice = record.choices[index];
++      const NeighborhoodShape &cachedShape = record.shapes[index];
++      const NeighborhoodShape &expectedShape = expectedShapes[index];
++      const TaskShapeCost &cost = record.costs[index];
++      if (!task.tripCountKnown || task.tripCount <= 0 ||
++          cachedChoice.task != cachedShape.task ||
++          cachedChoice.tripCount != task.tripCount ||
++          cachedShape.rows != cachedChoice.shape.rows ||
++          cachedShape.cols != cachedChoice.shape.cols ||
++          expectedShape.rows != cachedChoice.shape.rows ||
++          expectedShape.cols != cachedChoice.shape.cols ||
++          cachedChoice.shape.rows <= 0 || cachedChoice.shape.cols <= 0 ||
++          cachedChoice.shape.mapperRows <= 0 ||
++          cachedChoice.shape.mapperCols <= 0 || !cost.supported) {
++        error = "cross-phase cached score task trip count or selected shape disagrees with target metadata";
++        return false;
++      }
++      std::string durationError;
++      std::optional<int64_t> duration =
++          durationFromCost(cost, task.tripCount, durationError);
++      if (!duration || *duration != record.durations[index]) {
++        error = durationError.empty()
++                    ? "cross-phase cached predicted duration does not match its cost witness"
++                    : "cross-phase cached predicted duration is invalid: " +
++                          durationError;
++        return false;
++      }
++      TaskShapeChoice choice = cachedChoice;
++      choice.task = task.name;
++      reboundChoices.push_back(std::move(choice));
++      NeighborhoodShape shape = expectedShape;
++      shape.task = task.name;
++      reboundShapes.push_back(std::move(shape));
++    }
++    return true;
++  }
++
++  bool promotePhaseACanonicalDuplicate(
++      SearchState &state, ArchiveRecord &record, size_t archiveIndex,
++      std::vector<ArchiveRecord> &archive, ModuleOp canonical, StringRef functionName, StringRef outputDirectory,
++      StringRef candidatesDirectory, uint64_t &nextSerial, int64_t round,
++      bool &promoted, std::string &error) {
++    promoted = false;
++    if (decisionFlow != "sequential" || activeSearchPhase != "B" ||
++        !phaseAKeys.count(state.key) || isSequentialFinalRecord(record))
++      return true;
++    if (!record.valid)
++      return true;
++    if (!state.module || record.key != state.key ||
++        record.factKey != state.factKey ||
++        shapeSignature(record.shapes) != shapeSignature(state.shapes)) {
++      error = "phase-B canonical duplicate does not match the valid phase-A objective key";
++      return false;
++    }
++    if (llvm::is_contained(record.controlRoles,
++                           std::string("search_anchor"))) {
++      error = "phase-A search anchor unexpectedly has an incompatible frozen prefix";
++      return false;
++    }
++    std::string historyReason, fatalError;
++    if (!authenticateSequentialPhaseBState(
++            state, canonical, functionName, outputDirectory, nextSerial,
++            historyReason, fatalError)) {
++      error = fatalError.empty()
++                  ? "phase-B canonical duplicate failed frozen-prefix authentication: " +
++                        historyReason
++                  : fatalError;
++      return false;
++    }
++    if (!hasFrozenPrefix(state.actionHistory)) {
++      error = "phase-B canonical duplicate lacks the frozen structural prefix";
++      return false;
++    }
++
++    ArchiveRecord sourceRecord = record;
++    const std::string targetAttemptId = state.id;
++    const std::string promotedParentId = state.parentId;
++    const std::vector<std::string> sourceTaskNames = [&]() {
++      std::vector<std::string> names;
++      for (const TaskShapeChoice &choice : sourceRecord.choices)
++        names.push_back(choice.task);
++      return names;
++    }();
++
++    FailureOr<func::FuncOp> targetFunction =
++        selectTaskFunction(state.module.get(), functionName, error);
++    if (failed(targetFunction)) {
++      if (error.empty())
++        error = "phase-B canonical duplicate has no target task function";
++      return false;
++    }
++    SmallVector<TaskShapeChoice> reboundChoices;
++    std::vector<NeighborhoodShape> reboundShapes;
++    if (!rebindCachedRecordVocabulary(
++            sourceRecord, *targetFunction, state.shapes,
++            /*requireTargetTaskNames=*/true, reboundChoices, reboundShapes,
++            error))
++      return false;
++
++    std::string sourceModuleBytes;
++    const bool sourceModuleAvailable =
++        !record.candidatePath.empty() &&
++        llvm::sys::fs::exists(record.candidatePath);
++    if (sourceModuleAvailable &&
++        !readFileBytes(record.candidatePath, sourceModuleBytes, error))
++      return false;
++    std::string targetModuleBytes;
++    {
++      llvm::raw_string_ostream stream(targetModuleBytes);
++      state.module->print(stream, OpPrintingFlags().printGenericOpForm());
++      stream << "\n";
++      stream.flush();
++    }
++    const std::string sourceCandidatePath = record.candidatePath;
++    const std::vector<std::string> sourceActionPath = record.path;
++    const SearchState::TypedActionHistory sourceHistory =
++        portableActionHistory(record.actionHistory);
++    const std::string sourceGraphId = record.graphId;
++    const std::string objectiveCostPath = record.costPath;
++    auto targetGraph = (*targetFunction)->getAttrOfType<StringAttr>(
++        "amoeba.graph_variant_id");
++    const std::string targetGraphId =
++        targetGraph ? targetGraph.getValue().str() : record.id;
++
++    // This row keeps one canonical key. Replace only its primary module and
++    // typed-history representative; role-specific source snapshots remain
++    // immutable in controlRoleProvenance.
++    const std::vector<size_t> previousRankedPrefix = rankedArchivePrefix;
++    rankedArchivePrefix.erase(
++        std::remove(rankedArchivePrefix.begin(), rankedArchivePrefix.end(),
++                    archiveIndex),
++        rankedArchivePrefix.end());
++    record.candidatePath.clear();
++    record.parentId = promotedParentId;
++    record.path = state.path;
++    record.actionHistory = portableActionHistory(state.actionHistory);
++    record.shapes = std::move(reboundShapes);
++    record.choices = std::move(reboundChoices);
++    record.factKey = state.factKey;
++    record.graphId = targetGraphId;
++    record.round = round;
++    record.costPath = objectiveCostPath;
++
++    if (record.path != sourceActionPath &&
++        !llvm::is_contained(record.alternatePaths, sourceActionPath))
++      record.alternatePaths.push_back(sourceActionPath);
++    record.alternatePaths.erase(
++        std::remove(record.alternatePaths.begin(), record.alternatePaths.end(),
++                    state.path),
++        record.alternatePaths.end());
++    insertRankedArchiveIndex(archiveIndex, archive);
++    const bool retainTargetModule =
++        record.control ||
++        llvm::is_contained(rankedArchivePrefix, archiveIndex);
++    std::string targetCandidatePath;
++    if (retainTargetModule) {
++      if (!diskGuard(error))
++        return false;
++      for (;;) {
++        targetCandidatePath = candidatesDirectory.str() + "/" +
++                             targetAttemptId +
++                             "-cross-phase-dedup-" +
++                             std::to_string(nextSerial++) + ".mlir";
++        if (!llvm::sys::fs::exists(targetCandidatePath))
++          break;
++      }
++      if (!writeTextAtomically(targetCandidatePath, targetModuleBytes, error))
++        return false;
++      record.candidatePath = targetCandidatePath;
++    }
++
++    state.choices = record.choices;
++    state.shapes = record.shapes;
++    state.costs = record.costs;
++    state.durations = record.durations;
++    state.schedule = record.schedule;
++    state.score = record.score;
++    state.costPath = objectiveCostPath;
++    state.id = record.id;
++    state.parentId = promotedParentId;
++    state.scored = true;
++    state.keyReserved = true;
++    state.rejectReason.clear();
++
++    for (size_t index : previousRankedPrefix) {
++      ArchiveRecord &old = archive[index];
++      if (old.control || old.candidatePath.empty() ||
++          llvm::is_contained(rankedArchivePrefix, index))
++        continue;
++      obsoleteCandidatePaths.push_back(old.candidatePath);
++      old.candidatePath.clear();
++      dirtyJournalIndices.insert(index);
++    }
++    dirtyJournalIndices.insert(archiveIndex);
++
++    json::Array sourceNames, targetNames, preservedRoles;
++    for (const std::string &name : sourceTaskNames)
++      sourceNames.push_back(name);
++    for (const TaskShapeChoice &choice : record.choices)
++      targetNames.push_back(choice.task);
++    for (const std::string &role : record.controlRoles)
++      preservedRoles.push_back(role);
++    json::Value moduleBytesEqual = nullptr;
++    if (sourceModuleAvailable)
++      moduleBytesEqual = sourceModuleBytes == targetModuleBytes;
++    json::Object event{
++        {"schema", "orbit-cross-phase-dedup-promotion-v1"},
++        {"phase", "B"},
++        {"candidate_key", state.key},
++        {"source_candidate_id", sourceRecord.id},
++        {"archive_candidate_id", record.id},
++        {"target_attempt_id", targetAttemptId},
++        {"target_state_id", record.id},
++        {"source_primary_path", stringArray(sourceActionPath)},
++        {"target_primary_path", stringArray(state.path)},
++        {"source_candidate_path", sourceCandidatePath},
++        {"target_candidate_path", targetCandidatePath},
++        {"source_primary_history", typedActionHistoryObject(sourceHistory)},
++        {"target_primary_history", typedActionHistoryObject(record.actionHistory)},
++        {"source_graph_variant_id", sourceGraphId},
++        {"target_graph_variant_id", targetGraphId},
++        {"source_task_names", std::move(sourceNames)},
++        {"target_task_names", std::move(targetNames)},
++        {"source_module_available", sourceModuleAvailable},
++        {"source_module_sha256", sourceModuleAvailable
++                                      ? json::Value(sha256Hex(sourceModuleBytes))
++                                      : json::Value(nullptr)},
++        {"target_module_sha256", sha256Hex(targetModuleBytes)},
++        {"module_exact_bytes_equal", std::move(moduleBytesEqual)},
++        {"score_cycles", record.score},
++        {"objective_source_candidate_id", sourceRecord.id},
++        {"objective_cost_catalogue_path", objectiveCostPath},
++        {"objective_reused", true},
++        {"production_scheduler_invoked", false},
++        {"frontier_queued_once", true},
++        {"target_snapshot_retained", retainTargetModule},
++        {"control_roles_preserved", std::move(preservedRoles)},
++        {"control_role_provenance",
++         controlRoleProvenanceMapObject(sourceRecord.controlRoleProvenance)},
++        {"control_role_provenance_preserved", true}};
++    crossPhaseDedupPromotionTraceLines.push_back(
++        jsonText(json::Value(std::move(event))) + "\n");
++    promoted = true;
++    return true;
++  }
++
+   bool mergeDuplicate(SearchState &state, ModuleOp canonical,
+                       StringRef functionName,
+                       std::vector<ArchiveRecord> &archive,
+                       StringRef outputDirectory,
+                       StringRef candidatesDirectory, uint64_t &nextSerial,
+-                      std::string &error) {
++                      std::string &error,
++                      bool *promoted = nullptr,
++                      int64_t promotionRound = 0) {
++    if (promoted)
++      *promoted = false;
+     if (state.control != !state.controlRoles.empty()) {
+       error = "stage control duplicate marker and named roles differ";
+       return false;
+@@ -5022,6 +6954,16 @@
+         record.controlRoleProvenance.emplace(role, std::move(provenance));
+       }
+       record.control |= state.control;
++      if (decisionFlow == "sequential" && activeSearchPhase == "A")
++        phaseAKeys.insert(state.key);
++      bool wasPromoted = false;
++      if (!promotePhaseACanonicalDuplicate(
++              state, record, index, archive, canonical, functionName, outputDirectory,
++              candidatesDirectory, nextSerial, promotionRound, wasPromoted,
++              error))
++        return false;
++      if (promoted)
++        *promoted = wasPromoted;
+       // The archive's primary history belongs to its original retained
+       // representative. An equivalent duplicate may add a distinct control
+       // role, but must not replace that representative's authenticated path.
+@@ -5047,6 +6989,10 @@
+       }
+       dirtyJournalIndices.insert(index);
+       ++duplicateCandidates;
++      if (record.valid && decisionFlow != "legacy") {
++        ++objectiveCacheHits;
++        ++phaseObjectiveCacheHits[activeSearchPhase];
++      }
+       return true;
+     }
+     // Rejected actions with no canonical key do not reach this branch.
+@@ -5086,9 +7032,15 @@
+     json::Array beams, generatedStates, neighbors, graphCosts, witnesses;
+     for (const auto &state : beam) beams.push_back(stateObject(state));
+     for (const auto &state : generated) generatedStates.push_back(stateObject(state));
+-    for (const auto &neighbor : pending)
++    auto emitNeighbor = [&](const PendingNeighbor &neighbor) {
+       neighbors.push_back(json::Object{{"parent", int64_t(neighbor.parent)},
+                                        {"action", actionObject(neighbor.action)}});
++    };
++    if (indexedPending && indexedPending->matches(pending, pendingCursor))
++      indexedPending->snapshot(pending, emitNeighbor);
++    else
++      for (const auto &neighbor : pending)
++        emitNeighbor(neighbor);
+     // Seen failed scoring keys survive restore too. Their canonical graph may
+     // lack a score, so reconstructing seen solely from valid rows is unsafe.
+     for (const auto &entry : graphCostPaths)
+@@ -5110,6 +7062,30 @@
+         {"production_scheduler_calls", int64_t(productionSchedulerCalls)},
+         {"scoring_workers", scoringWorkers.getValue()},
+         {"max_partition_factor", maxPartitionFactor.getValue()},
++        {"typed_action_replay_cache_hits",
++         int64_t(typedActionReplayCacheHits)},
++        {"typed_action_replay_cache_misses",
++         int64_t(typedActionReplayCacheMisses)},
++        {"typed_action_replay_skipped_steps",
++         int64_t(typedActionReplaySkippedSteps)},
++        {"runtime_materializer_proof_cache_hits",
++         int64_t(materializerProofCacheHits)},
++        {"runtime_materializer_proof_cache_misses",
++         int64_t(materializerProofCacheMisses)},
++        {"runtime_materializer_source_proof_reuses",
++         int64_t(materializerSourceProofReuses)},
++        {"runtime_materializer_active_proof_reuses",
++         int64_t(materializerActiveProofReuses)},
++        {"runtime_materializer_shape_identity_hits",
++         int64_t(materializerShapeIdentityHits)},
++        {"runtime_materializer_seed_proof_check_milliseconds",
++         int64_t(materializerSeedProofCheckMilliseconds)},
++        {"runtime_materializer_proof_cache_lookup_milliseconds",
++         int64_t(materializerProofCacheLookupMilliseconds)},
++        {"runtime_materializer_proof_cache_ir_print_milliseconds",
++         int64_t(materializerProofCacheIRPrintMilliseconds)},
++        {"runtime_materializer_active_refresh_milliseconds",
++         int64_t(materializerActiveRefreshMilliseconds)},
+         {"parallel_preparation_milliseconds", parallelPreparationMilliseconds},
+         {"parallel_scoring_milliseconds", parallelScoringMilliseconds},
+         {"parallel_commit_milliseconds", parallelCommitMilliseconds},
+@@ -5153,6 +7129,67 @@
+     auto parsed = json::parse(bytes);
+     if (!parsed) { llvm::consumeError(parsed.takeError()); error = "invalid neighborhood checkpoint JSON"; return false; }
+     const auto *root = parsed->getAsObject();
++    const int64_t savedReplayCacheHits =
++        root->getInteger("typed_action_replay_cache_hits").value_or(0);
++    const int64_t savedReplayCacheMisses =
++        root->getInteger("typed_action_replay_cache_misses").value_or(0);
++    const int64_t savedReplaySkippedSteps =
++        root->getInteger("typed_action_replay_skipped_steps").value_or(0);
++    const int64_t savedMaterializerProofHits =
++        root->getInteger("runtime_materializer_proof_cache_hits").value_or(0);
++    const int64_t savedMaterializerProofMisses =
++        root->getInteger("runtime_materializer_proof_cache_misses").value_or(0);
++    const int64_t savedSourceProofReuses =
++        root->getInteger("runtime_materializer_source_proof_reuses").value_or(0);
++    const int64_t savedActiveProofReuses =
++        root->getInteger("runtime_materializer_active_proof_reuses").value_or(0);
++    const int64_t savedShapeIdentityHits =
++        root->getInteger("runtime_materializer_shape_identity_hits").value_or(0);
++    const int64_t savedSeedProofMilliseconds =
++        root->getInteger("runtime_materializer_seed_proof_check_milliseconds")
++            .value_or(0);
++    const int64_t savedLookupMilliseconds =
++        root->getInteger("runtime_materializer_proof_cache_lookup_milliseconds")
++            .value_or(0);
++    const int64_t savedIRPrintMilliseconds =
++        root->getInteger("runtime_materializer_proof_cache_ir_print_milliseconds")
++            .value_or(0);
++    const int64_t savedRefreshMilliseconds =
++        root->getInteger("runtime_materializer_active_refresh_milliseconds")
++            .value_or(0);
++    if (savedReplayCacheHits < 0 || savedReplayCacheMisses < 0 ||
++        savedReplaySkippedSteps < 0 || savedMaterializerProofHits < 0 ||
++        savedMaterializerProofMisses < 0 || savedSourceProofReuses < 0 ||
++        savedActiveProofReuses < 0 || savedShapeIdentityHits < 0 ||
++        savedSeedProofMilliseconds < 0 || savedLookupMilliseconds < 0 ||
++        savedIRPrintMilliseconds < 0 || savedRefreshMilliseconds < 0) {
++      error = "checkpoint search cache counters are negative";
++      return false;
++    }
++    typedActionReplayCacheHits =
++        static_cast<uint64_t>(savedReplayCacheHits);
++    typedActionReplayCacheMisses =
++        static_cast<uint64_t>(savedReplayCacheMisses);
++    typedActionReplaySkippedSteps =
++        static_cast<uint64_t>(savedReplaySkippedSteps);
++    materializerProofCacheHits =
++        static_cast<uint64_t>(savedMaterializerProofHits);
++    materializerProofCacheMisses =
++        static_cast<uint64_t>(savedMaterializerProofMisses);
++    materializerSourceProofReuses =
++        static_cast<uint64_t>(savedSourceProofReuses);
++    materializerActiveProofReuses =
++        static_cast<uint64_t>(savedActiveProofReuses);
++    materializerShapeIdentityHits =
++        static_cast<uint64_t>(savedShapeIdentityHits);
++    materializerSeedProofCheckMilliseconds =
++        static_cast<uint64_t>(savedSeedProofMilliseconds);
++    materializerProofCacheLookupMilliseconds =
++        static_cast<uint64_t>(savedLookupMilliseconds);
++    materializerProofCacheIRPrintMilliseconds =
++        static_cast<uint64_t>(savedIRPrintMilliseconds);
++    materializerActiveRefreshMilliseconds =
++        static_cast<uint64_t>(savedRefreshMilliseconds);
+     if (!root || !parseCheckpointHeader(*root, functionName, stage, sourceRepository,
+         sourceCommit, architecturePath, protocolFile, diagnosticIICeiling,
+         error)) return false;
+@@ -5187,7 +7224,7 @@
+         static_cast<uint64_t>(*count) - static_cast<uint64_t>(*roundCount);
+     const uint64_t expectedRoundLimit = perRoundScoreQuota(
+         scoresBeforeRound, configuredMaxCandidates,
+-        maxRounds.getValue() - *savedRound);
++        maxRounds.getValue() - *savedRound, roundScoreQuota.getValue());
+     const uint64_t remainingScoreBound =
+         configuredMaxCandidates - scoresBeforeRound;
+     if (static_cast<uint64_t>(*roundLimit) != expectedRoundLimit ||
+@@ -5469,6 +7506,18 @@
+     if (!module) { error = "retained native candidate module does not parse"; return false; }
+     auto selected = selectTaskFunction(*module, function, error);
+     if (failed(selected)) return false;
++    ArchiveRecord replayRecord = record;
++    if (decisionFlow == "sequential") {
++      SmallVector<TaskShapeChoice> reboundChoices;
++      std::vector<NeighborhoodShape> reboundShapes;
++      if (!rebindCachedRecordVocabulary(
++              record, *selected, record.shapes,
++              /*requireTargetTaskNames=*/false, reboundChoices,
++              reboundShapes, error))
++        return false;
++      replayRecord.choices = std::move(reboundChoices);
++      replayRecord.shapes = std::move(reboundShapes);
++    }
+     std::string activeTransferSignature;
+     if (!collectVerifiedActiveTransferSignature(*selected,
+                                                 activeTransferSignature,
+@@ -5479,14 +7528,19 @@
+       return false;
+     auto graph = (*selected)->getAttrOfType<StringAttr>("amoeba.graph_variant_id");
+     if (!graph || graph.getValue() != record.graphId) {
+-      error = "replay candidate graph label differs from saved C++ archive"; return false;
++      if (decisionFlow == "sequential" && record.control)
++        replayRecord.graphId = graph ? graph.getValue().str() : record.id;
++      else {
++        error = "replay candidate graph label differs from saved C++ archive";
++        return false;
++      }
+     }
+     const std::string shapeId = "shape-" + record.id;
+     const std::string replayDirectory = outputDirectory.str() + "/replay";
+     if (!ensureDirectory(replayDirectory, error) || !diskGuard(error)) return false;
+     const std::string shapePath = replayDirectory + "/" + record.id + "-shape.json";
+     const std::string scorePath = replayDirectory + "/" + record.id + "-score.jsonl";
+-    Candidate candidate; candidate.id = shapeId; candidate.choices = record.choices;
++    Candidate candidate; candidate.id = shapeId; candidate.choices = replayRecord.choices;
+     if (!writeNeighborhoodShapeSelection(*module, *selected, candidate, shapePath, error)) return false;
+     int64_t iterations = 64;
+     if (auto configured = (*selected)->getAttrOfType<IntegerAttr>("joint_scheduling_fixed_point_max_iterations"))
+@@ -5505,20 +7559,21 @@
+     json::Object footer{{"record_type", "footer"}, {"schema", "amoeba-exact-joint-task-scores-v1"},
+                         {"scored_count", 1}, {"status", "best-found"}, {"certified", false}};
+     std::string text = jsonText(json::Value(std::move(header))) + "\n" +
+-        jsonText(json::Value(scoreRecord(record, shapeId))) + "\n" +
++        jsonText(json::Value(scoreRecord(replayRecord, shapeId))) + "\n" +
+         jsonText(json::Value(std::move(footer))) + "\n";
+     if (!writeTextAtomically(scorePath, text, error)) return false;
+-    selection = archiveObject(record);
++    selection = archiveObject(replayRecord);
+     selection["record_type"] = "selection";
+     selection["shape_candidate_id"] = shapeId;
+     selection["score_file"] = scorePath;
+     selection["shape_manifest_file"] = shapePath;
+-    selection["score_record"] = scoreRecord(record, shapeId);
++    selection["score_record"] = scoreRecord(replayRecord, shapeId);
+     selection["certified"] = false; selection["best_found"] = true;
+     selection["source_binding_witness"] = bindingPath;
+     selection["transformations"] = json::Object{
+-        {"shape", choiceRecords(record.choices)}, {"action_path", stringArray(record.path)},
+-        {"lineage_source", record.candidatePath}};
++        {"shape", choiceRecords(replayRecord.choices)},
++        {"action_path", stringArray(replayRecord.path)},
++        {"lineage_source", replayRecord.candidatePath}};
+     return true;
+   }
+ 
+@@ -5536,7 +7591,12 @@
+     json::Object reasons;
+     uint64_t validCount = 0;
+     for (const auto &record : archive) {
+-      if (record.valid) { ranked.push_back(&record); ++validCount; }
++      if (record.valid) {
++        ++validCount;
++        if (decisionFlow != "sequential" || !phaseBFrozen ||
++            isSequentialFinalRecord(record))
++          ranked.push_back(&record);
++      }
+       else {
+         StringRef reason = record.rejectReason;
+         std::string category = reason.take_front(reason.find(':')).str();
+@@ -5575,6 +7635,55 @@
+       }
+       return result;
+     };
++    json::Object phaseBudgets;
++    json::Object phaseEvaluations;
++    json::Object phaseCandidateAttempts;
++    json::Object phaseActionCounts;
++    nominalPhaseBBudget = decisionFlow == "sequential"
++                              ? totalEvaluationBudget - phaseABudget
++                              : 0;
++    effectivePhaseABudget =
++        decisionFlow == "sequential" && transferredEvaluationCount
++            ? phaseEvaluationCounts["A"]
++            : phaseABudget;
++    if (decisionFlow == "sequential") {
++      phaseBudgets["A"] = static_cast<int64_t>(effectivePhaseABudget);
++      phaseBudgets["B"] = static_cast<int64_t>(phaseBBudget);
++      phaseEvaluations["A"] =
++          static_cast<int64_t>(phaseEvaluationCounts["A"]);
++      phaseEvaluations["B"] =
++          static_cast<int64_t>(phaseEvaluationCounts["B"]);
++      phaseCandidateAttempts["A"] =
++          static_cast<int64_t>(phaseActionAttempts["A"] + 1);
++      phaseCandidateAttempts["B"] =
++          static_cast<int64_t>(phaseActionAttempts["B"]);
++      for (StringRef phase : {StringRef("A"), StringRef("B")}) {
++        const std::string name = phase.str();
++        phaseActionCounts[name] = json::Object{
++            {"attempts", static_cast<int64_t>(phaseActionAttempts[name])},
++            {"materialized", static_cast<int64_t>(phaseActionMaterialized[name])},
++            {"legal", static_cast<int64_t>(phaseActionLegal[name])},
++            {"deduplicated", static_cast<int64_t>(phaseActionDeduplicated[name])},
++            {"failed", static_cast<int64_t>(phaseActionFailed[name])}};
++      }
++    } else if (decisionFlow == "joint") {
++      phaseBudgets["joint"] = static_cast<int64_t>(totalEvaluationBudget);
++      phaseEvaluations["joint"] =
++          static_cast<int64_t>(phaseEvaluationCounts["joint"]);
++      phaseCandidateAttempts["joint"] =
++          static_cast<int64_t>(phaseActionAttempts["joint"] + 1);
++      phaseActionCounts["joint"] = json::Object{
++          {"attempts", static_cast<int64_t>(phaseActionAttempts["joint"])},
++          {"materialized", static_cast<int64_t>(phaseActionMaterialized["joint"])},
++          {"legal", static_cast<int64_t>(phaseActionLegal["joint"])},
++          {"deduplicated", static_cast<int64_t>(phaseActionDeduplicated["joint"])},
++          {"failed", static_cast<int64_t>(phaseActionFailed["joint"])}};
++    }
++    const uint64_t candidateAttemptCount =
++        decisionFlow == "legacy"
++            ? productionSchedulerCalls
++            : phaseActionAttempts["A"] + phaseActionAttempts["B"] +
++                  phaseActionAttempts["joint"] + 1;
+     json::Object metadata{
+         {"schema", kSearchSchema}, {"search_scope", kSearchScope}, {"function", function},
+         {"stage", stageName}, {"source_repository", repository}, {"source_commit", commit},
+@@ -5585,6 +7694,12 @@
+         {"source_binding_witness", bindingPath}, {"max_rounds", maxRoundsValue},
+         {"max_candidates", maxCandidatesValue}, {"beam_width", beamWidthValue},
+         {"diversity_slots", diversityValue}, {"rounds", round}, {"rounds_completed", round},
++        {"decision_flow", decisionFlow.getValue()},
++        {"round_score_quota", roundScoreQuota.getValue()},
++        {"global_rounds_completed",
++         decisionFlow == "legacy"
++             ? round
++             : static_cast<int64_t>(actionFrontierTraceLines.size())},
+         {"unique_complete_candidates_scored", int64_t(scoredCount)},
+         {"unique_scored_candidates", int64_t(scoredCount)}, {"unique_valid_candidates", int64_t(validCount)},
+         {"rejected_or_duplicate_candidates", int64_t(rejectedCount)},
+@@ -5602,12 +7717,122 @@
+         {"cache_hits", int64_t(costCacheHits)}, {"cache_misses", int64_t(costCacheMisses)},
+         {"reject_reasons", std::move(reasons)}, {"elapsed_seconds", elapsedMilliseconds / 1000.0},
+         {"production_scheduler_calls", int64_t(productionSchedulerCalls)},
++        {"candidate_attempts", static_cast<int64_t>(candidateAttemptCount)},
++        {"objective_cache_hits", static_cast<int64_t>(objectiveCacheHits)},
++        {"actual_mapper_search_calls", 0},
++        {"actual_mapper_calls", 0},
++        {"resource_legality_queries", static_cast<int64_t>(resourceLegalityQueries)},
++        {"resource_legality_supported_fallbacks",
++         static_cast<int64_t>(resourceLegalitySupportedFallbacks)},
+         {"graph_cost_catalogues", int64_t(graphCostPaths.size())},
+         {"cost_catalogue_loaded", costCacheLoaded}, {"best_found", true}, {"exhaustive", false},
+         {"stop_reason", stopReason}, {"checkpoint", checkpointPath},
+         {"identity_control_retained", true}, {"previous_winner_requested", previousWinnerRequested},
+         {"native_top5_required", true}, {"numeric_trace_sram_separate", true},
++        {"runtime_pending_index", decisionFlow != "legacy" && runtimePendingIndex},
++        {"runtime_fact_cache", decisionFlow != "legacy" && runtimeFactCache},
++        {"runtime_materializer_proof_cache",
++         materializerProofCacheEnabled()},
++        {"runtime_fact_cache_hits", int64_t(factCacheHits)},
++        {"runtime_fact_cache_misses", int64_t(factCacheMisses)},
++        {"runtime_materializer_proof_cache_hits",
++         int64_t(materializerProofCacheHits)},
++        {"runtime_materializer_proof_cache_misses",
++         int64_t(materializerProofCacheMisses)},
++        {"runtime_materializer_source_proof_reuses",
++         int64_t(materializerSourceProofReuses)},
++        {"runtime_materializer_active_proof_reuses",
++         int64_t(materializerActiveProofReuses)},
++        {"runtime_materializer_shape_identity_hits",
++         int64_t(materializerShapeIdentityHits)},
++        {"runtime_materializer_seed_proof_check_milliseconds",
++         int64_t(materializerSeedProofCheckMilliseconds)},
++        {"runtime_materializer_proof_cache_lookup_milliseconds",
++         int64_t(materializerProofCacheLookupMilliseconds)},
++        {"runtime_materializer_proof_cache_ir_print_milliseconds",
++         int64_t(materializerProofCacheIRPrintMilliseconds)},
++        {"runtime_materializer_active_refresh_milliseconds",
++         int64_t(materializerActiveRefreshMilliseconds)},
++        {"runtime_indexed_action_selections", int64_t(indexedPendingSelections)},
++        {"checkpoint_write_period", decisionFlow == "legacy" ? int64_t(1) : checkpointWritePeriod.getValue()},
++        {"periodic_checkpoint_windows", int64_t(periodicCheckpointWindows)},
++        {"skipped_periodic_checkpoint_writes", int64_t(skippedCheckpointWrites)},
+         {"native_shortlist_count", int64_t(ranked.size())}};
++    if (decisionFlow != "legacy") {
++      metadata["graph_resource_initialization_policy"] =
++          kGraphResourceInitializationPolicy;
++      json::Object phaseObjectiveHits;
++      for (const auto &entry : phaseObjectiveCacheHits)
++        phaseObjectiveHits[entry.first] = static_cast<int64_t>(entry.second);
++      metadata["phase_objective_cache_hits"] = std::move(phaseObjectiveHits);
++      metadata["objective_budget"] = static_cast<int64_t>(totalEvaluationBudget);
++      metadata["initial_identity_attempts"] = 1;
++      if (decisionFlow == "joint") {
++        metadata["joint_anchor_objective_boundary"] = static_cast<int64_t>(totalEvaluationBudget / 2);
++        metadata["joint_anchor_candidate_id"] = jointHalfBudgetAnchorId;
++      }
++      metadata["phase_budgets"] = std::move(phaseBudgets);
++      metadata["phase_evaluations"] = std::move(phaseEvaluations);
++      metadata["phase_candidate_attempts"] = std::move(phaseCandidateAttempts);
++      metadata["phase_action_counts"] = std::move(phaseActionCounts);
++      metadata["budget_trace_file"] = "budget-trace.jsonl";
++      metadata["action_attempt_trace_file"] = "action-attempts.jsonl";
++      metadata["action_frontier_trace_file"] = "action-frontiers.jsonl";
++      metadata["graph_budget_percent"] = graphBudgetPercent.getValue();
++      if (decisionFlow == "sequential") {
++        if (sequentialBudgetPolicy == "transfer-unused") {
++          metadata["sequential_budget_policy"] =
++              sequentialBudgetPolicy.getValue();
++          metadata["nominal_phase_budgets"] = json::Object{
++              {"A", static_cast<int64_t>(phaseABudget)},
++              {"B", static_cast<int64_t>(nominalPhaseBBudget)}};
++          metadata["effective_phase_budgets"] = json::Object{
++              {"A", static_cast<int64_t>(effectivePhaseABudget)},
++              {"B", static_cast<int64_t>(phaseBBudget)}};
++          metadata["transferred_evaluation_count"] =
++              static_cast<int64_t>(transferredEvaluationCount);
++          metadata["phase_a_stop_reason"] = phaseAStopReason;
++        }
++        metadata["phase_elapsed_seconds"] = json::Object{
++            {"A", phaseAElapsedMilliseconds / 1000.0},
++            {"B", phaseBElapsedMilliseconds / 1000.0}};
++        metadata["cross_phase_dedup_promotions"] =
++            static_cast<int64_t>(crossPhaseDedupPromotionTraceLines.size());
++        metadata["cross_phase_dedup_promotion_trace_file"] =
++            "cross-phase-dedup-promotions.jsonl";
++      } else {
++        metadata["phase_elapsed_seconds"] = json::Object{
++            {"joint", phaseJointElapsedMilliseconds / 1000.0}};
++      }
++      if (decisionFlow == "sequential") {
++        metadata["phase_a_rounds_completed"] = phaseARoundsCompleted;
++        metadata["phase_b_rounds_completed"] = phaseBRoundsCompleted;
++        metadata["phase_a_anchor_candidate_id"] = phaseAAnchorCandidateId;
++        metadata["frozen_action_prefix_length"] =
++            static_cast<int64_t>(frozenPrefixActions.size());
++        json::Array frozenFissionWitness;
++        for (const NeighborhoodAction &action : frozenFissionActions)
++          frozenFissionWitness.push_back(typedActionObject(action));
++        metadata["frozen_fission_actions"] =
++            std::move(frozenFissionWitness);
++        json::Array frozenShapeWitness;
++        for (const NeighborhoodShape &shape : frozenInitialShapes)
++          frozenShapeWitness.push_back(shapeObject(shape));
++        metadata["frozen_initial_shapes"] = std::move(frozenShapeWitness);
++        metadata["frozen_canonical_fact_key"] = frozenCanonicalFactKey;
++      }
++    }
++      metadata["runtime_replay_cache_requested"] =
++          runtimeReplayCache.getValue();
++      metadata["runtime_replay_cache_enabled"] = false;
++      metadata["typed_action_replay_memo_policy"] =
++          kTypedActionReplayMemoPolicy;
++      metadata["typed_action_replay_cache_hits"] =
++          static_cast<int64_t>(typedActionReplayCacheHits);
++      metadata["typed_action_replay_cache_misses"] =
++          static_cast<int64_t>(typedActionReplayCacheMisses);
++      metadata["typed_action_replay_skipped_steps"] =
++          static_cast<int64_t>(typedActionReplaySkippedSteps);
+     if (diagnosticIICeiling == 23)
+       metadata["diagnostic_ii_ceiling"] = diagnosticIICeiling.getValue();
+     if (stageNumber(stageName) == 6) {
+@@ -5654,6 +7879,9 @@
+       requiredControlRoles.push_back("historical_measured_winner");
+       metadata["historical_native_winner_requested"] = true;
+       metadata["required_control_roles"] = std::move(requiredControlRoles);
++    } else if (decisionFlow != "legacy") {
++      metadata["required_control_roles"] =
++          json::Array{"identity", "search_anchor"};
+     }
+     json::Object header = metadata; header["record_type"] = "header";
+     std::string topText = jsonText(json::Value(std::move(header))) + "\n";
+@@ -5709,12 +7937,32 @@
+       }
+     }
+     if (!roles.count("identity") ||
++        (decisionFlow != "legacy" && !roles.count("search_anchor")) ||
+         (previousWinnerRequested &&
+          !roles.count("previous_stage_measured_winner")) ||
+         (historicalWinnerRequested &&
+          !roles.count("historical_measured_winner"))) {
+       error = "required stage native controls missing from C++ archive"; return false;
+     }
++    auto joinLines = [](ArrayRef<std::string> lines) {
++      std::string text;
++      for (const std::string &line : lines)
++        text += line;
++      return text;
++    };
++    if (decisionFlow != "legacy" &&
++        (!writeTextAtomically(outputDirectory.str() + "/budget-trace.jsonl",
++                              joinLines(budgetTraceLines), error) ||
++         !writeTextAtomically(outputDirectory.str() + "/action-attempts.jsonl",
++                              joinLines(actionAttemptTraceLines), error) ||
++         !writeTextAtomically(outputDirectory.str() + "/action-frontiers.jsonl",
++                              joinLines(actionFrontierTraceLines), error)))
++      return false;
++    if (decisionFlow == "sequential" &&
++        !writeTextAtomically(
++            outputDirectory.str() + "/cross-phase-dedup-promotions.jsonl",
++            joinLines(crossPhaseDedupPromotionTraceLines), error))
++      return false;
+     return writeTextAtomically(outputDirectory.str() + "/top5.jsonl", topText, error) &&
+            writeTextAtomically(outputDirectory.str() + "/controls.jsonl", controlsText, error) &&
+            writeTextAtomically(outputDirectory.str() + "/search-summary.json", jsonText(json::Value(std::move(metadata))) + "\n", error);
+@@ -5729,15 +7977,65 @@
+   bool preparedSourceCanonicalVerified = false;
+   std::optional<std::string> interTaskNetworkSpecOverrideBytes;
+   uint64_t journalBytes = 0, journalArchiveCount = 0, duplicateCandidates = 0;
++  uint64_t materializerProofCacheHits = 0, materializerProofCacheMisses = 0;
++  uint64_t materializerSourceProofReuses = 0;
++  uint64_t materializerActiveProofReuses = 0;
++  uint64_t materializerShapeIdentityHits = 0;
++  uint64_t materializerSeedProofCheckMilliseconds = 0;
++  uint64_t materializerProofCacheLookupMilliseconds = 0;
++  uint64_t materializerProofCacheIRPrintMilliseconds = 0;
++  uint64_t materializerActiveRefreshMilliseconds = 0;
++  double jointHalfBudgetAnchorScore = std::numeric_limits<double>::infinity();
++  std::string jointHalfBudgetAnchorId;
++  uint64_t objectiveCacheHits = 0;
++  std::map<std::string, uint64_t> phaseObjectiveCacheHits;
+   uint64_t productionSchedulerCalls = 0, costCacheHits = 0, costCacheMisses = 0;
++  uint64_t resourceLegalityQueries = 0;
++  uint64_t resourceLegalitySupportedFallbacks = 0;
+   uint64_t roundScoredCount = 0, roundScoreLimit = 0;
+   int64_t elapsedMilliseconds = 0;
++  std::chrono::steady_clock::time_point operationStarted;
++  std::chrono::steady_clock::time_point phaseStartedAt;
++  int64_t phaseJointElapsedMilliseconds = 0;
++  int64_t incumbentCycles = std::numeric_limits<int64_t>::max();
++  uint64_t totalEvaluationBudget = 0, phaseABudget = 0, phaseBBudget = 0;
++  uint64_t transferredEvaluationCount = 0;
++  uint64_t nominalPhaseBBudget = 0, effectivePhaseABudget = 0;
++  std::string activeSearchPhase = "legacy";
++  std::string phaseAAnchorCandidateId, phaseAStopReason;
++  bool phaseBFrozen = false;
++  int64_t phaseARoundsCompleted = 0, phaseBRoundsCompleted = 0;
++  int64_t phaseAElapsedMilliseconds = 0, phaseBElapsedMilliseconds = 0;
++  std::map<std::string, uint64_t> phaseEvaluationCounts;
++  std::map<std::string, uint64_t> phaseActionAttempts,
++      phaseActionMaterialized, phaseActionLegal, phaseActionDeduplicated,
++      phaseActionFailed;
++  std::set<std::string> phaseAKeys;
++  std::vector<NeighborhoodAction> frozenPrefixActions;
++  std::vector<NeighborhoodAction> frozenFissionActions;
++  std::vector<NeighborhoodShape> frozenInitialShapes;
++  std::string frozenCanonicalFactKey;
++  std::vector<std::string> budgetTraceLines, actionAttemptTraceLines,
++      actionFrontierTraceLines, crossPhaseDedupPromotionTraceLines;
+   int64_t parallelPreparationMilliseconds = 0;
+   int64_t parallelScoringMilliseconds = 0;
+   int64_t parallelCommitMilliseconds = 0;
+   uint64_t parallelModuleCacheHits = 0;
+   uint64_t parallelModuleCacheMisses = 0;
+   uint64_t parallelScoredJobs = 0;
++  std::vector<TypedActionReplayMemoEntry> typedActionReplayMemoEntries;
++  size_t typedActionReplayMemoBytes = 0;
++  uint64_t typedActionReplayMemoClock = 0;
++  uint64_t typedActionReplayCacheHits = 0;
++  uint64_t typedActionReplayCacheMisses = 0;
++  uint64_t typedActionReplaySkippedSteps = 0;
++  Operation *typedActionReplayMemoCanonical = nullptr;
++  MLIRContext *typedActionReplayMemoContext = nullptr;
++  std::string typedActionReplayMemoCanonicalIR;
++  std::string typedActionReplayMemoFunction;
++  std::string typedActionReplayMemoOutputDirectory;
++  std::string typedActionReplayMemoOptionsKey;
++  std::string typedActionReplayMemoContextKey;
+   func::FuncOp sourceDomainCanonical;
+   bool sourceDomainEnabled = false;
+   SmallVector<unsigned, 8> activeTransferArguments;
+--- a/lib/Backend/Neura/Orchestration/JointScheduling/MapJointSchedulingTasksPass.cpp
++++ b/lib/Backend/Neura/Orchestration/JointScheduling/MapJointSchedulingTasksPass.cpp
+@@ -55,7 +55,6 @@
+ using ::mlir::amoeba::neura::joint_scheduling::buildCommonMapperReplayWrapper;
+ using ::mlir::amoeba::neura::joint_scheduling::printCommonMapperReplayWrapper;
+ namespace json = llvm::json;
+-namespace json = llvm::json;
+ 
+ namespace {
+ 
+@@ -338,6 +337,9 @@
+       llvm::cl::init("")};
+ 
+   Option<std::string> mappingCacheDir{*this, "mapping-cache-dir", llvm::cl::init("")};
++  Option<bool> auditCalls{*this, "audit-calls",
++      llvm::cl::desc("Log every actual task mapper request, including failures"),
++      llvm::cl::init(false)};
+   uint64_t mappingCacheHits = 0, mappingCacheMisses = 0;
+   llvm::StringMap<double> startupCycles;
+   llvm::StringMap<double> predictedIIs;
+@@ -671,6 +673,15 @@
+     options.x_tiles = static_cast<int>(mapperCols);
+     options.y_tiles = static_cast<int>(mapperRows);
+     manager.addPass(::mlir::neura::createMapToAcceleratorPass(options));
++    if (auditCalls) {
++      json::Object row{{"candidate_id", materializedCandidateId},
++                       {"mapper_tile_rows", mapperRows},
++                       {"mapper_tile_cols", mapperCols}};
++      std::string line;
++      llvm::raw_string_ostream stream(line);
++      stream << json::Value(std::move(row));
++      llvm::errs() << "[ORBIT-MAPPER-CALL] " << stream.str() << "\n";
++    }
+     if (failed(manager.run(temporary))) {
+       if (profileOnly && expectedMapperFailure) {
+         *expectedMapperFailure = true;
+--- a/lib/Backend/Neura/Orchestration/JointScheduling/PredictAnalyticalTaskCostCatalogPass.cpp
++++ b/lib/Backend/Neura/Orchestration/JointScheduling/PredictAnalyticalTaskCostCatalogPass.cpp
+@@ -47,6 +47,7 @@
+ #include "mlir/Pass/PassManager.h"
+ 
+ #include "llvm/ADT/SmallVector.h"
++#include "llvm/ADT/ScopeExit.h"
+ #include "llvm/ADT/StringMap.h"
+ #include "llvm/Support/FileSystem.h"
+ #include "llvm/Support/JSON.h"
+@@ -58,6 +59,7 @@
+ #include <cctype>
+ #include <cerrno>
+ #include <cmath>
++#include <chrono>
+ #include <cstdint>
+ #include <fcntl.h>
+ #include <limits>
+@@ -1391,7 +1393,33 @@
+                      "23; training ceiling remains 20"),
+       llvm::cl::init(kPerCgra2x2TrainingIICeiling)};
+ 
++  Option<std::string> auditContext{
++      *this, "audit-context", llvm::cl::desc("Optional prediction accounting phase"),
++      llvm::cl::init("")};
++
+   void runOnOperation() override {
++    const auto auditStarted = std::chrono::steady_clock::now();
++    uint64_t auditQueries = 0, auditUnsupported = 0, auditRequests = 0;
++    uint64_t auditInferences = 0, auditHits = 0, auditMisses = 0;
++    bool auditSuccess = false;
++    auto auditExit = llvm::make_scope_exit([&] {
++      if (auditContext.empty()) return;
++      llvm::json::Object row{
++        {"phase", std::string(auditContext)}, {"graph_variant_id", std::string(graphVariantId)},
++        {"output", std::string(outputFile)}, {"status", auditSuccess ? "success" : "failed"},
++        {"feature_queries", static_cast<int64_t>(auditQueries)},
++        {"unsupported_queries", static_cast<int64_t>(auditUnsupported)},
++        {"prediction_requests", static_cast<int64_t>(auditRequests)},
++        {"model_inference_calls", static_cast<int64_t>(auditInferences)},
++        {"cache_hits", static_cast<int64_t>(auditHits)},
++        {"cache_misses", static_cast<int64_t>(auditMisses)},
++        {"ensemble_member_predictions", static_cast<int64_t>(auditInferences * 4)},
++        {"elapsed_seconds", std::chrono::duration<double>(std::chrono::steady_clock::now() - auditStarted).count()}};
++      std::string line;
++      llvm::raw_string_ostream stream(line);
++      stream << llvm::json::Value(std::move(row));
++      llvm::errs() << "[ORBIT-PREDICTOR-AUDIT] " << stream.str() << "\n";
++    });
+     ModuleOp module = getOperation();
+     auto fail = [&](llvm::StringRef message) {
+       module.emitError() << message;
+@@ -1549,6 +1577,9 @@
+       fail(error);
+       return;
+     }
++    auditQueries = generatedQueries.size();
++    for (const auto &query : generatedQueries)
++      auditUnsupported += query.modelDomainUnsupported;
+     if (llvm::any_of(generatedQueries, [](const FeatureQuery &query) {
+           return query.modelDomainUnsupported;
+         }) && (!featureFile.empty() || !featureOutputFile.empty())) {
+@@ -1642,11 +1673,13 @@
+         predictions.emplace_back();
+         continue;
+       }
++      ++auditRequests;
+       MLCostCacheKey key{query.bodyStructuralText, query.rows, query.cols};
+       MLCostCacheFacts facts{query.recMII, query.resMII, query.lowerBound};
+       MLPEnsemblePrediction prediction;
+       if (directModelMode) {
+         DirectMapperIIPrediction directPrediction;
++        ++auditInferences;
+         if (!directModel.predict(query.features, query.recMII, query.resMII,
+                                  query.lowerBound, directPrediction, error) ||
+             directPrediction.memberPredictions.size() !=
+@@ -1684,6 +1717,7 @@
+         }
+         MLPEnsemblePrediction cachedPrediction;
+         if (cache.lookup(key, facts, cachedPrediction)) {
++          ++auditHits;
+           if (!sameFeatureNumber(cachedPrediction.predictedII,
+                                  scalarPrediction.predictedII) ||
+               !sameFeatureNumber(cachedPrediction.predictedIIStd,
+@@ -1694,18 +1728,23 @@
+           }
+           prediction = cachedPrediction;
+         } else {
++          ++auditMisses;
+           prediction = scalarPrediction;
+           cache.insert(key, facts, prediction);
+         }
+         directPredictions[queryIndex] = std::move(directPrediction);
+       } else {
+         if (!cache.lookup(key, facts, prediction)) {
++          ++auditMisses;
++          ++auditInferences;
+           if (!model.predict(query.features, query.lowerBound, prediction,
+                              error)) {
+             fail(error);
+             return;
+           }
+           cache.insert(key, facts, prediction);
++        } else {
++          ++auditHits;
+         }
+         if (!std::isfinite(prediction.predictedII) ||
+             prediction.predictedII < query.lowerBound ||
+@@ -1745,6 +1784,7 @@
+       fail(error);
+       return;
+     }
++    auditSuccess = true;
+   }
+ };
+ 

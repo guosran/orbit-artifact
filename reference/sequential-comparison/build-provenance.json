@@ -1,0 +1,26 @@
+{
+  "schema": "orbit-sequential-build-provenance-v1",
+  "implementation_head": "99ded7396f31c71ee0946389c6946a5f58c770c6",
+  "cost_source_namespace": "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e",
+  "optimizer_sha256": "0edf2169f05e82bd012426a9f5da303105c1325ffb65ef14c2a12646e0f33548",
+  "optimizer_bytes": 132695216,
+  "llvm_source_head": "6146a88f60492b520a36f8f8f3231e15f3cc6082",
+  "cmake_flags": [
+    "CMAKE_BUILD_TYPE:STRING=Release",
+    "CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++",
+    "CMAKE_CXX_FLAGS:STRING=",
+    "LLVM_DIR:UNINITIALIZED=/home/x/shiran/llvm-project/build/lib/cmake/llvm",
+    "MLIR_DIR:UNINITIALIZED=/home/x/shiran/llvm-project/build/lib/cmake/mlir"
+  ],
+  "source_patch_sha256": "ea83b8bd871976e738f9472ade733b56b044fe15d35baa6d7377135c78035e49",
+  "prerequisite_patch_sha256": "539943ef59e37b49912b3dbffcd23e3bfe486bd18e09d3491ba3d6aebf3c431d",
+  "build_command": "ninja -C .work/sequential-build tools/mlir-amoeba-opt/mlir-amoeba-opt -j1",
+  "log": "/home/x/shiran/project/orbit-artifact/.work/sequential-build-final.log",
+  "pin_policy": "strip --strip-debug; chmod a-w; identical executable for all cells",
+  "objective_controller": {
+    "fixed_frontier_quota": 512,
+    "global_round_safety_cap": 8192,
+    "objective_allowance": 4096,
+    "legacy_default_quota_unchanged": true
+  }
+}

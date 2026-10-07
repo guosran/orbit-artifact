@@ -1,0 +1,20 @@
+{
+  "prior_template": "reference/input0-neighborhood/protocol-2x2-direct-model-template.json",
+  "prior_max_rounds": 4,
+  "prior_max_candidates": 4096,
+  "prior_quota": "ceil(remaining_objective_allowance / remaining_rounds)",
+  "actual_old_counter_unit": "complete-program production scheduler invocations including failed schedules and identity; canonical duplicates reuse objective",
+  "new_total_objective_allowance": 4096,
+  "new_common_fixed_frontier_quota": 512,
+  "new_global_round_safety_cap": 8192,
+  "rounds_are_budget": false,
+  "beam_width": 16,
+  "diversity_slots": 4,
+  "native_shortlist": 5,
+  "controls_per_method": 2,
+  "legacy_semantics_preserved_when_round_score_quota_zero": true,
+  "initialization_override": "decision_flow_comparison explicitly overrides inherited template seed/control descriptions; standalone compiler rejects seed_manifest, previous_winner and historical_native_winner",
+  "old_S5_reuse": false,
+  "reason_old_S5_not_reused": "cumulative-stage seeds and adaptive4-round controller are not the standalone matched objective protocol",
+  "raw_final_protocol": "results/sequential-comparison-4096-final/protocol.json"
+}

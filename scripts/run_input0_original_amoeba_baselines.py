@@ -31,6 +31,11 @@ MODEL_REL = Path("reference/input0-neighborhood/models/per-cgra-2x2/ensemble.jso
 MODEL_NAMESPACE = "orbit-per-cgra-2x2-direct-4member-v1"
 MODEL_REPOSITORY = "https://github.com/guosran/orbit.git"
 MODEL_COMMIT = "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e"
+SHARED_SCHEDULER = {
+    "backend": "orbit-production",
+    "dispatch_policy": "critical-path",
+    "timing": "common-explicit-network",
+}
 ORIGINAL_REPOSITORY = "https://github.com/ShangkunLi/neura"
 ORIGINAL_COMMIT = "f45a0c5f4cc3163a016250fee865c19ec56f0fa0"
 MIN_FREE_BYTES = 2 * 1024**3
@@ -106,6 +111,9 @@ class Queue:
             "progress_directory": relative(self.results),
             "queue_log": relative(self.queue_root / "queue.log"),
         }
+        if getattr(args, "reschedule_with_production_scheduler", False):
+            self.queue_state["scheduler"] = SHARED_SCHEDULER.copy()
+            self.queue_state["shared_scheduler_resource_only"] = True
 
     def update_queue(self, **updates: Any) -> None:
         self.queue_state.update(updates)
@@ -618,6 +626,8 @@ class Queue:
             retimer_options += f" replica-profile-evidence-file={replica_evidence}"
         if self.args.original_f45_replica_scaling:
             retimer_options += " original-f45-replica-scaling=true"
+        if self.args.reschedule_with_production_scheduler:
+            retimer_options += " reschedule-with-production-scheduler=true"
         retimer = [
             str(self.optimizer), str(replica_module or caller_bound), "--verify-each",
             f"--architecture-spec={self.arch}",
@@ -703,6 +713,11 @@ class Queue:
         cycles = retimed.get("mapped_whole_program_cycles")
         if type(cycles) is not int or cycles <= 0:
             raise StepFailed("result_admission", "retimer did not report a positive integer mapped_whole_program_cycles")
+        if self.args.reschedule_with_production_scheduler and (
+                retimed.get("scheduler") != SHARED_SCHEDULER
+                or retimed.get("shared_scheduler_resource_only") is not True
+                or trace.get("scheduler") != SHARED_SCHEDULER):
+            raise StepFailed("result_admission", "shared scheduler result/independent validation omit the required scheduler identity")
         final = self.base_result(workload, out)
         final.update({
             "status": "complete",
@@ -770,6 +785,23 @@ class Queue:
             if not isinstance(policy, dict):
                 raise StepFailed("result_admission", "explicit F45 replica scaling result omits its timing policy")
             final["replica_timing_policy"] = policy
+        if self.args.reschedule_with_production_scheduler:
+            final["scheduler"] = SHARED_SCHEDULER.copy()
+            final["shared_scheduler_resource_only"] = True
+            final["native_cycles_semantics"] = (
+                "ORBIT production communication-aware scheduler makespan for original "
+                "F45 selected shapes/counts/replicas; placements and dispatch are newly "
+                "selected by the shared scheduler; original full-parent mapper II and "
+                "ceiling replica duration estimate are retained")
+            final["preserved_original_decisions"] = {
+                "status": "pass", "scope": "selected-shapes-counts-and-replicas-only",
+                "placement_and_dispatch_preserved": False,
+                "task_count": trace.get("task_count"),
+                "original_dispatch_order": [row["task"] for row in sorted(
+                    retimed["original_decisions"], key=lambda row: row["dispatch_index"])],
+                "production_dispatch_order": retimed["dispatch_order"],
+            }
+            final["production_scheduler_decisions"] = retimed["production_scheduler_decisions"]
         atomic_json(result_path, final)
         self.update_progress(
             workload,
@@ -885,6 +917,8 @@ def main() -> int:
                         help="opt in to the f45 scheduler extension when a task has no mapped single-CGRA profile")
     parser.add_argument("--original-f45-replica-scaling", action="store_true",
                         help="preserve the original F45 replica duration estimate with common mapper/native timing")
+    parser.add_argument("--reschedule-with-production-scheduler", action="store_true",
+                        help="retain F45 resource choices and select placements/dispatch with the shared ORBIT communication-aware scheduler")
     parser.add_argument("--llvm-build", type=Path, required=True)
     parser.add_argument("--reference-root", type=Path, required=True)
     parser.add_argument("--cpu", type=int, default=10)
@@ -892,6 +926,10 @@ def main() -> int:
     parser.add_argument("--workloads", nargs="+", choices=WORKLOADS, default=list(WORKLOADS))
     parser.add_argument("--retry-terminal", action="store_true", help="re-run terminal failed/unsupported workload records")
     args = parser.parse_args()
+    if args.reschedule_with_production_scheduler and not args.original_f45_replica_scaling:
+        parser.error("shared scheduler mode currently requires --original-f45-replica-scaling")
+    if args.reschedule_with_production_scheduler and args.results_root.resolve() == (ROOT / "results/input0-amoeba-full-2x2-direct").resolve():
+        parser.error("shared scheduler measurements require a separate --results-root")
     if args.diagnostic_ii_ceiling == 23 and args.results_root.resolve() == (ROOT / "results/input0-amoeba-full-2x2-direct").resolve():
         parser.error("II23 diagnostics require a separate --results-root")
     if args.diagnostic_minimum_legal_profile_initialization and args.diagnostic_ii_ceiling != 23:

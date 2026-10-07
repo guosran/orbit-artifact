@@ -1,0 +1,170 @@
+{
+  "schema": "orbit-input0-memory-fusion-fission-r9-frozen-summary-v1",
+  "status": "complete",
+  "captured_date_hkt": "2026-10-07",
+  "run_ended_utc": "2026-10-06T23:20:47.267318+00:00",
+  "run_revision": "r9-queue-v2",
+  "input_index": 0,
+  "architecture": {
+    "cgra_rows": 4,
+    "cgra_columns": 4,
+    "pe_rows": 2,
+    "pe_columns": 2,
+    "context_mem_items": 6,
+    "registers": 32,
+    "runtime_ii_ceiling": 20,
+    "ray_diagnostic_runtime_ii_ceiling": 23,
+    "training_and_normalization_ii_ceiling": 20
+  },
+  "stage_initialization": "independent",
+  "stage_order": [
+    "shape-temporal",
+    "shape-temporal-replica",
+    "shape-temporal-replica-tiling",
+    "full-joint",
+    "full-joint-fission"
+  ],
+  "formal_go": false,
+  "native_stage_results_verified": 30,
+  "fixed1x1_verified": {
+    "status": "complete-with-model-domain-exclusion",
+    "summary": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/summary.json",
+    "workloads": {
+      "llama": {
+        "status": "complete",
+        "baseline_cycles": 1129656837,
+        "result": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/llama/result.json",
+        "independent_trace": "pass",
+        "numeric": "pass",
+        "mapper_equality": "pass"
+      },
+      "lu": {
+        "status": "complete",
+        "baseline_cycles": 18501,
+        "result": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/lu/result.json",
+        "independent_trace": "pass",
+        "numeric": "pass",
+        "mapper_equality": "pass"
+      },
+      "harris": {
+        "status": "complete",
+        "baseline_cycles": 988258,
+        "result": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/harris/result.json",
+        "independent_trace": "pass",
+        "numeric": "pass",
+        "mapper_equality": "pass"
+      },
+      "radar": {
+        "status": "complete",
+        "baseline_cycles": 1317811,
+        "result": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/radar/result.json",
+        "independent_trace": "pass",
+        "numeric": "pass",
+        "mapper_equality": "pass"
+      },
+      "gcn": {
+        "status": "complete",
+        "baseline_cycles": 95775,
+        "result": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/gcn/result.json",
+        "independent_trace": "pass",
+        "numeric": "pass",
+        "mapper_equality": "pass"
+      },
+      "raytracing": {
+        "status": "unsupported-model-domain",
+        "baseline_cycles": null,
+        "result": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/raytracing/result.json",
+        "domain_admission": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/fixed1x1/attempt-0002/input0-all-unit-2x2-v60-memory-fusion-fission-r5-20261006/raytracing/model-domain-admission.json",
+        "task": "Task_13",
+        "analytical_lower_bound": 83,
+        "runtime_ii_ceiling": 23,
+        "training_ii_ceiling": 20
+      }
+    }
+  },
+  "common_amoeba_ray_status": "pending",
+  "common_amoeba_replica_timing_policy": "ceil(full common-parent mapped duration/original active replicas)",
+  "raw_runtime_root": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006",
+  "raw_runtime_paths_are_capture_provenance": true,
+  "validation": "Exact R9 source/pin/model/architecture/protocol binding; queue native fixed1x1 receipt and state validator; strict native/trace/numeric stage receipt reader. Captured receipts retain their original local paths, not clean-clone cache bindings.",
+  "rows": [
+    {
+      "workload": "llama",
+      "fixed1x1_status": "complete",
+      "fixed1x1_cycles": 1129656837,
+      "common_amoeba_cycles": 757412371,
+      "stages": {
+        "S1": 762655252,
+        "S2": 595551249,
+        "S3": 424250388,
+        "S4": 424250388,
+        "S5": 424250388
+      }
+    },
+    {
+      "workload": "lu",
+      "fixed1x1_status": "complete",
+      "fixed1x1_cycles": 18501,
+      "common_amoeba_cycles": 9811,
+      "stages": {
+        "S1": 11347,
+        "S2": 9486,
+        "S3": 9486,
+        "S4": 9486,
+        "S5": 9486
+      }
+    },
+    {
+      "workload": "harris",
+      "fixed1x1_status": "complete",
+      "fixed1x1_cycles": 988258,
+      "common_amoeba_cycles": 926769,
+      "stages": {
+        "S1": 941012,
+        "S2": 899620,
+        "S3": 621600,
+        "S4": 621600,
+        "S5": 621600
+      }
+    },
+    {
+      "workload": "radar",
+      "fixed1x1_status": "complete",
+      "fixed1x1_cycles": 1317811,
+      "common_amoeba_cycles": 1317811,
+      "stages": {
+        "S1": 1309622,
+        "S2": 1309622,
+        "S3": 1309622,
+        "S4": 1309622,
+        "S5": 1309622
+      }
+    },
+    {
+      "workload": "gcn",
+      "fixed1x1_status": "complete",
+      "fixed1x1_cycles": 95775,
+      "common_amoeba_cycles": 83802,
+      "stages": {
+        "S1": 89388,
+        "S2": 86987,
+        "S3": 86987,
+        "S4": 86987,
+        "S5": 86987
+      }
+    },
+    {
+      "workload": "raytracing",
+      "fixed1x1_status": "unsupported-model-domain",
+      "fixed1x1_cycles": null,
+      "common_amoeba_cycles": null,
+      "stages": {
+        "S1": 176711,
+        "S2": 176711,
+        "S3": 176711,
+        "S4": 176711,
+        "S5": 176711
+      }
+    }
+  ]
+}

@@ -45,6 +45,9 @@ REPLAY_FILES = (
     "scripts/replay_cpp_global_top5.py",
     "scripts/validate_embedded_native_trace.py",
     "scripts/run_input0_numeric.py",
+    "scripts/run_input0_all_unit_baselines.py",
+    "scripts/run_input0_original_amoeba_baselines.py",
+    "scripts/validate_original_amoeba_fixed_retiming.py",
     "config/architectures/amoeba_4x4_vectorcgra_sram.json",
 )
 MODEL_FILES = ("ensemble.json", "baseline.json", "large-operation.json", "ranking.json")

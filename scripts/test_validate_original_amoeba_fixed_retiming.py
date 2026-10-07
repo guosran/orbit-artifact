@@ -450,6 +450,71 @@ def f45_replica_fixture() -> tuple[str, dict, dict, dict, dict, tempfile.Tempora
     return ir, result, body, profiles, costs, temporary
 
 
+def _sync_production_scheduler_witness(result: dict) -> None:
+    trace = result["fixed_decision_trace"]
+    decisions = {
+        "dispatch_order": copy.deepcopy(result["dispatch_order"]),
+        "task_schedule": copy.deepcopy(result["task_schedule"]),
+    }
+    result["production_scheduler_decisions"] = copy.deepcopy(decisions)
+    trace["production_scheduler_decisions"] = copy.deepcopy(decisions)
+    trace["dispatch_order"] = copy.deepcopy(decisions["dispatch_order"])
+    trace["task_schedule"] = copy.deepcopy(decisions["task_schedule"])
+
+
+def production_scheduler_fixture(
+        independent_tasks: bool = False
+) -> tuple[str, dict, dict, dict, dict, tempfile.TemporaryDirectory]:
+    """Keep original F45 choices while replacing only its schedule decisions."""
+    ir, result, body, profiles, costs, temporary = f45_replica_fixture()
+    trace = result["fixed_decision_trace"]
+    a_cells = [
+        {"row": 0, "col": 0, "replica_id": 0, "context_id": 0},
+        {"row": 0, "col": 1, "replica_id": 0, "context_id": 0},
+        # F45 placed replica 1 as 2x1. The production scheduler must retain
+        # the selected profile orientation, 1x2, for every replica.
+        {"row": 2, "col": 0, "replica_id": 1, "context_id": 0},
+        {"row": 2, "col": 1, "replica_id": 1, "context_id": 0},
+    ]
+    b_cell = {"row": 0, "col": 2, "replica_id": 0, "context_id": 0}
+    a_schedule = {
+        "task": "A", "row": 0, "col": 0, "rows": 1, "cols": 2,
+        "start_cycle": 0, "end_cycle": 7, "idle_cycles": 0,
+        "duration_cycles": 7, "occupied_cells": a_cells,
+    }
+    b_schedule = {
+        "task": "B", "row": 0, "col": 2, "rows": 1, "cols": 1,
+        "start_cycle": 21, "end_cycle": 35, "idle_cycles": 6,
+        "duration_cycles": 14, "occupied_cells": [b_cell],
+    }
+    if independent_tasks:
+        trace["dependencies"] = []
+        trace["routes"] = []
+        result["replayed_communication_edges"] = 0
+        result["dispatch_order"] = ["B", "A"]
+        b_schedule.update({"start_cycle": 0, "end_cycle": 14, "idle_cycles": 0})
+        result["task_schedule"] = [b_schedule, a_schedule]
+        result["mapped_whole_program_cycles"] = 14
+        result["predicted_whole_program_cycles"] = 14
+    else:
+        result["dispatch_order"] = ["A", "B"]
+        result["task_schedule"] = [a_schedule, b_schedule]
+        result["mapped_whole_program_cycles"] = 35
+        result["predicted_whole_program_cycles"] = 35
+    result["scheduler"] = {
+        "backend": "orbit-production",
+        "dispatch_policy": "critical-path",
+        "timing": "common-explicit-network",
+    }
+    result["shared_scheduler_resource_only"] = True
+    trace["scheduler"] = copy.deepcopy(result["scheduler"])
+    trace["shared_scheduler_resource_only"] = True
+    trace["dispatch_order"] = copy.deepcopy(result["dispatch_order"])
+    trace["task_schedule"] = copy.deepcopy(result["task_schedule"])
+    _sync_production_scheduler_witness(result)
+    return ir, result, body, profiles, costs, temporary
+
+
 def expanded_fixture() -> tuple[str, dict, dict, dict, dict, dict, tempfile.TemporaryDirectory]:
     """A source parent split into differently oriented, actually profiled children."""
     ir, result, body, profiles, costs, temporary = fixture()
@@ -1110,6 +1175,168 @@ class F45ReplicaTimingPolicyValidatorTests(unittest.TestCase):
                         result["fixed_decision_trace"]["task_schedule"]):
                 rows[0].update({"row": 2, "col": 0, "rows": 2, "cols": 1})
         self.assert_invalid_after(report_secondary_as_primary)
+
+
+class ProductionSchedulerRescheduleValidatorTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.set_fixture()
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def set_fixture(self, independent_tasks: bool = False) -> None:
+        (self.ir, self.result, self.body, self.profiles, self.costs,
+         self.temporary) = production_scheduler_fixture(independent_tasks)
+
+    def validate_current(self) -> dict:
+        profile_path = Path(self.costs["original_amoeba_profile_binding"]["profile_file"])
+        profile_path.write_text(json.dumps(self.profiles))
+        return validator.validate(self.ir, self.result, self.body,
+                                  self.profiles, self.costs)
+
+    def assert_invalid_after(self, mutate) -> None:
+        ir = self.ir
+        result = copy.deepcopy(self.result)
+        body = copy.deepcopy(self.body)
+        profiles = copy.deepcopy(self.profiles)
+        costs = copy.deepcopy(self.costs)
+        changed_ir = mutate(ir, result, body, profiles, costs)
+        if isinstance(changed_ir, str):
+            ir = changed_ir
+        profile_path = Path(costs["original_amoeba_profile_binding"]["profile_file"])
+        profile_path.write_text(json.dumps(profiles))
+        with self.assertRaises(ValueError):
+            validator.validate(ir, result, body, profiles, costs)
+
+    def test_accepts_new_placements_with_selected_shape_and_original_f45_evidence(self) -> None:
+        report = self.validate_current()
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["scheduler"], validator.PRODUCTION_SCHEDULER_POLICY)
+        self.assertTrue(report["shared_scheduler_resource_only"])
+        original_a = self.result["original_decisions"][0]
+        self.assertEqual(original_a["replicas"][1]["shape"], "2x1")
+        output_a = next(row for row in self.result["task_schedule"] if row["task"] == "A")
+        replica_one = [cell for cell in output_a["occupied_cells"]
+                       if cell["replica_id"] == 1]
+        self.assertEqual({(cell["row"], cell["col"]) for cell in replica_one},
+                         {(2, 0), (2, 1)})
+        self.assertEqual(output_a["duration_cycles"], 7)
+
+    def test_accepts_a_legal_alternate_topological_dispatch(self) -> None:
+        self.temporary.cleanup()
+        self.set_fixture(independent_tasks=True)
+        report = self.validate_current()
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(self.result["dispatch_order"], ["B", "A"])
+        self.assertEqual(self.result["original_decisions"][0]["dispatch_index"], 0)
+        self.assertEqual(self.result["original_decisions"][1]["dispatch_index"], 1)
+
+    def test_rejects_missing_or_changed_scheduler_witness(self) -> None:
+        self.assert_invalid_after(lambda ir, result, body, profiles, costs:
+                                  result.pop("scheduler"))
+        self.assert_invalid_after(lambda ir, result, body, profiles, costs:
+                                  result["fixed_decision_trace"]["scheduler"].update(
+                                      {"timing": "legacy-fixed-decisions"}))
+        self.assert_invalid_after(lambda ir, result, body, profiles, costs:
+                                  result["fixed_decision_trace"].pop(
+                                      "production_scheduler_decisions"))
+        self.assert_invalid_after(lambda ir, result, body, profiles, costs:
+                                  result["production_scheduler_decisions"][
+                                      "dispatch_order"].reverse())
+
+    def test_rejects_rescheduler_mode_without_original_f45_replica_policy(self) -> None:
+        def remove_policy(ir, result, body, profiles, costs):
+            result.pop("replica_timing_policy")
+            result["fixed_decision_trace"].pop("replica_timing_policy")
+        self.assert_invalid_after(remove_policy)
+
+    def test_rejects_changed_original_f45_contexts_or_internal_dispatch(self) -> None:
+        def alter_original_context(ir, result, body, profiles, costs):
+            result["original_decisions"][0]["actual_cells"][0]["context_id"] = 5
+        self.assert_invalid_after(alter_original_context)
+
+        def alter_source_dispatch(ir, result, body, profiles, costs):
+            return ir.replace('amoeba.task_scheduler_dispatch_order = ["A", "B"]',
+                              'amoeba.task_scheduler_dispatch_order = ["B", "A"]')
+        self.assert_invalid_after(alter_source_dispatch)
+
+    def test_rejects_per_replica_shape_count_or_replica_count_drift(self) -> None:
+        def rotate_new_replica(ir, result, body, profiles, costs):
+            schedule = next(row for row in result["task_schedule"] if row["task"] == "A")
+            for cell in schedule["occupied_cells"]:
+                if cell["replica_id"] == 1:
+                    cell["row"], cell["col"] = ((2, 2) if cell["col"] == 0
+                                                  else (3, 2))
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(rotate_new_replica)
+
+        def drop_one_cgra(ir, result, body, profiles, costs):
+            schedule = next(row for row in result["task_schedule"] if row["task"] == "A")
+            schedule["occupied_cells"].pop(0)
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(drop_one_cgra)
+
+        def drop_replica(ir, result, body, profiles, costs):
+            schedule = next(row for row in result["task_schedule"] if row["task"] == "A")
+            schedule["occupied_cells"] = [cell for cell in schedule["occupied_cells"]
+                                           if cell["replica_id"] == 0]
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(drop_replica)
+
+    def test_rejects_changed_duration_after_ceil_parent_replica_scaling(self) -> None:
+        def understate_duration(ir, result, body, profiles, costs):
+            task_cost = next(row for row in result["task_costs"] if row["task"] == "A")
+            task_cost["mapped_duration_cycles"] = 6
+            binding = next(row for row in result["fixed_decision_trace"][
+                "task_profile_bindings"] if row["task"] == "A")
+            binding["mapped_duration_cycles"] = 6
+            schedule = next(row for row in result["task_schedule"] if row["task"] == "A")
+            schedule["end_cycle"] = 6
+            schedule["duration_cycles"] = 6
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(understate_duration)
+
+    def test_rejects_body_proof_or_production_schedule_forgery(self) -> None:
+        self.assert_invalid_after(lambda ir, result, body, profiles, costs:
+                                  body["tasks"][0].__setitem__("normalized_mapper_body", "forged"))
+        self.assert_invalid_after(lambda ir, result, body, profiles, costs:
+                                  result["task_schedule"][0].__setitem__("row", 3))
+
+    def test_rejects_invalid_output_context_and_out_of_order_dependency(self) -> None:
+        def bad_context(ir, result, body, profiles, costs):
+            schedule = next(row for row in result["task_schedule"] if row["task"] == "B")
+            schedule["occupied_cells"][0]["context_id"] = 6
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(bad_context)
+
+        def reverse_dependency(ir, result, body, profiles, costs):
+            result["dispatch_order"] = ["B", "A"]
+            result["task_schedule"] = [result["task_schedule"][1],
+                                       result["task_schedule"][0]]
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(reverse_dependency)
+
+    def test_rejects_route_endpoint_and_resource_overlap_on_new_cells(self) -> None:
+        def route_to_old_cell(ir, result, body, profiles, costs):
+            result["fixed_decision_trace"]["routes"][0]["source_row"] = 3
+        self.assert_invalid_after(route_to_old_cell)
+
+        self.temporary.cleanup()
+        self.set_fixture(independent_tasks=True)
+        def overlap_tasks(ir, result, body, profiles, costs):
+            b_schedule = next(row for row in result["task_schedule"] if row["task"] == "B")
+            b_schedule.update({"row": 0, "col": 0})
+            b_schedule["occupied_cells"] = [
+                {"row": 0, "col": 0, "replica_id": 0, "context_id": 0}]
+            a_schedule = next(row for row in result["task_schedule"] if row["task"] == "A")
+            a_schedule["occupied_cells"][0]["context_id"] = 1
+            _sync_production_scheduler_witness(result)
+        self.assert_invalid_after(overlap_tasks)
+
+    def test_rejects_expanded_child_mode_explicitly(self) -> None:
+        with self.assertRaisesRegex(ValueError, "does not support expanded child mode"):
+            validator.validate(self.ir, self.result, self.body, self.profiles,
+                               self.costs, replica_profile_evidence={})
 
 
 class ExpandedOriginalReplicaRetimingValidatorTests(unittest.TestCase):

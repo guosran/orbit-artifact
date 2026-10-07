@@ -1,0 +1,156 @@
+{
+  "schema": "orbit-fusion-memory-elimination-diagnostics-v1",
+  "scope": "actual source-proven candidates; separate from full search best-found results",
+  "formal_go": false,
+  "sibling": {
+    "workload": "radar",
+    "pair": [
+      "Task_4",
+      "Task_5"
+    ],
+    "loads_before": 8,
+    "loads_after": 4,
+    "stores_before": 2,
+    "stores_after": 2,
+    "original_ii": [
+      7,
+      7
+    ],
+    "fused_ii_by_shape": {
+      "1x1": 12,
+      "1x2": 9
+    },
+    "original_pair_total_pes": 8,
+    "same_pe_comparison_shape": "1x2",
+    "measurements": [
+      {
+        "fused_shape": "1x1",
+        "native_cycles": 1973166,
+        "fixed1x1_native_cycles": 1317811,
+        "delta_cycles": 655355,
+        "delta_percent": 49.730575932360566,
+        "numeric": "pass",
+        "mapper_equality": "pass",
+        "independent_trace": "pass",
+        "source_result": "/tmp/orbit-radar-sibling-native-r4-20261006-1x1-r2/result.json",
+        "source_iteration_domain_verified": true,
+        "diagnostic_only": true,
+        "search_winner_claim": false
+      },
+      {
+        "fused_shape": "1x2",
+        "native_cycles": 1579954,
+        "fixed1x1_native_cycles": 1317811,
+        "delta_cycles": 262143,
+        "delta_percent": 19.89230625635998,
+        "numeric": "pass",
+        "mapper_equality": "pass",
+        "independent_trace": "pass",
+        "source_result": "/tmp/orbit-radar-sibling-native-r4-20261006-1x2/result.json",
+        "source_iteration_domain_verified": true,
+        "diagnostic_only": true,
+        "search_winner_claim": false
+      }
+    ]
+  },
+  "producer_consumer_retained": [
+    {
+      "workload": "harris",
+      "pair": [
+        "Task_0",
+        "Task_1"
+      ],
+      "memory_access_counts": {
+        "before_parent_pair": {
+          "loads": 4,
+          "stores": 2,
+          "by_task": {
+            "Task_0": {
+              "loads": 3,
+              "stores": 1
+            },
+            "Task_1": {
+              "loads": 1,
+              "stores": 1
+            }
+          }
+        },
+        "after_fused_task": {
+          "loads": 3,
+          "stores": 2
+        },
+        "removed": {
+          "loads": 1,
+          "stores": 0
+        }
+      },
+      "elimination_metadata": {
+        "loads": 1,
+        "stores": 0
+      },
+      "taskflow_coverage": {
+        "before_task_count": 24,
+        "after_task_count": 23,
+        "exactly_two_replaced_and_unrelated_tasks_unchanged": true,
+        "fused_result_ssa": "%done_writes:2",
+        "fused_output_roots": [
+          "%arg4",
+          "%arg5"
+        ],
+        "downstream_task": "Task_2",
+        "downstream_reads_fused_result": true,
+        "downstream_header": "%done_writes_0 = taskflow.task @Task_2 will_reads(%done_writes#1 : memref<?x128xi32>) will_writes(%arg6 : memref<?x128xi32>) value_inputs(%c63, %c2_i32 : index, i32) [original_read_memrefs(%arg5 : memref<?x128xi32>), original_write_memrefs(%arg6 : memref<?x128xi32>)]"
+      }
+    },
+    {
+      "workload": "radar",
+      "pair": [
+        "Task_16",
+        "Task_17"
+      ],
+      "memory_access_counts": {
+        "before_parent_pair": {
+          "loads": 6,
+          "stores": 2,
+          "by_task": {
+            "Task_16": {
+              "loads": 2,
+              "stores": 1
+            },
+            "Task_17": {
+              "loads": 4,
+              "stores": 1
+            }
+          }
+        },
+        "after_fused_task": {
+          "loads": 5,
+          "stores": 2
+        },
+        "removed": {
+          "loads": 1,
+          "stores": 0
+        }
+      },
+      "elimination_metadata": {
+        "loads": 1,
+        "stores": 0
+      },
+      "taskflow_coverage": {
+        "before_task_count": 21,
+        "after_task_count": 20,
+        "exactly_two_replaced_and_unrelated_tasks_unchanged": true,
+        "fused_result_ssa": "%done_writes_15:2",
+        "fused_output_roots": [
+          "%arg26",
+          "%arg27"
+        ],
+        "downstream_task": "Task_18",
+        "downstream_reads_fused_result": true,
+        "downstream_header": "%done_writes_16 = taskflow.task @Task_18 will_reads(%done_writes_15#1, %done_writes_10 : memref<?x256xi32>, memref<?x256xi32>) will_writes(%arg28 : memref<?x256xi32>) value_inputs(%c64, %c0_i32 : index, i32) [original_read_memrefs(%arg27, %arg21 : memref<?x256xi32>, memref<?x256xi32>), original_write_memrefs(%arg28 : memref<?x256xi32>)]"
+      }
+    }
+  ],
+  "private_intermediate_policy": "erase one paired load/store only for private exclusive storage; public intermediates retain observable producer store",
+  "proof_dependent_dialect_fix": "/home/x/shiran/project/orbit-artifact/.work/producer-consumer-real-retained-load-r5-20261006/standalone-verifier-summary.json"
+}

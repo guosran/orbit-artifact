@@ -43,6 +43,7 @@ def main() -> int:
     chain._validate_options(options)
     config = chain.load_config(config_path)
     config["config_base"] = str(config_path.parent.resolve())
+    chain.validate_stage_inputs(config, options, config_base=config_path.parent.resolve())
     manifest = chain._ensure_contract_snapshot(
         options.output_root, chain._contract_specs(
             config, options, config_base=config_path.parent.resolve()))
@@ -59,6 +60,8 @@ def main() -> int:
               "status": "running", "started_utc": chain.now(),
               "contract_manifest": str(manifest), "cpu_budget": required,
               "jobs_per_worker": args.jobs_per_worker, "subprocess_timeout": None,
+              "stage_initialization": options.stage_initialization,
+              "stage_order": list(chain.stage_order(options)),
               "lanes": {}, "workloads": {}}
     chain.atomic_write(record_path, record)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the six-workload input-0 neighborhood stages as a resumable chain.
+"""Run independently initialized input-0 ablation stages with exact resume binding.
 
 The C++ ``search-joint-neighborhood`` pass remains the owner of action
 generation, legality, canonicalisation, scoring, and archive ordering.  This
@@ -7,16 +7,16 @@ module only wires already source-owned records through
 ``scripts/neighborhood_replay.py``.  In particular it never constructs a
 candidate, derives a score, or ranks a shortlist in Python.
 
-The launcher is intentionally configuration driven.  A workload entry names
-the exact canonical program and cost/model inputs for that workload; optional
-``stages.<stage>.reuse_result`` entries can adopt a previously completed
-stage, but only when its source-binding sidecar is byte-for-byte compatible
-with the current protocol inputs.  Otherwise use a new output namespace.
+The launcher is configuration driven and defaults to independent stages. Each
+stage starts from the same original canonical program, explores every enabled
+family and owns its checkpoint. Cross-stage seeds and imported results are
+rejected. The explicit previous-winner policy remains for historical runs;
+exact bindings prevent the two policies from sharing a result namespace.
 """
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 import json
 import os
@@ -34,20 +34,87 @@ DEFAULT_TABLE = ROOT / "scripts/render_neighborhood_table.py"
 DEFAULT_PROTOCOL = ROOT / "config/protocols/amoeba_input0_neighborhood_v3.json"
 WORKLOADS = ("llama", "lu", "harris", "radar", "gcn", "raytracing")
 STAGES = (
-    "shape-only",
     "shape-temporal",
     "shape-temporal-replica",
     "shape-temporal-replica-tiling",
     "full-joint",
 )
+LEGACY_STAGES = ("shape-only",) + STAGES
+FISSION_STAGE = "full-joint-fission"
+FISSION_STAGES = STAGES + (FISSION_STAGE,)
+LEGACY_FISSION_STAGES = LEGACY_STAGES + (FISSION_STAGE,)
+STAGE_CHOICES = LEGACY_FISSION_STAGES
 CHAIN_SCHEMA = "orbit-amoeba-input0-neighborhood-chain-v1"
 BINDING_SCHEMA = "orbit-neighborhood-chain-binding-v1"
 CONTRACT_SCHEMA = "orbit-neighborhood-byte-contract-v1"
 CONTRACT_DIR = "_binding"
+SHARED_ORBIT_SCHEDULER = {
+    "backend": "orbit-production",
+    "dispatch_policy": "critical-path",
+    "timing": "common-explicit-network",
+}
 
 
 class ChainError(RuntimeError):
     """The chain cannot safely continue under the requested binding."""
+
+
+def protocol_stages(protocol: Mapping[str, Any]) -> tuple[str, ...]:
+    """Keep historical numbering bound to its protocol; new runs use four stages."""
+    declared = protocol.get("stages")
+    if declared is None:
+        return STAGES
+    if not isinstance(declared, list):
+        raise ChainError("protocol stages must be a list")
+    names = tuple(item.get("name") if isinstance(item, Mapping) else item
+                  for item in declared)
+    if names not in (STAGES, LEGACY_STAGES, FISSION_STAGES,
+                     LEGACY_FISSION_STAGES):
+        raise ChainError("protocol must declare the merged four-stage, historical five-stage, or canonical fission stage order")
+    return names
+
+
+def protocol_scheduler(protocol: Mapping[str, Any]) -> dict[str, str] | None:
+    value = protocol.get("scheduler")
+    if value is None:
+        return None
+    if not isinstance(value, Mapping) or dict(value) != SHARED_ORBIT_SCHEDULER:
+        raise ChainError("protocol scheduler must bind the shared ORBIT critical-path profile")
+    if protocol_stages(protocol) not in (STAGES, FISSION_STAGES):
+        raise ChainError("shared ORBIT scheduler profile requires the independent four-stage or fission protocol")
+    stages = protocol.get("stages", [])
+    if any(not isinstance(stage, Mapping) or stage.get("dispatch") != "critical-path"
+           or stage.get("scheduling_mode") != "spatial-temporal" for stage in stages):
+        raise ChainError("shared ORBIT scheduler stages must use critical-path spatial-temporal dispatch")
+    return dict(SHARED_ORBIT_SCHEDULER)
+
+
+def diagnostic_ii_ceiling(protocol: Mapping[str, Any]) -> int | None:
+    """Read the opt-in diagnostic II ceiling carried by a workload protocol."""
+    search = protocol.get("search", {})
+    if not isinstance(search, Mapping):
+        raise ChainError("protocol search must be an object")
+    value = search.get("diagnostic_ii_ceiling")
+    if value is None:
+        return None
+    if not isinstance(value, int) or isinstance(value, bool) or value not in (20, 23):
+        raise ChainError("protocol diagnostic_ii_ceiling must be 20 or 23")
+    if value == 23 and search.get("supported_shape_bootstrap_policy") != "minimum-area-supported-model-shape-v1":
+        raise ChainError("diagnostic II ceiling 23 requires supported-shape bootstrap policy")
+    return value
+
+
+def stage_order(options: "ChainOptions") -> tuple[str, ...]:
+    manifest_path = _contract_manifest_path(options.output_root)
+    if manifest_path.is_file():
+        # Check the frozen protocol bytes before interpreting stage metadata.
+        # A malformed edit must not bypass the existing resume contract check.
+        for source in read_json(manifest_path).get("sources", []):
+            if source.get("path") == str(options.protocol.resolve()):
+                snapshot = Path(str(source["snapshot"]))
+                if not _stream_equal(options.protocol, snapshot):
+                    raise ChainError(f"immutable chain input bytes changed: {options.protocol}")
+    return protocol_stages(read_json(options.protocol))
 
 
 def now() -> str:
@@ -185,12 +252,19 @@ def _contract_specs(config: Mapping[str, Any], options: "ChainOptions",
     add(options.seed_index, "seed_index")
     for workload in options.workloads:
         entry = _merged_workload(config, workload)
-        for stage in STAGES:
+        add(_workload_input(entry, "protocol", options.protocol, base=config_base),
+            "protocol", workload)
+        add(_workload_input(entry, "architecture", options.architecture, base=config_base),
+            "architecture", workload)
+        for stage in stage_order(options):
             model_path = _path_for(entry, "model_cache", stage, base=config_base) or options.model_cache
             if model_path:
                 for model_file in _model_files(model_path):
                     add(model_file, "model", workload, stage)
             add(_path_for(entry, "canonical", stage, base=config_base), "canonical", workload, stage)
+            if stage == FISSION_STAGE:
+                add(_path_for(entry, "prepared_source_file", stage, base=config_base),
+                    "prepared_source", workload, stage)
             add(_path_for(entry, "parent_cost_file", stage, base=config_base), "parent_cost", workload, stage)
             add(_path_for(entry, "seed_manifest", stage, base=config_base), "seed_manifest", workload, stage)
             add(_path_for(entry, "previous_winner", stage, base=config_base), "previous_winner", workload, stage)
@@ -330,11 +404,20 @@ class ChainOptions:
     # the row under the current protocol before it can enter the archive.
     seed_index: Path | None = None
     workloads: tuple[str, ...] = WORKLOADS
-    start_stage: str = STAGES[0]
+    start_stage: str | None = None
     allow_missing_table: bool = False
+    stage_initialization: str = "independent"
 
 
-def _validate_options(options: ChainOptions) -> None:
+def _validate_options(options: ChainOptions, config: Mapping[str, Any] | None = None,
+                      *, config_base: Path = ROOT) -> None:
+    if options.stage_initialization not in {"independent", "previous-winner"}:
+        raise ChainError("unknown stage initialization policy")
+    policy = read_json(options.protocol).get("search", {}).get("stage_initialization")
+    if policy is not None and policy != options.stage_initialization:
+        raise ChainError("stage initialization differs from the bound protocol")
+    if options.stage_initialization == "independent" and options.seed_index is not None:
+        raise ChainError("independent stages cannot import a seed index")
     if not 1 <= options.jobs <= 10:
         raise ChainError("jobs must be between 1 and 10; mapper budget is ten cores")
     if options.max_rounds <= 0 or options.max_candidates <= 0:
@@ -343,7 +426,7 @@ def _validate_options(options: ChainOptions) -> None:
         raise ChainError("beam/diversity settings are invalid")
     if not options.workloads:
         raise ChainError("at least one workload is required")
-    if options.start_stage not in STAGES:
+    if options.start_stage is not None and options.start_stage not in stage_order(options):
         raise ChainError(f"unknown start stage: {options.start_stage}")
     unknown = set(options.workloads) - set(WORKLOADS)
     if unknown:
@@ -356,6 +439,51 @@ def _validate_options(options: ChainOptions) -> None:
         raise ChainError(f"seed_index does not exist: {options.seed_index}")
     if options.inter_task_network is not None and not options.inter_task_network.is_file():
         raise ChainError(f"inter_task_network does not exist: {options.inter_task_network}")
+    scheduler = protocol_scheduler(read_json(options.protocol))
+    protocol = read_json(options.protocol)
+    if FISSION_STAGE in stage_order(options):
+        if options.stage_initialization != "independent":
+            raise ChainError("full-joint-fission must start independently from the canonical module")
+        if protocol.get("stage_scheme") != FISSION_STAGE:
+            raise ChainError("fission protocol stage_scheme must be full-joint-fission")
+        cap = protocol.get("search", {}).get("max_fission_actions_per_task")
+        if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+            raise ChainError("fission protocol must bind a positive search.max_fission_actions_per_task")
+    if scheduler is not None:
+        if options.inter_task_network is None:
+            raise ChainError("shared ORBIT scheduler profile requires the common explicit inter-task network")
+        if options.inter_task_network.resolve() != (ROOT / "config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml").resolve():
+            raise ChainError("shared ORBIT scheduler must use the unchanged common network specification")
+    if config is not None:
+        for workload in options.workloads:
+            entry = _merged_workload(config, workload)
+            selected_protocol_path = _workload_input(entry, "protocol", options.protocol,
+                                                     base=config_base)
+            selected_architecture = _workload_input(entry, "architecture", options.architecture,
+                                                    base=config_base)
+            if not selected_protocol_path.is_file():
+                raise ChainError(f"{workload}: protocol does not exist: {selected_protocol_path}")
+            if not selected_architecture.is_file():
+                raise ChainError(f"{workload}: architecture does not exist: {selected_architecture}")
+            selected_protocol = read_json(selected_protocol_path)
+            if protocol_stages(selected_protocol) != stage_order(options):
+                raise ChainError(f"{workload}: protocol stage order differs from the chain protocol")
+            if selected_protocol.get("search", {}).get("stage_initialization") not in (
+                    None, options.stage_initialization):
+                raise ChainError(f"{workload}: stage initialization differs from the bound protocol")
+            diagnostic_ii_ceiling(selected_protocol)
+            selected_scheduler = protocol_scheduler(selected_protocol)
+            if selected_scheduler is not None:
+                if options.inter_task_network is None:
+                    raise ChainError(f"{workload}: shared ORBIT scheduler requires the common explicit inter-task network")
+                if options.inter_task_network.resolve() != (ROOT / "config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml").resolve():
+                    raise ChainError(f"{workload}: shared ORBIT scheduler must use the unchanged common network specification")
+            if FISSION_STAGE in stage_order(options):
+                if selected_protocol.get("stage_scheme") != FISSION_STAGE:
+                    raise ChainError(f"{workload}: fission protocol stage_scheme must be full-joint-fission")
+                cap = selected_protocol.get("search", {}).get("max_fission_actions_per_task")
+                if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+                    raise ChainError(f"{workload}: protocol must bind a positive search.max_fission_actions_per_task")
     if not options.mapping_cache.exists():
         raise ChainError(f"mapping_cache does not exist: {options.mapping_cache}")
     if not options.table_script.is_file() and not options.allow_missing_table:
@@ -365,6 +493,13 @@ def _validate_options(options: ChainOptions) -> None:
 def _path_for(entry: Mapping[str, Any], key: str, stage: str, *, base: Path) -> Path | None:
     value = _stage_value(entry, key, stage)
     return resolve_path(value, base=base)
+
+
+def _workload_input(entry: Mapping[str, Any], key: str, fallback: Path, *, base: Path) -> Path:
+    """Resolve a workload-wide architecture/protocol override or its CLI default."""
+    value = entry.get(key)
+    selected = resolve_path(value, base=base) if value is not None else None
+    return selected or fallback.resolve()
 
 
 def expected_binding(entry: Mapping[str, Any], workload: str, stage: str,
@@ -381,6 +516,10 @@ def expected_binding(entry: Mapping[str, Any], workload: str, stage: str,
     previous_override = _path_for(entry, "previous_winner", stage, base=config_base)
     if previous_override is None and stage == options.start_stage:
         previous_override = _seed_index_winner(options, workload, stage)
+    protocol_path = _workload_input(entry, "protocol", options.protocol, base=config_base)
+    architecture_path = _workload_input(entry, "architecture", options.architecture,
+                                        base=config_base)
+    protocol = read_json(protocol_path)
     binding = {
         "schema": BINDING_SCHEMA,
         "workload": workload,
@@ -388,8 +527,8 @@ def expected_binding(entry: Mapping[str, Any], workload: str, stage: str,
         "canonical_program": str(canonical),
         "function": str(function or ""),
         "optimizer": str(options.optimizer),
-        "architecture": str(options.architecture),
-        "protocol": str(options.protocol),
+        "architecture": str(architecture_path),
+        "protocol": str(protocol_path),
         "source_contract_file": str(options.source_contract_file),
         "mapping_cache": str(options.mapping_cache),
         "seed_index": str(options.seed_index) if options.seed_index else None,
@@ -404,12 +543,47 @@ def expected_binding(entry: Mapping[str, Any], workload: str, stage: str,
         "diversity_slots": options.diversity_slots,
         "start_stage": options.start_stage,
         "contract_manifest": str(contract_manifest) if contract_manifest else None,
-        "protocol_schema": _protocol_schema(options.protocol),
+        "protocol_schema": _protocol_schema(protocol_path),
         "identity_policy": "exact protocol/source-contract binding; no hash identity",
     }
+    if options.stage_initialization == "independent":
+        binding["stage_initialization"] = "independent"
+    if stage_order(options) == STAGES:
+        binding["stage_scheme"] = "merged-spatial-temporal"
+        binding["stage_order"] = list(stage_order(options))
+    elif stage_order(options) in (FISSION_STAGES, LEGACY_FISSION_STAGES):
+        binding["stage_scheme"] = FISSION_STAGE
+        binding["stage_order"] = list(stage_order(options))
     if options.inter_task_network is not None:
         binding["inter_task_network"] = str(options.inter_task_network)
         binding["inter_task_network_text"] = options.inter_task_network.read_text()
+    ceiling = diagnostic_ii_ceiling(protocol)
+    if ceiling is not None:
+        binding["diagnostic_ii_ceiling"] = ceiling
+    scheduler = protocol_scheduler(protocol)
+    if scheduler is not None:
+        binding["scheduler"] = scheduler
+    if stage == FISSION_STAGE:
+        prepared = _path_for(entry, "prepared_source_file", stage, base=config_base)
+        if prepared is None or not prepared.is_file():
+            raise ChainError(f"{workload}/{stage}: prepared_source_file is missing")
+        cap = protocol.get("search", {}).get("max_fission_actions_per_task")
+        if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+            raise ChainError("fission protocol must bind a positive search.max_fission_actions_per_task")
+        binding["prepared_source_file"] = str(prepared)
+        binding["max_fission_actions_per_task"] = cap
+        if contract_manifest is not None:
+            manifest = read_json(contract_manifest)
+            matches = [source for source in manifest.get("sources", [])
+                       if source.get("path") == str(prepared) and
+                       "prepared_source" in source.get("kinds", []) and
+                       any(context.get("workload") == workload and
+                           context.get("stage") == FISSION_STAGE
+                           for context in source.get("contexts", []))]
+            if len(matches) != 1:
+                raise ChainError(f"{workload}/{stage}: prepared source is not uniquely pinned in the contract manifest")
+            binding["prepared_source_snapshot"] = str(matches[0]["snapshot"])
+            binding["prepared_source_size_bytes"] = matches[0]["size_bytes"]
     return binding
 
 
@@ -423,10 +597,13 @@ def _protocol_schema(path: Path) -> str | None:
 
 
 def _stage_number(stage: str) -> int:
-    try:
-        return STAGES.index(stage) + 1
-    except ValueError as error:
-        raise ChainError(f"unknown stage: {stage}") from error
+    if stage == "shape-only":
+        return 1
+    if stage in STAGES:
+        return STAGES.index(stage) + 2
+    if stage == FISSION_STAGE:
+        return 6
+    raise ChainError(f"unknown stage: {stage}")
 
 
 def _seed_index_winner(options: ChainOptions, workload: str, stage: str) -> Path | None:
@@ -475,13 +652,22 @@ def _global_binding(config: Mapping[str, Any], options: ChainOptions) -> dict[st
         "start_stage": options.start_stage,
         "protocol_schema": _protocol_schema(options.protocol),
         "workloads": list(options.workloads),
-        "stages": list(STAGES),
+        "stages": list(stage_order(options)),
         "best_found": True,
         "exhaustive": False,
     }
+    if options.stage_initialization == "independent":
+        binding["stage_initialization"] = "independent"
+    if stage_order(options) == STAGES:
+        binding["stage_scheme"] = "merged-spatial-temporal"
+    elif stage_order(options) in (FISSION_STAGES, LEGACY_FISSION_STAGES):
+        binding["stage_scheme"] = FISSION_STAGE
     if options.inter_task_network is not None:
         binding["inter_task_network"] = str(options.inter_task_network)
         binding["inter_task_network_text"] = options.inter_task_network.read_text()
+    scheduler = protocol_scheduler(read_json(options.protocol))
+    if scheduler is not None:
+        binding["scheduler"] = scheduler
     return binding
 
 
@@ -543,13 +729,20 @@ def _compatible_source_binding(value: Mapping[str, Any], expected: Mapping[str, 
     """Compare semantic source inputs; output directories are intentionally ignored."""
     aliases = {"parent_cost_file": "parent_cost_file", "cost_cache": "cost_cache",
                "model_cache": "model_cache", "canonical_program": "canonical_program",
-               "optimizer": "optimizer", "architecture": "architecture"}
+               "optimizer": "optimizer", "architecture": "architecture",
+               "protocol": "protocol"}
     for expected_key, source_key in aliases.items():
         if value.get(source_key) != expected.get(expected_key):
             return False
+    if expected.get("stage_initialization") == "independent" and value.get("stage_initialization") != "independent":
+        return False
     for key in ("inter_task_network", "inter_task_network_text"):
         if value.get(key) != expected.get(key):
             return False
+    if value.get("scheduler") != expected.get("scheduler"):
+        return False
+    if value.get("diagnostic_ii_ceiling") != expected.get("diagnostic_ii_ceiling"):
+        return False
     if value.get("source_commit") != _protocol_source_commit(expected):
         return False
     protocol_schema = value.get("protocol_schema")
@@ -559,6 +752,24 @@ def _compatible_source_binding(value: Mapping[str, Any], expected: Mapping[str, 
     # admitted into the current protocol namespace.
     if value.get("source_contract_file") != expected.get("source_contract_file"):
         return False
+    if expected.get("stage") == FISSION_STAGE:
+        if (value.get("prepared_source_file") != expected.get("prepared_source_file") or
+                value.get("max_fission_actions_per_task") !=
+                expected.get("max_fission_actions_per_task")):
+            return False
+        snapshot_value = expected.get("prepared_source_snapshot")
+        if not isinstance(snapshot_value, str) or not snapshot_value:
+            return False
+        snapshot = Path(snapshot_value)
+        try:
+            exact_bytes = snapshot.read_bytes()
+            exact_text = exact_bytes.decode("utf-8")
+        except (OSError, UnicodeDecodeError):
+            return False
+        if (value.get("prepared_source_exact_text") != exact_text or
+                value.get("prepared_source_size_bytes") != len(exact_bytes) or
+                expected.get("prepared_source_size_bytes") != len(exact_bytes)):
+            return False
     return True
 
 
@@ -700,12 +911,16 @@ def _build_replay_command(*, workload: str, stage: str, entry: Mapping[str, Any]
     graph_manifests = _path_for(entry, "graph_manifests", stage, base=config_base)
     manifest = _path_for(entry, "manifest", stage, base=config_base)
     sram_config = _path_for(entry, "sram_config", stage, base=config_base) or options.sram_config
+    architecture = _workload_input(entry, "architecture", options.architecture,
+                                   base=config_base)
+    protocol_path = _workload_input(entry, "protocol", options.protocol, base=config_base)
+    protocol = read_json(protocol_path)
     checkpoint = stage_dir / "checkpoint.json"
     argv = [sys.executable, str(options.replay_script),
             "--workload", workload, "--stage", stage,
             "--canonical", str(canonical), "--output-dir", str(stage_dir),
-            "--optimizer", str(options.optimizer), "--architecture", str(options.architecture),
-            "--protocol", str(options.protocol), "--mapping-cache", str(options.mapping_cache),
+            "--optimizer", str(options.optimizer), "--architecture", str(architecture),
+            "--protocol", str(protocol_path), "--mapping-cache", str(options.mapping_cache),
             "--source-contract-file", str(options.source_contract_file),
             "--checkpoint", str(checkpoint), "--jobs", str(options.jobs),
             "--max-rounds", str(options.max_rounds),
@@ -720,6 +935,11 @@ def _build_replay_command(*, workload: str, stage: str, entry: Mapping[str, Any]
         argv += ["--cost-cache", str(cost_cache)]
     if parent_cost:
         argv += ["--parent-cost-file", str(parent_cost)]
+    argv += ["--stage-initialization", options.stage_initialization]
+    if options.stage_initialization == "independent":
+        if seed_manifest or _path_for(entry, "previous_winner", stage, base=config_base):
+            raise ChainError("independent stages cannot import seed inputs")
+        previous_winner = None
     if seed_manifest:
         argv += ["--seed-manifest", str(seed_manifest)]
     if previous_winner:
@@ -732,6 +952,17 @@ def _build_replay_command(*, workload: str, stage: str, entry: Mapping[str, Any]
         argv += ["--sram-config", str(sram_config)]
     if options.inter_task_network is not None:
         argv += ["--inter-task-network", str(options.inter_task_network)]
+    if stage == FISSION_STAGE:
+        prepared = _path_for(entry, "prepared_source_file", stage, base=config_base)
+        if prepared is None or not prepared.is_file():
+            raise ChainError(f"{workload}/{stage}: prepared_source_file is missing")
+        cap = protocol.get("search", {}).get("max_fission_actions_per_task")
+        if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+            raise ChainError("fission protocol must bind a positive search.max_fission_actions_per_task")
+        if previous_winner is not None or seed_manifest is not None or options.stage_initialization != "independent":
+            raise ChainError("full-joint-fission cannot import a previous winner or seed")
+        argv += ["--prepared-source-file", str(prepared),
+                 "--max-fission-actions-per-task", str(cap)]
     if resume:
         argv += ["--resume", str(checkpoint)]
     if skip_search:
@@ -773,7 +1004,7 @@ def _render_table(options: ChainOptions) -> dict[str, Any]:
     label = _next_label(options.output_root, "render-table")
     command = [sys.executable, str(options.table_script), "--results-root",
                str(options.output_root), "--workloads", *options.workloads,
-               "--stages", *STAGES, "--output-dir", str(options.output_root / "table")]
+               "--stages", *stage_order(options), "--output-dir", str(options.output_root / "table")]
     return _run_logged(command, options.output_root, label)
 
 
@@ -832,10 +1063,64 @@ def _stage_complete(stage_dir: Path, expected: Mapping[str, Any]) -> tuple[bool,
     return result.get("status") == "native_replayed", result
 
 
+def validate_stage_inputs(config: Mapping[str, Any], options: ChainOptions,
+                          *, config_base: Path) -> None:
+    """All independent stages share one original canonical input and no search seeds."""
+    if options.stage_initialization != "independent":
+        return
+    protocol = read_json(options.protocol)
+    stages = stage_order(options)
+    if FISSION_STAGE in stages:
+        if options.stage_initialization != "independent":
+            raise ChainError("full-joint-fission must start independently from the canonical module")
+        if protocol.get("stage_scheme") != FISSION_STAGE:
+            raise ChainError("fission protocol stage_scheme must be full-joint-fission")
+        cap = protocol.get("search", {}).get("max_fission_actions_per_task")
+        if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+            raise ChainError("fission protocol must bind a positive search.max_fission_actions_per_task")
+    if protocol.get("historical_native_winners"):
+        raise ChainError("independent stages cannot import historical native winners")
+    forbidden = {"seed_manifest", "previous_winner", "historical_native_winner",
+                 "seed_index", "reuse_result"}
+    for workload in options.workloads:
+        entry = _merged_workload(config, workload)
+        workload_protocol = read_json(_workload_input(
+            entry, "protocol", options.protocol, base=config_base))
+        if protocol_stages(workload_protocol) != stages:
+            raise ChainError(f"{workload}: protocol stage order differs from the chain protocol")
+        if workload_protocol.get("historical_native_winners"):
+            raise ChainError(f"{workload}: independent stages cannot import historical native winners")
+        if FISSION_STAGE in stages:
+            if workload_protocol.get("stage_scheme") != FISSION_STAGE:
+                raise ChainError(f"{workload}: fission protocol stage_scheme must be full-joint-fission")
+            cap = workload_protocol.get("search", {}).get("max_fission_actions_per_task")
+            if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+                raise ChainError(f"{workload}: protocol must bind a positive search.max_fission_actions_per_task")
+        canonical = _path_for(entry, "canonical", stages[0], base=config_base)
+        function = _stage_value(entry, "function", stages[0])
+        for stage in stages:
+            if any(_stage_value(entry, key, stage) is not None for key in forbidden):
+                raise ChainError(f"{workload}/{stage}: independent stages cannot import seeds or results")
+            if (_path_for(entry, "canonical", stage, base=config_base) != canonical or
+                    _stage_value(entry, "function", stage) != function):
+                raise ChainError(f"{workload}: independent stages require the same canonical program and function")
+            if stage == FISSION_STAGE:
+                prepared = _path_for(entry, "prepared_source_file", stage, base=config_base)
+                if prepared is None or not prepared.is_file():
+                    raise ChainError(f"{workload}/{stage}: prepared_source_file is missing")
+
+
 def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
     """Run stages in configured workload order, returning 0 only when all finish."""
-    _validate_options(options)
+    stages = stage_order(options)
+    if options.start_stage is None:
+        options = replace(options, start_stage=stages[0])
     config_base = Path(str(config.get("config_base", ROOT))).resolve()
+    if _contract_manifest_path(options.output_root).is_file():
+        _ensure_contract_snapshot(options.output_root, _contract_specs(config, options, config_base=config_base))
+    _validate_options(options, config, config_base=config_base)
+    validate_stage_inputs(config, options, config_base=config_base)
+    independent = options.stage_initialization == "independent"
     options.output_root.mkdir(parents=True, exist_ok=True)
     contract_manifest = _ensure_contract_snapshot(
         options.output_root, _contract_specs(config, options, config_base=config_base))
@@ -843,22 +1128,24 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
     binding["contract_manifest"] = str(contract_manifest)
     state = _load_or_start_state(options.output_root, binding)
     failed = False
-    start_index = STAGES.index(options.start_stage)
+    start_index = stages.index(options.start_stage)
     for workload in options.workloads:
         entry = _merged_workload(config, workload)
         workload_state = state.setdefault("workloads", {}).setdefault(workload, {"stages": {}})
         blocked = False
         previous_winner: Path | None = None
-        for stage in STAGES[:start_index]:
+        for stage in stages[:start_index]:
             record = _stage_state(state, workload, stage)
             # `_stage_state` creates a normal pending record.  An explicitly
             # later start stage must make the skipped prefix observable as
             # outside the requested run; setdefault would leave it pending.
             record["status"] = "outside-start"
             record["reason"] = f"chain start stage is {options.start_stage}"
-        active_stages = STAGES[start_index:]
+        active_stages = stages[start_index:]
         for stage_index, stage in enumerate(active_stages, start=start_index):
             record = _stage_state(state, workload, stage)
+            if independent:
+                previous_winner = None
             stage_dir = options.output_root / workload / stage
             stage_dir.mkdir(parents=True, exist_ok=True)
             expected = expected_binding(entry, workload, stage, options, config_base=config_base,
@@ -870,7 +1157,7 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                               stage_dir=str(stage_dir))
                 _save_state(options.output_root, state)
                 failed = True
-                blocked = True
+                blocked = not independent
                 break
             if not had_binding and any((stage_dir / name).exists()
                                        for name in ("result.json", "checkpoint.json", "search")):
@@ -879,7 +1166,7 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                               stage_dir=str(stage_dir))
                 _save_state(options.output_root, state)
                 failed = True
-                blocked = True
+                blocked = not independent
                 break
             atomic_write(binding_path, expected)
             record["stage_dir"] = str(stage_dir)
@@ -902,7 +1189,7 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                 except ChainError as error:
                     record.update(status="incomplete", reason=f"winner-selection: {error}")
                     failed = True
-                    blocked = True
+                    blocked = not independent
                     _save_state(options.output_root, state)
                     continue
                 record.update(status="reused", result=str(stage_dir / "result.json"),
@@ -937,35 +1224,36 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                 except (ChainError, OSError, TypeError) as error:
                     record.update(status="binding-mismatch", reason=f"reuse rejected: {error}")
                     failed = True
-                    blocked = True
+                    blocked = not independent
                     _save_state(options.output_root, state)
                     continue
 
-            if stage_index == start_index:
-                external_previous = _path_for(entry, "previous_winner", stage, base=config_base)
-                if external_previous is None:
-                    external_previous = _seed_index_winner(options, workload, stage)
-                if external_previous is not None:
-                    if not external_previous.is_file():
-                        record.update(status="blocked", reason=f"external previous winner missing: {external_previous}")
+            if not independent:
+                if stage_index == start_index:
+                    external_previous = _path_for(entry, "previous_winner", stage, base=config_base)
+                    if external_previous is None:
+                        external_previous = _seed_index_winner(options, workload, stage)
+                    if external_previous is not None:
+                        if not external_previous.is_file():
+                            record.update(status="blocked", reason=f"external previous winner missing: {external_previous}")
+                            failed = True
+                            blocked = not independent
+                            _save_state(options.output_root, state)
+                            continue
+                        previous_winner = external_previous
+                    elif stage_index > 0:
+                        record.update(status="blocked",
+                                      reason="start stage requires a source-owned previous measured winner")
                         failed = True
-                        blocked = True
+                        blocked = not independent
                         _save_state(options.output_root, state)
                         continue
-                    previous_winner = external_previous
-                elif stage_index > 0:
-                    record.update(status="blocked",
-                                  reason="start stage requires a source-owned previous measured winner")
+                if stage_index > start_index and previous_winner is None:
+                    record.update(status="blocked", reason="previous measured winner unavailable")
                     failed = True
-                    blocked = True
+                    blocked = not independent
                     _save_state(options.output_root, state)
                     continue
-            if stage_index > start_index and previous_winner is None:
-                record.update(status="blocked", reason="previous measured winner unavailable")
-                failed = True
-                blocked = True
-                _save_state(options.output_root, state)
-                continue
 
             search_complete = _search_artifacts_complete(stage_dir)
             checkpoint = stage_dir / "checkpoint.json"
@@ -984,6 +1272,7 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                     "workload": workload, "stage": stage, "argv": command.get("argv"),
                     "status": command.get("status"), "exit_code": command.get("exit_code"),
                     "resume": resume, "skip_search": skip_search,
+                    "stage_initialization": options.stage_initialization,
                     "previous_winner": str(previous_winner) if previous_winner else None,
                 })
                 result_path = stage_dir / "result.json"
@@ -996,14 +1285,14 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                     record.update(status="failed", reason="replay-process-failed",
                                   exit_code=command.get("exit_code"), result=str(result_path))
                     failed = True
-                    blocked = True
+                    blocked = not independent
                     _save_state(options.output_root, state)
                     continue
                 if result.get("status") != "native_replayed":
                     record.update(status="incomplete", reason="stage-native-replay-incomplete",
                                   result=str(result_path))
                     failed = True
-                    blocked = True
+                    blocked = not independent
                     _save_state(options.output_root, state)
                     continue
                 previous_winner = write_winner(stage_dir, result)
@@ -1022,7 +1311,7 @@ def run_chain(config: Mapping[str, Any], options: ChainOptions) -> int:
                                           reason=f"launcher-error: {type(error).__name__}: {error}")
                 record.update(status="failed", reason=failure["stop_reason"], result=str(stage_dir / "result.json"))
                 failed = True
-                blocked = True
+                blocked = not independent
                 _save_state(options.output_root, state)
                 continue
         workload_state["status"] = "complete" if all(
@@ -1055,8 +1344,10 @@ def _parse_args(argv: Sequence[str] | None = None) -> tuple[ChainOptions, Path]:
     parser.add_argument("--inter-task-network", type=Path)
     parser.add_argument("--seed-index", type=Path,
                         help="optional index of source-owned historical C++ winner rows")
-    parser.add_argument("--start-stage", choices=STAGES, default=STAGES[0],
-                        help="first stage to run; later stages still chain measured winners")
+    parser.add_argument("--stage-initialization", choices=("independent", "previous-winner"),
+                        default="independent", help="fresh identity per stage; warm-start only for historical replay")
+    parser.add_argument("--start-stage", choices=STAGE_CHOICES,
+                        help="first independently initialized stage to run")
     parser.add_argument("--workloads", nargs="+", default=list(WORKLOADS))
     parser.add_argument("--jobs", type=int, default=1)
     parser.add_argument("--max-rounds", type=int, default=20)
@@ -1082,8 +1373,9 @@ def _parse_args(argv: Sequence[str] | None = None) -> tuple[ChainOptions, Path]:
         model_cache=args.model_cache, cost_cache=args.cost_cache,
         sram_config=args.sram_config, inter_task_network=args.inter_task_network,
         seed_index=args.seed_index,
-        workloads=tuple(args.workloads), start_stage=args.start_stage,
-        allow_missing_table=args.allow_missing_table)
+        workloads=tuple(args.workloads), start_stage=args.start_stage or
+        protocol_stages(read_json(args.protocol))[0],
+        allow_missing_table=args.allow_missing_table, stage_initialization=args.stage_initialization)
     return options, config_path
 
 

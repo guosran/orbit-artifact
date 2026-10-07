@@ -1,0 +1,97 @@
+{
+  "schema": "orbit-neura-cross-mapper-identity-audit-v2",
+  "workload": "harris",
+  "task": "Task_1",
+  "cgra_shape": [
+    1,
+    1
+  ],
+  "pe_shape": [
+    2,
+    2
+  ],
+  "mapper_strategy": "heuristic",
+  "operation_counts": {
+    "amoeba": {
+      "operations": {
+        "neura.constant": 1,
+        "neura.grant_once": 8,
+        "neura.counter": 2,
+        "neura.data_mov": 56,
+        "neura.load_indexed": 1,
+        "neura.icmp": 2,
+        "neura.sel": 2,
+        "neura.grant_predicate": 12,
+        "neura.not": 1,
+        "neura.phi": 6,
+        "neura.store_indexed": 1,
+        "neura.return_value": 1,
+        "neura.yield": 1
+      },
+      "pe_consuming_operations": 37
+    },
+    "orbit": {
+      "operations": {
+        "neura.constant": 3,
+        "neura.counter": 2,
+        "neura.data_mov": 44,
+        "neura.load_indexed": 1,
+        "neura.icmp": 2,
+        "neura.sel": 2,
+        "neura.grant_predicate": 10,
+        "neura.not": 1,
+        "neura.phi": 5,
+        "neura.store_indexed": 1
+      },
+      "pe_consuming_operations": 27
+    }
+  },
+  "identical_mapper_files": {
+    "lib/NeuraDialect/Mapping/HeuristicMapping/HeuristicMapping.cpp": true,
+    "lib/NeuraDialect/Mapping/Mapping.cpp": true,
+    "include/NeuraDialect/Mapping/HeuristicMapping/HeuristicMapping.h": true,
+    "include/NeuraDialect/Mapping/Mapping.h": true,
+    "include/NeuraDialect/Mapping/MappingState.h": true
+  },
+  "mapper_surrounding_code_differences": [
+    "deterministic hardware-ID traversal",
+    "yield exclusion from ResMII",
+    "configured-memory-address routing and route handling",
+    "optional template strategy; not selected in these runs"
+  ],
+  "conclusion": "For Harris Task_1 the reported II 10 versus 7 follows the pre-mapper DFG, unchanged when the two compilers are exchanged. This does not certify every task has identical mapping behavior across compiler versions.",
+  "compiler_provenance": {
+    "f45": "original F45 profiling compiler, correct-flow-static-v2",
+    "orbit": "unchanged immutable v57 independently initialized ablation compiler"
+  },
+  "results": [
+    {
+      "frontend": "amoeba",
+      "compiler": "f45",
+      "exit_code": 0,
+      "ii": 10,
+      "res_mii": 10
+    },
+    {
+      "frontend": "amoeba",
+      "compiler": "orbit",
+      "exit_code": 0,
+      "ii": 10,
+      "res_mii": 10
+    },
+    {
+      "frontend": "orbit",
+      "compiler": "f45",
+      "exit_code": 0,
+      "ii": 7,
+      "res_mii": 7
+    },
+    {
+      "frontend": "orbit",
+      "compiler": "orbit",
+      "exit_code": 0,
+      "ii": 7,
+      "res_mii": 7
+    }
+  ]
+}

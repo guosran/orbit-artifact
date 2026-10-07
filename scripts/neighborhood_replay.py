@@ -38,6 +38,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from types import SimpleNamespace
 from typing import Any, Mapping, Sequence
 
+from cleanup_neighborhood_temporaries import cleanup_search_temporaries
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OPT = ROOT / ".work/mainline-tools/mlir-amoeba-opt"
@@ -51,16 +53,48 @@ DEFAULT_LLAMA_HARNESS = ROOT / ".work/cpp-gate-continuation-agent/source/replica
 REPLAY_SCRIPT = ROOT / "scripts/replay_cpp_global_top5.py"
 
 STAGES = (
-    "shape-only",
     "shape-temporal",
     "shape-temporal-replica",
     "shape-temporal-replica-tiling",
     "full-joint",
 )
+LEGACY_STAGES = ("shape-only",) + STAGES
+FISSION_STAGE = "full-joint-fission"
+FISSION_STAGES = LEGACY_STAGES + (FISSION_STAGE,)
+SHARED_ORBIT_SCHEDULER = {
+    "backend": "orbit-production",
+    "dispatch_policy": "critical-path",
+    "timing": "common-explicit-network",
+}
 
 
 class ContractError(RuntimeError):
     """The C++/replay evidence contract is incomplete or inconsistent."""
+
+
+def scheduler_profile(protocol: Mapping[str, Any]) -> dict[str, str] | None:
+    """Read the optional, exact scheduler profile bound by a new protocol."""
+    value = protocol.get("scheduler")
+    if value is None:
+        return None
+    if not isinstance(value, Mapping) or dict(value) != SHARED_ORBIT_SCHEDULER:
+        raise ContractError("protocol scheduler must bind the shared ORBIT critical-path profile")
+    return dict(SHARED_ORBIT_SCHEDULER)
+
+
+def diagnostic_ii_ceiling(protocol: Mapping[str, Any]) -> int | None:
+    """Validate and return an explicitly bound diagnostic II ceiling."""
+    search = protocol.get("search", {})
+    if not isinstance(search, Mapping):
+        raise ContractError("protocol search must be an object")
+    value = search.get("diagnostic_ii_ceiling")
+    if value is None:
+        return None
+    if not isinstance(value, int) or isinstance(value, bool) or value not in (20, 23):
+        raise ContractError("protocol diagnostic_ii_ceiling must be 20 or 23")
+    if value == 23 and search.get("supported_shape_bootstrap_policy") != "minimum-area-supported-model-shape-v1":
+        raise ContractError("diagnostic II ceiling 23 requires supported_shape_bootstrap_policy")
+    return value
 
 
 def atomic_write(path: Path, value: Any) -> None:
@@ -105,7 +139,10 @@ def source_binding(protocol: Mapping[str, Any], canonical: Path, optimizer: Path
                    cost_cache: Path | None,
                    parent_cost_file: Path | None = None,
                    source_contract_file: Path | None = None,
-                   inter_task_network: Path | None = None) -> dict[str, Any]:
+                   inter_task_network: Path | None = None,
+                   prepared_source_file: Path | None = None,
+                   max_fission_actions_per_task: int | None = None,
+                   protocol_path: Path | None = None) -> dict[str, Any]:
     """Record reproducibility inputs without introducing a hash identity."""
     binding = {
         "schema": "orbit-neighborhood-source-binding-v1",
@@ -123,7 +160,53 @@ def source_binding(protocol: Mapping[str, Any], canonical: Path, optimizer: Path
     if inter_task_network:
         binding["inter_task_network"] = str(inter_task_network.resolve())
         binding["inter_task_network_text"] = inter_task_network.read_text()
+    if protocol_path is not None:
+        binding["protocol"] = str(protocol_path.resolve())
+    ceiling = diagnostic_ii_ceiling(protocol)
+    if ceiling is not None:
+        binding["diagnostic_ii_ceiling"] = ceiling
+    if prepared_source_file:
+        prepared_bytes = prepared_source_file.read_bytes()
+        try:
+            prepared_text = prepared_bytes.decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise ContractError(
+                f"prepared source is not UTF-8 text: {prepared_source_file}") from error
+        binding.update({
+            "prepared_source_file": str(prepared_source_file.resolve()),
+            "prepared_source_exact_text": prepared_text,
+            "prepared_source_size_bytes": len(prepared_bytes),
+            "max_fission_actions_per_task": max_fission_actions_per_task,
+        })
+    bound_scheduler = scheduler_profile(protocol)
+    if bound_scheduler is not None:
+        binding["scheduler"] = bound_scheduler
     return binding
+
+
+def fission_protocol_cap(protocol: Mapping[str, Any], requested: int | None = None) -> int:
+    search = protocol.get("search", {})
+    if not isinstance(search, Mapping):
+        raise ContractError("protocol search must be an object")
+    cap = search.get("max_fission_actions_per_task")
+    if not isinstance(cap, int) or isinstance(cap, bool) or cap <= 0:
+        raise ContractError("full-joint-fission protocol must bind a positive search.max_fission_actions_per_task")
+    if requested is not None and requested != cap:
+        raise ContractError("max-fission-actions-per-task differs from the bound protocol")
+    return cap
+
+
+def partition_protocol_cap(protocol: Mapping[str, Any]) -> int:
+    search = protocol.get("search", {})
+    if not isinstance(search, Mapping):
+        raise ContractError("protocol search must be an object")
+    # The source search pass defaults to max-partition-factor=4 when the
+    # protocol omits this optional field.  Native action replay must use that
+    # same effective cap rather than a looser default.
+    cap = search.get("max_partition_factor", 4)
+    if isinstance(cap, bool) or cap not in (4, 8):
+        raise ContractError("protocol max_partition_factor must be 4 or 8")
+    return cap
 
 
 def _run_logged(argv: Sequence[str], directory: Path, label: str,
@@ -151,6 +234,22 @@ def _run_logged(argv: Sequence[str], directory: Path, label: str,
     return command
 
 
+def stage_initialization_policy(protocol: Mapping[str, Any], requested: str | None = None,
+                                *, seed_manifest: Path | None = None,
+                                previous_winner: Path | None = None,
+                                historical_native_winner: Path | None = None) -> str:
+    bound = protocol.get("search", {}).get("stage_initialization")
+    policy = requested or bound or "previous-winner"
+    if policy not in {"independent", "previous-winner"}:
+        raise ContractError(f"unknown stage initialization: {policy!r}")
+    if bound is not None and policy != bound:
+        raise ContractError("stage initialization differs from the bound protocol")
+    if policy == "independent" and (seed_manifest or previous_winner or
+                                    historical_native_winner or protocol.get("historical_native_winners")):
+        raise ContractError("independent stages cannot import previous or historical search seeds")
+    return policy
+
+
 def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
                          function: str, stage: str, architecture: Path,
                          protocol: Mapping[str, Any], checkpoint: Path,
@@ -165,8 +264,30 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
                          workload: str | None = None,
                          inter_task_network: Path | None = None,
                          decision_flow: str = "legacy",
-                         graph_budget_percent: int = 50) -> list[str]:
+                         graph_budget_percent: int = 50,
+                         stage_initialization: str | None = None,
+                         prepared_source_file: Path | None = None,
+                         max_fission_actions_per_task: int | None = None) -> list[str]:
     """Build the sole C++ search invocation."""
+    if stage == FISSION_STAGE and stage_initialization is None:
+        stage_initialization = "independent"
+    stage_initialization_policy(protocol, stage_initialization, seed_manifest=seed_manifest,
+                                previous_winner=previous_winner,
+                                historical_native_winner=historical_native_winner)
+    if scheduler_profile(protocol) is not None and inter_task_network is None:
+        raise ContractError("shared ORBIT scheduling requires the bound common inter-task network")
+    search = protocol.get("search", {})
+    if not isinstance(search, Mapping):
+        raise ContractError("protocol search must be an object")
+    if stage == FISSION_STAGE:
+        if stage_initialization != "independent":
+            raise ContractError("full-joint-fission requires independent canonical initialization")
+        if prepared_source_file is None or not prepared_source_file.is_file():
+            raise ContractError("full-joint-fission requires an existing --prepared-source-file")
+        max_fission_actions_per_task = fission_protocol_cap(
+            protocol, max_fission_actions_per_task)
+    elif prepared_source_file is not None or max_fission_actions_per_task is not None:
+        raise ContractError("prepared-source and fission-cap options are only valid for full-joint-fission")
     search_options = [
         f"output-dir={output_dir}",
         f"function={function}",
@@ -183,18 +304,35 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
     if decision_flow != "legacy":
         if decision_flow not in {"joint", "sequential"}:
             raise ContractError(f"unknown decision flow: {decision_flow}")
-        if stage != "full-joint" or previous_winner or seed_manifest or historical_native_winner:
-            raise ContractError("standalone decision flows require full-joint and a common unseeded identity")
+        if stage not in {"full-joint", FISSION_STAGE} or previous_winner or seed_manifest or historical_native_winner:
+            raise ContractError("standalone decision flows require full-joint or full-joint-fission and a common unseeded identity")
         if graph_budget_percent not in {25, 50, 75}:
             raise ContractError("graph budget percent must be 25, 50 or 75")
         search_options.extend([f"decision-flow={decision_flow}",
                                f"graph-budget-percent={graph_budget_percent}"])
+    budget_policy = protocol.get("decision_flow_comparison", {}).get("sequential_budget_policy", "fixed-split")
+    if budget_policy not in {"fixed-split", "transfer-unused"}:
+        raise ContractError("unknown Sequential budget policy")
+    if budget_policy == "transfer-unused":
+        if decision_flow != "sequential":
+            raise ContractError("transfer-unused requires Sequential")
+        search_options.append("sequential-budget-policy=transfer-unused")
     if protocol.get("model_namespace"):
         search_options.append("model-namespace=" + protocol["model_namespace"])
     # New profiles explicitly bind execution and partition caps. The frozen
     # v11 protocol omits these options and keeps its original invocation.
     execution = protocol.get("execution", {})
     search = protocol.get("search", {})
+    replay_cache = protocol.get("decision_flow_comparison", {}).get("runtime_replay_cache")
+    if replay_cache is not None:
+        if not isinstance(replay_cache, bool):
+            raise ContractError("runtime_replay_cache must be a boolean")
+        search_options.append("runtime-replay-cache=" + str(replay_cache).lower())
+    if "round_score_quota" in search:
+        quota = search["round_score_quota"]
+        if not isinstance(quota, int) or isinstance(quota, bool) or quota <= 0:
+            raise ContractError("protocol round_score_quota must be a positive integer")
+        search_options.append(f"round-score-quota={quota}")
     if "supported_shape_bootstrap_policy" in search:
         bootstrap_policy = search["supported_shape_bootstrap_policy"]
         if bootstrap_policy != "minimum-area-supported-model-shape-v1":
@@ -203,6 +341,9 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
                 f"{bootstrap_policy!r}"
             )
         search_options.append("bootstrap-supported-shapes=true")
+    diagnostic_ceiling = diagnostic_ii_ceiling(protocol)
+    if diagnostic_ceiling is not None:
+        search_options.append(f"diagnostic-ii-ceiling={diagnostic_ceiling}")
     if "scoring_workers" in execution:
         workers = execution["scoring_workers"]
         if not isinstance(workers, int) or isinstance(workers, bool) or not 1 <= workers <= 12:
@@ -213,6 +354,11 @@ def build_search_command(*, optimizer: Path, canonical: Path, output_dir: Path,
         if cap not in (4, 8) or isinstance(cap, bool):
             raise ContractError("protocol max_partition_factor must be 4 or 8")
         search_options.append(f"max-partition-factor={cap}")
+    if stage == FISSION_STAGE:
+        search_options.extend([
+            f"prepared-source-file={prepared_source_file}",
+            f"max-fission-actions-per-task={max_fission_actions_per_task}",
+        ])
     if protocol.get("source_iteration_domain", {}).get("required", False):
         search_options.append("require-source-iteration-domain=true")
     if protocol_path:
@@ -382,13 +528,32 @@ def _replay_args(*, optimizer: Path, architecture: Path, mapping_cache: Path,
                  output_dir: Path, graph_manifests: Path | None,
                  manifest: Path, sram_config: Path,
                  inter_task_network: Path | None = None,
-                 audit_mapper_calls: bool = False) -> SimpleNamespace:
+                 scheduler: Mapping[str, str] | None = None,
+                 audit_mapper_calls: bool = False,
+                 stage: str = "", canonical: Path | None = None,
+                 function: str | None = None,
+                 workload: str | None = None,
+                 protocol: Path | None = None,
+                 source_contract_file: Path | None = None,
+                 prepared_source_file: Path | None = None,
+                 source_binding_file: Path | None = None,
+                 max_partition_factor: int | None = None,
+                 max_fission_actions_per_task: int | None = None) -> SimpleNamespace:
     return SimpleNamespace(optimizer=optimizer, architecture=architecture,
                            mapping_cache=mapping_cache, output_dir=output_dir,
                            graph_manifests=graph_manifests, manifest=manifest,
                            sram_config=sram_config, reuse_mapped_root=None,
                            jobs=1, inter_task_network=inter_task_network,
-                           audit_mapper_calls=audit_mapper_calls)
+                           scheduler_profile=dict(scheduler) if scheduler else None,
+                           audit_mapper_calls=audit_mapper_calls, stage=stage,
+                           canonical=canonical, function=function,
+                           workload=workload,
+                           protocol=protocol,
+                           source_contract_file=source_contract_file,
+                           prepared_source_file=prepared_source_file,
+                           source_binding_file=source_binding_file,
+                           max_partition_factor=max_partition_factor,
+                           max_fission_actions_per_task=max_fission_actions_per_task)
 
 
 def replay_one(selection: Mapping[str, Any], *, replay_module: Any,
@@ -436,13 +601,32 @@ def replay_records(records: Sequence[Mapping[str, Any]], *, output_dir: Path,
                    manifest: Path, graph_manifests: Path | None,
                    sram_config: Path, jobs: int,
                    inter_task_network: Path | None = None,
-                   audit_mapper_calls: bool = False) -> dict[str, Any]:
+                   scheduler: Mapping[str, str] | None = None,
+                   audit_mapper_calls: bool = False,
+                   stage: str = "", canonical: Path | None = None,
+                   function: str | None = None,
+                   workload: str | None = None,
+                   protocol: Path | None = None,
+                   source_contract_file: Path | None = None,
+                   prepared_source_file: Path | None = None,
+                   source_binding_file: Path | None = None,
+                   max_partition_factor: int | None = None,
+                   max_fission_actions_per_task: int | None = None) -> dict[str, Any]:
     replay_module = _load_replay_module()
     args = _replay_args(optimizer=optimizer, architecture=architecture,
                         mapping_cache=mapping_cache, output_dir=output_dir,
                         graph_manifests=graph_manifests, manifest=manifest,
                         sram_config=sram_config, inter_task_network=inter_task_network,
-                        audit_mapper_calls=audit_mapper_calls)
+                        scheduler=scheduler,
+                        audit_mapper_calls=audit_mapper_calls, stage=stage,
+                        canonical=canonical, function=function,
+                        workload=workload,
+                        protocol=protocol,
+                        source_contract_file=source_contract_file,
+                        prepared_source_file=prepared_source_file,
+                        source_binding_file=source_binding_file,
+                        max_partition_factor=max_partition_factor,
+                        max_fission_actions_per_task=max_fission_actions_per_task)
     output_dir.mkdir(parents=True, exist_ok=True)
     values: list[dict[str, Any]] = []
     order = {(row.get("control_role"), row.get("rank"), row.get("candidate_id")): index
@@ -582,6 +766,37 @@ def validate_source_bindings(records: Sequence[Mapping[str, Any]]) -> None:
                     f"{record.get('candidate_id')} {field} is not a file: {path}")
 
 
+def validate_scheduler_selections(scheduler: Mapping[str, str] | None,
+                                  header: Mapping[str, Any],
+                                  records: Sequence[Mapping[str, Any]]) -> None:
+    """Bind both the scored rows and native replay to the declared scheduler."""
+    if scheduler is None:
+        return
+    if (header.get("schedule_space") != "production-scheduler" or
+            header.get("dispatch_policy") != scheduler["dispatch_policy"]):
+        raise ContractError("C++ search header does not bind the shared ORBIT scheduler policy")
+    for record in records:
+        score_path = Path(str(record["score_file_path"]))
+        try:
+            score_header = json.loads(score_path.read_text().splitlines()[0])
+        except (OSError, IndexError, json.JSONDecodeError) as error:
+            raise ContractError(f"cannot read scheduler score header {score_path}: {error}") from error
+        if (score_header.get("schedule_space") != "production-scheduler" or
+                score_header.get("dispatch_policy") != scheduler["dispatch_policy"]):
+            raise ContractError(f"{record.get('candidate_id')} score rows use a different scheduler policy")
+
+
+def require_native_scheduler(summary: Mapping[str, Any], scheduler: Mapping[str, str] | None) -> None:
+    if scheduler is None:
+        return
+    for record in summary.get("records", []):
+        if record.get("status") != "native_replayed":
+            continue
+        if (record.get("scheduler_backend") != "orchestrate-tasks-on-accelerators" or
+                record.get("replay_timing_policy") != "production-scheduler-with-mapped-durations"):
+            raise ContractError("native replay did not use the shared production scheduler with mapped-duration timing")
+
+
 def _protocol(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text())
     if value.get("schema") != "orbit-amoeba-input0-neighborhood-v3":
@@ -592,10 +807,15 @@ def _protocol(path: Path) -> dict[str, Any]:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workload", required=True)
-    parser.add_argument("--stage", choices=STAGES, required=True)
+    parser.add_argument("--stage", choices=FISSION_STAGES, required=True)
     parser.add_argument("--decision-flow", choices=("legacy", "joint", "sequential"), default="legacy")
     parser.add_argument("--graph-budget-percent", type=int, choices=(25, 50, 75), default=50)
+    parser.add_argument("--stage-initialization", choices=("independent", "previous-winner"))
     parser.add_argument("--canonical", type=Path, required=True)
+    parser.add_argument("--prepared-source-file", type=Path,
+                        help="exact pre-Neura Taskflow input for full-joint-fission")
+    parser.add_argument("--max-fission-actions-per-task", type=int,
+                        help="must equal the protocol-bound fission cut cap")
     parser.add_argument("--function")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--optimizer", type=Path, default=DEFAULT_OPT)
@@ -623,6 +843,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--diversity-slots", type=int, default=4)
     parser.add_argument("--skip-search", action="store_true",
                         help="replay an already completed C++ search directory")
+    cleanup_group = parser.add_mutually_exclusive_group()
+    cleanup_group.add_argument("--cleanup-search-temporaries",
+                               dest="cleanup_search_temporaries", action="store_true",
+                               help="remove unreferenced C++ search spill after successful search")
+    cleanup_group.add_argument("--no-cleanup-search-temporaries",
+                               dest="cleanup_search_temporaries", action="store_false",
+                               help="retain search spill files")
+    parser.set_defaults(cleanup_search_temporaries=True)
     args = parser.parse_args(argv)
     if not 1 <= args.jobs <= 12:
         parser.error("--jobs must be between 1 and 12")
@@ -630,7 +858,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error("search budgets must be positive")
     for key in ("canonical", "output_dir", "optimizer", "architecture", "protocol",
                 "mapping_cache", "model_cache", "cost_cache", "seed_manifest",
-                "parent_cost_file", "source_contract_file",
+                "parent_cost_file", "source_contract_file", "prepared_source_file",
                 "previous_winner", "historical_native_winner", "resume", "checkpoint", "manifest",
                 "graph_manifests", "sram_config", "inter_task_network"):
         value = getattr(args, key)
@@ -641,6 +869,37 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not args.optimizer.is_file():
         raise ContractError(f"optimizer does not exist: {args.optimizer}")
     protocol = _protocol(args.protocol)
+    scheduler = scheduler_profile(protocol)
+    if scheduler is not None and args.inter_task_network is None:
+        raise ContractError("shared ORBIT scheduling requires --inter-task-network")
+    if protocol.get("stage_scheme") == "merged-spatial-temporal" and args.stage not in STAGES:
+        raise ContractError("merged stages use the existing spatial-temporal path; shape-only is historical")
+    if args.stage == FISSION_STAGE:
+        if protocol.get("stage_scheme") != FISSION_STAGE:
+            raise ContractError("full-joint-fission requires stage_scheme=full-joint-fission")
+        declared = protocol.get("stages", [])
+        names = tuple(item.get("name") if isinstance(item, Mapping) else item
+                      for item in declared) if isinstance(declared, list) else ()
+        if names not in (STAGES + (FISSION_STAGE,),
+                         LEGACY_STAGES + (FISSION_STAGE,)):
+            raise ContractError("full-joint-fission requires the bound current or historical stage order with fission last")
+        if args.prepared_source_file is None or not args.prepared_source_file.is_file():
+            raise ContractError("full-joint-fission requires an existing --prepared-source-file")
+        args.max_fission_actions_per_task = fission_protocol_cap(
+            protocol, args.max_fission_actions_per_task)
+        if args.stage_initialization not in (None, "independent"):
+            raise ContractError("full-joint-fission requires independent canonical initialization")
+        if args.seed_manifest or args.previous_winner or args.historical_native_winner:
+            raise ContractError("full-joint-fission cannot import a previous winner or search seed")
+        if protocol.get("historical_native_winners"):
+            raise ContractError("full-joint-fission cannot import historical native winners")
+    elif args.prepared_source_file is not None or args.max_fission_actions_per_task is not None:
+        raise ContractError("prepared-source and fission-cap options are only valid for full-joint-fission")
+    initialization = stage_initialization_policy(
+        protocol, ("independent" if args.stage == FISSION_STAGE and
+                   args.stage_initialization is None else args.stage_initialization),
+        seed_manifest=args.seed_manifest,
+        previous_winner=args.previous_winner, historical_native_winner=args.historical_native_winner)
     if args.historical_native_winner is None:
         history = protocol.get("historical_native_winners", {}).get(args.workload)
         if isinstance(history, dict):
@@ -657,10 +916,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     # mlir-opt opens its -o destination before running any passes.
     search_dir.mkdir(parents=True, exist_ok=True)
     checkpoint = args.checkpoint or (output / "checkpoint.json")
-    atomic_write(output / "source-binding.json",
-                 source_binding(protocol, args.canonical, args.optimizer, args.architecture,
-                                args.model_cache, args.cost_cache, args.parent_cost_file,
-                                args.source_contract_file, args.inter_task_network))
+    fission_partition_cap = partition_protocol_cap(protocol) if args.stage == FISSION_STAGE else None
+    binding = source_binding(protocol, args.canonical, args.optimizer, args.architecture,
+                             args.model_cache, args.cost_cache, args.parent_cost_file,
+                             args.source_contract_file, args.inter_task_network,
+                             args.prepared_source_file,
+                             args.max_fission_actions_per_task,
+                             protocol_path=args.protocol)
+    if initialization == "independent":
+        binding["stage_initialization"] = initialization
+    source_binding_path = output / "source-binding.json"
+    if args.stage == FISSION_STAGE and source_binding_path.is_file():
+        previous_binding = json.loads(source_binding_path.read_text(encoding="utf-8"))
+        for field in ("prepared_source_file", "prepared_source_exact_text",
+                      "prepared_source_size_bytes", "max_fission_actions_per_task"):
+            if previous_binding.get(field) != binding.get(field):
+                raise ContractError(
+                    "existing full-joint-fission source binding differs; choose a new output directory")
+    atomic_write(source_binding_path, binding)
 
     if not args.skip_search:
         command = build_search_command(
@@ -676,7 +949,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             source_contract_file=args.source_contract_file,
             historical_native_winner=args.historical_native_winner, workload=args.workload,
             inter_task_network=args.inter_task_network,
-            decision_flow=args.decision_flow, graph_budget_percent=args.graph_budget_percent)
+            decision_flow=args.decision_flow, graph_budget_percent=args.graph_budget_percent,
+            stage_initialization=initialization,
+            prepared_source_file=args.prepared_source_file,
+            max_fission_actions_per_task=args.max_fission_actions_per_task)
         search_record = _run_logged(command, output, "search")
         atomic_write(output / "search-result.json", search_record)
         if search_record.get("exit_code") != 0:
@@ -694,12 +970,20 @@ def main(argv: Sequence[str] | None = None) -> int:
                                  ("global-top5.jsonl", "top5.jsonl", "native-top5.jsonl"))
     selected, header, footer = load_cpp_selections(top5_path)
     controls_path = search_dir / "controls.jsonl"
-    controls = load_cpp_controls(controls_path, require_previous=args.decision_flow == "legacy" and args.stage != "shape-only")
+    controls = load_cpp_controls(controls_path, require_previous=initialization == "previous-winner" and args.decision_flow == "legacy" and args.stage != "shape-only")
+    if initialization == "independent" and any(row["control_role"] in {"previous_stage_measured_winner", "historical_measured_winner"} for row in controls):
+        raise ContractError("independent stage contains an inherited winner control")
     if args.decision_flow != "legacy" and {row["control_role"] for row in controls} != {"identity", "search_anchor"}:
         raise ContractError("standalone flows require the common identity and search_anchor validation controls")
     if args.historical_native_winner and not any(row.get("control_role") == "historical_measured_winner" for row in controls):
         raise ContractError("C++ did not retain the requested historical native control")
     validate_source_bindings([*selected, *controls])
+    validate_scheduler_selections(scheduler, header, [*selected, *controls])
+    # Search output is now complete and the replay ledgers have been parsed and
+    # checked. The helper retains every file named by a selection/control row
+    # and records exactly what it removes before native replay starts.
+    cleanup_receipt = cleanup_search_temporaries(
+        output, enabled=args.cleanup_search_temporaries)
     graph_manifests = args.graph_manifests
     if graph_manifests is None:
         candidate = search_dir / "graph-manifests.json"
@@ -716,14 +1000,36 @@ def main(argv: Sequence[str] | None = None) -> int:
                    manifest=manifest, graph_manifests=graph_manifests,
                    sram_config=args.sram_config, jobs=args.jobs,
                    inter_task_network=args.inter_task_network,
-                   audit_mapper_calls=args.decision_flow != "legacy")
+                   scheduler=scheduler,
+                   audit_mapper_calls=args.decision_flow != "legacy",
+                   stage=args.stage, canonical=args.canonical, function=function,
+                   workload=args.workload,
+                   protocol=args.protocol,
+                   source_contract_file=args.source_contract_file,
+                   prepared_source_file=args.prepared_source_file,
+                   source_binding_file=source_binding_path,
+                   max_partition_factor=fission_partition_cap,
+                   max_fission_actions_per_task=args.max_fission_actions_per_task)
+    top5_summary = json.loads((top5_out / "summary.json").read_text())
+    require_native_scheduler(top5_summary, scheduler)
     controls_out = output / "native-controls"
     replay_records(controls, output_dir=controls_out, optimizer=args.optimizer,
                    architecture=args.architecture, mapping_cache=args.mapping_cache,
                    manifest=manifest, graph_manifests=graph_manifests,
                    sram_config=args.sram_config, jobs=args.jobs,
                    inter_task_network=args.inter_task_network,
-                   audit_mapper_calls=args.decision_flow != "legacy")
+                   scheduler=scheduler,
+                   audit_mapper_calls=args.decision_flow != "legacy",
+                   stage=args.stage, canonical=args.canonical, function=function,
+                   workload=args.workload,
+                   protocol=args.protocol,
+                   source_contract_file=args.source_contract_file,
+                   prepared_source_file=args.prepared_source_file,
+                   source_binding_file=source_binding_path,
+                   max_partition_factor=fission_partition_cap,
+                   max_fission_actions_per_task=args.max_fission_actions_per_task)
+    controls_summary = json.loads((controls_out / "summary.json").read_text())
+    require_native_scheduler(controls_summary, scheduler)
     top5_numeric = run_numeric_gate(workload=args.workload, stage=args.stage,
                                     native_root=top5_out, ranks=range(5),
                                     optimizer=args.optimizer, jobs=args.jobs,
@@ -732,14 +1038,16 @@ def main(argv: Sequence[str] | None = None) -> int:
                                        native_root=controls_out, ranks=tuple(row["rank"] for row in controls),
                                        optimizer=args.optimizer, jobs=args.jobs,
                                        label_suffix="controls", output_dir=output)
-    top5_summary = json.loads((top5_out / "summary.json").read_text())
-    controls_summary = json.loads((controls_out / "summary.json").read_text())
+    # Numeric execution updates the durable rank records and summaries. Read
+    # those completed gates before choosing measured cycles or publishing them.
+    top5_summary = refresh_native_summary(top5_out)
+    controls_summary = refresh_native_summary(controls_out)
     all_records = top5_summary.get("records", []) + controls_summary.get("records", [])
     measured = [record for record in all_records
                 if record.get("status") == "native_replayed"
                 and record.get("mapper_equality") == "pass"
                 and record.get("independent_trace") == "pass"
-                and (record.get("numeric") == "pass" if args.decision_flow != "legacy" else record.get("numeric") != "fail")
+                and record.get("numeric") == "pass"
                 and isinstance(record.get("native_cycles"), (int, float))]
     actual_cycles = min((record["native_cycles"] for record in measured), default=None)
     stop_reason = footer.get("stop_reason") or footer.get("search_stop_reason") or header.get("stop_reason")
@@ -756,6 +1064,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         "exhaustive": False,
         "global_optimality_claim": False,
         "source_binding": str(output / "source-binding.json"),
+        "prepared_source_file": (str(args.prepared_source_file)
+                                  if args.prepared_source_file else None),
+        "max_fission_actions_per_task": (args.max_fission_actions_per_task
+                                          if args.stage == FISSION_STAGE else None),
+        "scheduler": scheduler,
         "protocol": str(args.protocol),
         "search": search_record,
         "search_header": header,
@@ -763,6 +1076,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "stop_reason": stop_reason or "not-reported-by-cpp",
         "checkpoint": str(checkpoint),
         "global_top5": str(top5_path),
+        "temporary_cleanup": cleanup_receipt,
         "top5": selected,
         "controls": controls,
         "native_top5": top5_summary,
@@ -780,6 +1094,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                   else "pending"),
         "sram": top5_summary.get("sram_gate", "pending"),
     }
+    diagnostic_ceiling = diagnostic_ii_ceiling(protocol)
+    if diagnostic_ceiling is not None:
+        result["diagnostic_ii_ceiling"] = diagnostic_ceiling
     atomic_write(output / "result.json", result)
     print(json.dumps({"workload": args.workload, "stage": args.stage,
                       "status": result["status"], "actual_stage_cycles": actual_cycles,

@@ -1,0 +1,217 @@
+{
+  "schema": "orbit-joint-neighborhood-typed-actions-v1",
+  "canonicalInput": "/home/x/shiran/project/orbit-artifact/results/sequential-comparison-4096-fast2-host/inputs/llama/canonical.mlir",
+  "candidateInput": "/home/x/shiran/project/orbit-artifact/results/sequential-comparison-4096-fast2-host/inputs/llama/canonical.mlir",
+  "function": "_Z10llama_funciPA256_KiS1_S1_S1_S1_S1_S1_PA256_i",
+  "stage": "full-joint",
+  "maxPartitionFactor": 8,
+  "initialShapes": [
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_0"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_1"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_2"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_3"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_4"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_5"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_6"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_7"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "Task_8"
+    }
+  ],
+  "actions": [
+    {
+      "canonicalReset": false,
+      "family": "producer-consumer-co-tiling",
+      "label": "co-tile:Task_1:Task_3",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_1",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        },
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_3",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "producer-consumer-co-tiling",
+      "label": "co-tile:Task_0:Task_3.tile.0.1",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_0",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        },
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_3.tile.0.1",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "tiling",
+      "label": "tile:Task_3.tile.0.0:axis=0:factor=2",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_3.tile.0.0",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "tiling",
+      "label": "tile:Task_2:axis=0:factor=2",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_2",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "tiling",
+      "label": "tile:Task_0.tile.0.1:axis=0:factor=2",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_0.tile.0.1",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "tiling",
+      "label": "tile:Task_1.tile.0.1:axis=0:factor=2",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_1.tile.0.1",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "tiling",
+      "label": "tile:Task_0.tile.0.0:axis=0:factor=2",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 2,
+          "firstTask": "Task_0.tile.0.0",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    },
+    {
+      "canonicalReset": false,
+      "family": "tiling",
+      "label": "tile:Task_1.tile.0.0:axis=0:factor=4",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 4,
+          "firstTask": "Task_1.tile.0.0",
+          "kind": "tile",
+          "mode": "none",
+          "secondTask": ""
+        }
+      ],
+      "shapeCols": 0,
+      "shapeRows": 0,
+      "shapeTask": ""
+    }
+  ]
+}
