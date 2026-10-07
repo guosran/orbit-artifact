@@ -1,8 +1,11 @@
 import json
 import gzip
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from audit_fusion_fission_funnel import (
     build_audit,
@@ -182,6 +185,14 @@ class FunnelEvidenceTests(unittest.TestCase):
                     "top5": 1,
                     "top5_candidates": [{"candidate_id": "fused-1", "score": 9, "global_rank": 0}],
                 },
+                {
+                    "record_type": "pending_unattempted",
+                    "round": 1,
+                    "action_family": "fusion",
+                    "action_signature": "fusion:Task_0:Task_1",
+                    "stop_reason": "max-unique-candidates",
+                    "action": {"label": "fuse:Task_0:Task_1"},
+                },
             ]
             (diag / "family-funnel.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
             logged = summarize_new_logs(stage)
@@ -191,6 +202,8 @@ class FunnelEvidenceTests(unittest.TestCase):
             self.assertEqual(counters["fresh_cost_scored"]["status"], "unknown_not_emitted")
             self.assertEqual(logged["candidate_attempt_event_index_by_family"]["fusion"]["source_line_first"], 1)
             self.assertEqual(logged["round_path_presence_rows_by_family"]["fusion"][0]["top5"], 1)
+            self.assertEqual(logged["pending_unattempted_action_index_by_family"]["fusion"]["pending_action_count"], 1)
+            self.assertEqual(logged["current_edge_by_family"]["fusion"]["current_edge_metrics"]["attempted"]["value"], 1)
 
     def test_cli_root_selection_is_generic_and_corrects_harris_top5(self):
         with tempfile.TemporaryDirectory() as temp:

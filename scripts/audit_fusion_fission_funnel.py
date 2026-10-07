@@ -498,12 +498,45 @@ def summarize_new_logs(stage_dir: Path) -> dict[str, Any] | None:
     attempt_event_metrics: dict[str, collections.Counter[str]] = collections.defaultdict(collections.Counter)
     attempt_reject_reasons: dict[str, collections.Counter[str]] = collections.defaultdict(collections.Counter)
     event_index: dict[str, dict[str, Any]] = {}
+    pending_index: dict[str, dict[str, Any]] = {}
     for source_path, line_number, row in row_sources:
         row_type = str(first(row, "record_type", "row_type", "kind", default="")).lower().replace("_", "-")
         family = first(row, "action_family", "actionFamily", "family", default=None)
+        if family is None and isinstance(row.get("action"), dict):
+            family = action_family(row["action"])
         if family is None:
             continue
         family_key = str(family).lower().replace("_", "-")
+        if "pending-unattempted" in row_type:
+            index = pending_index.setdefault(family_key, {
+                "pending_action_count": 0,
+                "source_files": [],
+                "source_line_first": line_number,
+                "source_line_last": line_number,
+                "source_line_samples": [],
+                "stop_reason_counts": collections.Counter(),
+                "signatures_sample": [],
+                "labels_sample": [],
+            })
+            index["pending_action_count"] += 1
+            if source_path not in index["source_files"]:
+                index["source_files"].append(source_path)
+            index["source_line_first"] = min(index["source_line_first"], line_number)
+            index["source_line_last"] = max(index["source_line_last"], line_number)
+            if len(index["source_line_samples"]) < 20:
+                index["source_line_samples"].append(line_number)
+            reason = first(row, "stop_reason", "reason", default=None)
+            if reason is not None:
+                index["stop_reason_counts"][str(reason)] += 1
+            signature = first(row, "action_signature", "signature", default=None)
+            if signature is not None and len(index["signatures_sample"]) < 20:
+                index["signatures_sample"].append(signature)
+            label = first(row.get("action", {}) if isinstance(row.get("action"), dict) else {}, "label", default=None)
+            if label is None:
+                label = first(row, "label", default=None)
+            if label is not None and len(index["labels_sample"]) < 20:
+                index["labels_sample"].append(label)
+            continue
         if "candidate-attempt" not in row_type:
             continue
         result = row.get("result") if isinstance(row.get("result"), dict) else {}
@@ -552,6 +585,8 @@ def summarize_new_logs(stage_dir: Path) -> dict[str, Any] | None:
             source_counters["reject_reasons"] = dict(attempt_reject_reasons[family_key])
         source_counters["_event_log_path"] = event_paths[0] if event_paths else None
         by_family[family_key] = source_counters
+    for index in pending_index.values():
+        index["stop_reason_counts"] = dict(sorted(index["stop_reason_counts"].items()))
 
     event_counts: collections.Counter[str] = collections.Counter()
     event_values: dict[str, collections.Counter[str]] = collections.defaultdict(collections.Counter)
@@ -621,6 +656,7 @@ def summarize_new_logs(stage_dir: Path) -> dict[str, Any] | None:
             }
             for family, index in sorted(event_index.items())
         },
+        "pending_unattempted_action_index_by_family": dict(sorted(pending_index.items())),
         "round_path_presence_rows_by_family": {
             family: [
                 compact_typed_path_presence_row(row, source_path, line_number)
@@ -749,6 +785,10 @@ def family_funnel(
         "fission": {"fission"},
     }[family]
     matching_presence = [entry for key, entry in presence_by_family.items() if key in accepted_presence_keys]
+    pending_by_family = (logged or {}).get("pending_unattempted_action_index_by_family", {})
+    matching_pending = {
+        key: value for key, value in pending_by_family.items() if key in edge_family_keys
+    }
 
     def logged_presence_count(count_key: str, ids_key: str) -> dict[str, Any]:
         if not matching_presence:
@@ -818,6 +858,7 @@ def family_funnel(
             "logged_best": logged_top5.get("best") if logged_top5 else None,
         },
         "new_event_log_family_metrics": logged_family,
+        "pending_unattempted_action_details": matching_pending,
         "source_refs": [
             {"file": f"{workload}/{stage_name}/result.json", "json_pointer": "/top5", "purpose": "typed global search top-five paths"},
             {"file": f"{workload}/{stage_name}/search/search-summary.json", "json_pointer": "/reject_reasons and /stop_reason", "purpose": "aggregate search counts; rejection reasons remain family agnostic"},
