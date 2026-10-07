@@ -1,0 +1,1407 @@
+{
+  "schema": "orbit-controlled-fusion-fission-r11b-summary-v1",
+  "cohort": "fusion-fission-controlled-r11b-20261007",
+  "status": "complete",
+  "diagnostic_only": true,
+  "formal_go": false,
+  "main_curve_inclusion": false,
+  "main_curve_budget_changed": false,
+  "performance_winner_claim": false,
+  "source_build": {
+    "source_namespace_commit": "4547a3853452438af0a74f20342b4bc182cc9107",
+    "compiled_implementation_source_commit": "2dd2bb327269eaff23e5dc8cdff11d968b0dda15",
+    "source_repository": "https://github.com/guosran/orbit.git",
+    "source_file_count": 140,
+    "current_source_snapshot_matches_actual_build_snapshot": true,
+    "optimizer_pin": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11b-20261007",
+    "optimizer_bytes": 525213552,
+    "pin_acceptance_status": "exact-build-pin-copy-accepted",
+    "pin_acceptance_receipt": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/r11b-pin-acceptance.json",
+    "source_proof_acceptance": {
+      "status": "accepted",
+      "records": 25,
+      "all_records_pass": true,
+      "receipt": "/tmp/orbit-r11b-source-proof-acceptance-20261007/summary.json"
+    },
+    "narrow_mapping_unblock": "R11b includes the source-proved same-block, unannotated, exact-type DataMov producer peel used by these PC controls; no general mapper failure suppression or global mapping-rule relaxation was applied."
+  },
+  "protocol_separation": {
+    "each_search_is_diagnostic_only": true,
+    "main_curve_budget_changed": false,
+    "diagnostic_search_budgets": {
+      "harris_pc_1x2": {
+        "max_candidates": 2,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "native_shortlist_count": 2,
+        "unique_complete_candidates_scored": 2,
+        "unique_valid_candidates": 2,
+        "unique_scored_candidates": 2,
+        "stop_reason": "max-unique-candidates",
+        "best_found": true,
+        "exhaustive": false
+      },
+      "harris_pc_2x1": {
+        "max_candidates": 2,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "native_shortlist_count": 2,
+        "unique_complete_candidates_scored": 2,
+        "unique_valid_candidates": 2,
+        "unique_scored_candidates": 2,
+        "stop_reason": "max-unique-candidates",
+        "best_found": true,
+        "exhaustive": false
+      },
+      "radar_pc_1x2": {
+        "max_candidates": 2,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "native_shortlist_count": 2,
+        "unique_complete_candidates_scored": 2,
+        "unique_valid_candidates": 2,
+        "unique_scored_candidates": 2,
+        "stop_reason": "max-unique-candidates",
+        "best_found": true,
+        "exhaustive": false
+      },
+      "radar_pc_2x1": {
+        "max_candidates": 2,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "native_shortlist_count": 2,
+        "unique_complete_candidates_scored": 2,
+        "unique_valid_candidates": 2,
+        "unique_scored_candidates": 2,
+        "stop_reason": "max-unique-candidates",
+        "best_found": true,
+        "exhaustive": false
+      },
+      "radar_sibling_1x2": {
+        "max_candidates": 2,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "native_shortlist_count": 2,
+        "unique_complete_candidates_scored": 2,
+        "unique_valid_candidates": 2,
+        "unique_scored_candidates": 2,
+        "stop_reason": "max-unique-candidates",
+        "best_found": true,
+        "exhaustive": false
+      },
+      "lu_task0_fission": {
+        "max_candidates": 3,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "native_shortlist_count": 3,
+        "unique_complete_candidates_scored": 3,
+        "unique_valid_candidates": 3,
+        "unique_scored_candidates": 3,
+        "stop_reason": "max-unique-candidates",
+        "best_found": true,
+        "exhaustive": false
+      }
+    },
+    "controls_are_not_main_curve_rows": true,
+    "all_transforms_and_fresh_scores_are_cpp_owned": true,
+    "native_replay_numeric_gate_and_independent_trace_completed": true,
+    "sram_admission": "pending; no production-ready claim"
+  },
+  "measurement_notes": {
+    "target_body_statistics": "Serialized task-region byte and operation counts are wrapper statistics over the exact C++ replay/candidate MLIR. Fresh task costs come from C++ score rows; actual compiled II comes from compiler-emitted native mapped MLIR.",
+    "native_cycles": "Whole-program cycle counts from the per-candidate native ledger; separate from C++ predicted whole-program cycles and per-task predicted durations.",
+    "resource_counts": "Targeted pair/children CGRAs are distinguished from the whole-program sum of task CGRAs.",
+    "candidate_pairing": "Pair search and native rows by candidate_id. For fusion identity controls, neighborhood-0 is search selection rank 1 but native ledger rank 5; rank alone is not a stable cross-ledger key.",
+    "local_paths": "Absolute paths below point to preserved local evidence and command receipts. They do not define portable source, model, pin, protocol, config, prepared-source, or runtime-contract bindings."
+  },
+  "results": {
+    "harris_pc_1x2": {
+      "workload": "harris",
+      "control": "producer-consumer fusion",
+      "source_parent_tasks": [
+        "Task_0",
+        "Task_1"
+      ],
+      "fused_task": "Task_0.fuse.Task_1",
+      "same_resource_comparison": {
+        "separate_parent_shapes": [
+          "1x1",
+          "1x1"
+        ],
+        "fused_shape": "1x2",
+        "target_pair_cgras": 2,
+        "parent_task_pair_cgras": 2,
+        "whole_program_cgras_separate": 24,
+        "whole_program_cgras_fused": 24,
+        "same_pair_resources": true,
+        "same_total_resources": true
+      },
+      "fused_candidate": {
+        "task": "Task_0.fuse.Task_1",
+        "candidate_id": "neighborhood-seed-1",
+        "search_selection_rank": 0,
+        "native_ledger_rank": 0,
+        "full_program_mlir_bytes": 462989,
+        "cpp_predicted_whole_program_cycles": 985038,
+        "native_whole_program_cycles": 955485,
+        "native_delta_vs_identity_cycles": -32773,
+        "native_delta_vs_identity_percent": -3.3162,
+        "cpp_replayed_communication_edges": 28,
+        "actual_native_compiled_ii": 10,
+        "fresh_cpp_task_cost": {
+          "trip_count": 8064,
+          "source_firings": 8064,
+          "predicted_ii": 7.313968181610107,
+          "startup_cycles": 12,
+          "predicted_duration": 58985,
+          "support_status": "supported"
+        }
+      },
+      "identity_control": {
+        "candidate_id": "neighborhood-0",
+        "search_selection_rank": 1,
+        "native_ledger_rank": 5,
+        "full_program_mlir_bytes": 461187,
+        "cpp_predicted_whole_program_cycles": 1051098,
+        "native_whole_program_cycles": 988258,
+        "cpp_replayed_communication_edges": 29,
+        "actual_native_compiled_ii_by_task": {
+          "Task_0": 3,
+          "Task_1": 7
+        },
+        "fresh_cpp_task_costs": {
+          "Task_0": {
+            "trip_count": 8064,
+            "source_firings": 8064,
+            "predicted_ii": 3.9195845127105713,
+            "startup_cycles": 6,
+            "predicted_duration": 31610,
+            "support_status": "supported"
+          },
+          "Task_1": {
+            "trip_count": 8064,
+            "source_firings": 8064,
+            "predicted_ii": 7.522878646850586,
+            "startup_cycles": 9,
+            "predicted_duration": 60666,
+            "support_status": "supported"
+          }
+        }
+      },
+      "source_task_body_statistics": {
+        "measurement": "UTF-8 serialized task region byte and operation counts on the C++ replay/candidate MLIR",
+        "separate_parents": [
+          {
+            "task": "Task_0",
+            "body_bytes": 4880,
+            "operation_count": 35,
+            "loads": 3,
+            "stores": 1
+          },
+          {
+            "task": "Task_1",
+            "body_bytes": 8820,
+            "operation_count": 79,
+            "loads": 1,
+            "stores": 1
+          }
+        ],
+        "fused_task": {
+          "task": "Task_0.fuse.Task_1",
+          "body_bytes": 11819,
+          "operation_count": 103,
+          "loads": 3,
+          "stores": 2
+        },
+        "memory_change": {
+          "parent_loads": 4,
+          "fused_loads": 3,
+          "removed_loads": 1,
+          "parent_stores": 2,
+          "fused_stores": 2,
+          "removed_stores": 0,
+          "public_output_stores_preserved": true
+        }
+      },
+      "native_mapped_task_body_statistics": {
+        "fused": {
+          "Task_0.fuse.Task_1": {
+            "body_bytes": 43138,
+            "operation_count": 103,
+            "loads": 3,
+            "stores": 2
+          }
+        },
+        "identity": {
+          "Task_0": {
+            "body_bytes": 11261,
+            "operation_count": 35,
+            "loads": 3,
+            "stores": 1
+          },
+          "Task_1": {
+            "body_bytes": 33202,
+            "operation_count": 79,
+            "loads": 1,
+            "stores": 1
+          }
+        }
+      },
+      "source_domain": {
+        "fused": {
+          "task": "Task_0.fuse.Task_1",
+          "complete": true,
+          "current_domain_status": "certified-source-partition",
+          "current_output_coordinate_status": "proven",
+          "current_source_work_count": 8064,
+          "current_taskflow_firing_count": 8064,
+          "source_multiplicity": 8064,
+          "represented_multiplicity": 8064,
+          "internal_multiplicity": 1
+        },
+        "parents": {
+          "Task_0": {
+            "task": "Task_0",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "source_multiplicity": 8064,
+            "represented_multiplicity": 8064,
+            "internal_multiplicity": 1
+          },
+          "Task_1": {
+            "task": "Task_1",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "source_multiplicity": 8064,
+            "represented_multiplicity": 8064,
+            "internal_multiplicity": 1
+          }
+        }
+      },
+      "checks": {
+        "typed_cpp_replay": "complete",
+        "native_candidate": {
+          "candidate_id": "neighborhood-seed-1",
+          "native_ledger_rank": 0,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 955485,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 884736,
+            "mismatches": 0
+          }
+        },
+        "native_identity_control": {
+          "candidate_id": "neighborhood-0",
+          "native_ledger_rank": 5,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 988258,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 884736,
+            "mismatches": 0
+          }
+        },
+        "search_footer_status": "best-found"
+      },
+      "evidence": {
+        "case_root": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1",
+        "result": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1/result.json",
+        "search_selection": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1/search/top5.jsonl",
+        "native_ledger": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1/native/summary.json",
+        "diagnostic_search_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1/diagnostic-search.command.json",
+        "typed_action_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1/typed-action/typed-replay.command.json",
+        "numeric_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1/numeric-gate.command.json"
+      }
+    },
+    "harris_pc_2x1": {
+      "workload": "harris",
+      "control": "producer-consumer fusion",
+      "source_parent_tasks": [
+        "Task_0",
+        "Task_1"
+      ],
+      "fused_task": "Task_0.fuse.Task_1",
+      "same_resource_comparison": {
+        "separate_parent_shapes": [
+          "1x1",
+          "1x1"
+        ],
+        "fused_shape": "2x1",
+        "target_pair_cgras": 2,
+        "parent_task_pair_cgras": 2,
+        "whole_program_cgras_separate": 24,
+        "whole_program_cgras_fused": 24,
+        "same_pair_resources": true,
+        "same_total_resources": true
+      },
+      "fused_candidate": {
+        "task": "Task_0.fuse.Task_1",
+        "candidate_id": "neighborhood-seed-1",
+        "search_selection_rank": 0,
+        "native_ledger_rank": 0,
+        "full_program_mlir_bytes": 462989,
+        "cpp_predicted_whole_program_cycles": 984802,
+        "native_whole_program_cycles": 939361,
+        "native_delta_vs_identity_cycles": -48897,
+        "native_delta_vs_identity_percent": -4.9478,
+        "cpp_replayed_communication_edges": 28,
+        "actual_native_compiled_ii": 8,
+        "fresh_cpp_task_cost": {
+          "trip_count": 8064,
+          "source_firings": 8064,
+          "predicted_ii": 7.2845377922058105,
+          "startup_cycles": 12,
+          "predicted_duration": 58748,
+          "support_status": "supported"
+        }
+      },
+      "identity_control": {
+        "candidate_id": "neighborhood-0",
+        "search_selection_rank": 1,
+        "native_ledger_rank": 5,
+        "full_program_mlir_bytes": 461187,
+        "cpp_predicted_whole_program_cycles": 1051098,
+        "native_whole_program_cycles": 988258,
+        "cpp_replayed_communication_edges": 29,
+        "actual_native_compiled_ii_by_task": {
+          "Task_0": 3,
+          "Task_1": 7
+        },
+        "fresh_cpp_task_costs": {
+          "Task_0": {
+            "trip_count": 8064,
+            "source_firings": 8064,
+            "predicted_ii": 3.9195845127105713,
+            "startup_cycles": 6,
+            "predicted_duration": 31610,
+            "support_status": "supported"
+          },
+          "Task_1": {
+            "trip_count": 8064,
+            "source_firings": 8064,
+            "predicted_ii": 7.522878646850586,
+            "startup_cycles": 9,
+            "predicted_duration": 60666,
+            "support_status": "supported"
+          }
+        }
+      },
+      "source_task_body_statistics": {
+        "measurement": "UTF-8 serialized task region byte and operation counts on the C++ replay/candidate MLIR",
+        "separate_parents": [
+          {
+            "task": "Task_0",
+            "body_bytes": 4880,
+            "operation_count": 35,
+            "loads": 3,
+            "stores": 1
+          },
+          {
+            "task": "Task_1",
+            "body_bytes": 8820,
+            "operation_count": 79,
+            "loads": 1,
+            "stores": 1
+          }
+        ],
+        "fused_task": {
+          "task": "Task_0.fuse.Task_1",
+          "body_bytes": 11819,
+          "operation_count": 103,
+          "loads": 3,
+          "stores": 2
+        },
+        "memory_change": {
+          "parent_loads": 4,
+          "fused_loads": 3,
+          "removed_loads": 1,
+          "parent_stores": 2,
+          "fused_stores": 2,
+          "removed_stores": 0,
+          "public_output_stores_preserved": true
+        }
+      },
+      "native_mapped_task_body_statistics": {
+        "fused": {
+          "Task_0.fuse.Task_1": {
+            "body_bytes": 45066,
+            "operation_count": 103,
+            "loads": 3,
+            "stores": 2
+          }
+        },
+        "identity": {
+          "Task_0": {
+            "body_bytes": 11261,
+            "operation_count": 35,
+            "loads": 3,
+            "stores": 1
+          },
+          "Task_1": {
+            "body_bytes": 33202,
+            "operation_count": 79,
+            "loads": 1,
+            "stores": 1
+          }
+        }
+      },
+      "source_domain": {
+        "fused": {
+          "task": "Task_0.fuse.Task_1",
+          "complete": true,
+          "current_domain_status": "certified-source-partition",
+          "current_output_coordinate_status": "proven",
+          "current_source_work_count": 8064,
+          "current_taskflow_firing_count": 8064,
+          "source_multiplicity": 8064,
+          "represented_multiplicity": 8064,
+          "internal_multiplicity": 1
+        },
+        "parents": {
+          "Task_0": {
+            "task": "Task_0",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "source_multiplicity": 8064,
+            "represented_multiplicity": 8064,
+            "internal_multiplicity": 1
+          },
+          "Task_1": {
+            "task": "Task_1",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "source_multiplicity": 8064,
+            "represented_multiplicity": 8064,
+            "internal_multiplicity": 1
+          }
+        }
+      },
+      "checks": {
+        "typed_cpp_replay": "complete",
+        "native_candidate": {
+          "candidate_id": "neighborhood-seed-1",
+          "native_ledger_rank": 0,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 939361,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 884736,
+            "mismatches": 0
+          }
+        },
+        "native_identity_control": {
+          "candidate_id": "neighborhood-0",
+          "native_ledger_rank": 5,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 988258,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 884736,
+            "mismatches": 0
+          }
+        },
+        "search_footer_status": "best-found"
+      },
+      "evidence": {
+        "case_root": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1",
+        "result": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1/result.json",
+        "search_selection": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1/search/top5.jsonl",
+        "native_ledger": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1/native/summary.json",
+        "diagnostic_search_command": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1/diagnostic-search.command.json",
+        "typed_action_command": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1/typed-action/typed-replay.command.json",
+        "numeric_command": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1/numeric-gate.command.json"
+      }
+    },
+    "radar_pc_1x2": {
+      "workload": "radar",
+      "control": "producer-consumer fusion",
+      "source_parent_tasks": [
+        "Task_16",
+        "Task_17"
+      ],
+      "fused_task": "Task_16.fuse.Task_17",
+      "same_resource_comparison": {
+        "separate_parent_shapes": [
+          "1x1",
+          "1x1"
+        ],
+        "fused_shape": "1x2",
+        "target_pair_cgras": 2,
+        "parent_task_pair_cgras": 2,
+        "whole_program_cgras_separate": 21,
+        "whole_program_cgras_fused": 21,
+        "same_pair_resources": true,
+        "same_total_resources": true
+      },
+      "fused_candidate": {
+        "task": "Task_16.fuse.Task_17",
+        "candidate_id": "neighborhood-seed-1",
+        "search_selection_rank": 0,
+        "native_ledger_rank": 0,
+        "full_program_mlir_bytes": 463639,
+        "cpp_predicted_whole_program_cycles": 1340835,
+        "native_whole_program_cycles": 1310353,
+        "native_delta_vs_identity_cycles": -7458,
+        "native_delta_vs_identity_percent": -0.5659,
+        "cpp_replayed_communication_edges": 31,
+        "actual_native_compiled_ii": 4,
+        "fresh_cpp_task_cost": {
+          "trip_count": 840,
+          "source_firings": 840,
+          "predicted_ii": 5.9593915939331055,
+          "startup_cycles": 9,
+          "predicted_duration": 5009,
+          "support_status": "supported"
+        }
+      },
+      "identity_control": {
+        "candidate_id": "neighborhood-0",
+        "search_selection_rank": 1,
+        "native_ledger_rank": 5,
+        "full_program_mlir_bytes": 463336,
+        "cpp_predicted_whole_program_cycles": 1348048,
+        "native_whole_program_cycles": 1317811,
+        "cpp_replayed_communication_edges": 33,
+        "actual_native_compiled_ii_by_task": {
+          "Task_16": 2,
+          "Task_17": 6
+        },
+        "fresh_cpp_task_costs": {
+          "Task_16": {
+            "trip_count": 840,
+            "source_firings": 840,
+            "predicted_ii": 3.0101940631866455,
+            "startup_cycles": 5,
+            "predicted_duration": 2531,
+            "support_status": "supported"
+          },
+          "Task_17": {
+            "trip_count": 840,
+            "source_firings": 840,
+            "predicted_ii": 6.655652046203613,
+            "startup_cycles": 9,
+            "predicted_duration": 5594,
+            "support_status": "supported"
+          }
+        }
+      },
+      "source_task_body_statistics": {
+        "measurement": "UTF-8 serialized task region byte and operation counts on the C++ replay/candidate MLIR",
+        "separate_parents": [
+          {
+            "task": "Task_16",
+            "body_bytes": 3735,
+            "operation_count": 27,
+            "loads": 2,
+            "stores": 1
+          },
+          {
+            "task": "Task_17",
+            "body_bytes": 6229,
+            "operation_count": 51,
+            "loads": 4,
+            "stores": 1
+          }
+        ],
+        "fused_task": {
+          "task": "Task_16.fuse.Task_17",
+          "body_bytes": 7817,
+          "operation_count": 65,
+          "loads": 5,
+          "stores": 2
+        },
+        "memory_change": {
+          "parent_loads": 6,
+          "fused_loads": 5,
+          "removed_loads": 1,
+          "parent_stores": 2,
+          "fused_stores": 2,
+          "removed_stores": 0,
+          "public_output_stores_preserved": true
+        }
+      },
+      "native_mapped_task_body_statistics": {
+        "fused": {
+          "Task_16.fuse.Task_17": {
+            "body_bytes": 22897,
+            "operation_count": 65,
+            "loads": 5,
+            "stores": 2
+          }
+        },
+        "identity": {
+          "Task_16": {
+            "body_bytes": 7923,
+            "operation_count": 27,
+            "loads": 2,
+            "stores": 1
+          },
+          "Task_17": {
+            "body_bytes": 16680,
+            "operation_count": 51,
+            "loads": 4,
+            "stores": 1
+          }
+        }
+      },
+      "source_domain": {
+        "fused": {
+          "task": "Task_16.fuse.Task_17",
+          "complete": true,
+          "current_domain_status": "certified-source-partition",
+          "current_output_coordinate_status": "proven",
+          "current_source_work_count": 840,
+          "current_taskflow_firing_count": 840,
+          "source_multiplicity": 840,
+          "represented_multiplicity": 840,
+          "internal_multiplicity": 1
+        },
+        "parents": {
+          "Task_16": {
+            "task": "Task_16",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "source_multiplicity": 840,
+            "represented_multiplicity": 840,
+            "internal_multiplicity": 1
+          },
+          "Task_17": {
+            "task": "Task_17",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "source_multiplicity": 840,
+            "represented_multiplicity": 840,
+            "internal_multiplicity": 1
+          }
+        }
+      },
+      "checks": {
+        "typed_cpp_replay": "complete",
+        "native_candidate": {
+          "candidate_id": "neighborhood-seed-1",
+          "native_ledger_rank": 0,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 1310353,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 259904,
+            "mismatches": 0
+          }
+        },
+        "native_identity_control": {
+          "candidate_id": "neighborhood-0",
+          "native_ledger_rank": 5,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 1317811,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 259904,
+            "mismatches": 0
+          }
+        },
+        "search_footer_status": "best-found"
+      },
+      "evidence": {
+        "case_root": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17",
+        "result": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17/result.json",
+        "search_selection": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17/search/top5.jsonl",
+        "native_ledger": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17/native/summary.json",
+        "diagnostic_search_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17/diagnostic-search.command.json",
+        "typed_action_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17/typed-action/typed-replay.command.json",
+        "numeric_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17/numeric-gate.command.json"
+      }
+    },
+    "radar_pc_2x1": {
+      "workload": "radar",
+      "control": "producer-consumer fusion",
+      "source_parent_tasks": [
+        "Task_16",
+        "Task_17"
+      ],
+      "fused_task": "Task_16.fuse.Task_17",
+      "same_resource_comparison": {
+        "separate_parent_shapes": [
+          "1x1",
+          "1x1"
+        ],
+        "fused_shape": "2x1",
+        "target_pair_cgras": 2,
+        "parent_task_pair_cgras": 2,
+        "whole_program_cgras_separate": 21,
+        "whole_program_cgras_fused": 21,
+        "same_pair_resources": true,
+        "same_total_resources": true
+      },
+      "fused_candidate": {
+        "task": "Task_16.fuse.Task_17",
+        "candidate_id": "neighborhood-seed-1",
+        "search_selection_rank": 0,
+        "native_ledger_rank": 0,
+        "full_program_mlir_bytes": 463639,
+        "cpp_predicted_whole_program_cycles": 1340799,
+        "native_whole_program_cycles": 1312031,
+        "native_delta_vs_identity_cycles": -5780,
+        "native_delta_vs_identity_percent": -0.4386,
+        "cpp_replayed_communication_edges": 31,
+        "actual_native_compiled_ii": 6,
+        "fresh_cpp_task_cost": {
+          "trip_count": 840,
+          "source_firings": 840,
+          "predicted_ii": 5.91621732711792,
+          "startup_cycles": 9,
+          "predicted_duration": 4973,
+          "support_status": "supported"
+        }
+      },
+      "identity_control": {
+        "candidate_id": "neighborhood-0",
+        "search_selection_rank": 1,
+        "native_ledger_rank": 5,
+        "full_program_mlir_bytes": 463336,
+        "cpp_predicted_whole_program_cycles": 1348048,
+        "native_whole_program_cycles": 1317811,
+        "cpp_replayed_communication_edges": 33,
+        "actual_native_compiled_ii_by_task": {
+          "Task_16": 2,
+          "Task_17": 6
+        },
+        "fresh_cpp_task_costs": {
+          "Task_16": {
+            "trip_count": 840,
+            "source_firings": 840,
+            "predicted_ii": 3.0101940631866455,
+            "startup_cycles": 5,
+            "predicted_duration": 2531,
+            "support_status": "supported"
+          },
+          "Task_17": {
+            "trip_count": 840,
+            "source_firings": 840,
+            "predicted_ii": 6.655652046203613,
+            "startup_cycles": 9,
+            "predicted_duration": 5594,
+            "support_status": "supported"
+          }
+        }
+      },
+      "source_task_body_statistics": {
+        "measurement": "UTF-8 serialized task region byte and operation counts on the C++ replay/candidate MLIR",
+        "separate_parents": [
+          {
+            "task": "Task_16",
+            "body_bytes": 3735,
+            "operation_count": 27,
+            "loads": 2,
+            "stores": 1
+          },
+          {
+            "task": "Task_17",
+            "body_bytes": 6229,
+            "operation_count": 51,
+            "loads": 4,
+            "stores": 1
+          }
+        ],
+        "fused_task": {
+          "task": "Task_16.fuse.Task_17",
+          "body_bytes": 7817,
+          "operation_count": 65,
+          "loads": 5,
+          "stores": 2
+        },
+        "memory_change": {
+          "parent_loads": 6,
+          "fused_loads": 5,
+          "removed_loads": 1,
+          "parent_stores": 2,
+          "fused_stores": 2,
+          "removed_stores": 0,
+          "public_output_stores_preserved": true
+        }
+      },
+      "native_mapped_task_body_statistics": {
+        "fused": {
+          "Task_16.fuse.Task_17": {
+            "body_bytes": 23112,
+            "operation_count": 65,
+            "loads": 5,
+            "stores": 2
+          }
+        },
+        "identity": {
+          "Task_16": {
+            "body_bytes": 7923,
+            "operation_count": 27,
+            "loads": 2,
+            "stores": 1
+          },
+          "Task_17": {
+            "body_bytes": 16680,
+            "operation_count": 51,
+            "loads": 4,
+            "stores": 1
+          }
+        }
+      },
+      "source_domain": {
+        "fused": {
+          "task": "Task_16.fuse.Task_17",
+          "complete": true,
+          "current_domain_status": "certified-source-partition",
+          "current_output_coordinate_status": "proven",
+          "current_source_work_count": 840,
+          "current_taskflow_firing_count": 840,
+          "source_multiplicity": 840,
+          "represented_multiplicity": 840,
+          "internal_multiplicity": 1
+        },
+        "parents": {
+          "Task_16": {
+            "task": "Task_16",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "source_multiplicity": 840,
+            "represented_multiplicity": 840,
+            "internal_multiplicity": 1
+          },
+          "Task_17": {
+            "task": "Task_17",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "source_multiplicity": 840,
+            "represented_multiplicity": 840,
+            "internal_multiplicity": 1
+          }
+        }
+      },
+      "checks": {
+        "typed_cpp_replay": "complete",
+        "native_candidate": {
+          "candidate_id": "neighborhood-seed-1",
+          "native_ledger_rank": 0,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 1312031,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 259904,
+            "mismatches": 0
+          }
+        },
+        "native_identity_control": {
+          "candidate_id": "neighborhood-0",
+          "native_ledger_rank": 5,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 1317811,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 259904,
+            "mismatches": 0
+          }
+        },
+        "search_footer_status": "best-found"
+      },
+      "evidence": {
+        "case_root": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17",
+        "result": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17/result.json",
+        "search_selection": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17/search/top5.jsonl",
+        "native_ledger": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17/native/summary.json",
+        "diagnostic_search_command": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17/diagnostic-search.command.json",
+        "typed_action_command": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17/typed-action/typed-replay.command.json",
+        "numeric_command": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17/numeric-gate.command.json"
+      }
+    },
+    "radar_sibling_1x2": {
+      "workload": "radar",
+      "control": "sibling fusion",
+      "source_parent_tasks": [
+        "Task_4",
+        "Task_5"
+      ],
+      "fused_task": "Task_4.fuse.Task_5",
+      "same_resource_comparison": {
+        "separate_parent_shapes": [
+          "1x1",
+          "1x1"
+        ],
+        "fused_shape": "1x2",
+        "target_pair_cgras": 2,
+        "parent_task_pair_cgras": 2,
+        "whole_program_cgras_separate": 21,
+        "whole_program_cgras_fused": 21,
+        "same_pair_resources": true,
+        "same_total_resources": true,
+        "repeated_in_both_orientation_roots": true
+      },
+      "fused_candidate": {
+        "task": "Task_4.fuse.Task_5",
+        "candidate_id": "neighborhood-seed-1",
+        "search_selection_rank": 0,
+        "native_ledger_rank": 0,
+        "full_program_mlir_bytes": 461533,
+        "cpp_predicted_whole_program_cycles": 1276089,
+        "native_whole_program_cycles": 1579954,
+        "native_delta_vs_identity_cycles": 262143,
+        "native_delta_vs_identity_percent": 19.8923,
+        "cpp_replayed_communication_edges": 31,
+        "actual_native_compiled_ii": 9,
+        "fresh_cpp_task_cost": {
+          "trip_count": 131072,
+          "source_firings": 131072,
+          "predicted_ii": 6.614099502563477,
+          "startup_cycles": 7,
+          "predicted_duration": 866924,
+          "support_status": "supported"
+        }
+      },
+      "identity_control": {
+        "candidate_id": "neighborhood-0",
+        "search_selection_rank": 1,
+        "native_ledger_rank": 5,
+        "full_program_mlir_bytes": 463336,
+        "cpp_predicted_whole_program_cycles": 1348048,
+        "native_whole_program_cycles": 1317811,
+        "cpp_replayed_communication_edges": 33,
+        "actual_native_compiled_ii_by_task": {
+          "Task_4": 7,
+          "Task_5": 7
+        },
+        "fresh_cpp_task_costs": {
+          "Task_4": {
+            "trip_count": 131072,
+            "source_firings": 131072,
+            "predicted_ii": 7.163114547729492,
+            "startup_cycles": 7,
+            "predicted_duration": 938884,
+            "support_status": "supported"
+          },
+          "Task_5": {
+            "trip_count": 131072,
+            "source_firings": 131072,
+            "predicted_ii": 7.163114547729492,
+            "startup_cycles": 7,
+            "predicted_duration": 938884,
+            "support_status": "supported"
+          }
+        }
+      },
+      "source_task_body_statistics": {
+        "measurement": "UTF-8 serialized task region byte and operation counts on the C++ replay/candidate MLIR",
+        "separate_parents": [
+          {
+            "task": "Task_4",
+            "body_bytes": 9043,
+            "operation_count": 75,
+            "loads": 4,
+            "stores": 1
+          },
+          {
+            "task": "Task_5",
+            "body_bytes": 9043,
+            "operation_count": 75,
+            "loads": 4,
+            "stores": 1
+          }
+        ],
+        "fused_task": {
+          "task": "Task_4.fuse.Task_5",
+          "body_bytes": 15027,
+          "operation_count": 137,
+          "loads": 4,
+          "stores": 2
+        },
+        "memory_change": {
+          "parent_loads": 8,
+          "fused_loads": 4,
+          "removed_loads": 4,
+          "parent_stores": 2,
+          "fused_stores": 2,
+          "removed_stores": 0,
+          "public_output_stores_preserved": true
+        }
+      },
+      "native_mapped_task_body_statistics": {
+        "fused": {
+          "Task_4.fuse.Task_5": {
+            "body_bytes": 48872,
+            "operation_count": 137,
+            "loads": 4,
+            "stores": 2
+          }
+        },
+        "identity": {
+          "Task_4": {
+            "body_bytes": 27561,
+            "operation_count": 75,
+            "loads": 4,
+            "stores": 1
+          },
+          "Task_5": {
+            "body_bytes": 27561,
+            "operation_count": 75,
+            "loads": 4,
+            "stores": 1
+          }
+        }
+      },
+      "source_domain": {
+        "fused": {
+          "task": "Task_4.fuse.Task_5",
+          "complete": true,
+          "current_domain_status": "certified-source-partition",
+          "current_output_coordinate_status": "proven",
+          "current_source_work_count": 131072,
+          "current_taskflow_firing_count": 131072,
+          "source_multiplicity": 131072,
+          "represented_multiplicity": 131072,
+          "internal_multiplicity": 1
+        },
+        "parents": {
+          "Task_4": {
+            "task": "Task_4",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 131072,
+            "current_taskflow_firing_count": 131072,
+            "source_multiplicity": 131072,
+            "represented_multiplicity": 131072,
+            "internal_multiplicity": 1
+          },
+          "Task_5": {
+            "task": "Task_5",
+            "complete": true,
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 131072,
+            "current_taskflow_firing_count": 131072,
+            "source_multiplicity": 131072,
+            "represented_multiplicity": 131072,
+            "internal_multiplicity": 1
+          }
+        }
+      },
+      "checks": {
+        "typed_cpp_replay": "complete",
+        "native_candidate": {
+          "candidate_id": "neighborhood-seed-1",
+          "native_ledger_rank": 0,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 1579954,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 259904,
+            "mismatches": 0
+          }
+        },
+        "native_identity_control": {
+          "candidate_id": "neighborhood-0",
+          "native_ledger_rank": 5,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 1317811,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 259904,
+            "mismatches": 0
+          }
+        },
+        "search_footer_status": "best-found"
+      },
+      "evidence": {
+        "case_root": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5",
+        "result": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5/result.json",
+        "search_selection": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5/search/top5.jsonl",
+        "native_ledger": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5/native/summary.json",
+        "diagnostic_search_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5/diagnostic-search.command.json",
+        "typed_action_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5/typed-action/typed-replay.command.json",
+        "numeric_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5/numeric-gate.command.json"
+      },
+      "interpretation": "Valid semantic control with same-resource native slowdown; not a performance winner."
+    },
+    "lu_task0_fission": {
+      "workload": "LU",
+      "control": "source-proved Task_0 fission at the sole enumerated legal cut",
+      "same_resource_comparison": {
+        "same_task_resources": true,
+        "same_total_resources": true,
+        "split_child_shapes": {
+          "Task_0.split.0": "1x1",
+          "Task_0.split.1": "1x1"
+        },
+        "split_children_cgra_count": 2,
+        "unsplit_parent_shape": "2x1",
+        "unsplit_parent_task_cgra_count": 2,
+        "whole_program_parent_cgra_count": 10,
+        "whole_program_split_cgra_count": 10
+      },
+      "source_cut": {
+        "census_status": "complete",
+        "legal_cut_count_for_Task_0": 1,
+        "selected_left_nodes": [
+          0
+        ],
+        "exact_cpp_source_replay_status": "verified-by-C++-verifyTaskflowFissionReplay",
+        "fission_source_replay_verified": true,
+        "child_partitions": [
+          {
+            "task": "Task_0.split.0",
+            "source_multiplicity": 64,
+            "represented_multiplicity": 64
+          },
+          {
+            "task": "Task_0.split.1",
+            "source_multiplicity": 64,
+            "represented_multiplicity": 64
+          }
+        ],
+        "partition_semantics": "retained-per-operation-not-disjoint-firing-partitions",
+        "source_operation_coverage_counts": "not emitted numerically; no split cardinalities inferred"
+      },
+      "same_resource_parent_control": {
+        "candidate_id": "neighborhood-seed-1",
+        "search_selection_rank": 0,
+        "native_ledger_rank": 0,
+        "full_program_mlir_bytes": 249775,
+        "cpp_predicted_whole_program_cycles": 18365,
+        "native_whole_program_cycles": 18438,
+        "cpp_replayed_communication_edges": 10,
+        "target_task_body": {
+          "task": "Task_0",
+          "source_body_bytes": 2537,
+          "source_operations": 16,
+          "mapped_body_bytes": 4152,
+          "mapped_operations": 16,
+          "loads": 1,
+          "stores": 1,
+          "actual_native_compiled_ii": 1
+        },
+        "fresh_cpp_task_cost": {
+          "trip_count": 64,
+          "source_firings": 64,
+          "predicted_ii": 2.2181453704833984,
+          "startup_cycles": 3,
+          "predicted_duration": 143
+        },
+        "native_receipt": {
+          "candidate_id": "neighborhood-seed-1",
+          "native_ledger_rank": 0,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 18438,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 4025,
+            "mismatches": 0
+          }
+        },
+        "source_domain": {
+          "task": "Task_0",
+          "complete": true,
+          "current_domain_status": "certified-source-partition",
+          "current_output_coordinate_status": "proven",
+          "current_source_work_count": 64,
+          "current_taskflow_firing_count": 64,
+          "source_multiplicity": 64,
+          "represented_multiplicity": 64,
+          "internal_multiplicity": 1
+        }
+      },
+      "fission_candidate": {
+        "candidate_id": "neighborhood-seed-2",
+        "search_selection_rank": 2,
+        "native_ledger_rank": 2,
+        "full_program_mlir_bytes": 259356,
+        "cpp_predicted_whole_program_cycles": 18646,
+        "native_whole_program_cycles": 18694,
+        "native_delta_vs_parent_control_cycles": 256,
+        "native_delta_vs_parent_control_percent": 1.3884,
+        "cpp_replayed_communication_edges": 11,
+        "children": [
+          {
+            "task": "Task_0.split.0",
+            "shape": "1x1",
+            "source_body_bytes": 2529,
+            "source_operations": 16,
+            "mapped_body_bytes": 4214,
+            "mapped_operations": 16,
+            "loads": 1,
+            "stores": 1,
+            "retained_source_work": 64,
+            "retained_taskflow_firings": 64,
+            "source_multiplicity": 64,
+            "represented_multiplicity": 64,
+            "output_coordinates": "proven",
+            "actual_native_compiled_ii": 2,
+            "fresh_cpp_cost": {
+              "trip_count": 64,
+              "source_firings": 64,
+              "predicted_ii": 2.796416997909546,
+              "startup_cycles": 3,
+              "predicted_duration": 180,
+              "support_status": "supported"
+            }
+          },
+          {
+            "task": "Task_0.split.1",
+            "shape": "1x1",
+            "source_body_bytes": 2559,
+            "source_operations": 16,
+            "mapped_body_bytes": 4244,
+            "mapped_operations": 16,
+            "loads": 1,
+            "stores": 1,
+            "retained_source_work": 64,
+            "retained_taskflow_firings": 64,
+            "source_multiplicity": 64,
+            "represented_multiplicity": 64,
+            "output_coordinates": "proven",
+            "actual_native_compiled_ii": 2,
+            "fresh_cpp_cost": {
+              "trip_count": 64,
+              "source_firings": 64,
+              "predicted_ii": 2.796416997909546,
+              "startup_cycles": 3,
+              "predicted_duration": 180,
+              "support_status": "supported"
+            }
+          }
+        ],
+        "native_receipt": {
+          "candidate_id": "neighborhood-seed-2",
+          "native_ledger_rank": 2,
+          "status": "native_replayed",
+          "native_whole_program_cycles": 18694,
+          "mapper_equality": "pass",
+          "independent_trace": "pass",
+          "numeric": {
+            "status": "pass",
+            "scope": "mapped-native",
+            "element_comparisons": 4025,
+            "mismatches": 0
+          }
+        }
+      },
+      "retained_domain_warning": "Each child has its own retained-per-operation domain count 64. These are not disjoint firing partitions; do not add them as unique parent firings.",
+      "native_child_startup_and_duration": "not emitted by the native checker; unknown, not inferred from whole-program cycles",
+      "checks": {
+        "source_fission_replay": "verified-by-C++-verifyTaskflowFissionReplay",
+        "coverage_and_no_duplication": true,
+        "numeric_mismatches": 0,
+        "numeric_element_comparisons_per_candidate": 4025
+      },
+      "interpretation": "Complete positive source-replay, native, numeric, and trace proof at equal resources; measured fission is 256 cycles slower than its same-resource unsplit parent control, so it is not a performance win.",
+      "evidence": {
+        "case_root": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu",
+        "result": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu/result.json",
+        "source_cut_census": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu/census/source-cut-census.json",
+        "source_replay_facts": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu/fission-control-replay/replay/source-facts.json",
+        "search_selection": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu/search/top5.jsonl",
+        "native_ledger": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu/native/summary.json",
+        "diagnostic_search_command": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu/diagnostic-search.command.json"
+      }
+    }
+  },
+  "negative_and_forwarding_controls": {
+    "forwarded_private_store_load_positive_and_tamper_negatives": "pass",
+    "forged_source_metadata": "rejected as expected",
+    "alias_effect_and_stale_domain_source_fixtures": "rejected as expected",
+    "fixture_check_command_exit_statuses": "pass; expected diagnostic cases use verify-diagnostics and exit successfully",
+    "evidence": "Per-case results preserve fixture commands and stdout/stderr. The R11b source-proof receipt preserves all 25 source census, replay, positive, and expected-negative command records."
+  },
+  "limitations": [
+    "These are isolated diagnostic controls; none contributes a row or extra budget to the main curve.",
+    "No exhaustive-search, production-readiness, formal-go, or SRAM-capacity claim is made; SRAM admission remains pending.",
+    "The LU children each retain per-operation domain/firing count 64 and are not disjoint firing partitions.",
+    "For LU, native per-child startup and duration are not emitted, so only fresh C++ predicted startup/duration and actual native compiled II are reported.",
+    "The Radar sibling fused native result is slower than the same-resource identity control despite reducing four loads; it remains a negative performance result."
+  ],
+  "evidence_pointers": {
+    "one_by_two_run_root": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007",
+    "two_by_one_run_root": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007",
+    "r11b_pin_acceptance": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/r11b-pin-acceptance.json",
+    "source_proof_acceptance": "/tmp/orbit-r11b-source-proof-acceptance-20261007/summary.json",
+    "source_contract": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11b-20261007.json",
+    "protocol": "/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/protocol-2x2-fusion-fission-r11b-20261007.json",
+    "runtime_config": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/input0-chain-runtime-ii23.json",
+    "case_receipts": {
+      "harris_pc_1x2": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-harris-task0-task1",
+      "harris_pc_2x1": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-harris-task0-task1",
+      "radar_pc_1x2": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/pc-radar-task16-task17",
+      "radar_pc_2x1": "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007/pc-radar-task16-task17",
+      "radar_sibling_1x2": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/sibling-radar-task4-task5",
+      "lu_task0_fission": "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007/fission-lu"
+    },
+    "preserved_per_case_receipts": [
+      "result.json",
+      "search/top5.jsonl",
+      "search/replay/*-score.jsonl",
+      "diagnostic-search.command.json",
+      "typed-action/typed-replay.command.json",
+      "numeric-gate.command.json",
+      "native/summary.json",
+      "native rank mapped MLIR and per-row native/trace/numeric command receipts"
+    ]
+  }
+}

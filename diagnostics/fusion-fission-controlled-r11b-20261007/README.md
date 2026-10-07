@@ -1,0 +1,24 @@
+# Controlled fusion and fission receipts: R11b
+
+These R11b controls all completed exact C++ source replay, fresh C++ scoring, native replay, numeric checking, mapper equality, and independent trace validation. They are diagnostic-only seed/identity experiments. The four producer-consumer rows cover both 1x2 and 2x1 fused shapes; the Radar sibling and LU fission rows are separate controls. None enters the main curve, changes its budget, or claims a performance winner. SRAM admission remains pending.
+
+The pin acceptance receipt says the immutable optimizer copy was accepted and the current 140-file source snapshot exactly matches the implementation snapshot used to build it. The separate source-proof receipt has 25 passing records, including positive exact-source replays and expected rejection cases. The R11b mapping unblock is a narrow same-block, unannotated, exact-type `DataMov` producer peel. It does not relax the mapper globally.
+
+| Control | Same total resources | Native cycles: transformed vs identity/parent | Actual mapped II | Memory operations in source task bodies | Numeric and trace |
+|---|---|---|---|---|---|
+| Harris Task_0 + Task_1, fused 1x2 | Pair 2 CGRAs; program 24 CGRAs | 955,485 vs 988,258 (−32,773; −3.3162%) | Parents 3/7; fused 10 | 4 loads/2 stores → 3/2 | 884,736 comparisons, 0 mismatches; pass |
+| Harris Task_0 + Task_1, fused 2x1 | Pair 2 CGRAs; program 24 CGRAs | 939,361 vs 988,258 (−48,897; −4.9478%) | Parents 3/7; fused 8 | 4 loads/2 stores → 3/2 | 884,736 comparisons, 0 mismatches; pass |
+| Radar Task_16 + Task_17, fused 1x2 | Pair 2 CGRAs; program 21 CGRAs | 1,310,353 vs 1,317,811 (−7,458; −0.5659%) | Parents 2/6; fused 4 | 6 loads/2 stores → 5/2 | 259,904 comparisons, 0 mismatches; pass |
+| Radar Task_16 + Task_17, fused 2x1 | Pair 2 CGRAs; program 21 CGRAs | 1,312,031 vs 1,317,811 (−5,780; −0.4386%) | Parents 2/6; fused 6 | 6 loads/2 stores → 5/2 | 259,904 comparisons, 0 mismatches; pass |
+| Radar sibling Task_4 + Task_5, fused 1x2 | Pair 2 CGRAs; program 21 CGRAs | 1,579,954 vs 1,317,811 (+262,143; +19.8923%) | Parents 7/7; fused 9 | 8 loads/2 stores → 4/2 | 259,904 comparisons, 0 mismatches; pass |
+| LU Task_0 fission | Parent 2x1 vs children 1x1 + 1x1; program 10 CGRAs | 18,694 vs parent 18,438 (+256; +1.3884%) | Parent 1; children 2/2 | Parent 1 load/1 store; children each 1/1 | 4,025 comparisons, 0 mismatches; pass |
+
+The memory counts are from the exact C++ replayed source task bodies. Both public stores remain in every fusion pair; the PC rewrites remove one real load, while the sibling rewrite removes four loads. Target task source body sizes/operation counts, whole-program C++ predicted scores, exact candidate IDs, native ledger IDs, native mapped body sizes, per-task fresh cost details, domain facts, and raw receipt paths are in `summary.json`.
+
+The LU source-cut census found exactly one legal cut for Task_0, selecting `left_nodes=[0]`. C++ `verifyTaskflowFissionReplay` verified coverage and no duplication for `Task_0.split.0` and `.1`. Each child reports source work, Taskflow firings, source multiplicity, and represented multiplicity of 64, with output coordinates proven. These are retained-per-operation domain counts, not disjoint firing partitions; do not sum them as unique parent firings. Scorer-emitted source bodies were 2,529 and 2,559 bytes (16 operations each). Fresh C++ child costs report trip count 64, startup 3, predicted II 2.7964169979, and predicted duration 180 for each. Native mapped bodies were 4,214 and 4,244 bytes, with actual compiled II 2 for each child. The native checker does not emit native per-child startup or duration, so those values remain unknown.
+
+The sibling result is a valid semantic control and a clear slowdown. It stays in the receipt as a negative performance result. The sibling 1x2 check was repeated in both orientation roots and produced the same reported cycles; it is listed once above.
+
+The forwarded-private-store/load positive fixture and its tamper negatives passed. Expected rejection fixtures for forged source metadata, aliasing, effects, and stale domains also passed their diagnostic checks. Ranks can differ between ledgers: for the fusion identity controls, `neighborhood-0` is search selection rank 1 but native ledger rank 5. Use the exact candidate ID to pair records, not rank alone.
+
+Absolute paths in `summary.json` point to local receipts and command logs; they are not portable runtime bindings. Each run root retains the command JSON, typed action history, source replay, search selection, native ledger, numeric gates, traces, and failure receipts.
