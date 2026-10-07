@@ -1,0 +1,780 @@
+{
+  "architecture_and_network": {
+    "cgra_grid": "4x4",
+    "context_memory_items_per_cgra": 6,
+    "control_memory_items_per_cgra": 23,
+    "directed_links": 48,
+    "link_bandwidth_bits_per_cycle": 32,
+    "link_latency_cycles": 1,
+    "network": "4x4 mesh",
+    "per_cgra_tile": "2x2",
+    "physical_cgra_count": 16,
+    "processing_element_count": 64,
+    "runtime_extrapolation_enabled": true,
+    "runtime_ii_ceiling": 23,
+    "training_ii_ceiling": 20
+  },
+  "baseline_kind": "common-DFG AMOEBA original F45 allocation, replayed and rescheduled by common ORBIT production scheduler",
+  "cohort_scope": {
+    "fresh_fusion_fission_full_stages_admitted": false,
+    "only_workload_in_this_capture": "Original Ray",
+    "other_five_common_amoeba_baselines_rerun": false,
+    "r9_records_modified": false
+  },
+  "evidence_provenance": {
+    "absolute_capture_paths_are_provenance_only": true,
+    "absolute_paths_are_clean_clone_reusable_bindings": false,
+    "capture_root": "/tmp/orbit-r11-common-amoeba-ray-native-20261007",
+    "exact_serialized_byte_comparisons": {
+      "r10c_to_r11_canonical_input": {
+        "exact_serialized_bytes_equal": true,
+        "left": {
+          "byte_count": 971685,
+          "path": "/tmp/orbit-r10c-common-amoeba-ray-20261007-r2/profiles/raytracing/canonical.mlir"
+        },
+        "right": {
+          "byte_count": 971685,
+          "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/canonical.mlir"
+        }
+      },
+      "r10c_to_r11_f45_scheduled_input": {
+        "exact_serialized_bytes_equal": true,
+        "left": {
+          "byte_count": 1024612,
+          "path": "/tmp/orbit-r10c-common-amoeba-ray-20261007-r2/profiles/raytracing/scheduled-common-input-f45.mlir"
+        },
+        "right": {
+          "byte_count": 1024612,
+          "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/scheduled-common-input-f45.mlir"
+        }
+      },
+      "r10c_to_r11_task_profiles": {
+        "exact_serialized_bytes_equal": true,
+        "left": {
+          "byte_count": 3659716,
+          "path": "/tmp/orbit-r10c-common-amoeba-ray-20261007-r2/profiles/raytracing/task-profiles.json"
+        },
+        "right": {
+          "byte_count": 3659716,
+          "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/task-profiles.json"
+        }
+      },
+      "runtime_architecture_to_main_config": {
+        "exact_serialized_bytes_equal": true,
+        "left": {
+          "byte_count": 618,
+          "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/architecture.yaml"
+        },
+        "right": {
+          "byte_count": 618,
+          "path": "/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6_ctrlmem23_diagnostic.yaml"
+        }
+      },
+      "runtime_contract_to_main_contract": {
+        "exact_serialized_bytes_equal": true,
+        "left": {
+          "byte_count": 7109218,
+          "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/source-contract.json"
+        },
+        "right": {
+          "byte_count": 7109218,
+          "path": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11-20261007.json"
+        }
+      },
+      "runtime_network_to_main_config": {
+        "exact_serialized_bytes_equal": true,
+        "left": {
+          "byte_count": 5626,
+          "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/network.yaml"
+        },
+        "right": {
+          "byte_count": 5626,
+          "path": "/home/x/shiran/project/orbit-artifact/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml"
+        }
+      }
+    },
+    "files": {
+      "captured_r10c_task_profiles_json": {
+        "byte_count": 3659716,
+        "path": "/tmp/orbit-r10c-common-amoeba-ray-20261007-r2/profiles/raytracing/task-profiles.json"
+      },
+      "marker_positive_result_json": {
+        "byte_count": 427190,
+        "path": "/tmp/orbit-r11-common-profile-marker-acceptance-20261007/positive-captured-ray.json"
+      },
+      "r11_architecture_yaml": {
+        "byte_count": 618,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/architecture.yaml"
+      },
+      "r11_build_acceptance_json": {
+        "byte_count": 1059,
+        "path": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/r11-build-acceptance.json"
+      },
+      "r11_canonical_source_facts_json": {
+        "byte_count": 147560,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/canonical-source-facts.json"
+      },
+      "r11_independent_trace_json": {
+        "byte_count": 832,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/independent-trace.json"
+      },
+      "r11_input_canonical_mlir": {
+        "byte_count": 971685,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/canonical.mlir"
+      },
+      "r11_input_f45_scheduled_mlir": {
+        "byte_count": 1024612,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/scheduled-common-input-f45.mlir"
+      },
+      "r11_input_task_profiles_json": {
+        "byte_count": 3659716,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/task-profiles.json"
+      },
+      "r11_native_mlir": {
+        "byte_count": 1077974,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/native/rank-0/native.mlir"
+      },
+      "r11_network_yaml": {
+        "byte_count": 5626,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/inputs/network.yaml"
+      },
+      "r11_numeric_result_json": {
+        "byte_count": 2572,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/numeric/raytracing/common-amoeba-rank-0/result.json"
+      },
+      "r11_result_json": {
+        "byte_count": 2445,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/result.json"
+      },
+      "r11_retiming_json": {
+        "byte_count": 427194,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/raytracing/retiming.json"
+      },
+      "r11_runtime_json": {
+        "byte_count": 1439,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/runtime.json"
+      },
+      "r11_source_contract_json": {
+        "byte_count": 7109218,
+        "path": "/tmp/orbit-r11-common-amoeba-ray-native-20261007/source-contract.json"
+      }
+    },
+    "marker_acceptance_root": "/tmp/orbit-r11-common-profile-marker-acceptance-20261007",
+    "r10c_profile_capture_root": "/tmp/orbit-r10c-common-amoeba-ray-20261007-r2/profiles/raytracing",
+    "single_file_reference_semantics": "A lone path and byte count are provenance only; they do not establish file identity. Identity is asserted only for the paired complete-byte comparisons listed here."
+  },
+  "f45_profile_provenance": {
+    "allocation_policy": "unchanged original F45 throughput-guided allocator",
+    "captured_attempts_origin": "R10c profile-generation run; R11 native replay reuses the authenticated byte-identical profile and original F45 scheduled input",
+    "captured_inputs_byte_for_byte_match_r10c": {
+      "canonical_input": true,
+      "f45_scheduled_input": true,
+      "task_profiles": true
+    },
+    "captured_mapping_attempt_count": 216,
+    "captured_mapping_attempts_expected": 216,
+    "captured_scheduler_invoked_during_profile_generation": false,
+    "common_mapper_profile_provenance": "source-owned-common-parent-profile-only-mapped-duration-v1",
+    "parent_task_count": 27,
+    "profile_binding_verified": true,
+    "r11_child_mapper_profiles_used": false,
+    "r11_full_child_remap": false
+  },
+  "marker_acceptance": {
+    "negative_controls_rejected": {
+      "extra-field": true,
+      "forged-count": true,
+      "forged-fallback": true,
+      "forged-shape": true,
+      "unit-profile-supported": true
+    },
+    "positive_captured_ray_record_passed": true,
+    "scope": "metadata/marker acceptance only; the native replay, profile selection, trace and numeric gates are recorded separately above"
+  },
+  "result": {
+    "candidate_id": "candidate-0",
+    "diagnostic_only": true,
+    "dispatch_policy": "critical-path",
+    "formal_go": false,
+    "formal_or_sram_gate": "pending; no formal-go claim",
+    "independent_trace": "pass",
+    "input_index": 0,
+    "mapper": "pass",
+    "native_whole_program_cycles": 177426,
+    "numeric": "pass",
+    "numeric_element_comparisons": 61892,
+    "numeric_mismatches": 0,
+    "scheduler_backend": "orbit-production",
+    "stage_admission": "not_claimed",
+    "trace_dependency_count": 66,
+    "trace_routed_data_pairs": 39,
+    "whole_program_result_scope": "original-amoeba-resource-choices-rescheduled-by-common-orbit-production-scheduler; placements-and-dispatch-are-new"
+  },
+  "schema": "orbit-common-amoeba-original-ray-r11-summary-v1",
+  "source_and_runtime_pin": {
+    "exact_source_bytes_unchanged_during_build": true,
+    "immutable_optimizer_pin_detached_from_build_output": true,
+    "optimizer_path_provenance": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11-20261007",
+    "published_source_commit": "2dd2bb327269eaff23e5dc8cdff11d968b0dda15",
+    "source_commit": "2dd2bb327269eaff23e5dc8cdff11d968b0dda15",
+    "source_contract_path_provenance": "/home/x/shiran/project/orbit-artifact/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11-20261007.json",
+    "source_contract_replay_payload_count": 26,
+    "source_dirty_recorded_by_contract": true,
+    "source_file_count": 140
+  },
+  "status": "native_replayed",
+  "task13_profile_interpretation": {
+    "captured_successful_profiles": [
+      {
+        "compiled_ii": 22,
+        "composed_cgra_count": 4,
+        "composed_cgra_shape": "2x2",
+        "estimated_latency_cycles": 32405,
+        "mapper_succeeded": true,
+        "materialized_operation_count": 328
+      },
+      {
+        "compiled_ii": 21,
+        "composed_cgra_count": 4,
+        "composed_cgra_shape": "1x4",
+        "estimated_latency_cycles": 30934,
+        "mapper_succeeded": true,
+        "materialized_operation_count": 328
+      }
+    ],
+    "count_field_semantics": "4 is the selected physical CGRA count per replica; it is not a count of four candidate profiles",
+    "effective_per_replica_duration_cycles": 15467,
+    "f45_active_replicas": 2,
+    "f45_selected_cgra_count": 4,
+    "f45_selected_profile_shape": "1x4",
+    "fallback_selected": "1x4",
+    "full_parent_mapped_duration_cycles": 30934,
+    "profile_status_note": "The R11 runtime selects the 1x4 candidate (II 21, full parent duration 30934); II 21 exceeds training ceiling 20 but is within diagnostic runtime ceiling 23 with runtime extrapolation enabled.",
+    "unit_cgra_profile_present": false,
+    "unit_cgra_profile_status": "unsupported/unavailable in the authenticated captured Task_13 profile set; negative marker control rejects asserting it as supported"
+  },
+  "task_records": [
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 8,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_0"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 4418,
+      "compiled_ii": 3,
+      "effective_duration_cycles": 4418,
+      "effective_duration_formula": "ceil(4418/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 4418,
+      "materialized_operation_count": 11,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 4418,
+      "recorded_mapped_duration_cycles": 4418,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_1"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 17672,
+      "compiled_ii": 12,
+      "effective_duration_cycles": 17672,
+      "effective_duration_formula": "ceil(17672/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 17672,
+      "materialized_operation_count": 44,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 17672,
+      "recorded_mapped_duration_cycles": 17672,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_2"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 7360,
+      "compiled_ii": 5,
+      "effective_duration_cycles": 7360,
+      "effective_duration_formula": "ceil(7360/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 7360,
+      "materialized_operation_count": 16,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 7360,
+      "recorded_mapped_duration_cycles": 7360,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_3"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_4"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_5"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_6"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_7"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_8"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_9"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_10"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5890,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5890,
+      "effective_duration_formula": "ceil(5890/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5890,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5890,
+      "recorded_mapped_duration_cycles": 5890,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_11"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 2947,
+      "compiled_ii": 2,
+      "effective_duration_cycles": 2947,
+      "effective_duration_formula": "ceil(2947/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 2947,
+      "materialized_operation_count": 7,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 2947,
+      "recorded_mapped_duration_cycles": 2947,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_12"
+    },
+    {
+      "common_scheduler_placed_shape": "1x4",
+      "common_scheduler_task_duration_cycles": 15467,
+      "compiled_ii": 21,
+      "effective_duration_cycles": 15467,
+      "effective_duration_formula": "ceil(30934/2)",
+      "f45_original_active_replicas": 2,
+      "f45_original_placed_shape": "4x1",
+      "f45_selected_profile_shape": "1x4",
+      "full_parent_mapped_duration_cycles": 30934,
+      "materialized_operation_count": 328,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 15467,
+      "recorded_mapped_duration_cycles": 15467,
+      "selected_cgra_count": 4,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 11776,
+      "task": "Task_13"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 7360,
+      "compiled_ii": 5,
+      "effective_duration_cycles": 7360,
+      "effective_duration_formula": "ceil(7360/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 7360,
+      "materialized_operation_count": 16,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 7360,
+      "recorded_mapped_duration_cycles": 7360,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_14"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 2945,
+      "compiled_ii": 2,
+      "effective_duration_cycles": 2945,
+      "effective_duration_formula": "ceil(2945/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 2945,
+      "materialized_operation_count": 7,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 2945,
+      "recorded_mapped_duration_cycles": 2945,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_15"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 7362,
+      "compiled_ii": 5,
+      "effective_duration_cycles": 7362,
+      "effective_duration_formula": "ceil(7362/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 7362,
+      "materialized_operation_count": 12,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 7362,
+      "recorded_mapped_duration_cycles": 7362,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_16"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 14724,
+      "compiled_ii": 10,
+      "effective_duration_cycles": 14724,
+      "effective_duration_formula": "ceil(14724/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 14724,
+      "materialized_operation_count": 35,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 14724,
+      "recorded_mapped_duration_cycles": 14724,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_17"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 14724,
+      "compiled_ii": 10,
+      "effective_duration_cycles": 14724,
+      "effective_duration_formula": "ceil(14724/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 14724,
+      "materialized_operation_count": 35,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 14724,
+      "recorded_mapped_duration_cycles": 14724,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_18"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 22085,
+      "compiled_ii": 15,
+      "effective_duration_cycles": 22085,
+      "effective_duration_formula": "ceil(22085/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 22085,
+      "materialized_operation_count": 57,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 22085,
+      "recorded_mapped_duration_cycles": 22085,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_19"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 22085,
+      "compiled_ii": 15,
+      "effective_duration_cycles": 22085,
+      "effective_duration_formula": "ceil(22085/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 22085,
+      "materialized_operation_count": 57,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 22085,
+      "recorded_mapped_duration_cycles": 22085,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_20"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 22085,
+      "compiled_ii": 15,
+      "effective_duration_cycles": 22085,
+      "effective_duration_formula": "ceil(22085/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 22085,
+      "materialized_operation_count": 57,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 22085,
+      "recorded_mapped_duration_cycles": 22085,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_21"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 22085,
+      "compiled_ii": 15,
+      "effective_duration_cycles": 22085,
+      "effective_duration_formula": "ceil(22085/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 22085,
+      "materialized_operation_count": 57,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 22085,
+      "recorded_mapped_duration_cycles": 22085,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_22"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5891,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5891,
+      "effective_duration_formula": "ceil(5891/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5891,
+      "materialized_operation_count": 10,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5891,
+      "recorded_mapped_duration_cycles": 5891,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_23"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5891,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5891,
+      "effective_duration_formula": "ceil(5891/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5891,
+      "materialized_operation_count": 10,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5891,
+      "recorded_mapped_duration_cycles": 5891,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_24"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 8831,
+      "compiled_ii": 6,
+      "effective_duration_cycles": 8831,
+      "effective_duration_formula": "ceil(8831/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 8831,
+      "materialized_operation_count": 19,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 8831,
+      "recorded_mapped_duration_cycles": 8831,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_25"
+    },
+    {
+      "common_scheduler_placed_shape": "1x1",
+      "common_scheduler_task_duration_cycles": 5889,
+      "compiled_ii": 4,
+      "effective_duration_cycles": 5889,
+      "effective_duration_formula": "ceil(5889/1)",
+      "f45_original_active_replicas": 1,
+      "f45_original_placed_shape": "1x1",
+      "f45_selected_profile_shape": "1x1",
+      "full_parent_mapped_duration_cycles": 5889,
+      "materialized_operation_count": 13,
+      "profile_sample_trip_count": 1472,
+      "recorded_f45_scheduler_duration_cycles": 5889,
+      "recorded_mapped_duration_cycles": 5889,
+      "selected_cgra_count": 1,
+      "source_iteration_domain_complete": true,
+      "source_iteration_work_count": 1472,
+      "task": "Task_26"
+    }
+  ],
+  "task_timing_formula": "ceil(ceil(structural_startup_cycles + compiled_ii * (actual_mapper_firings - 1)) / original_active_replicas)",
+  "task_timing_validation": {
+    "effective_duration_matches_recorded_mapped_f45_and_shared_scheduler_duration": true,
+    "effective_duration_rule": "ceil(full_parent_mapped_duration_cycles / original_active_replicas)",
+    "full_parent_duration_from_retiming": "task_costs[].full_parent_mapped_duration_cycles",
+    "source_iteration_domain_complete_for_all_tasks": true,
+    "task_records_checked": 27
+  },
+  "workload": "Original Ray"
+}
