@@ -15,6 +15,10 @@ FISSION_STAGE = 'full-joint-fission'
 ACTION_SCHEMA = 'orbit-joint-neighborhood-typed-actions-v1'
 HISTORY_SCHEMA = 'orbit-joint-neighborhood-typed-actions-v1'
 REPLAY_FACTS_SCHEMA = 'orbit-joint-neighborhood-action-replay-facts-v1'
+FISSION_SOURCE_REPLAY_CONTRACTS = {
+    'orbit-taskflow-fission-source-replay-v1',
+    'orbit-taskflow-fission-source-replay-v2-ordinary-suffix-rebase',
+}
 COMMON_INTER_TASK_NETWORK = Path(
     'config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml')
 
@@ -142,7 +146,8 @@ def _check_search_binding(selection, args, prepared_bytes, prepared_text,
             witness.get('prepared_source_exact_bytes') != prepared_text or
             witness.get('max_fission_actions_per_task') != args.max_fission_actions_per_task or
             not witness.get('prepared_source_lowering_pipeline') or
-            witness.get('fission_source_replay') != 'orbit-taskflow-fission-source-replay-v1'):
+            not isinstance(witness.get('fission_source_replay'), str) or
+            witness.get('fission_source_replay') not in FISSION_SOURCE_REPLAY_CONTRACTS):
         raise FissionReplayError('C++ source binding has a different prepared source, cut cap, or lowering policy')
     files = witness.get('files')
     prepared_record = files.get('prepared_taskflow_source') if isinstance(files, dict) else None

@@ -232,6 +232,33 @@ def test_fission_replay_rejects_candidate_mismatch_from_native_comparator(tmp_pa
         replay.replay_fission_candidate(selection, args, tmp_path / "rank-0")
 
 
+def test_rebased_fission_contract_keeps_exact_prefix_suffix_replay(tmp_path, monkeypatch):
+    args, selection, calls = _fixture(tmp_path, monkeypatch)
+    witness_path = Path(selection["source_binding_witness"])
+    witness = json.loads(witness_path.read_text())
+    witness["fission_source_replay"] = (
+        "orbit-taskflow-fission-source-replay-v2-ordinary-suffix-rebase")
+    write_json(witness_path, witness)
+    receipt = replay.replay_fission_candidate(selection, args, tmp_path / "rank-0")
+    assert receipt["status"] == "verified"
+    assert receipt["fission_action_count"] == 1
+    assert receipt["ordinary_action_count"] == 1
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("contract", [None, {}, [], "orbit-taskflow-fission-source-replay-v2",
+                                    "orbit-taskflow-fission-source-replay-v3"])
+def test_unknown_fission_contract_blocks_native_replay(tmp_path, monkeypatch, contract):
+    args, selection, calls = _fixture(tmp_path, monkeypatch)
+    witness_path = Path(selection["source_binding_witness"])
+    witness = json.loads(witness_path.read_text())
+    witness["fission_source_replay"] = contract
+    write_json(witness_path, witness)
+    with pytest.raises(replay.FissionReplayError, match="lowering policy"):
+        replay.replay_fission_candidate(selection, args, tmp_path / "rank-0")
+    assert calls == []
+
+
 def test_active_transfer_options_are_copied_from_protocol_and_native_facts(tmp_path, monkeypatch):
     args, selection, calls = _fixture(
         tmp_path, monkeypatch, active_arguments=[1, 3, 7])
