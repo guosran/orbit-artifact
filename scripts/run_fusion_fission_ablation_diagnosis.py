@@ -796,6 +796,7 @@ def _run_point(*, control: Any, nr: Any, case: Mapping[str, Any], side: str,
                          "command": replay_receipt,
                          "source_work": _source_work_summary(target_facts, case, side),
                          "history_key": _history_key(target_facts)}
+    search_dir.mkdir(parents=True, exist_ok=True)
     search_command_receipt = _atomic_command_run(
         control, search_command, case_dir, "diagnostic-search", runtime_root)
     result["search_command_receipt"] = search_command_receipt
@@ -1278,7 +1279,11 @@ def run(args: argparse.Namespace) -> int:
                     if identity_costs is None and point_result.get("receipt"):
                         identity_costs = point_result["receipt"].get("identity_costs")
                     if args.mode == "score":
-                        side_points[0]["objective_count"] = 1
+                        # Identity is already included in point 1's two C++
+                        # scores. Point 0 exposes that cost without charging
+                        # the same scheduler call twice.
+                        side_points[0]["objective_count"] = 0
+                        side_points[0]["score_charged_at_point"] = 1
                         side_points[0]["objective_costs"] = identity_costs
                     else:
                         side_points[0]["planned_identity_score_count"] = 1

@@ -554,6 +554,7 @@
     {
       "lineage": null,
       "mapper": {
+        "bijective_ssa_body_equality": true,
         "cache_input_blake2b_256": "73e974eba636f0214eeebda6fd48ddd0030bbe2d6ef411834dead5764d2e9e40",
         "cache_input_bytes": 2364,
         "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-r9-diagnosis/task-14/input.txt",
@@ -572,7 +573,7 @@
         },
         "mapper_visible_dfg_blake2b_256": "d5ddde955ac9d8356c55ea2fd341575dce999754a31e38a9611d5d01587294be",
         "mapper_visible_dfg_wrapper_bytes": 1684,
-        "normalization": "terminal neura.yield->func.return; remove whitespace outside strings; alpha-rename SSA identifiers outside strings",
+        "normalization": "empty terminal yield->return; whitespace removed outside strings; bijective SSA rename by first occurrence, preserving operand connectivity",
         "source_kernel_normalized_equals_mapper_func_body": true
       },
       "operations_per_original_firing": {

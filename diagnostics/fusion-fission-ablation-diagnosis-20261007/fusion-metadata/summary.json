@@ -1,0 +1,142 @@
+{
+  "allowed_conclusions": [
+    "Two observed positive-shared-read fusion materializations are rejected during R9 imported-seed facts extraction before scoring.",
+    "Both materialized fused kernels preserve indexed stores and verified source work while reducing duplicate indexed loads in the observed examples.",
+    "No evidence establishes a performance effect, a native mapper result, or failure of every legal fusion/fission alternative."
+  ],
+  "cache_and_native": {
+    "cache_key_evidence": "Cost catalog binds source graph identity and exact current task IDs; score key includes candidate/cost bytes, current function IR, task edges and shapes; mapper cache compares complete wrapper/shape/architecture input.",
+    "direct_materialization_flags": {
+      "cost_catalog_read": false,
+      "native_mapping_run": false,
+      "prediction_run": false,
+      "ranking_performed": false
+    },
+    "native_mapper_outcome": "\u672a\u77e5",
+    "source_locations": [
+      "AnalyticalTaskCostCatalog.cpp:298,308,313,545,606,610,613",
+      "ScoreExactJointTaskCandidatesPass.cpp:1683,1685,1695,1713,1731",
+      "OriginalAmoebaProfileCostAdapter.cpp:1179,1181,1183",
+      "MapJointSchedulingTasksPass.cpp:624,626,637,645"
+    ],
+    "specific_fused_candidate_cache_hit_or_miss": "\u672a\u77e5"
+  },
+  "finding": {
+    "description": "R9 sibling and producer-consumer materializers emit complete typed fusion metadata with positive eliminated_loads, while the R9 extractor requires zero eliminated_loads for those modes. Imported required seeds fail facts extraction before prediction/scoring.",
+    "missing_required_attributes": false,
+    "scope": "Observed mismatch covers both measured fusion paths; it is not shape-specific in the extractor. R9 still accepts sibling/retained cases with zero eliminated loads and correctly formed forwarded 1/1 metadata. The two fission materializations have no fusion metadata.",
+    "scope_status": "\u8bc1\u636e\u652f\u6301\u4f46\u672a\u786e\u8ba4",
+    "source_locations": {
+      "r9_extractor_call": "ExtractJointTaskGraphFactsPass.cpp:2493",
+      "r9_extractor_predicates": "ExtractJointTaskGraphFactsPass.cpp:2195,2210",
+      "r9_producer_consumer_materializer": "MaterializeNeuraJointRewritePass.cpp:3973,3975,3977",
+      "r9_seed_rejection": "JointNeighborhoodSearchPass.cpp:2592,2599,2602",
+      "r9_sibling_materializer": "MaterializeNeuraJointRewritePass.cpp:4516,4518,4520,4522"
+    },
+    "status": "\u5df2\u8bc1\u5b9e"
+  },
+  "fission_materializations": {
+    "actions": [
+      "fission:Task_0:left=0"
+    ],
+    "cases": [
+      "lu-fission-first",
+      "harris-fission-first"
+    ],
+    "fusion_metadata_attribute_occurrences": 0,
+    "implication": "These two artifacts do not exercise the fusion-metadata predicate.",
+    "source_iteration_domain_verified": true,
+    "status": "\u5df2\u8bc1\u5b9e"
+  },
+  "materialized_fusion_evidence": [
+    {
+      "artifacts": {
+        "after": "legality/radar-sibling-4-5/replay/candidate.mlir:221,362",
+        "before": "legality/radar-sibling-4-5/replay/candidate-input.mlir:221,301",
+        "imported_seed": "fixed-probes-v2/radar-sibling-4-5/search/archive.jsonl:2"
+      },
+      "body_counts_preserved": {
+        "neura.add": 5,
+        "neura.data_mov": 76,
+        "neura.icmp": 2,
+        "neura.mul": 4
+      },
+      "case": "radar-sibling-4-5",
+      "materialized_metadata": {
+        "eliminated_loads": 4,
+        "eliminated_stores": 0,
+        "mode": "sibling",
+        "sibling_names_present_and_distinct": true
+      },
+      "neura_load_indexed_before_after": [
+        8,
+        4
+      ],
+      "neura_store_indexed_before_after": [
+        2,
+        2
+      ],
+      "rejected_by_r9_because": "R9 sibling validator requires eliminated_loads == 0",
+      "score_status": "N/A: invalid before prediction/scoring",
+      "verified_source_firings": 131072
+    },
+    {
+      "artifacts": {
+        "after": "legality/radar-pc-16-17/replay/candidate.mlir:905,974",
+        "before": "legality/radar-pc-16-17/replay/candidate-input.mlir:905,937",
+        "imported_seed": "fixed-probes-v2/radar-pc-16-17/search/archive.jsonl:2"
+      },
+      "body_counts_preserved": {
+        "neura.add": 2,
+        "neura.cast": 3,
+        "neura.data_mov": 35,
+        "neura.icmp": 3,
+        "neura.mul": 3
+      },
+      "case": "radar-pc-16-17",
+      "materialized_metadata": {
+        "eliminated_loads": 1,
+        "eliminated_stores": 0,
+        "mode": "retained",
+        "sibling_fields_absent": true
+      },
+      "neura_load_indexed_before_after": [
+        6,
+        5
+      ],
+      "neura_store_indexed_before_after": [
+        2,
+        2
+      ],
+      "rejected_by_r9_because": "R9 retained validator requires eliminated_loads == 0 and eliminated_stores == 0",
+      "retained_store_semantics": "producer write and consumer output write remain yielded; consumer indexed load is shared",
+      "score_status": "N/A: invalid before prediction/scoring",
+      "verified_source_firings": 840
+    }
+  ],
+  "r11b_source_comparison": {
+    "extractor_change": "Embedded ExtractJointTaskGraphFactsPass.cpp:2195,2198,2205 permits nonnegative sibling eliminated-load counts; :2217, :2218, :2219, :2220 permits retained 0-1 load and zero stores.",
+    "materializer_change": "Embedded MaterializeNeuraJointRewritePass.cpp:3917, :3925, :3927, :3931 peels identity DataMov wrappers when forwarding values; this is separate from metadata validation and can alter later body wiring.",
+    "replay_status": "not run",
+    "status": "\u5df2\u8bc1\u5b9e source diff; behavior not rerun"
+  },
+  "schema": "orbit-ff-r9-fusion-metadata-audit-v1",
+  "scope": {
+    "inspected_materializations": [
+      "radar-sibling-4-5",
+      "radar-pc-16-17",
+      "lu-fission-first",
+      "harris-fission-first"
+    ],
+    "mode": "read-only",
+    "no_build_mapper_search_or_hashing": true,
+    "r11b_source_contract": "/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11b-20261007.json",
+    "r9_source": "/tmp/orbit-ff-ablation-r9-source-20261007"
+  },
+  "status": "complete",
+  "unknowns": [
+    "Native mapping outcome and performance of either fused body.",
+    "Whether a specific fused wrapper would hit an exact existing mapper-cache entry.",
+    "Behavior of unobserved fusion cases with zero eliminated loads or other store/load patterns."
+  ]
+}

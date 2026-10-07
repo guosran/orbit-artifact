@@ -1,0 +1,223 @@
+{
+  "schema": "orbit-ff-ablation-semantics-r9-v1",
+  "status": "read-only diagnosis complete",
+  "scope": {
+    "primary_run_revision": "r9-queue-v2",
+    "result_root": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006",
+    "runtime_root": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6",
+    "stage_receipts": "/home/x/shiran/project/orbit-artifact/diagnostics/input0-memory-fusion-fission-r9-20261007/stage-receipts.json",
+    "public_summary": "/home/x/shiran/project/orbit-artifact/diagnostics/input0-memory-fusion-fission-r9-20261007/summary.json",
+    "prior_exact_audit": "/home/x/shiran/project/orbit-artifact/diagnostics/fusion-fission-audit-r9-20261007/audit.json",
+    "fission_census_root": "/tmp/orbit-r9-source-proof-acceptance-20261006",
+    "workloads": [
+      "llama",
+      "lu",
+      "harris",
+      "radar",
+      "gcn",
+      "raytracing"
+    ],
+    "stage_order": [
+      "shape-temporal",
+      "shape-temporal-replica",
+      "shape-temporal-replica-tiling",
+      "full-joint",
+      "full-joint-fission"
+    ],
+    "audit_stage_aliases": {
+      "S4": "full-joint",
+      "S5": "full-joint-fission"
+    },
+    "stage_initialization": "independent",
+    "actual_source_contract": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/source-model-contract-memory-fusion-fission-r9-original-ray-ii23-stable-features-queue-v2-20261006.json",
+    "source_contract_provenance": {
+      "source_commit": "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e",
+      "published_source_commit": "a75c848eccc010a5c6923cc16fc0e3d6073da73a",
+      "source_dirty": true,
+      "model_namespace": "orbit-per-cgra-2x2-direct-4member-v1",
+      "search_contract": "orbit-neighborhood-search-v1",
+      "rewrite_contract": "orbit-joint-graph-rewrite-contract-v8",
+      "queue_revision": "exact frozen-model pathname admission fix; native compiler/model bytes unchanged",
+      "embedded_source_file_count": 140,
+      "live_source_used": false
+    }
+  },
+  "profile": {
+    "common_values_across_12_S4_S5_stages": {
+      "max_rounds": 4,
+      "max_candidates": 4096,
+      "beam_width": 16,
+      "diversity_slots": 4,
+      "native_shortlist_count": 5,
+      "max_partition_factor": 8,
+      "scoring_workers": 4
+    },
+    "physical_resources": {
+      "cgra_rows": 4,
+      "cgra_columns": 4,
+      "pe_rows": 2,
+      "pe_columns": 2,
+      "context_mem_items": 6,
+      "registers": 32,
+      "runtime_ii_ceiling": 20,
+      "ray_diagnostic_runtime_ii_ceiling": 23,
+      "training_and_normalization_ii_ceiling": 20
+    },
+    "S4_stage": "full-joint, internal C++ stage number 5; fusion gate enabled; fission gate absent",
+    "S5_stage": "full-joint-fission, internal C++ stage number 6; fission gate enabled with authenticated prepared pre-Neura source",
+    "source_fission_limit_per_task": 64,
+    "raytracing_ii_ceiling": 23,
+    "other_workloads_ii_ceiling": 20,
+    "explicit_runtime_network": "amoeba_4x4_mesh_latency1_bandwidth32.yaml"
+  },
+  "independence_and_controls": {
+    "stage_initialization": "independent",
+    "seed_manifest_and_seed_index": "null in each stage chain-binding.json",
+    "previous_winner_override": "null in each stage chain-binding.json",
+    "search_header_previous_winner_requested": "false in all 12 stage headers",
+    "control_observation": "one native control per S4/S5 stage, each control_role=identity; no previous-stage or historical winner control appears",
+    "archive_scope": "each stage has its own search output/checkpoint; protocol retains identity and scored candidates within a stage; prior stage archive is not inherited",
+    "shortlist_scope": "5 per-stage global archive finalists; native records are separate from the identity control",
+    "canonical_identity_nonunit_exception": "only Ray Task_13 is 1x4 (recorded as rows=1, cols=4); all other canonical task shapes are 1x1",
+    "top5_action_history": "all 60/60 top-five entries have authenticated typed history on graph-0; family action histories plus alternate paths contain no direct fusion or fission action"
+  },
+  "family_flow": {
+    "fusion": {
+      "stage_gate": "enabled in full-joint and full-joint-fission by source stage gate",
+      "family_specific_legal_source_census": "unknown; no family-specific source census retained",
+      "attempted_materialized_structural_change_scored_archive_counts": "unknown; per-family event logs and archive spill files were deleted after completion",
+      "final_checkpoint_beam_presence": "0 of 16 beam entries in every S4 and S5 checkpoint",
+      "global_top5_presence": "0 of 5 top-five candidate histories in every S4 and S5 result",
+      "native_top5_presence": "0 of 5; native IDs joined to the exact result top-five histories",
+      "selected_winner_presence": "0 direct fusion action histories in all 12 selected winners",
+      "co_tiling_distinction": "Harris has 5 producer-consumer-co-tiling candidates in each S4/S5 top five; these histories contain paired tile primitives and no fusion primitive"
+    },
+    "fission": {
+      "stage_gate": "disabled in S4/full-joint; enabled only in S5/full-joint-fission",
+      "source_cut_census_is_attempt_count": false,
+      "source_cut_census_total_across_six_workloads": 87,
+      "source_cut_census_by_workload": {
+        "llama": 0,
+        "lu": 1,
+        "harris": 30,
+        "radar": 0,
+        "gcn": 0,
+        "raytracing": 56
+      },
+      "attempted_materialized_structural_change_scored_archive_counts": "unknown after family funnel/archive deletion",
+      "final_checkpoint_beam_presence": "0 of 16 beam entries in every S4 and S5 checkpoint",
+      "global_top5_presence": "0 fission action histories in all 12 S4/S5 result top-five lists",
+      "native_top5_presence": "0 of 5 in every stage, cross-checked by candidate ID to result history",
+      "selected_winner_presence": "0 fissionActions in all 12 selected winners"
+    },
+    "pending_menu_policy": "checkpoint pending-neighbor row counts and cursors are preserved as queue snapshots only and are not interpreted as family attempt counts"
+  },
+  "budget_and_crowding": {
+    "unique_candidates_scored_total_S4_S5": 48067,
+    "stages_stopped_at_4096_unique_candidates": 10,
+    "stages_stopped_at_max_rounds_below_4096": 2,
+    "candidate_budget_hit_fraction": "10/12",
+    "observed_vs_causal_status": "budget saturation is observed; that it crowded fusion/fission specifically is not confirmed because event/archive family attribution was not retained",
+    "exhaustive": false
+  },
+  "family_quota_and_ordering": {
+    "fixed_per_family_quota": "not present in the recorded configuration/source path",
+    "actual_mechanism": "families are round-robin interleaved in pending action generation and the next family is prioritized by the lowest successful plus reserved score count; the hard score quota is global per round",
+    "diversity_slots_meaning": "distinct action paths/configurations for beam expansion; not a family allotment and does not reserve family representation in global top five",
+    "random_seed_recorded": false,
+    "prng_api_hits_in_140_embedded_source_texts": 0,
+    "determinism_evidence": "family/target ordering uses ordered maps/sets and stable sorting; scoring batches commit in pending order; no PRNG API or random-seed field was found in the embedded source/records",
+    "determinism_limit": "this establishes deterministic action ordering and no explicit RNG seed, not a general proof that every external runtime component is bit-for-bit deterministic"
+  },
+  "allowed_conclusions": [
+    {
+      "status": "已证实",
+      "claim": "Within the published R9 bounded search, none of the 12 S4/S5 top-five lists, final beam snapshots, selected winners, or native top-five candidates contains a direct fusion action or fission action. Harris producer-consumer co-tiling is present and is a distinct paired-tiling rewrite."
+    },
+    {
+      "status": "已证实",
+      "claim": "S5 source census exposes 87 legal fission cuts in aggregate: LU 1, Harris 30, Raytracing 56; LLaMA, Radar, and GCN have zero under the source-owned fission legality rules. The census is not evidence that those actions were attempted or scored."
+    },
+    {
+      "status": "证据支持但未确认",
+      "claim": "The common 4096 unique-candidate limit was reached in 10 of 12 stages, making search-budget crowding plausible. Family-specific attempted/materialized/scored/archive counts are unknown, so the omission cannot be causally assigned to budget crowding. The recorded best measured cycles are equal S4/S5 for all six workloads."
+    }
+  ],
+  "unresolved_unknowns": [
+    "Fusion source-legal action census by workload.",
+    "Per-family action attempts, materializer accepts/rejects, structural candidates, cache reuse, scored candidates, archive ranks, and duplicate dispositions for fusion and fission.",
+    "Whether a fusion/fission candidate was generated but lost at a particular intermediate beam or cost-validation stage."
+  ],
+  "source_line_references": [
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "lines": "104-125",
+      "finding": "Maps full-joint to internal stage 5 and full-joint-fission to stage 6."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "lines": "1639-1718",
+      "finding": "Fusion and sibling-fusion action families are generated only at stage >=5; paired producer-consumer co-tiling is a distinct two-tile action."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "lines": "1721-1809",
+      "finding": "Fission is gated at stage >=6 and uses the authenticated prepared source to enumerate the complete legal source cut set."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "463-486",
+      "finding": "Typed history records canonical shapes, ordinary actions, and fissionActions separately."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "1260-1268",
+      "finding": "The per-round score quota is global over remaining candidate budget and rounds."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "1270-1446",
+      "finding": "Pending neighbors are deterministically grouped/interleaved by action family; scored-family balancing is adaptive, not a fixed family quota."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "1277-1315",
+      "finding": "Fission neighbors are removed when history is unknown, when ordinary action history is nonempty, when the path has multiple primitives, or when that task was already fissioned."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "1903-1950",
+      "finding": "Seed manifest, previous winner, round, candidate, beam/diversity, source, worker, and fission cap options."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "4648-4683",
+      "finding": "Beam has width/diversity slots; diversity selects path/configuration variants only for expansion."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "5535-5552",
+      "finding": "Final shortlist is the first five records under one global archive sort."
+    },
+    {
+      "embedded_file": "lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "lines": "5578-5625",
+      "finding": "The search header records budgets, control inclusion, shortlist size, and S6 fission census/support metadata."
+    }
+  ],
+  "acceptance": {
+    "correct_R9_source_contract_and_root": "pass",
+    "stage_flags_and_stage_gates": "pass",
+    "canonical_shapes_and_typed_histories": "pass",
+    "independent_seed_warmstart_archive_and_shortlist_checks": "pass",
+    "budget_resource_and_census_counts": "pass",
+    "unknown_counts_not_reported_as_zero": "pass",
+    "pending_cursor_not_used_as_attempt_count": "pass",
+    "exact_embedded_source_line_references": "pass",
+    "only_requested_tmp_outputs_written": "pass"
+  },
+  "files_written": [
+    "/tmp/orbit-ff-ablation-semantics-r9-20261007/report.md",
+    "/tmp/orbit-ff-ablation-semantics-r9-20261007/summary.json"
+  ]
+}

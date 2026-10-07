@@ -1,0 +1,760 @@
+{
+  "counts": {
+    "archive_journal_fusion_last_family_events": 5411,
+    "archive_journal_fusion_unique_candidate_ids": 5408,
+    "archive_journal_repeated_fusion_event_ids": {
+      "neighborhood-200": 4
+    },
+    "archive_row_arithmetic": "3554 valid/scored + 18964 nonvalid archived records = 22518 archive records; the 824 canonical-duplicate outcomes appear in the reject histogram but not as extra archive records.",
+    "archive_rows": 22518,
+    "archive_unique_candidate_ids": 22518,
+    "archived_nonvalid_candidate_rows": 18964,
+    "canonical_duplicate_count_from_search_summary": 824,
+    "canonical_duplicate_outcomes_have_separate_archive_rows": false,
+    "checkpoint_rejected_or_duplicate_total": 19788,
+    "duplicate_candidates_checkpoint": 824,
+    "journal_events": 23153,
+    "production_scheduler_calls": 3554,
+    "raw_enumeration_or_descriptor_attempt_total": "unknown; archive candidate records are deduplicated and do not count every generated descriptor or attempted path.",
+    "reported_rejected_or_duplicate_candidates": 19788,
+    "search_summary_reject_reason_sum": 19788,
+    "unique_scored_candidates": 3554,
+    "valid_candidates": 3554
+  },
+  "evidence_files": {
+    "original_final_checkpoint": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/checkpoint.json.gz",
+    "original_funnel_audit": "/tmp/orbit-artifact-ablation-diagnosis-20261007/diagnostics/fusion-fission-ablation-diagnosis-20261007/funnel/original-r9.json",
+    "original_search_top5": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/search/top5.jsonl",
+    "rerun_archive": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/search/archive.jsonl",
+    "rerun_final_checkpoint": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/checkpoint.json",
+    "rerun_journal": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/search/archive.journal.jsonl",
+    "rerun_search_summary": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/search/search-summary.json"
+  },
+  "final_beam": {
+    "all_round_beam_membership": "unknown; only the terminal round-4 checkpoint beam is available, and the archive/journal are not per-round beam snapshots.",
+    "candidate_ids": [
+      "neighborhood-23245",
+      "neighborhood-23338",
+      "neighborhood-21010",
+      "neighborhood-21909",
+      "neighborhood-21607",
+      "neighborhood-22198",
+      "neighborhood-20666",
+      "neighborhood-21654",
+      "neighborhood-22396",
+      "neighborhood-22972",
+      "neighborhood-22527",
+      "neighborhood-23322",
+      "neighborhood-23159",
+      "neighborhood-22397",
+      "neighborhood-22973",
+      "neighborhood-0"
+    ],
+    "contains_fusion_or_fission": false,
+    "ordered_beam_identity_candidate_key_action_score_parent_match": true,
+    "original_beam_size": 16,
+    "rerun_beam_size": 16
+  },
+  "fission": {
+    "archived_valid_scored_rows": 1,
+    "candidate": {
+      "action": {
+        "canonicalReset": false,
+        "family": "fission",
+        "label": "fission:Task_0:left=0",
+        "primitives": [
+          {
+            "axis": 0,
+            "factor": 1,
+            "firstTask": "Task_0",
+            "kind": "fission",
+            "leftNodes": [
+              0
+            ],
+            "mode": "",
+            "secondTask": ""
+          }
+        ],
+        "shapeCols": 0,
+        "shapeRows": 0,
+        "shapeTask": ""
+      },
+      "candidate_id": "neighborhood-2",
+      "candidate_key": "graph-2|1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;",
+      "delta_cycles_vs_parent": 415,
+      "global_score_rank": 3540,
+      "graph_facts_key": "graph-2",
+      "graph_variant_id": "graph-2",
+      "parent_candidate_id": "neighborhood-0",
+      "parent_predicted_whole_program_cycles": 18231,
+      "predicted_whole_program_cycles": 18646,
+      "round": 0,
+      "task_names": [
+        "Task_0.split.0",
+        "Task_0.split.1",
+        "Task_1",
+        "Task_2",
+        "Task_3",
+        "Task_4",
+        "Task_5",
+        "Task_6",
+        "Task_7",
+        "Task_8"
+      ]
+    },
+    "raw_attempt_total": "unknown; archived records may deduplicate generated descriptors."
+  },
+  "fusion_last_family": {
+    "all_15_candidate_paths_empty": true,
+    "all_rejected_rows_have_null_prediction_fields": true,
+    "by_final_family": {
+      "fusion": {
+        "domain_unproven": 0,
+        "materializer_rejected": 1178,
+        "other_rejected": 0,
+        "valid_scored": 0
+      },
+      "fusion-plus-shape": {
+        "domain_unproven": 0,
+        "materializer_rejected": 589,
+        "other_rejected": 0,
+        "valid_scored": 0
+      },
+      "fusion-plus-tiling": {
+        "domain_unproven": 0,
+        "materializer_rejected": 589,
+        "other_rejected": 0,
+        "valid_scored": 0
+      },
+      "sibling-fusion": {
+        "domain_unproven": 27,
+        "materializer_rejected": 2421,
+        "other_rejected": 0,
+        "valid_scored": 15
+      },
+      "tiling-plus-fusion": {
+        "domain_unproven": 0,
+        "materializer_rejected": 589,
+        "other_rejected": 0,
+        "valid_scored": 0
+      }
+    },
+    "classification": "Count candidate archive rows whose final recorded action_path step belongs to a fusion-bearing family. Composite family names remain separate; this is an archived candidate-record count, not total generated descriptors.",
+    "distinct_valid_shape_keys": 15,
+    "pre_score_gate": {
+      "materializer_rejected": 5366,
+      "prediction_fields_null_for_all_rejected_fusion_records": true,
+      "source_iteration_domain_unproven": 27,
+      "valid_scored": 15
+    },
+    "saved_body_evidence": "candidate_path is empty for all 15 valid siblings; graph key/task-shape structure is recorded, but per-candidate IR bodies are not retained here.",
+    "source_gate": {
+      "extractor_source": "/tmp/orbit-ff-ablation-r9-source-20261007/lib/Backend/Neura/Orchestration/JointScheduling/ExtractJointTaskGraphFactsPass.cpp:2173-2217",
+      "finding": "The 15 accepted LU sibling-fusion records extract as one graph-5 variant; the exact R9 extractor only accepts sibling metadata with eliminated_loads=0 and eliminated_stores=0, so these accepted records necessarily pass its zero-shared-load/store condition. This is inferred from source gate plus successful graph extraction; the archive does not serialize the attributes themselves.",
+      "materializer_source": "/tmp/orbit-ff-ablation-r9-source-20261007/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp:4506-4525",
+      "mismatch_boundary": "The same R9 extractor requires typed mode, eliminated_loads, and eliminated_stores; sibling mode additionally requires distinct nonempty sibling_first and sibling_second and zero loads/stores. The producer writes eliminated_loads from eliminatedLoads. A sibling fusion with positive eliminatedLoads is therefore rejected by the sibling metadata gate; this narrows the earlier metadata issue to that sibling case and does not establish all fusion is blocked.",
+      "status": "evidence-supported narrow conclusion"
+    },
+    "total_archive_rows": 5408,
+    "total_materializer_rejected": 5366,
+    "total_source_iteration_domain_unproven": 27,
+    "total_valid_and_scored": 15,
+    "typed_task_names": [
+      "Task_0.fuse.Task_1",
+      "Task_2",
+      "Task_3",
+      "Task_4",
+      "Task_5",
+      "Task_6",
+      "Task_7",
+      "Task_8"
+    ],
+    "valid_candidates": [
+      {
+        "actions": [
+          "shape:Task_2:1x2",
+          "shape:Task_6:2x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-10458",
+        "candidate_key": "graph-5|1x1;1x2;1x1;1x1;1x1;2x2;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 2415,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-6423",
+        "parent_predicted_whole_program_cycles": 14087,
+        "predicted_whole_program_cycles": 14229,
+        "round": 2,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_7:1x2",
+          "shape:Task_6:2x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-11649",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;2x2;1x2;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 2418,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-6424",
+        "parent_predicted_whole_program_cycles": 14101,
+        "predicted_whole_program_cycles": 14243,
+        "round": 2,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_2:2x1",
+          "shape:Task_6:2x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-11653",
+        "candidate_key": "graph-5|1x1;2x1;1x1;1x1;1x1;2x2;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 2421,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-6425",
+        "parent_predicted_whole_program_cycles": 14111,
+        "predicted_whole_program_cycles": 14253,
+        "round": 2,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_7:2x1",
+          "shape:Task_6:2x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-11657",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;2x2;2x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 2422,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-6426",
+        "parent_predicted_whole_program_cycles": 14125,
+        "predicted_whole_program_cycles": 14267,
+        "round": 2,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_6:1x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4253",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;1x2;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 2927,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-12",
+        "parent_predicted_whole_program_cycles": 16549,
+        "predicted_whole_program_cycles": 16691,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_6:2x1",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4258",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;2x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 2933,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-230",
+        "parent_predicted_whole_program_cycles": 16559,
+        "predicted_whole_program_cycles": 16701,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_2:1x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4262",
+        "candidate_key": "graph-5|1x1;1x2;1x1;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 3071,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-201",
+        "parent_predicted_whole_program_cycles": 16724,
+        "predicted_whole_program_cycles": 16866,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_7:1x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4266",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;1x1;1x2;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 3072,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-215",
+        "parent_predicted_whole_program_cycles": 16738,
+        "predicted_whole_program_cycles": 16880,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_2:2x1",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4271",
+        "candidate_key": "graph-5|1x1;2x1;1x1;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 3073,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-231",
+        "parent_predicted_whole_program_cycles": 16748,
+        "predicted_whole_program_cycles": 16890,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_7:2x1",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4275",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;1x1;2x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 3074,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-232",
+        "parent_predicted_whole_program_cycles": 16762,
+        "predicted_whole_program_cycles": 16904,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_3:1x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-3358",
+        "candidate_key": "graph-5|1x1;1x1;1x2;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 3535,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-226",
+        "parent_predicted_whole_program_cycles": 18288,
+        "predicted_whole_program_cycles": 18430,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_3:2x1",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4211",
+        "candidate_key": "graph-5|1x1;1x1;2x1;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 142,
+        "global_score_rank": 3536,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-235",
+        "parent_predicted_whole_program_cycles": 18290,
+        "predicted_whole_program_cycles": 18432,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_0:1x2",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4285",
+        "candidate_key": "graph-5|1x2;1x1;1x1;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 79,
+        "global_score_rank": 3537,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-228",
+        "parent_predicted_whole_program_cycles": 18363,
+        "predicted_whole_program_cycles": 18442,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "shape:Task_0:2x1",
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-4290",
+        "candidate_key": "graph-5|2x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 82,
+        "global_score_rank": 3538,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-237",
+        "parent_predicted_whole_program_cycles": 18365,
+        "predicted_whole_program_cycles": 18447,
+        "round": 1,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      },
+      {
+        "actions": [
+          "sibling-fuse:Task_0:Task_1"
+        ],
+        "candidate_id": "neighborhood-200",
+        "candidate_key": "graph-5|1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;",
+        "candidate_path_recorded": false,
+        "delta_cycles_vs_parent": 313,
+        "global_score_rank": 3539,
+        "graph_facts_key": "graph-5",
+        "graph_variant_id": "graph-5",
+        "parent_candidate_id": "neighborhood-0",
+        "parent_predicted_whole_program_cycles": 18231,
+        "predicted_whole_program_cycles": 18544,
+        "round": 0,
+        "task_names": [
+          "Task_0.fuse.Task_1",
+          "Task_2",
+          "Task_3",
+          "Task_4",
+          "Task_5",
+          "Task_6",
+          "Task_7",
+          "Task_8"
+        ]
+      }
+    ],
+    "valid_sibling_graph_facts_keys": [
+      "graph-5"
+    ],
+    "valid_sibling_graph_variant_ids": [
+      "graph-5"
+    ]
+  },
+  "original_comparison": {
+    "archive_count_equal": true,
+    "final_beam_equal": true,
+    "limitations": [
+      "Original archive rows were cleaned up; this confirms retained counts, terminal beam, and top-five selection, not equality of every original scored candidate or every round beam.",
+      "No new compiler, native mapper, native binary, or search invocation was made during this audit."
+    ],
+    "original_archive_cleaned_up": true,
+    "original_audit_row": "/tmp/orbit-artifact-ablation-diagnosis-20261007/diagnostics/fusion-fission-ablation-diagnosis-20261007/funnel/original-r9.json",
+    "original_checkpoint": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/checkpoint.json.gz",
+    "rejected_and_duplicate_counts_equal": true,
+    "round_and_stop_reason_equal": true,
+    "scored_candidate_count_equal": true
+  },
+  "run": {
+    "beam_width": 16,
+    "command_comparison": {
+      "all_non_search_argv_entries_equal_except_output_path": true,
+      "all_search_config_fields_equal_except_output_checkpoint_cache_and_guard": true,
+      "changed_search_fields": {
+        "cache": {
+          "original": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/cost-cache-original-ray-ii23-r9/lu-ml-cache.json",
+          "rerun": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/r9-compatible-cost-cache.json"
+        },
+        "checkpoint": {
+          "original": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/checkpoint.json",
+          "rerun": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/checkpoint.json"
+        },
+        "output-dir": {
+          "original": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/search",
+          "rerun": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/search"
+        },
+        "test-pause-after-candidates": {
+          "original": null,
+          "rerun": "3555"
+        }
+      },
+      "family_quota_or_beam_sweep": false,
+      "mutable_cache_launch_time_bytes_identical": "unknown per replay manifest",
+      "native_main_table_unchanged_per_manifest": true,
+      "pause_guard_basis": "rerun has test-pause-after-candidates=3555; it stopped max-rounds with 3554 unique scored candidates.",
+      "pause_guard_fired": false,
+      "source_model_action_rules_unchanged_per_manifest": true
+    },
+    "command_v2_receipt": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/same-flags-funnel-replay-v2.command.json",
+    "diversity_slots": 4,
+    "exit_code": 0,
+    "manifest": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/funnel-lu-r9-replay/manifest.json",
+    "max_candidates": 4096,
+    "original_command_receipt": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/search.command.json",
+    "rounds_completed": 4,
+    "scoring_workers": 4,
+    "stage": "full-joint-fission",
+    "status": "finished",
+    "stop_reason": "max-rounds"
+  },
+  "schema": "orbit-ff-lu-r9-funnel-audit-v1",
+  "scope": "Read-only audit of the completed exact-R9 LU full-joint-fission rerun and retained original artifacts.",
+  "selection": {
+    "all_fusion_and_fission_candidates_outside_top5": true,
+    "comparison_scope": "Search-level top-five selection records only; native reruns are not part of this audit.",
+    "native_shortlist_count_reported": 5,
+    "native_top5_required": true,
+    "original_search_top5": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006/lu/full-joint-fission/search/top5.jsonl",
+    "rerun_global_archive_top5": "computed by ascending predicted whole-program cycles, then candidate_id; archive contains every scored candidate.",
+    "top5_candidates": [
+      {
+        "actions": [
+          "shape:Task_2:1x2",
+          "replica:Task_6:axis=1:factor=8",
+          "shape:Task_7:2x2",
+          "shape:Task_3:2x2"
+        ],
+        "candidate_id": "neighborhood-23245",
+        "candidate_key": "graph-61|1x1;1x1;1x2;2x2;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;2x2;1x1;",
+        "contains_fission": false,
+        "contains_fusion": false,
+        "families": [
+          "shape",
+          "replica",
+          "shape",
+          "shape"
+        ],
+        "predicted_whole_program_cycles": 9477
+      },
+      {
+        "actions": [
+          "shape:Task_2:1x2",
+          "replica:Task_6:axis=1:factor=8",
+          "shape:Task_7:2x2",
+          "shape:Task_3:4x1"
+        ],
+        "candidate_id": "neighborhood-23338",
+        "candidate_key": "graph-61|1x1;1x1;1x2;4x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;2x2;1x1;",
+        "contains_fission": false,
+        "contains_fusion": false,
+        "families": [
+          "shape",
+          "replica",
+          "shape",
+          "shape"
+        ],
+        "predicted_whole_program_cycles": 9498
+      },
+      {
+        "actions": [
+          "replica:Task_6:axis=1:factor=2",
+          "shape:Task_2:2x2",
+          "shape:Task_7:2x2",
+          "tile:Task_0:axis=0:factor=8"
+        ],
+        "candidate_id": "neighborhood-21010",
+        "candidate_key": "graph-33|1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;2x2;1x1;1x1;1x1;1x1;1x1;2x2;1x1;",
+        "contains_fission": false,
+        "contains_fusion": false,
+        "families": [
+          "replica",
+          "shape",
+          "shape",
+          "tiling"
+        ],
+        "predicted_whole_program_cycles": 10098
+      },
+      {
+        "actions": [
+          "replica:Task_6:axis=1:factor=2",
+          "shape:Task_2:2x2",
+          "shape:Task_7:2x2",
+          "tile:Task_0:axis=1:factor=8"
+        ],
+        "candidate_id": "neighborhood-21909",
+        "candidate_key": "graph-60|1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;2x2;1x1;1x1;1x1;1x1;1x1;2x2;1x1;",
+        "contains_fission": false,
+        "contains_fusion": false,
+        "families": [
+          "replica",
+          "shape",
+          "shape",
+          "tiling"
+        ],
+        "predicted_whole_program_cycles": 10098
+      },
+      {
+        "actions": [
+          "shape:Task_2:1x2",
+          "replica:Task_6:axis=1:factor=8",
+          "shape:Task_7:2x2",
+          "tile:Task_0:axis=0:factor=8"
+        ],
+        "candidate_id": "neighborhood-21607",
+        "candidate_key": "graph-81|1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x2;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;2x2;1x1;",
+        "contains_fission": false,
+        "contains_fusion": false,
+        "families": [
+          "shape",
+          "replica",
+          "shape",
+          "tiling"
+        ],
+        "predicted_whole_program_cycles": 10110
+      }
+    ],
+    "top5_comparison_fields": [
+      "candidate_id",
+      "candidate_key",
+      "predicted_whole_program_cycles",
+      "action_path",
+      "action_history"
+    ],
+    "top5_order_candidate_key_action_and_score_exact_match": true
+  }
+}

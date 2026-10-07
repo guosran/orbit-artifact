@@ -1,0 +1,4584 @@
+[
+  {
+    "action_history": {
+      "actions": [
+        {
+          "canonicalReset": false,
+          "family": "sibling-fusion",
+          "label": "sibling-fuse:Task_4:Task_5",
+          "primitives": [
+            {
+              "axis": 0,
+              "factor": 1,
+              "firstTask": "Task_4",
+              "kind": "sibling-fusion",
+              "leftNodes": [],
+              "mode": "sibling",
+              "secondTask": "Task_5"
+            }
+          ],
+          "shapeCols": 0,
+          "shapeRows": 0,
+          "shapeTask": ""
+        }
+      ],
+      "canonicalFactKey": "graph-0",
+      "fissionActions": [],
+      "initialShapes": [
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_2"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_3"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_4"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_5"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_6"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_7"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_8"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_9"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_10"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_11"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_12"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_13"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_14"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_15"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_16"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_17"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_18"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_19"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_20"
+        }
+      ],
+      "known": true,
+      "schema": "orbit-joint-neighborhood-typed-actions-v1",
+      "unknownReason": ""
+    },
+    "action_path": [
+      "sibling-fuse:Task_4:Task_5"
+    ],
+    "candidate_digest": {
+      "blake2b_256": "66ad7374dacdd808814406d2ef4d97ae38944a0a7e8fb9c625b4ae73aded104c",
+      "bytes": 461478,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-sibling-4-5/replay/candidate.mlir"
+    },
+    "case": "radar-sibling-4-5",
+    "fission_source_replay_verified": false,
+    "input_digest": {
+      "blake2b_256": "26da80b94ba964a01196b2d7e353768d480d296bf8e59f37de008153fbc2bb2e",
+      "bytes": 463281,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-sibling-4-5/replay/candidate-input.mlir"
+    },
+    "kernels": {
+      "original": [
+        {
+          "canonical_witness_blake2b_256": "fae4b24d06a4838db417db24f62241c3fcc5c95d1144fa1ef1a450b10e582ba8",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "99fbb7843f4b9f5b2a38b7665995292c2c6c1b53ba5d34e6479da7e77e061e00",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 64,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 64
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 32,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 32
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 64,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 2,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 64
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 64
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 32
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 2,
+                "output_axes": [],
+                "step": 1,
+                "upper": 64
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 131072,
+            "current_taskflow_firing_count": 131072,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 131072,
+            "source_multiplicity": 131072
+          },
+          "statistics": {
+            "body_bytes": 9043,
+            "compiled_ii": null,
+            "loads": 4,
+            "operation_count": 75,
+            "operation_counts": {
+              "arith.constant": 3,
+              "neura.add": 2,
+              "neura.counter": 3,
+              "neura.ctrl_mov": 1,
+              "neura.data_mov": 38,
+              "neura.extract_predicate": 1,
+              "neura.grant_once": 1,
+              "neura.grant_predicate": 5,
+              "neura.icmp": 1,
+              "neura.kernel": 1,
+              "neura.load_indexed": 4,
+              "neura.mul": 2,
+              "neura.not": 2,
+              "neura.phi": 1,
+              "neura.phi_start": 1,
+              "neura.reserve": 1,
+              "neura.return_value": 1,
+              "neura.store_indexed": 1,
+              "neura.sub": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 3,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_4",
+          "task_interface": {
+            "operand_segments": [
+              4,
+              1,
+              2,
+              4,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "canonical_witness_blake2b_256": "fae4b24d06a4838db417db24f62241c3fcc5c95d1144fa1ef1a450b10e582ba8",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "b521a7145bd71ffdb6f4255ea0cd53335dfec154bcc4b5caa9101beac061cb54",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 64,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 64
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 32,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 32
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 64,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 2,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 64
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 64
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 32
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 2,
+                "output_axes": [],
+                "step": 1,
+                "upper": 64
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 131072,
+            "current_taskflow_firing_count": 131072,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 131072,
+            "source_multiplicity": 131072
+          },
+          "statistics": {
+            "body_bytes": 9043,
+            "compiled_ii": null,
+            "loads": 4,
+            "operation_count": 75,
+            "operation_counts": {
+              "arith.constant": 3,
+              "neura.add": 3,
+              "neura.counter": 3,
+              "neura.ctrl_mov": 1,
+              "neura.data_mov": 38,
+              "neura.extract_predicate": 1,
+              "neura.grant_once": 1,
+              "neura.grant_predicate": 5,
+              "neura.icmp": 1,
+              "neura.kernel": 1,
+              "neura.load_indexed": 4,
+              "neura.mul": 2,
+              "neura.not": 2,
+              "neura.phi": 1,
+              "neura.phi_start": 1,
+              "neura.reserve": 1,
+              "neura.return_value": 1,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 3,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_5",
+          "task_interface": {
+            "operand_segments": [
+              4,
+              1,
+              2,
+              4,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ],
+      "transformed": [
+        {
+          "canonical_witness_blake2b_256": "fae4b24d06a4838db417db24f62241c3fcc5c95d1144fa1ef1a450b10e582ba8",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": "fae4b24d06a4838db417db24f62241c3fcc5c95d1144fa1ef1a450b10e582ba8",
+          "raw_kernel_region_blake2b_256": "8bfae69020e85497ef3d9c2d21af9e66c07af145e9b7ad6759484ea5d02c81ce",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 64,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 64
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 32,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 32
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 64,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 2,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 64
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 64
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 32
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 2,
+                "output_axes": [],
+                "step": 1,
+                "upper": 64
+              }
+            ],
+            "current_domain_status": "certified-source-partition",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 131072,
+            "current_taskflow_firing_count": 131072,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 131072,
+            "source_multiplicity": 131072
+          },
+          "statistics": {
+            "body_bytes": 15027,
+            "compiled_ii": null,
+            "loads": 4,
+            "operation_count": 137,
+            "operation_counts": {
+              "arith.constant": 6,
+              "neura.add": 5,
+              "neura.counter": 3,
+              "neura.ctrl_mov": 2,
+              "neura.data_mov": 76,
+              "neura.extract_predicate": 2,
+              "neura.grant_once": 2,
+              "neura.grant_predicate": 10,
+              "neura.icmp": 2,
+              "neura.kernel": 1,
+              "neura.load_indexed": 4,
+              "neura.mul": 4,
+              "neura.not": 4,
+              "neura.phi": 2,
+              "neura.phi_start": 2,
+              "neura.reserve": 2,
+              "neura.return_value": 2,
+              "neura.store_indexed": 2,
+              "neura.sub": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 3,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 2
+          },
+          "task": "Task_4.fuse.Task_5",
+          "task_interface": {
+            "operand_segments": [
+              4,
+              2,
+              2,
+              4,
+              2
+            ],
+            "result_segments": [
+              0,
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "selected_shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_2"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_3"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_4.fuse.Task_5"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_6"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_7"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_8"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_9"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_10"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_11"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_12"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_13"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_14"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_15"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_16"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_17"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_18"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_19"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_20"
+      }
+    ],
+    "source_domain_verified": true,
+    "source_facts_digest": {
+      "blake2b_256": "ba037635e3d42595a0d653c7843aabfa3beb748bcdae5e55b116d4ca6bf1f329",
+      "bytes": 325443,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-sibling-4-5/replay/source-facts.json"
+    },
+    "state_dependency_evidence": {
+      "original": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%8"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 3,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_2",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 1,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 2,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 3,
+            "producer": "Task_7",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%16#0"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%16#1"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%16#0"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%16#1"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 0,
+            "producer": "Task_9",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 1,
+            "producer": "Task_10",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_12",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_13",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 0,
+            "producer": "Task_12",
+            "producer_result_port": 0,
+            "ssa_value": "%20"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 1,
+            "producer": "Task_13",
+            "producer_result_port": 0,
+            "ssa_value": "%21"
+          },
+          {
+            "consumer": "Task_15",
+            "consumer_operand_position": 0,
+            "producer": "Task_14",
+            "producer_result_port": 0,
+            "ssa_value": "%22"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 1,
+            "producer": "Task_15",
+            "producer_result_port": 0,
+            "ssa_value": "%23"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 1,
+            "producer": "Task_16",
+            "producer_result_port": 0,
+            "ssa_value": "%24"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 0,
+            "producer": "Task_17",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 1,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_19",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%26"
+          },
+          {
+            "consumer": "Task_20",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%26"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      },
+      "transformed": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%8"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 3,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_2",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_4.fuse.Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_4.fuse.Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_4.fuse.Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%12#0"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_4.fuse.Task_5",
+            "producer_result_port": 1,
+            "ssa_value": "%12#1"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_4.fuse.Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%12#0"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 1,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 2,
+            "producer": "Task_4.fuse.Task_5",
+            "producer_result_port": 1,
+            "ssa_value": "%12#1"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 3,
+            "producer": "Task_7",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%15#0"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%15#1"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%15#0"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%15#1"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 0,
+            "producer": "Task_9",
+            "producer_result_port": 0,
+            "ssa_value": "%16"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 1,
+            "producer": "Task_10",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_12",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_13",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 0,
+            "producer": "Task_12",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 1,
+            "producer": "Task_13",
+            "producer_result_port": 0,
+            "ssa_value": "%20"
+          },
+          {
+            "consumer": "Task_15",
+            "consumer_operand_position": 0,
+            "producer": "Task_14",
+            "producer_result_port": 0,
+            "ssa_value": "%21"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 1,
+            "producer": "Task_15",
+            "producer_result_port": 0,
+            "ssa_value": "%22"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 1,
+            "producer": "Task_16",
+            "producer_result_port": 0,
+            "ssa_value": "%23"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 0,
+            "producer": "Task_17",
+            "producer_result_port": 0,
+            "ssa_value": "%24"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 1,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_19",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          },
+          {
+            "consumer": "Task_20",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      }
+    },
+    "task_count_after": 20,
+    "task_count_before": 21
+  },
+  {
+    "action_history": {
+      "actions": [
+        {
+          "canonicalReset": false,
+          "family": "fusion",
+          "label": "fuse:Task_16:Task_17:producer-consumer-retained",
+          "primitives": [
+            {
+              "axis": 0,
+              "factor": 1,
+              "firstTask": "Task_16",
+              "kind": "fusion",
+              "leftNodes": [],
+              "mode": "producer-consumer-retained",
+              "secondTask": "Task_17"
+            }
+          ],
+          "shapeCols": 0,
+          "shapeRows": 0,
+          "shapeTask": ""
+        }
+      ],
+      "canonicalFactKey": "graph-0",
+      "fissionActions": [],
+      "initialShapes": [
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_2"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_3"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_4"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_5"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_6"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_7"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_8"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_9"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_10"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_11"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_12"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_13"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_14"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_15"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_16"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_17"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_18"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_19"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_20"
+        }
+      ],
+      "known": true,
+      "schema": "orbit-joint-neighborhood-typed-actions-v1",
+      "unknownReason": ""
+    },
+    "action_path": [
+      "fuse:Task_16:Task_17:producer-consumer-retained"
+    ],
+    "candidate_digest": {
+      "blake2b_256": "89e844ed2a050232b9b5994e6d3910ab7cc947c3f1b96756a7c7fc12149dd7c2",
+      "bytes": 463584,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/candidate.mlir"
+    },
+    "case": "radar-pc-16-17",
+    "fission_source_replay_verified": false,
+    "input_digest": {
+      "blake2b_256": "26da80b94ba964a01196b2d7e353768d480d296bf8e59f37de008153fbc2bb2e",
+      "bytes": 463281,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/candidate-input.mlir"
+    },
+    "kernels": {
+      "original": [
+        {
+          "canonical_witness_blake2b_256": "09677a593c9941be8a1c14fedc230e460843d5b1ce27c80842ac7409ba45ad01",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "dd7e3ed608cddd81ee31298c54ce904b31d27901f3450f067cff15301f936c92",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 60,
+                "kind": "taskflow-counter",
+                "lower": 2,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 62
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 14,
+                "kind": "taskflow-counter",
+                "lower": 1,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 15
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 2,
+                "ordinal": 0,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 62
+              },
+              {
+                "bound_status": "proven",
+                "lower": 1,
+                "ordinal": 1,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 15
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 840,
+            "source_multiplicity": 840
+          },
+          "statistics": {
+            "body_bytes": 3735,
+            "compiled_ii": null,
+            "loads": 2,
+            "operation_count": 27,
+            "operation_counts": {
+              "arith.addi": 1,
+              "arith.constant": 4,
+              "neura.cast": 1,
+              "neura.counter": 2,
+              "neura.data_mov": 10,
+              "neura.icmp": 1,
+              "neura.kernel": 1,
+              "neura.load_indexed": 2,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_16",
+          "task_interface": {
+            "operand_segments": [
+              2,
+              1,
+              1,
+              2,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "canonical_witness_blake2b_256": "09677a593c9941be8a1c14fedc230e460843d5b1ce27c80842ac7409ba45ad01",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "6dd3b99b8c5eebffa64d1a76a7825de47412a4f41d1807cf83b5cbce85dd4504",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 60,
+                "kind": "taskflow-counter",
+                "lower": 2,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 62
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 14,
+                "kind": "taskflow-counter",
+                "lower": 1,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 15
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 2,
+                "ordinal": 0,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 62
+              },
+              {
+                "bound_status": "proven",
+                "lower": 1,
+                "ordinal": 1,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 15
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 840,
+            "source_multiplicity": 840
+          },
+          "statistics": {
+            "body_bytes": 6229,
+            "compiled_ii": null,
+            "loads": 4,
+            "operation_count": 51,
+            "operation_counts": {
+              "arith.addi": 1,
+              "arith.constant": 4,
+              "neura.add": 2,
+              "neura.cast": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 25,
+              "neura.icmp": 2,
+              "neura.kernel": 1,
+              "neura.load_indexed": 4,
+              "neura.mul": 3,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_17",
+          "task_interface": {
+            "operand_segments": [
+              2,
+              1,
+              1,
+              2,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ],
+      "transformed": [
+        {
+          "canonical_witness_blake2b_256": "09677a593c9941be8a1c14fedc230e460843d5b1ce27c80842ac7409ba45ad01",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": "09677a593c9941be8a1c14fedc230e460843d5b1ce27c80842ac7409ba45ad01",
+          "raw_kernel_region_blake2b_256": "fb2cfc77750e29e979fad5091b44f756533242770edf622e4660f2cfa668cfd0",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 60,
+                "kind": "taskflow-counter",
+                "lower": 2,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 62
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 14,
+                "kind": "taskflow-counter",
+                "lower": 1,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 15
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 2,
+                "ordinal": 0,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 62
+              },
+              {
+                "bound_status": "proven",
+                "lower": 1,
+                "ordinal": 1,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 15
+              }
+            ],
+            "current_domain_status": "certified-source-partition",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 840,
+            "current_taskflow_firing_count": 840,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 840,
+            "source_multiplicity": 840
+          },
+          "statistics": {
+            "body_bytes": 7817,
+            "compiled_ii": null,
+            "loads": 5,
+            "operation_count": 65,
+            "operation_counts": {
+              "arith.addi": 1,
+              "arith.constant": 4,
+              "neura.add": 2,
+              "neura.cast": 3,
+              "neura.counter": 2,
+              "neura.data_mov": 35,
+              "neura.icmp": 3,
+              "neura.kernel": 1,
+              "neura.load_indexed": 5,
+              "neura.mul": 3,
+              "neura.store_indexed": 2,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 2
+          },
+          "task": "Task_16.fuse.Task_17",
+          "task_interface": {
+            "operand_segments": [
+              2,
+              2,
+              1,
+              2,
+              2
+            ],
+            "result_segments": [
+              0,
+              2,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "selected_shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_2"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_3"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_4"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_5"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_6"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_7"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_8"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_9"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_10"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_11"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_12"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_13"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_14"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_15"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_16.fuse.Task_17"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_18"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_19"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_20"
+      }
+    ],
+    "source_domain_verified": true,
+    "source_facts_digest": {
+      "blake2b_256": "967ff8745c3a711f716ac9b5410675e92e96e4f50085305f6bc99b7790991a4a",
+      "bytes": 326762,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/source-facts.json"
+    },
+    "state_dependency_evidence": {
+      "original": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%8"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 3,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_2",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 1,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 2,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 3,
+            "producer": "Task_7",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%16#0"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%16#1"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%16#0"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%16#1"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 0,
+            "producer": "Task_9",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 1,
+            "producer": "Task_10",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_12",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_13",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 0,
+            "producer": "Task_12",
+            "producer_result_port": 0,
+            "ssa_value": "%20"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 1,
+            "producer": "Task_13",
+            "producer_result_port": 0,
+            "ssa_value": "%21"
+          },
+          {
+            "consumer": "Task_15",
+            "consumer_operand_position": 0,
+            "producer": "Task_14",
+            "producer_result_port": 0,
+            "ssa_value": "%22"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 1,
+            "producer": "Task_15",
+            "producer_result_port": 0,
+            "ssa_value": "%23"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 1,
+            "producer": "Task_16",
+            "producer_result_port": 0,
+            "ssa_value": "%24"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 0,
+            "producer": "Task_17",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 1,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_19",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%26"
+          },
+          {
+            "consumer": "Task_20",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%26"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      },
+      "transformed": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%8"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 3,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_2",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%11#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%11#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 1,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 2,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 3,
+            "producer": "Task_7",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%16#0"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%16#1"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%16#0"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 2,
+            "producer": "Task_8",
+            "producer_result_port": 1,
+            "ssa_value": "%16#1"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 0,
+            "producer": "Task_9",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 1,
+            "producer": "Task_10",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_12",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_13",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 0,
+            "producer": "Task_12",
+            "producer_result_port": 0,
+            "ssa_value": "%20"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 1,
+            "producer": "Task_13",
+            "producer_result_port": 0,
+            "ssa_value": "%21"
+          },
+          {
+            "consumer": "Task_15",
+            "consumer_operand_position": 0,
+            "producer": "Task_14",
+            "producer_result_port": 0,
+            "ssa_value": "%22"
+          },
+          {
+            "consumer": "Task_16.fuse.Task_17",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_16.fuse.Task_17",
+            "consumer_operand_position": 1,
+            "producer": "Task_15",
+            "producer_result_port": 0,
+            "ssa_value": "%23"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 0,
+            "producer": "Task_16.fuse.Task_17",
+            "producer_result_port": 1,
+            "ssa_value": "%24#1"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 1,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_19",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          },
+          {
+            "consumer": "Task_20",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      }
+    },
+    "task_count_after": 20,
+    "task_count_before": 21
+  },
+  {
+    "action_history": {
+      "actions": [],
+      "canonicalFactKey": "source-replay-pending",
+      "fissionActions": [
+        {
+          "canonicalReset": false,
+          "family": "fission",
+          "label": "fission:Task_0:left=0",
+          "primitives": [
+            {
+              "axis": 0,
+              "factor": 1,
+              "firstTask": "Task_0",
+              "kind": "fission",
+              "leftNodes": [
+                0
+              ],
+              "mode": "",
+              "secondTask": ""
+            }
+          ],
+          "shapeCols": 0,
+          "shapeRows": 0,
+          "shapeTask": ""
+        }
+      ],
+      "initialShapes": [
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0.split.0"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0.split.1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_2"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_3"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_4"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_5"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_6"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_7"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_8"
+        }
+      ],
+      "known": true,
+      "schema": "orbit-joint-neighborhood-typed-actions-v1",
+      "unknownReason": ""
+    },
+    "action_path": [
+      "fission:Task_0:left=0"
+    ],
+    "candidate_digest": {
+      "blake2b_256": "115be9d61832feaf4c9c8f4c62147e151ff63ab9d604a93b3b347cb754b014bf",
+      "bytes": 259301,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/lu-fission-first/replay/candidate.mlir"
+    },
+    "case": "lu-fission-first",
+    "fission_source_replay_verified": true,
+    "input_digest": {
+      "blake2b_256": "13fb5030f7950af72b89eba6f36a2e2b0c964dc78d7435c2b8ce4abc9afda34c",
+      "bytes": 247248,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/lu-fission-first/replay/candidate-input.mlir"
+    },
+    "kernels": {
+      "original": [
+        {
+          "canonical_witness_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "47e3bd9a4073dc74cc71b066f5d5ac9e3e59a79cb6773a8fa73eb29447e2ff2e",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 64,
+            "current_taskflow_firing_count": 64,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 64,
+            "source_multiplicity": 64
+          },
+          "statistics": {
+            "body_bytes": 2537,
+            "compiled_ii": null,
+            "loads": 1,
+            "operation_count": 16,
+            "operation_counts": {
+              "arith.constant": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 5,
+              "neura.kernel": 1,
+              "neura.load_indexed": 1,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0",
+          "task_interface": {
+            "operand_segments": [
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ],
+      "transformed": [
+        {
+          "canonical_witness_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "1823c5f589d2c574147520260a2d5bb0e88a3243e8fff4e78402949c69ebd1ca",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 64,
+            "current_taskflow_firing_count": 64,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 64,
+            "source_multiplicity": 64
+          },
+          "statistics": {
+            "body_bytes": 2529,
+            "compiled_ii": null,
+            "loads": 1,
+            "operation_count": 16,
+            "operation_counts": {
+              "arith.constant": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 5,
+              "neura.kernel": 1,
+              "neura.load_indexed": 1,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0.split.0",
+          "task_interface": {
+            "operand_segments": [
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "canonical_witness_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "08c67e4efeba94980c791cae800eaad333fd41b06a370db4b4b6813453ab0caf",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 64,
+            "current_taskflow_firing_count": 64,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 64,
+            "source_multiplicity": 64
+          },
+          "statistics": {
+            "body_bytes": 2559,
+            "compiled_ii": null,
+            "loads": 1,
+            "operation_count": 16,
+            "operation_counts": {
+              "arith.constant": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 5,
+              "neura.kernel": 1,
+              "neura.load_indexed": 1,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0.split.1",
+          "task_interface": {
+            "operand_segments": [
+              2,
+              1,
+              1,
+              2,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "selected_shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0.split.0"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0.split.1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_2"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_3"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_4"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_5"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_6"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_7"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_8"
+      }
+    ],
+    "source_domain_verified": true,
+    "source_facts_digest": {
+      "blake2b_256": "11b0031fc0860b9bb6db143a8c8d0ac319731aa0aa3151e4ff755de64108e349",
+      "bytes": 180888,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/lu-fission-first/replay/source-facts.json"
+    },
+    "state_dependency_evidence": {
+      "original": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 0,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%7"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%7"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%8#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 2,
+            "producer": "Task_1",
+            "producer_result_port": 1,
+            "ssa_value": "%8#1"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%11"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%8#2"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 2,
+            "producer": "Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%8#2"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 2,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      },
+      "transformed": {
+        "edges": [
+          {
+            "consumer": "Task_0.split.1",
+            "consumer_operand_position": 0,
+            "producer": "Task_0.split.0",
+            "producer_result_port": 0,
+            "ssa_value": "%8"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 0,
+            "producer": "Task_0.split.1",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0.split.1",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%11"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 2,
+            "producer": "Task_1",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%12#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%12#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%10#2"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%12#0"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 2,
+            "producer": "Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%10#2"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%12#1"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 2,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%12#1"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      }
+    },
+    "task_count_after": 10,
+    "task_count_before": 9
+  },
+  {
+    "action_history": {
+      "actions": [],
+      "canonicalFactKey": "source-replay-pending",
+      "fissionActions": [
+        {
+          "canonicalReset": false,
+          "family": "fission",
+          "label": "fission:Task_0:left=0",
+          "primitives": [
+            {
+              "axis": 0,
+              "factor": 1,
+              "firstTask": "Task_0",
+              "kind": "fission",
+              "leftNodes": [
+                0
+              ],
+              "mode": "",
+              "secondTask": ""
+            }
+          ],
+          "shapeCols": 0,
+          "shapeRows": 0,
+          "shapeTask": ""
+        }
+      ],
+      "initialShapes": [
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0.split.0"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0.split.1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_2"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_3"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_4"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_5"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_6"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_7"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_8"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_9"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_10"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_11"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_12"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_13"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_14"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_15"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_16"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_17"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_18"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_19"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_20"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_21"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_22"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_23"
+        }
+      ],
+      "known": true,
+      "schema": "orbit-joint-neighborhood-typed-actions-v1",
+      "unknownReason": ""
+    },
+    "action_path": [
+      "fission:Task_0:left=0"
+    ],
+    "candidate_digest": {
+      "blake2b_256": "871c94ee0084f3bf7608bb5e7cb6877bd51359b46765d1d13d6c12af62d55e6c",
+      "bytes": 474590,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/harris-fission-first/replay/candidate.mlir"
+    },
+    "case": "harris-fission-first",
+    "fission_source_replay_verified": true,
+    "input_digest": {
+      "blake2b_256": "df7bea3ac7132624813d62ec880869285baff58a70df832a10228e68c12e934d",
+      "bytes": 461132,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/harris-fission-first/replay/candidate-input.mlir"
+    },
+    "kernels": {
+      "original": [
+        {
+          "canonical_witness_blake2b_256": "dfe49af691567f36a8aec642508edef3b7b16b9a237544357d8de3f5f731e757",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "bd5c77c67c4e3993d9cbdbede42fddd116f65c9272bcad324962d7a30f6a40e7",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 63,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 63
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 128,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 128
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 63
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 128
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 8064,
+            "source_multiplicity": 8064
+          },
+          "statistics": {
+            "body_bytes": 4880,
+            "compiled_ii": null,
+            "loads": 3,
+            "operation_count": 35,
+            "operation_counts": {
+              "arith.constant": 3,
+              "neura.add": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 16,
+              "neura.kernel": 1,
+              "neura.load_indexed": 3,
+              "neura.mul": 3,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0",
+          "task_interface": {
+            "operand_segments": [
+              3,
+              1,
+              4,
+              3,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ],
+      "transformed": [
+        {
+          "canonical_witness_blake2b_256": "dfe49af691567f36a8aec642508edef3b7b16b9a237544357d8de3f5f731e757",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "ad28263a1e9caaa6e0931797b867e400282b61213a6d261c01cdb70e38982f3e",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 63,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 63
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 128,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 128
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 63
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 128
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 8064,
+            "source_multiplicity": 8064
+          },
+          "statistics": {
+            "body_bytes": 2712,
+            "compiled_ii": null,
+            "loads": 1,
+            "operation_count": 17,
+            "operation_counts": {
+              "arith.constant": 3,
+              "neura.counter": 2,
+              "neura.data_mov": 5,
+              "neura.kernel": 1,
+              "neura.load_indexed": 1,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0.split.0",
+          "task_interface": {
+            "operand_segments": [
+              3,
+              1,
+              4,
+              3,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "canonical_witness_blake2b_256": "dfe49af691567f36a8aec642508edef3b7b16b9a237544357d8de3f5f731e757",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "103d64332efb0f9038e67cb359d7cf17f56d32bfc536034732164cb9201a63e7",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 63,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 63
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 128,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 128
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 63
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 128
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 8064,
+            "current_taskflow_firing_count": 8064,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 8064,
+            "source_multiplicity": 8064
+          },
+          "statistics": {
+            "body_bytes": 4911,
+            "compiled_ii": null,
+            "loads": 3,
+            "operation_count": 35,
+            "operation_counts": {
+              "arith.constant": 3,
+              "neura.add": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 16,
+              "neura.kernel": 1,
+              "neura.load_indexed": 3,
+              "neura.mul": 3,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0.split.1",
+          "task_interface": {
+            "operand_segments": [
+              4,
+              1,
+              4,
+              4,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "selected_shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0.split.0"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0.split.1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_2"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_3"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_4"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_5"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_6"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_7"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_8"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_9"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_10"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_11"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_12"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_13"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_14"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_15"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_16"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_17"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_18"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_19"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_20"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_21"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_22"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_23"
+      }
+    ],
+    "source_domain_verified": true,
+    "source_facts_digest": {
+      "blake2b_256": "8a6ec520dcc34635bb2d24587f2024ea2cb523d059d037bb1e741aa1a1ed009f",
+      "bytes": 336174,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/harris-fission-first/replay/source-facts.json"
+    },
+    "state_dependency_evidence": {
+      "original": {
+        "edges": [
+          {
+            "consumer": "Task_1",
+            "consumer_operand_position": 0,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%11"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 0,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 1,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%16"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%16"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 1,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%16"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 0,
+            "producer": "Task_7",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_12",
+            "consumer_operand_position": 0,
+            "producer": "Task_9",
+            "producer_result_port": 0,
+            "ssa_value": "%20"
+          },
+          {
+            "consumer": "Task_13",
+            "consumer_operand_position": 0,
+            "producer": "Task_10",
+            "producer_result_port": 0,
+            "ssa_value": "%21"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%22"
+          },
+          {
+            "consumer": "Task_15",
+            "consumer_operand_position": 0,
+            "producer": "Task_12",
+            "producer_result_port": 0,
+            "ssa_value": "%23"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 0,
+            "producer": "Task_13",
+            "producer_result_port": 0,
+            "ssa_value": "%24"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 1,
+            "producer": "Task_14",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 2,
+            "producer": "Task_15",
+            "producer_result_port": 0,
+            "ssa_value": "%26"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 0,
+            "producer": "Task_16",
+            "producer_result_port": 0,
+            "ssa_value": "%27"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 0,
+            "producer": "Task_17",
+            "producer_result_port": 0,
+            "ssa_value": "%28"
+          },
+          {
+            "consumer": "Task_19",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%29"
+          },
+          {
+            "consumer": "Task_20",
+            "consumer_operand_position": 0,
+            "producer": "Task_19",
+            "producer_result_port": 0,
+            "ssa_value": "%30"
+          },
+          {
+            "consumer": "Task_21",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%29"
+          },
+          {
+            "consumer": "Task_21",
+            "consumer_operand_position": 1,
+            "producer": "Task_20",
+            "producer_result_port": 0,
+            "ssa_value": "%31"
+          },
+          {
+            "consumer": "Task_22",
+            "consumer_operand_position": 0,
+            "producer": "Task_21",
+            "producer_result_port": 0,
+            "ssa_value": "%32"
+          },
+          {
+            "consumer": "Task_22",
+            "consumer_operand_position": 1,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_23",
+            "consumer_operand_position": 0,
+            "producer": "Task_22",
+            "producer_result_port": 0,
+            "ssa_value": "%33"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      },
+      "transformed": {
+        "edges": [
+          {
+            "consumer": "Task_0.split.1",
+            "consumer_operand_position": 0,
+            "producer": "Task_0.split.0",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_1",
+            "consumer_operand_position": 0,
+            "producer": "Task_0.split.1",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 0,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%14"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%15"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%16"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%16"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 1,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%17"
+          },
+          {
+            "consumer": "Task_9",
+            "consumer_operand_position": 1,
+            "producer": "Task_5",
+            "producer_result_port": 0,
+            "ssa_value": "%18"
+          },
+          {
+            "consumer": "Task_10",
+            "consumer_operand_position": 0,
+            "producer": "Task_7",
+            "producer_result_port": 0,
+            "ssa_value": "%20"
+          },
+          {
+            "consumer": "Task_11",
+            "consumer_operand_position": 0,
+            "producer": "Task_8",
+            "producer_result_port": 0,
+            "ssa_value": "%21"
+          },
+          {
+            "consumer": "Task_12",
+            "consumer_operand_position": 0,
+            "producer": "Task_9",
+            "producer_result_port": 0,
+            "ssa_value": "%22"
+          },
+          {
+            "consumer": "Task_13",
+            "consumer_operand_position": 0,
+            "producer": "Task_10",
+            "producer_result_port": 0,
+            "ssa_value": "%23"
+          },
+          {
+            "consumer": "Task_14",
+            "consumer_operand_position": 0,
+            "producer": "Task_11",
+            "producer_result_port": 0,
+            "ssa_value": "%24"
+          },
+          {
+            "consumer": "Task_15",
+            "consumer_operand_position": 0,
+            "producer": "Task_12",
+            "producer_result_port": 0,
+            "ssa_value": "%25"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 0,
+            "producer": "Task_13",
+            "producer_result_port": 0,
+            "ssa_value": "%26"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 1,
+            "producer": "Task_14",
+            "producer_result_port": 0,
+            "ssa_value": "%27"
+          },
+          {
+            "consumer": "Task_16",
+            "consumer_operand_position": 2,
+            "producer": "Task_15",
+            "producer_result_port": 0,
+            "ssa_value": "%28"
+          },
+          {
+            "consumer": "Task_17",
+            "consumer_operand_position": 0,
+            "producer": "Task_16",
+            "producer_result_port": 0,
+            "ssa_value": "%29"
+          },
+          {
+            "consumer": "Task_18",
+            "consumer_operand_position": 0,
+            "producer": "Task_17",
+            "producer_result_port": 0,
+            "ssa_value": "%30"
+          },
+          {
+            "consumer": "Task_19",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%31"
+          },
+          {
+            "consumer": "Task_20",
+            "consumer_operand_position": 0,
+            "producer": "Task_19",
+            "producer_result_port": 0,
+            "ssa_value": "%32"
+          },
+          {
+            "consumer": "Task_21",
+            "consumer_operand_position": 0,
+            "producer": "Task_18",
+            "producer_result_port": 0,
+            "ssa_value": "%31"
+          },
+          {
+            "consumer": "Task_21",
+            "consumer_operand_position": 1,
+            "producer": "Task_20",
+            "producer_result_port": 0,
+            "ssa_value": "%33"
+          },
+          {
+            "consumer": "Task_22",
+            "consumer_operand_position": 0,
+            "producer": "Task_21",
+            "producer_result_port": 0,
+            "ssa_value": "%34"
+          },
+          {
+            "consumer": "Task_22",
+            "consumer_operand_position": 1,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%19"
+          },
+          {
+            "consumer": "Task_23",
+            "consumer_operand_position": 0,
+            "producer": "Task_22",
+            "producer_result_port": 0,
+            "ssa_value": "%35"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      }
+    },
+    "task_count_after": 25,
+    "task_count_before": 24
+  },
+  {
+    "action_history": {
+      "actions": [
+        {
+          "canonicalReset": false,
+          "family": "sibling-fusion",
+          "label": "sibling-fuse:Task_0:Task_1",
+          "primitives": [
+            {
+              "axis": 0,
+              "factor": 1,
+              "firstTask": "Task_0",
+              "kind": "sibling-fusion",
+              "leftNodes": [],
+              "mode": "sibling",
+              "secondTask": "Task_1"
+            }
+          ],
+          "shapeCols": 0,
+          "shapeRows": 0,
+          "shapeTask": ""
+        }
+      ],
+      "canonicalFactKey": "graph-0",
+      "fissionActions": [],
+      "initialShapes": [
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_0"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_1"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_2"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_3"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_4"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_5"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_6"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_7"
+        },
+        {
+          "cols": 1,
+          "rows": 1,
+          "task": "Task_8"
+        }
+      ],
+      "known": true,
+      "schema": "orbit-joint-neighborhood-typed-actions-v1",
+      "unknownReason": ""
+    },
+    "action_path": [
+      "sibling-fuse:Task_0:Task_1"
+    ],
+    "candidate_digest": {
+      "blake2b_256": "bb926647552a59bc4b1031a00c7d598c748ea94e35c27ca5d79931d794766776",
+      "bytes": 246262,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/lu-sibling-0-1/replay/candidate.mlir"
+    },
+    "case": "lu-sibling-0-1",
+    "fission_source_replay_verified": false,
+    "input_digest": {
+      "blake2b_256": "13fb5030f7950af72b89eba6f36a2e2b0c964dc78d7435c2b8ce4abc9afda34c",
+      "bytes": 247248,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/lu-sibling-0-1/replay/candidate-input.mlir"
+    },
+    "kernels": {
+      "original": [
+        {
+          "canonical_witness_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "47e3bd9a4073dc74cc71b066f5d5ac9e3e59a79cb6773a8fa73eb29447e2ff2e",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 64,
+            "current_taskflow_firing_count": 64,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 64,
+            "source_multiplicity": 64
+          },
+          "statistics": {
+            "body_bytes": 2537,
+            "compiled_ii": null,
+            "loads": 1,
+            "operation_count": 16,
+            "operation_counts": {
+              "arith.constant": 2,
+              "neura.counter": 2,
+              "neura.data_mov": 5,
+              "neura.kernel": 1,
+              "neura.load_indexed": 1,
+              "neura.store_indexed": 1,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 1
+          },
+          "task": "Task_0",
+          "task_interface": {
+            "operand_segments": [
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            "result_segments": [
+              0,
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "canonical_witness_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": null,
+          "raw_kernel_region_blake2b_256": "3ac7db5567ab96adb0578b6202bc4fa37b521baca3f074de5da58e58cf63f55f",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "current_domain_status": "certified-complete",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 64,
+            "current_taskflow_firing_count": 64,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 64,
+            "source_multiplicity": 64
+          },
+          "statistics": {
+            "body_bytes": 4774,
+            "compiled_ii": null,
+            "loads": 0,
+            "operation_count": 35,
+            "operation_counts": {
+              "arith.constant": 2,
+              "neura.cast": 2,
+              "neura.constant": 3,
+              "neura.counter": 2,
+              "neura.data_mov": 16,
+              "neura.icmp": 1,
+              "neura.kernel": 1,
+              "neura.sel": 1,
+              "neura.store_indexed": 3,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 3
+          },
+          "task": "Task_1",
+          "task_interface": {
+            "operand_segments": [
+              0,
+              3,
+              3,
+              0,
+              3
+            ],
+            "result_segments": [
+              0,
+              3,
+              0
+            ]
+          }
+        }
+      ],
+      "transformed": [
+        {
+          "canonical_witness_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "mapper_visible_hash": null,
+          "mapper_visible_hash_note": "Direct typed materialization does not invoke mapper; raw kernel hash is separately labeled.",
+          "partition_proof_blake2b_256": "37cee5c5b7a1278df7d94d115bfd80924e4b8d6c4042856799c1258e34d7eccb",
+          "raw_kernel_region_blake2b_256": "ad288dfcbac7a2ac60304905de4c41ce1f4b4269d0533bc8994944f55727096c",
+          "source_domain_summary": {
+            "axes": [
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 0,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "carried_values": 0,
+                "expanded_inside_mapper_firing": false,
+                "extent": 8,
+                "kind": "taskflow-counter",
+                "lower": 0,
+                "ordinal": 1,
+                "parent_counter_ordinal": -1,
+                "result_uses": 0,
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "complete": true,
+            "current_counter_axes": [
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 0,
+                "output_axes": [
+                  0
+                ],
+                "step": 1,
+                "upper": 8
+              },
+              {
+                "bound_status": "proven",
+                "lower": 0,
+                "ordinal": 1,
+                "output_axes": [
+                  1
+                ],
+                "step": 1,
+                "upper": 8
+              }
+            ],
+            "current_domain_status": "certified-source-partition",
+            "current_output_coordinate_status": "proven",
+            "current_source_work_count": 64,
+            "current_taskflow_firing_count": 64,
+            "internal_multiplicity": 1,
+            "represented_multiplicity": 64,
+            "source_multiplicity": 64
+          },
+          "statistics": {
+            "body_bytes": 5953,
+            "compiled_ii": null,
+            "loads": 1,
+            "operation_count": 44,
+            "operation_counts": {
+              "arith.constant": 4,
+              "neura.cast": 2,
+              "neura.constant": 3,
+              "neura.counter": 2,
+              "neura.data_mov": 21,
+              "neura.icmp": 1,
+              "neura.kernel": 1,
+              "neura.load_indexed": 1,
+              "neura.sel": 1,
+              "neura.store_indexed": 4,
+              "neura.yield": 1,
+              "taskflow.counter": 2,
+              "taskflow.yield": 1
+            },
+            "selected_trip_count": null,
+            "source_firings": null,
+            "stores": 4
+          },
+          "task": "Task_0.fuse.Task_1",
+          "task_interface": {
+            "operand_segments": [
+              1,
+              4,
+              3,
+              1,
+              4
+            ],
+            "result_segments": [
+              0,
+              4,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "selected_shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0.fuse.Task_1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_2"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_3"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_4"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_5"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_6"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_7"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_8"
+      }
+    ],
+    "source_domain_verified": true,
+    "source_facts_digest": {
+      "blake2b_256": "649fac3d593b79a9cd815169a3635e40476291f3b9f7d132b81705695f300b76",
+      "bytes": 171323,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/lu-sibling-0-1/replay/source-facts.json"
+    },
+    "state_dependency_evidence": {
+      "original": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 0,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%7"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0",
+            "producer_result_port": 0,
+            "ssa_value": "%7"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%9"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%8#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 2,
+            "producer": "Task_1",
+            "producer_result_port": 1,
+            "ssa_value": "%8#1"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%11"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%8#2"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%10#0"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 2,
+            "producer": "Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%8#2"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 2,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%13"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%10#1"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      },
+      "transformed": {
+        "edges": [
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 0,
+            "producer": "Task_0.fuse.Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%7#0"
+          },
+          {
+            "consumer": "Task_2",
+            "consumer_operand_position": 1,
+            "producer": "Task_0.fuse.Task_1",
+            "producer_result_port": 0,
+            "ssa_value": "%7#0"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 0,
+            "producer": "Task_2",
+            "producer_result_port": 0,
+            "ssa_value": "%8"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 1,
+            "producer": "Task_0.fuse.Task_1",
+            "producer_result_port": 1,
+            "ssa_value": "%7#1"
+          },
+          {
+            "consumer": "Task_3",
+            "consumer_operand_position": 2,
+            "producer": "Task_0.fuse.Task_1",
+            "producer_result_port": 2,
+            "ssa_value": "%7#2"
+          },
+          {
+            "consumer": "Task_4",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%9#0"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 0,
+            "producer": "Task_4",
+            "producer_result_port": 0,
+            "ssa_value": "%10"
+          },
+          {
+            "consumer": "Task_5",
+            "consumer_operand_position": 2,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%9#1"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 0,
+            "producer": "Task_0.fuse.Task_1",
+            "producer_result_port": 3,
+            "ssa_value": "%7#3"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 0,
+            "ssa_value": "%9#0"
+          },
+          {
+            "consumer": "Task_6",
+            "consumer_operand_position": 2,
+            "producer": "Task_0.fuse.Task_1",
+            "producer_result_port": 3,
+            "ssa_value": "%7#3"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 0,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 1,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%9#1"
+          },
+          {
+            "consumer": "Task_7",
+            "consumer_operand_position": 2,
+            "producer": "Task_6",
+            "producer_result_port": 0,
+            "ssa_value": "%12"
+          },
+          {
+            "consumer": "Task_8",
+            "consumer_operand_position": 0,
+            "producer": "Task_3",
+            "producer_result_port": 1,
+            "ssa_value": "%9#1"
+          }
+        ],
+        "method": "Syntactic Taskflow result-port to operand dependencies from exact generic IR; not a substitute for semantic scheduling RAW/WAR/WAW edges. Native witnesses record actual semantic dependencies/routes where mapping ran."
+      }
+    },
+    "task_count_after": 8,
+    "task_count_before": 9
+  }
+]

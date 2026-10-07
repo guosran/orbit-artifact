@@ -1,0 +1,893 @@
+{
+  "actual_task_schedule": [
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        },
+        {
+          "col": 1,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 4,
+      "duration": 257,
+      "end_cycle": 257,
+      "native_startup_cycles": null,
+      "profile_duration": 257,
+      "resource_wait_cycles": null,
+      "start_cycle": 0,
+      "task": "Task_0.fuse.Task_1"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 4608,
+      "end_cycle": 5665,
+      "native_startup_cycles": null,
+      "profile_duration": 4608,
+      "resource_wait_cycles": null,
+      "start_cycle": 1057,
+      "task": "Task_2"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 5,
+      "duration": 322,
+      "end_cycle": 6787,
+      "native_startup_cycles": null,
+      "profile_duration": 322,
+      "resource_wait_cycles": null,
+      "start_cycle": 6465,
+      "task": "Task_3"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 578,
+      "end_cycle": 8165,
+      "native_startup_cycles": null,
+      "profile_duration": 578,
+      "resource_wait_cycles": null,
+      "start_cycle": 7587,
+      "task": "Task_4"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 11,
+      "duration": 705,
+      "end_cycle": 8879,
+      "native_startup_cycles": null,
+      "profile_duration": 705,
+      "resource_wait_cycles": null,
+      "start_cycle": 8174,
+      "task": "Task_5"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 11,
+      "duration": 5632,
+      "end_cycle": 13220,
+      "native_startup_cycles": null,
+      "profile_duration": 5632,
+      "resource_wait_cycles": null,
+      "start_cycle": 7588,
+      "task": "Task_6"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 4609,
+      "end_cycle": 18629,
+      "native_startup_cycles": null,
+      "profile_duration": 4609,
+      "resource_wait_cycles": null,
+      "start_cycle": 14020,
+      "task": "Task_7"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 2,
+      "duration": 19,
+      "end_cycle": 8406,
+      "native_startup_cycles": null,
+      "profile_duration": 19,
+      "resource_wait_cycles": null,
+      "start_cycle": 8387,
+      "task": "Task_8"
+    }
+  ],
+  "dependencies": [
+    {
+      "consumer": "Task_2",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_0.fuse.Task_1",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_2",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_0.fuse.Task_1",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_2",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_0.fuse.Task_1",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 1,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_0.fuse.Task_1",
+      "producer_index": 2,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_4",
+      "consumer_index": 2,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_5",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 256,
+      "producer": "Task_4",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_5",
+      "consumer_index": 2,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_0.fuse.Task_1",
+      "producer_index": 3,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 1,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_0.fuse.Task_1",
+      "producer_index": 3,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_6",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 1,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_6",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_8",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    }
+  ],
+  "file_digests": {
+    "independent-trace.json": {
+      "blake2b_256": "45ef11b66644ad5886614191f995d25020df12e7dce0dc2ac69aebf64d01c297",
+      "bytes": 303,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/independent-trace.json"
+    },
+    "mapped.mlir": {
+      "blake2b_256": "bcc8e0ae55c741298ef3d8da911f10e13ca132923c2811651baa4d7917919656",
+      "bytes": 403994,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/mapped.mlir"
+    },
+    "native.mlir": {
+      "blake2b_256": "cf8dede304ee80379ac8c862634250df14516719c3b0f2d2e85aab37cfb804a1",
+      "bytes": 423054,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/native.mlir"
+    },
+    "result.json": {
+      "blake2b_256": "0c77033e6394d129f2a60805f2b6db1ce1104424928aa782a681586e3f665a1e",
+      "bytes": 7323,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/result.json"
+    }
+  },
+  "limits": "Native startup/resource-wait fields are absent. Schedule gaps include dependencies/communication; no pure resource-wait causal attribution.",
+  "mapper_visible_kernel_checks": [
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "d87adb657af8bfd59b04baab8cd05b107f4fa6e424a696eb6b9e8c6a85ae778b",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/mapper-cache/lu/task-0/input.txt",
+      "compiled_ii": 4,
+      "mapper_shape": {
+        "cgra_count": 2,
+        "cgra_shape": "1x2",
+        "mapper_cache_hit": false,
+        "mapper_tile_cols": 4,
+        "mapper_tile_rows": 2,
+        "selected_trip_count": 64
+      },
+      "mapper_visible_dfg_blake2b_256": "d911b9ed051b6ba0d3fba16102fe788d534100cc645ecd23b6628e9a103c3ccc",
+      "raw_source_kernel_region_blake2b_256": "7f2f447adb7cf70eda2aa21d9c58e651b216ba00bb5e0cb05e268e1a7f97e283",
+      "task": "Task_0.fuse.Task_1"
+    },
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "a760bdc6bde7a878077661a0863a9bf49b40358361f764faae0c4f2ff287068f",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/mapper-cache/lu/task-5/input.txt",
+      "compiled_ii": 11,
+      "mapper_shape": {
+        "cgra_count": 1,
+        "cgra_shape": "1x1",
+        "mapper_cache_hit": false,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "selected_trip_count": 512
+      },
+      "mapper_visible_dfg_blake2b_256": "caa098c89853a61830eb562c15310a24ba164dbf7eca594dc5ec5d542bcb3ac1",
+      "raw_source_kernel_region_blake2b_256": "ca8539df5ec8b6348cdb7f026e349f0a0bbcde5a256a6c48c827bd14c9730664",
+      "task": "Task_6"
+    }
+  ],
+  "name": "lu-fixed-fusion-rank-1",
+  "native_result": {
+    "candidate_id": "neighborhood-seed-1",
+    "control_role": null,
+    "ended_utc": "2026-10-07T12:59:10.549265+00:00",
+    "fixed_location_equality": "scheduler-selected",
+    "graph_variant_id": "graph-1",
+    "independent_trace": "pass",
+    "mapper_cache_hits": 0,
+    "mapper_cache_misses": 8,
+    "mapper_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/search/candidates/neighborhood-seed-1.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--materialize-analytical-task-candidate=candidates=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/search/replay/neighborhood-seed-1-shape.json candidate-id=shape-neighborhood-seed-1",
+        "--map-joint-scheduling-tasks=scores=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/search/replay/neighborhood-seed-1-score.jsonl candidate-id=neighborhood-seed-1 mapping-cache-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/mapper-cache/lu",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/mapped.mlir"
+      ],
+      "ended_utc": "2026-10-07T12:59:10.486986+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T12:59:09.351264+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/mapper.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/mapper.stdout.gz"
+    },
+    "mapper_equality": "pass",
+    "native_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/mapped.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy=critical-path communication-mode=explicit exact-replay-timing=mapped",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/native.mlir"
+      ],
+      "ended_utc": "2026-10-07T12:59:10.541788+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T12:59:10.488291+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/native.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/native.stdout.gz"
+    },
+    "native_cycles": 18629,
+    "numeric": "pass",
+    "numeric_gate_record": {
+      "actual_nonzero": 1025,
+      "commands": [
+        {
+          "argv": [
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/native.mlir",
+            "--verify-each",
+            "--lower-joint-taskflow-to-host-scf=input0-numeric-program=lu",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/numeric/lu/controlled-lu-sibling-0-1-rank-1/host.mlir"
+          ],
+          "elapsed_seconds": 0.01710875891149044,
+          "exit_code": 0,
+          "step": "host"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-opt",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/numeric/lu/controlled-lu-sibling-0-1-rank-1/host.mlir",
+            "--verify-each",
+            "--convert-scf-to-cf",
+            "--convert-cf-to-llvm",
+            "--convert-arith-to-llvm",
+            "--finalize-memref-to-llvm",
+            "--convert-func-to-llvm",
+            "--reconcile-unrealized-casts",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/numeric/lu/controlled-lu-sibling-0-1-rank-1/llvm.mlir"
+          ],
+          "elapsed_seconds": 0.02337839175015688,
+          "exit_code": 0,
+          "step": "llvm"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-runner",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/numeric/lu/controlled-lu-sibling-0-1-rank-1/llvm.mlir",
+            "-e",
+            "main",
+            "-entry-point-result=i64",
+            "-O2",
+            "-shared-libs",
+            "/home/x/shiran/llvm-project/build/lib/libmlir_runner_utils.so",
+            "-shared-libs",
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/liblu_reference.so"
+          ],
+          "elapsed_seconds": 0.11203896207734942,
+          "exit_code": 0,
+          "step": "run"
+        }
+      ],
+      "compiler_owned_fixture_and_execution": true,
+      "element_comparisons": 4025,
+      "expected_mismatches": 0,
+      "expected_nonzero": 1025,
+      "independent_reference": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/liblu_reference.so",
+      "mismatches": 0,
+      "negative_control": false,
+      "rank": 1,
+      "schema": "orbit-input0-cpp-host-numeric-gate-v1",
+      "scope": "mapped-native",
+      "source": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fifth-fixed-control/lu-sibling-0-1/native/rank-1/native.mlir",
+      "stage": "controlled-lu-sibling-0-1",
+      "stage_admission": "not_claimed",
+      "status": "pass",
+      "workload": "lu"
+    },
+    "predicted_cycles": 18442,
+    "prediction_mapper_equal": false,
+    "prediction_start_equality": false,
+    "production_ready": false,
+    "rank": 1,
+    "ranking_certified": false,
+    "replay_timing_policy": "production-scheduler-with-mapped-durations",
+    "scheduler_backend": "orchestrate-tasks-on-accelerators",
+    "sram_blocker": "target_sram_capacity_unestablished",
+    "sram_capacity_config": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/architectures/amoeba_4x4_cgra_2x2_sram_pending.json",
+    "sram_capacity_evaluated": false,
+    "sram_gate": "pending",
+    "started_utc": "2026-10-07T12:59:09.350033+00:00",
+    "status": "native_replayed"
+  },
+  "normalization": "empty terminal yield->return; whitespace removed outside strings; bijective SSA rename preserving operand connectivity",
+  "prediction": {
+    "predicted_whole_program_cycles": 18442,
+    "task_costs": [
+      {
+        "mapper_tile_cols": 4,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 220,
+        "predicted_ii": 3.4022843837738037,
+        "startup_cycles": 5,
+        "support_status": "supported",
+        "task": "Task_0.fuse.Task_1",
+        "trip_count": 64
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 4827,
+        "predicted_ii": 9.427913665771484,
+        "startup_cycles": 9,
+        "support_status": "supported",
+        "task": "Task_2",
+        "trip_count": 512
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 347,
+        "predicted_ii": 5.387444972991943,
+        "startup_cycles": 7,
+        "support_status": "supported",
+        "task": "Task_3",
+        "trip_count": 64
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 610,
+        "predicted_ii": 9.507587432861328,
+        "startup_cycles": 11,
+        "support_status": "supported",
+        "task": "Task_4",
+        "trip_count": 64
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 742,
+        "predicted_ii": 11.584107398986816,
+        "startup_cycles": 12,
+        "support_status": "supported",
+        "task": "Task_5",
+        "trip_count": 64
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 5473,
+        "predicted_ii": 10.688370704650879,
+        "startup_cycles": 11,
+        "support_status": "supported",
+        "task": "Task_6",
+        "trip_count": 512
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 4374,
+        "predicted_ii": 8.53999137878418,
+        "startup_cycles": 10,
+        "support_status": "supported",
+        "task": "Task_7",
+        "trip_count": 512
+      },
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 23,
+        "predicted_ii": 2.552049160003662,
+        "startup_cycles": 5,
+        "support_status": "supported",
+        "task": "Task_8",
+        "trip_count": 8
+      }
+    ],
+    "task_schedule": [
+      {
+        "col": 0,
+        "cols": 2,
+        "end_cycle": 220,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 0,
+        "task": "Task_0.fuse.Task_1"
+      },
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 5847,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 1020,
+        "task": "Task_2"
+      },
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 6994,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 6647,
+        "task": "Task_3"
+      },
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 8404,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 7794,
+        "task": "Task_4"
+      },
+      {
+        "col": 1,
+        "cols": 1,
+        "end_cycle": 9155,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 8413,
+        "task": "Task_5"
+      },
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 13268,
+        "idle_cycles": 0,
+        "row": 1,
+        "rows": 1,
+        "start_cycle": 7795,
+        "task": "Task_6"
+      },
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 18442,
+        "idle_cycles": 0,
+        "row": 1,
+        "rows": 1,
+        "start_cycle": 14068,
+        "task": "Task_7"
+      },
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 8617,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 8594,
+        "task": "Task_8"
+      }
+    ]
+  },
+  "routes": [
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_2",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        0
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 1057,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 257
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_0.fuse.Task_1",
+      "ready_cycle": 1057,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_3",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        2
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 6465,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 5665
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_2",
+      "ready_cycle": 6465,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_4",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        5
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 7587,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 6787
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7587,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_6",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        8
+      ],
+      "links": [
+        {
+          "end_cycle": 1058,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 257
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_0.fuse.Task_1",
+      "ready_cycle": 1058,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_6",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        9
+      ],
+      "links": [
+        {
+          "end_cycle": 7588,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 6787
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7588,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_5",
+      "destination_col": 1,
+      "destination_row": 0,
+      "edge_indices": [
+        6
+      ],
+      "links": [
+        {
+          "end_cycle": 8174,
+          "link_index": 0,
+          "resource_kind": "network_link",
+          "start_cycle": 8165
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 256,
+      "producer": "Task_4",
+      "ready_cycle": 8174,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 9
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_5",
+      "destination_col": 1,
+      "destination_row": 0,
+      "edge_indices": [
+        7
+      ],
+      "links": [
+        {
+          "end_cycle": 7588,
+          "link_index": 0,
+          "resource_kind": "network_link",
+          "start_cycle": 6787
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7588,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_7",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        11
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 14020,
+          "resource_kind": "local_channel",
+          "row": 1,
+          "start_cycle": 13220
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_6",
+      "ready_cycle": 14020,
+      "source_col": 0,
+      "source_row": 1,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_7",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        12
+      ],
+      "links": [
+        {
+          "end_cycle": 8389,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 7588
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 8389,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_8",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        14
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 8387,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 7587
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 8387,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    }
+  ],
+  "schema": "orbit-r9-extra-native-receipt-v1"
+}

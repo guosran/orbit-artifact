@@ -1,0 +1,1064 @@
+{
+  "actual_task_schedule": [
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 2,
+      "duration": 129,
+      "end_cycle": 129,
+      "native_startup_cycles": null,
+      "profile_duration": 129,
+      "resource_wait_cycles": null,
+      "start_cycle": 0,
+      "task": "Task_0.split.0"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 2,
+      "duration": 129,
+      "end_cycle": 322,
+      "native_startup_cycles": null,
+      "profile_duration": 129,
+      "resource_wait_cycles": null,
+      "start_cycle": 193,
+      "task": "Task_0.split.1"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 4,
+      "duration": 257,
+      "end_cycle": 257,
+      "native_startup_cycles": null,
+      "profile_duration": 257,
+      "resource_wait_cycles": null,
+      "start_cycle": 0,
+      "task": "Task_1"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 4608,
+      "end_cycle": 5730,
+      "native_startup_cycles": null,
+      "profile_duration": 4608,
+      "resource_wait_cycles": null,
+      "start_cycle": 1122,
+      "task": "Task_2"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 5,
+      "duration": 322,
+      "end_cycle": 6852,
+      "native_startup_cycles": null,
+      "profile_duration": 322,
+      "resource_wait_cycles": null,
+      "start_cycle": 6530,
+      "task": "Task_3"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 578,
+      "end_cycle": 8230,
+      "native_startup_cycles": null,
+      "profile_duration": 578,
+      "resource_wait_cycles": null,
+      "start_cycle": 7652,
+      "task": "Task_4"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 11,
+      "duration": 705,
+      "end_cycle": 8944,
+      "native_startup_cycles": null,
+      "profile_duration": 705,
+      "resource_wait_cycles": null,
+      "start_cycle": 8239,
+      "task": "Task_5"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 0
+        },
+        {
+          "col": 2,
+          "row": 0
+        },
+        {
+          "col": 1,
+          "row": 1
+        },
+        {
+          "col": 2,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 5,
+      "duration": 2566,
+      "end_cycle": 10219,
+      "native_startup_cycles": null,
+      "profile_duration": 2566,
+      "resource_wait_cycles": null,
+      "start_cycle": 7653,
+      "task": "Task_6"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 4609,
+      "end_cycle": 15628,
+      "native_startup_cycles": null,
+      "profile_duration": 4609,
+      "resource_wait_cycles": null,
+      "start_cycle": 11019,
+      "task": "Task_7"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 2,
+      "duration": 19,
+      "end_cycle": 8471,
+      "native_startup_cycles": null,
+      "profile_duration": 19,
+      "resource_wait_cycles": null,
+      "start_cycle": 8452,
+      "task": "Task_8"
+    }
+  ],
+  "dependencies": [
+    {
+      "consumer": "Task_0.split.1",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 2048,
+      "producer": "Task_0.split.0",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_2",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_0.split.1",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_2",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_0.split.1",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_2",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_1",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 1,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_1",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_4",
+      "consumer_index": 2,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_5",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 256,
+      "producer": "Task_4",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_5",
+      "consumer_index": 2,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_1",
+      "producer_index": 2,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 1,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_1",
+      "producer_index": 2,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_6",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 1,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_6",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_8",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    }
+  ],
+  "file_digests": {
+    "independent-trace.json": {
+      "blake2b_256": "ac1dbacbed5ae46140c2e2be3f5a47a4ea02b5a7c54c3da3b9d4f079c9b9c3aa",
+      "bytes": 304,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/independent-trace.json"
+    },
+    "mapped.mlir": {
+      "blake2b_256": "9f08b16f4db8cb4bba18d234028fa77da0c38417fabbcbc7cb9c74a811fa64eb",
+      "bytes": 419422,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/mapped.mlir"
+    },
+    "native.mlir": {
+      "blake2b_256": "b65ab27995c43aa745b08b433c98f629e58c0ef5361c332b51a009bbce7ac071",
+      "bytes": 440916,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/native.mlir"
+    },
+    "result.json": {
+      "blake2b_256": "22512f4763cf7a267da3fe0dec3bf4169a80946c7708818ce4a1c27fe001cd7e",
+      "bytes": 12141,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/result.json"
+    }
+  },
+  "limits": "Native startup/resource-wait fields are absent. Schedule gaps include dependencies/communication; no pure resource-wait causal attribution.",
+  "mapper_visible_kernel_checks": [
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "b60f83a4850a1f9ffced31cebb25900cfca58a23f45b75d61d27ad5d9ea22bf9",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu/task-9/input.txt",
+      "compiled_ii": 2,
+      "mapper_shape": {
+        "cgra_count": 1,
+        "cgra_shape": "1x1",
+        "mapper_cache_hit": false,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "selected_trip_count": 64
+      },
+      "mapper_visible_dfg_blake2b_256": "9849cfa00dd88031f359f04625bedcb3e60566e128f52890fc4381971d348713",
+      "raw_source_kernel_region_blake2b_256": "426c7a76a752e1132587603fda8b71793eace9c2c814f1bc68f8f846853c2c73",
+      "task": "Task_0.split.0"
+    },
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "7a0641bc600505c453ee5705ece5d6e42a646f2f92be9e32daf24d02518d00d6",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu/task-10/input.txt",
+      "compiled_ii": 2,
+      "mapper_shape": {
+        "cgra_count": 1,
+        "cgra_shape": "1x1",
+        "mapper_cache_hit": false,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "selected_trip_count": 64
+      },
+      "mapper_visible_dfg_blake2b_256": "57a815302693963b9758aaee8030d7dfddd949ddcd694bd53d432ef2e13a9cd4",
+      "raw_source_kernel_region_blake2b_256": "d98351dd66458bc99b255007f86fdeab8837ae7641bf6fbc92919a43667f573d",
+      "task": "Task_0.split.1"
+    },
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "5b36e72d15cc3ae1539ab1b82a3acfec68dcd201da07f797fb51b3c904b0a080",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu/task-6/input.txt",
+      "compiled_ii": 5,
+      "mapper_shape": {
+        "cgra_count": 4,
+        "cgra_shape": "2x2",
+        "mapper_cache_hit": true,
+        "mapper_tile_cols": 4,
+        "mapper_tile_rows": 4,
+        "selected_trip_count": 512
+      },
+      "mapper_visible_dfg_blake2b_256": "caa098c89853a61830eb562c15310a24ba164dbf7eca594dc5ec5d542bcb3ac1",
+      "raw_source_kernel_region_blake2b_256": "e145bb7b4e9b1b191a82421cb45e6b2d6d1ebbd88ac0b21d3d2c896b45ed7254",
+      "task": "Task_6"
+    }
+  ],
+  "name": "lu-resource-transformed-58",
+  "native_result": {
+    "candidate_id": "neighborhood-seed-1",
+    "control_role": null,
+    "ended_utc": "2026-10-07T13:11:02.968237+00:00",
+    "fixed_location_equality": "scheduler-selected",
+    "graph_variant_id": "graph-1",
+    "independent_trace": "pass",
+    "mapper_cache_hits": 8,
+    "mapper_cache_misses": 2,
+    "mapper_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/search/candidates/neighborhood-seed-1.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--materialize-analytical-task-candidate=candidates=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/search/replay/neighborhood-seed-1-shape.json candidate-id=shape-neighborhood-seed-1",
+        "--map-joint-scheduling-tasks=scores=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/search/replay/neighborhood-seed-1-score.jsonl candidate-id=neighborhood-seed-1 mapping-cache-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/mapped.mlir"
+      ],
+      "ended_utc": "2026-10-07T13:11:02.848115+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T13:11:02.804276+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/mapper.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/mapper.stdout.gz"
+    },
+    "mapper_equality": "pass",
+    "native_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/mapped.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy=critical-path communication-mode=explicit exact-replay-timing=mapped",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/native.mlir"
+      ],
+      "ended_utc": "2026-10-07T13:11:02.958391+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T13:11:02.849203+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/native.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/native.stdout.gz"
+    },
+    "native_cycles": 15628,
+    "numeric": "pass",
+    "numeric_gate_record": {
+      "actual_nonzero": 1025,
+      "commands": [
+        {
+          "argv": [
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/native.mlir",
+            "--verify-each",
+            "--lower-joint-taskflow-to-host-scf=input0-numeric-program=lu",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/numeric/lu/controlled-058-rank-0/host.mlir"
+          ],
+          "elapsed_seconds": 0.017051159869879484,
+          "exit_code": 0,
+          "step": "host"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-opt",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/numeric/lu/controlled-058-rank-0/host.mlir",
+            "--verify-each",
+            "--convert-scf-to-cf",
+            "--convert-cf-to-llvm",
+            "--convert-arith-to-llvm",
+            "--finalize-memref-to-llvm",
+            "--convert-func-to-llvm",
+            "--reconcile-unrealized-casts",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/numeric/lu/controlled-058-rank-0/llvm.mlir"
+          ],
+          "elapsed_seconds": 0.025576048996299505,
+          "exit_code": 0,
+          "step": "llvm"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-runner",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/numeric/lu/controlled-058-rank-0/llvm.mlir",
+            "-e",
+            "main",
+            "-entry-point-result=i64",
+            "-O2",
+            "-shared-libs",
+            "/home/x/shiran/llvm-project/build/lib/libmlir_runner_utils.so",
+            "-shared-libs",
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/liblu_reference.so"
+          ],
+          "elapsed_seconds": 0.12303701508790255,
+          "exit_code": 0,
+          "step": "run"
+        }
+      ],
+      "compiler_owned_fixture_and_execution": true,
+      "element_comparisons": 4025,
+      "expected_mismatches": 0,
+      "expected_nonzero": 1025,
+      "independent_reference": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/liblu_reference.so",
+      "mismatches": 0,
+      "negative_control": false,
+      "rank": 0,
+      "schema": "orbit-input0-cpp-host-numeric-gate-v1",
+      "scope": "mapped-native",
+      "source": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/native.mlir",
+      "stage": "controlled-058",
+      "stage_admission": "not_claimed",
+      "status": "pass",
+      "workload": "lu"
+    },
+    "predicted_cycles": 16009,
+    "prediction_mapper_equal": false,
+    "prediction_start_equality": false,
+    "production_ready": false,
+    "rank": 0,
+    "ranking_certified": false,
+    "replay_timing_policy": "production-scheduler-with-mapped-durations",
+    "scheduler_backend": "orchestrate-tasks-on-accelerators",
+    "source_fission_replay": {
+      "active_transfer_arguments": [],
+      "active_transfer_require_proven": null,
+      "candidate_id": "neighborhood-seed-1",
+      "canonical_input": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir",
+      "command": {
+        "argv": [
+          "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+          "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir",
+          "--verify-each",
+          "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+          "--replay-joint-neighborhood-actions=action-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay-actions.json canonical-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir candidate-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir function=_Z7lu_funciPA100_KiPS_PA100_iS4_S4_PiS5_S4_S5_ stage=full-joint-fission max-partition-factor=8 prepared-source-file=/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/lu-pre-neura.mlir max-fission-actions-per-task=64 expected-candidate-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/search/candidates/neighborhood-seed-1.mlir output-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay",
+          "--mlir-print-op-generic",
+          "-o",
+          "/dev/null"
+        ],
+        "ended_utc": "2026-10-07T13:11:02.801140+00:00",
+        "exit_code": 0,
+        "started_utc": "2026-10-07T13:11:02.647308+00:00",
+        "status": "finished",
+        "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/fission-replay.stderr.gz",
+        "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/fission-replay.stdout.gz"
+      },
+      "expected_search_candidate": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/search/candidates/neighborhood-seed-1.mlir",
+      "fission_action_count": 1,
+      "max_fission_actions_per_task": 64,
+      "max_partition_factor": 8,
+      "native_candidate_comparison": "exact-generic-module-after-removing-only-function-graph-variant-id",
+      "native_candidate_match": true,
+      "ordinary_action_count": 1,
+      "prepared_source_bytes": 45648,
+      "prepared_source_file": "/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/lu-pre-neura.mlir",
+      "prepared_source_public_binding": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/source-binding.json",
+      "prepared_source_replay_witness": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay/prepared-source.mlir",
+      "prepared_source_search_binding": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/checkpoint.json.binding.json",
+      "reconstructed_candidate": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay/candidate.mlir",
+      "replay_facts": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay/source-facts.json",
+      "replay_output_dir": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay",
+      "schema": "orbit-neighborhood-source-fission-replay-evidence-v1",
+      "stage": "full-joint-fission",
+      "status": "verified",
+      "typed_action_file": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/transformed/points/058/native/rank-0/source-fission-replay-actions.json"
+    },
+    "sram_blocker": "target_sram_capacity_unestablished",
+    "sram_capacity_config": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/architectures/amoeba_4x4_cgra_2x2_sram_pending.json",
+    "sram_capacity_evaluated": false,
+    "sram_gate": "pending",
+    "started_utc": "2026-10-07T13:11:02.607562+00:00",
+    "status": "native_replayed"
+  },
+  "normalization": "empty terminal yield->return; whitespace removed outside strings; bijective SSA rename preserving operand connectivity",
+  "prediction": {
+    "objective": "predicted production scheduler makespan",
+    "predicted_whole_program_cycles": 16009,
+    "task_costs_by_body": {
+      "Task_0.split.0": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 180,
+        "predicted_ii": 2.796416997909546,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 180,
+          "row": 0,
+          "start_cycle": 0
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 3
+      },
+      "Task_0.split.1": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 180,
+        "predicted_ii": 2.796416997909546,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 424,
+          "row": 0,
+          "start_cycle": 244
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 3
+      },
+      "Task_1": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 290,
+        "predicted_ii": 4.518055438995361,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 1,
+          "end_cycle": 290,
+          "row": 1,
+          "start_cycle": 0
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 5
+      },
+      "Task_2": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 512,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 4827,
+        "predicted_ii": 9.427913665771484,
+        "represented_multiplicity": 512,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 6051,
+          "row": 0,
+          "start_cycle": 1224
+        },
+        "source_multiplicity": 512,
+        "startup_cycles": 9
+      },
+      "Task_3": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 347,
+        "predicted_ii": 5.387444972991943,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 7198,
+          "row": 0,
+          "start_cycle": 6851
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 7
+      },
+      "Task_4": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 610,
+        "predicted_ii": 9.507587432861328,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 8608,
+          "row": 0,
+          "start_cycle": 7998
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 11
+      },
+      "Task_5": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 742,
+        "predicted_ii": 11.584107398986816,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 9359,
+          "row": 1,
+          "start_cycle": 8617
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 12
+      },
+      "Task_6": {
+        "cgra_cols": 2,
+        "cgra_rows": 2,
+        "current_source_work_count": 512,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 4,
+        "mapper_tile_rows": 4,
+        "predicted_duration": 2836,
+        "predicted_ii": 5.5276198387146,
+        "represented_multiplicity": 512,
+        "schedule": {
+          "col": 1,
+          "end_cycle": 10835,
+          "row": 0,
+          "start_cycle": 7999
+        },
+        "source_multiplicity": 512,
+        "startup_cycles": 11
+      },
+      "Task_7": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 512,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 4374,
+        "predicted_ii": 8.53999137878418,
+        "represented_multiplicity": 512,
+        "schedule": {
+          "col": 1,
+          "end_cycle": 16009,
+          "row": 1,
+          "start_cycle": 11635
+        },
+        "source_multiplicity": 512,
+        "startup_cycles": 10
+      },
+      "Task_8": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 8,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 23,
+        "predicted_ii": 2.552049160003662,
+        "represented_multiplicity": 8,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 8821,
+          "row": 0,
+          "start_cycle": 8798
+        },
+        "source_multiplicity": 8,
+        "startup_cycles": 5
+      }
+    }
+  },
+  "routes": [
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_0.split.1",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        0
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 193,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 129
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 2048,
+      "producer": "Task_0.split.0",
+      "ready_cycle": 193,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 64
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_2",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        1
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 1122,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 322
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_0.split.1",
+      "ready_cycle": 1122,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_3",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        3
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 6530,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 5730
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_2",
+      "ready_cycle": 6530,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_4",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        6
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 7652,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 6852
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7652,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_6",
+      "destination_col": 1,
+      "destination_row": 1,
+      "edge_indices": [
+        9
+      ],
+      "links": [
+        {
+          "col": 1,
+          "end_cycle": 1057,
+          "resource_kind": "local_channel",
+          "row": 1,
+          "start_cycle": 257
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_1",
+      "ready_cycle": 1057,
+      "source_col": 1,
+      "source_row": 1,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_6",
+      "destination_col": 1,
+      "destination_row": 0,
+      "edge_indices": [
+        10
+      ],
+      "links": [
+        {
+          "end_cycle": 7653,
+          "link_index": 0,
+          "resource_kind": "network_link",
+          "start_cycle": 6852
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7653,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_5",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        7
+      ],
+      "links": [
+        {
+          "end_cycle": 8239,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 8230
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 256,
+      "producer": "Task_4",
+      "ready_cycle": 8239,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 9
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_5",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        8
+      ],
+      "links": [
+        {
+          "end_cycle": 7653,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 6852
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7653,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_7",
+      "destination_col": 1,
+      "destination_row": 1,
+      "edge_indices": [
+        12
+      ],
+      "links": [
+        {
+          "col": 1,
+          "end_cycle": 11019,
+          "resource_kind": "local_channel",
+          "row": 1,
+          "start_cycle": 10219
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_6",
+      "ready_cycle": 11019,
+      "source_col": 1,
+      "source_row": 1,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_7",
+      "destination_col": 1,
+      "destination_row": 1,
+      "edge_indices": [
+        13
+      ],
+      "links": [
+        {
+          "end_cycle": 8455,
+          "link_index": 0,
+          "resource_kind": "network_link",
+          "start_cycle": 7653
+        },
+        {
+          "end_cycle": 8455,
+          "link_index": 30,
+          "resource_kind": "network_link",
+          "start_cycle": 7653
+        }
+      ],
+      "path_latency_cycles": 2,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 8455,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 802
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_8",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        15
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 8452,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 7652
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 8452,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    }
+  ],
+  "schema": "orbit-r9-extra-native-receipt-v1"
+}

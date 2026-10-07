@@ -1,0 +1,81 @@
+{
+  "cpu_lane": [
+    8,
+    9,
+    10,
+    11
+  ],
+  "mapper_processes_stopped": false,
+  "original_queue_root": "/tmp/orbit-input0-fusion-fission-r11b-20261007/",
+  "other_agents_touched": false,
+  "paused_utc": "2026-10-07T12:15:10.508009+00:00",
+  "reason": "temporarily prioritize independently budgeted R9 fusion/fission diagnosis; no checkpoint or source modification",
+  "resume_namespace_correction": "Initial sandbox /proc did not expose host queue PIDs; no signals were sent in that namespace.",
+  "resume_receipts": [
+    {
+      "pid": 2664872,
+      "state_before": "T",
+      "status": "resumed"
+    },
+    {
+      "pid": 2664871,
+      "state_before": "T",
+      "status": "resumed"
+    },
+    {
+      "pid": 2633597,
+      "state_before": "T",
+      "status": "resumed"
+    },
+    {
+      "pid": 2615523,
+      "state_before": "T",
+      "status": "resumed"
+    }
+  ],
+  "resume_required": false,
+  "resumed_utc": "2026-10-07T13:13:29.845450+00:00",
+  "schema": "orbit-ff-r9-diagnosis-resource-allocation-v1",
+  "stopped_processes": [
+    {
+      "affinity": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "command": "/usr/bin/python3 /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/scripts/run_neighborhood_parallel_batch.py --chain-command-file /tmp/orbit-input0-fusion-fission-r11b-20261007/chain-command-frozen-r11b.json --workers 1 --cpus-per-worker 4 --jobs-per-worker 4 ",
+      "pid": 2615523
+    },
+    {
+      "affinity": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "command": "/usr/bin/python3 /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/scripts/run_neighborhood_parallel_recovery.py --chain-command-file /tmp/orbit-input0-fusion-fission-r11b-20261007/chain-command-frozen-r11b.json --workload harris --jobs 4 ",
+      "pid": 2633597
+    },
+    {
+      "affinity": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "command": "/usr/bin/python3 /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/scripts/neighborhood_replay.py --workload harris --stage full-joint-fission --canonical /home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/canonical.mlir --output-dir /tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/harris/full-joint-fission --optimizer /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11b-20261007 --architecture /home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml --protocol /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/reference/input0-neighborhood/protocol-2x2-fusion-fission-r11b-20261007.json --mapping-cache /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/native-mapping-cache-r11b --source-contract-file /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11b-20261007.json --checkpoint /tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/harris/full-joint-fission/checkpoint.json --jobs 4 --max-rounds 4 --max-candidates 4096 --beam-width 16 --diversity-slots 4 --model-cache /home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json --cost-cache /home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/ml-cache.json --parent-cost-file /home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/cost-catalog.json --stage-initialization independent --sram-config /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/config/architectures/amoeba_4x4_cgra_2x2_sram_pending.json --inter-task-network /tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml --prepared-source-file /home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/pre-neura.mlir --max-fission-actions-per-task 64 --cleanup-search-temporaries ",
+      "pid": 2664871
+    },
+    {
+      "affinity": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "command": "/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11b-20261007 /home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/canonical.mlir --verify-each --architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml --search-joint-neighborhood=output-dir=/tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/harris/full-joint-fission/search function=_Z11harris_funciPA128_KiS1_S1_PA128_iS3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_ stage=full-joint-fission architecture-path=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml source-repository=https://github.com/guosran/orbit.git source-commit=4547a3853452438af0a74f20342b4bc182cc9107 max-rounds=4 max-candidates=4096 beam-width=16 diversity-slots=4 checkpoint=/tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/harris/full-joint-fission/checkpoint.json model-namespace=orbit-per-cgra-2x2-direct-4member-v1 bootstrap-supported-shapes=true scoring-workers=4 max-partition-factor=8 prepared-source-file=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/pre-neura.mlir max-fission-actions-per-task=64 require-source-iteration-domain=true protocol=/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/reference/input0-neighborhood/protocol-2x2-fusion-fission-r11b-20261007.json source-contract-file=/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/source-model-contract-fusion-fission-funnel-r11b-20261007.json parent-cost-file=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/cost-catalog.json model=/home/x/shiran/project/orbit-artifact/reference/input0-neighborhood/models/per-cgra-2x2/ensemble.json cache=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/harris/ml-cache.json -o /tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/harris/full-joint-fission/search/search-output.mlir --joint-inter-task-network-spec=/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml ",
+      "pid": 2664872
+    }
+  ]
+}

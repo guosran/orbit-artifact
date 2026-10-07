@@ -1,0 +1,34 @@
+# R9 fusion/fission ablation semantics
+
+This read-only diagnosis uses the completed R9 queue-v2 run at `/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/results-original-ray-v6/input0-neighborhood-2x2-v60-memory-fusion-fission-r5-20261006` and source text embedded in `/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/source-model-contract-memory-fusion-fission-r9-original-ray-ii23-stable-features-queue-v2-20261006.json`. The contract binds the dirty search source commit `6a1b6fcf6e155651e96b3b881565ad58fdf0c03e` to published base `a75c848eccc010a5c6923cc16fc0e3d6073da73a` and model namespace `orbit-per-cgra-2x2-direct-4member-v1`. The run summary identifies revision `r9-queue-v2`; no live checkout or frozen-v3 Joint/Sequential source was used.
+
+The five independently initialized stages are `shape-temporal, shape-temporal-replica, shape-temporal-replica-tiling, full-joint, full-joint-fission`. In the public audit alias, S4 is `full-joint` (internal C++ stage 5) and S5 is `full-joint-fission` (internal C++ stage 6). Each of these 12 workload-stage runs records max rounds 4, max unique candidates 4096, beam width 16, diversity slots 4, max partition factor 8, scoring workers 4, and native shortlist 5. The physical target is 4×4 CGRAs with 2×2 PEs per CGRA and six context-memory items; Raytracing uses its explicit II23 diagnostic protocol while the other five use II20. Fission's per-task cut cap is 64.
+
+Each stage binding says `stage_initialization=independent`, `seed_manifest=null`, and `previous_winner_override=null`; the search header also reports `previous_winner_requested=false`. Each S4/S5 native-controls file contains only the `neighborhood-0` identity control. Thus no earlier-stage winner, seed manifest, or archive is inherited. The search protocol retains the identity and explored candidates inside each stage, and ranks five per-stage global archive records for its shortlist.
+
+The stage header evidence is in `/home/x/shiran/project/orbit-artifact/diagnostics/input0-memory-fusion-fission-r9-20261007/stage-receipts.json`; workload-level measured cycles and the five-stage order are in the adjacent `summary.json`. The family funnel status and source-census references are in `/home/x/shiran/project/orbit-artifact/diagnostics/fusion-fission-audit-r9-20261007/audit.json`.
+
+The canonical identity history is known on `graph-0`. LLaMA/LU have 9 all-unit tasks; Harris 24, Radar 21, GCN 28, and Raytracing 27. Raytracing's only non-unit canonical shape is Task_13 at 1×4; every other initial task shape is 1×1. Across all 60 S4/S5 top-five histories, the authenticated action history and alternate paths contain no direct fusion or fission action. All 12 selected winners and all 60 native top-five records, joined to their result candidate IDs, show the same. The final checkpoint beam has 0/16 candidates with either action family in every stage. Harris does have five `producer-consumer-co-tiling` candidates in each top five; these pair two tile primitives and do not fuse the tasks.
+
+**Fission census.** The source-owned S5 census is exact and reports 87 legal cuts total: LU 1, Harris 30, and Raytracing 56 (Task_12:3, Task_23:30, Task_24:23). LLaMA, Radar, and GCN each have zero legal cuts under this source contract. The census invokes no mapper and counts legal source cuts, not candidate attempts. S4 has no fission dimension by stage gate.
+
+S5 fission also has a source-level prefix restriction: it is offered only from a known history with no ordinary rewrite actions, as one cut action at a time, and it cannot split the same task twice. This proves a path-order gate in the search; it does not reveal how many such actions were reached or scored.
+
+**Family-flow boundary.** The audit confirms zero fusion/fission presence in the final global top five, checkpoint beam, selected winner, and native shortlist. It does not retain exact fusion legal-action census or family-specific attempted, materialized, rejected, structurally changed, scored, cache, duplicate, or archive counts. The stage cleanup receipts list `search/archive.jsonl` and `search/archive.journal.jsonl` as deleted, and the audit marks those funnel values `unknown`. The checkpoint menu/cursor are queue snapshots; this report does not use them as attempt counts.
+
+**Budget and ordering.** Ten of 12 S4/S5 stages scored 4096 unique candidates and stopped at `max-unique-candidates`; both LU stages stopped at `max-rounds` with 3553 and 3554 scored. That saturation makes family crowding plausible, but family attribution is absent, so crowding is not established as the cause. The source has no fixed per-family quota: it round-robins action families and adaptively prioritizes the family with fewer successful/reserved scores, while the candidate score quota is global. Its family ordering uses ordered containers and stable sorting; a scan of the 140 embedded source texts found no PRNG API or random-seed field. This supports deterministic action ordering, not a blanket guarantee about every runtime component.
+
+The recorded best measured S4/S5 cycle counts are equal for every workload: LLaMA 424250388, LU 9486, Harris 621600, Radar 1309622, GCN 86987, Raytracing 176711. That is no measured best-candidate delta in this bounded search; it does not establish no effect over the legal transformation space.
+
+## Source references from embedded text
+
+- `lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp:104-125` maps the stage names; `:1639-1718` enumerates fusion and distinct co-tiling families; `:1721-1809` gates and enumerates fission.
+- `lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp:463-486` serializes typed action history; `:1260-1268` defines the global per-round budget; `:1270-1446` implements family interleaving and adaptive balancing; `:1277-1315` restricts fission prefixes; `:1903-1950` lists the seed/search options; `:4648-4683` defines beam diversity; `:5535-5552` selects a global top five; `:5578-5625` records the final header and fission census metadata.
+
+## Allowed conclusions
+
+1. **已证实:** No direct fusion or fission candidate appears in the 12 S4/S5 top fives, final beam snapshots, selected winners, or native top fives.
+2. **已证实:** Source-legal fission cuts exist in LU, Harris, and Raytracing (87 total); three workloads have none under the source census. This is not an attempt count.
+3. **证据支持但未确认:** The global candidate cap is reached in 10/12 stages, making crowding plausible. Per-family funnel records are missing, so this cause remains unconfirmed. The measured best-stage cycles are equal between S4/S5 across all six workloads.
+
+Machine-readable counts and per-stage references are in [summary.json](summary.json).

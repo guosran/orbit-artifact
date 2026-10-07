@@ -1,0 +1,977 @@
+{
+  "actual_task_schedule": [
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 2,
+      "duration": 129,
+      "end_cycle": 129,
+      "native_startup_cycles": null,
+      "profile_duration": 129,
+      "resource_wait_cycles": null,
+      "start_cycle": 0,
+      "task": "Task_0"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 4,
+      "duration": 257,
+      "end_cycle": 257,
+      "native_startup_cycles": null,
+      "profile_duration": 257,
+      "resource_wait_cycles": null,
+      "start_cycle": 0,
+      "task": "Task_1"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 4608,
+      "end_cycle": 5537,
+      "native_startup_cycles": null,
+      "profile_duration": 4608,
+      "resource_wait_cycles": null,
+      "start_cycle": 929,
+      "task": "Task_2"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 5,
+      "duration": 322,
+      "end_cycle": 6659,
+      "native_startup_cycles": null,
+      "profile_duration": 322,
+      "resource_wait_cycles": null,
+      "start_cycle": 6337,
+      "task": "Task_3"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 578,
+      "end_cycle": 8037,
+      "native_startup_cycles": null,
+      "profile_duration": 578,
+      "resource_wait_cycles": null,
+      "start_cycle": 7459,
+      "task": "Task_4"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 11,
+      "duration": 705,
+      "end_cycle": 8751,
+      "native_startup_cycles": null,
+      "profile_duration": 705,
+      "resource_wait_cycles": null,
+      "start_cycle": 8046,
+      "task": "Task_5"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 0
+        },
+        {
+          "col": 2,
+          "row": 0
+        },
+        {
+          "col": 1,
+          "row": 1
+        },
+        {
+          "col": 2,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 5,
+      "duration": 2566,
+      "end_cycle": 10026,
+      "native_startup_cycles": null,
+      "profile_duration": 2566,
+      "resource_wait_cycles": null,
+      "start_cycle": 7460,
+      "task": "Task_6"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 1,
+          "row": 1
+        }
+      ],
+      "compiled_ii": 9,
+      "duration": 4609,
+      "end_cycle": 15435,
+      "native_startup_cycles": null,
+      "profile_duration": 4609,
+      "resource_wait_cycles": null,
+      "start_cycle": 10826,
+      "task": "Task_7"
+    },
+    {
+      "cgra_positions": [
+        {
+          "col": 0,
+          "row": 0
+        }
+      ],
+      "compiled_ii": 2,
+      "duration": 19,
+      "end_cycle": 8278,
+      "native_startup_cycles": null,
+      "profile_duration": 19,
+      "resource_wait_cycles": null,
+      "start_cycle": 8259,
+      "task": "Task_8"
+    }
+  ],
+  "dependencies": [
+    {
+      "consumer": "Task_2",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_0",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_2",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_0",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_2",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_1",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_3",
+      "consumer_index": 1,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_1",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_4",
+      "consumer_index": 2,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_5",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 256,
+      "producer": "Task_4",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_5",
+      "consumer_index": 2,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_1",
+      "producer_index": 2,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 1,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_6",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_1",
+      "producer_index": 2,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_6",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 1,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_7",
+      "consumer_index": 0,
+      "consumer_segment": "will_writes",
+      "kind": "waw",
+      "producer": "Task_6",
+      "producer_index": 0,
+      "producer_segment": "done_writes"
+    },
+    {
+      "consumer": "Task_8",
+      "consumer_index": 0,
+      "consumer_segment": "will_reads",
+      "kind": "raw",
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "producer_index": 1,
+      "producer_segment": "done_writes"
+    }
+  ],
+  "file_digests": {
+    "independent-trace.json": {
+      "blake2b_256": "28d2b65243b6156b9f0575339317ac169e1412305e1deb2cf8b7276dc179ebcc",
+      "bytes": 303,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/independent-trace.json"
+    },
+    "mapped.mlir": {
+      "blake2b_256": "0e004a3e606a6478416683c74fe8f25a82ca80e60838c4d4781f68e1f0adac26",
+      "bytes": 404820,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/mapped.mlir"
+    },
+    "native.mlir": {
+      "blake2b_256": "22423146b6895edd54ff266532e74db454c597ef3fd86e257a3ad90e25cb5b59",
+      "bytes": 424426,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/native.mlir"
+    },
+    "result.json": {
+      "blake2b_256": "d2bb2ce6b1641da563b9a140cfd9202fdcb864be93c56c29029aad2b09f18c85",
+      "bytes": 12054,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/result.json"
+    }
+  },
+  "limits": "Native startup/resource-wait fields are absent. Schedule gaps include dependencies/communication; no pure resource-wait causal attribution.",
+  "mapper_visible_kernel_checks": [
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "a795c524a32e3c67b504844f7a97162ada44686060807ee456828ec84d948ac6",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu/task-0/input.txt",
+      "compiled_ii": 2,
+      "mapper_shape": {
+        "cgra_count": 1,
+        "cgra_shape": "1x1",
+        "mapper_cache_hit": false,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "selected_trip_count": 64
+      },
+      "mapper_visible_dfg_blake2b_256": "d5ddde955ac9d8356c55ea2fd341575dce999754a31e38a9611d5d01587294be",
+      "raw_source_kernel_region_blake2b_256": "ef8a43ac02544e91d2ca8206eb3cb27aa67e130c4d0aca81ec64ee704fc350a4",
+      "task": "Task_0"
+    },
+    {
+      "bijective_ssa_body_equality": true,
+      "cache_input_blake2b_256": "5b36e72d15cc3ae1539ab1b82a3acfec68dcd201da07f797fb51b3c904b0a080",
+      "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu/task-6/input.txt",
+      "compiled_ii": 5,
+      "mapper_shape": {
+        "cgra_count": 4,
+        "cgra_shape": "2x2",
+        "mapper_cache_hit": false,
+        "mapper_tile_cols": 4,
+        "mapper_tile_rows": 4,
+        "selected_trip_count": 512
+      },
+      "mapper_visible_dfg_blake2b_256": "caa098c89853a61830eb562c15310a24ba164dbf7eca594dc5ec5d542bcb3ac1",
+      "raw_source_kernel_region_blake2b_256": "c64d7aeba2f1724a05b45a4ab1980873d1b89d0d023df1e60bad5697482775b8",
+      "task": "Task_6"
+    }
+  ],
+  "name": "lu-resource-original-52",
+  "native_result": {
+    "candidate_id": "neighborhood-seed-1",
+    "control_role": null,
+    "ended_utc": "2026-10-07T13:11:02.404984+00:00",
+    "fixed_location_equality": "scheduler-selected",
+    "graph_variant_id": "graph-1",
+    "independent_trace": "pass",
+    "mapper_cache_hits": 0,
+    "mapper_cache_misses": 9,
+    "mapper_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/search/candidates/neighborhood-seed-1.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--materialize-analytical-task-candidate=candidates=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/search/replay/neighborhood-seed-1-shape.json candidate-id=shape-neighborhood-seed-1",
+        "--map-joint-scheduling-tasks=scores=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/search/replay/neighborhood-seed-1-score.jsonl candidate-id=neighborhood-seed-1 mapping-cache-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-resource-r9-lu",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/mapped.mlir"
+      ],
+      "ended_utc": "2026-10-07T13:11:02.284022+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T13:10:57.750235+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/mapper.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/mapper.stdout.gz"
+    },
+    "mapper_equality": "pass",
+    "native_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/mapped.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy=critical-path communication-mode=explicit exact-replay-timing=mapped",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/native.mlir"
+      ],
+      "ended_utc": "2026-10-07T13:11:02.395514+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T13:11:02.285462+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/native.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/native.stdout.gz"
+    },
+    "native_cycles": 15435,
+    "numeric": "pass",
+    "numeric_gate_record": {
+      "actual_nonzero": 1025,
+      "commands": [
+        {
+          "argv": [
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/native.mlir",
+            "--verify-each",
+            "--lower-joint-taskflow-to-host-scf=input0-numeric-program=lu",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/numeric/lu/controlled-052-rank-0/host.mlir"
+          ],
+          "elapsed_seconds": 0.016800975892692804,
+          "exit_code": 0,
+          "step": "host"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-opt",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/numeric/lu/controlled-052-rank-0/host.mlir",
+            "--verify-each",
+            "--convert-scf-to-cf",
+            "--convert-cf-to-llvm",
+            "--convert-arith-to-llvm",
+            "--finalize-memref-to-llvm",
+            "--convert-func-to-llvm",
+            "--reconcile-unrealized-casts",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/numeric/lu/controlled-052-rank-0/llvm.mlir"
+          ],
+          "elapsed_seconds": 0.025020014960318804,
+          "exit_code": 0,
+          "step": "llvm"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-runner",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/numeric/lu/controlled-052-rank-0/llvm.mlir",
+            "-e",
+            "main",
+            "-entry-point-result=i64",
+            "-O2",
+            "-shared-libs",
+            "/home/x/shiran/llvm-project/build/lib/libmlir_runner_utils.so",
+            "-shared-libs",
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/liblu_reference.so"
+          ],
+          "elapsed_seconds": 0.11988407513126731,
+          "exit_code": 0,
+          "step": "run"
+        }
+      ],
+      "compiler_owned_fixture_and_execution": true,
+      "element_comparisons": 4025,
+      "expected_mismatches": 0,
+      "expected_nonzero": 1025,
+      "independent_reference": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/liblu_reference.so",
+      "mismatches": 0,
+      "negative_control": false,
+      "rank": 0,
+      "schema": "orbit-input0-cpp-host-numeric-gate-v1",
+      "scope": "mapped-native",
+      "source": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/native.mlir",
+      "stage": "controlled-052",
+      "stage_admission": "not_claimed",
+      "status": "pass",
+      "workload": "lu"
+    },
+    "predicted_cycles": 15765,
+    "prediction_mapper_equal": false,
+    "prediction_start_equality": false,
+    "production_ready": false,
+    "rank": 0,
+    "ranking_certified": false,
+    "replay_timing_policy": "production-scheduler-with-mapped-durations",
+    "scheduler_backend": "orchestrate-tasks-on-accelerators",
+    "source_fission_replay": {
+      "active_transfer_arguments": [],
+      "active_transfer_require_proven": null,
+      "candidate_id": "neighborhood-seed-1",
+      "canonical_input": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir",
+      "command": {
+        "argv": [
+          "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+          "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir",
+          "--verify-each",
+          "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+          "--replay-joint-neighborhood-actions=action-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay-actions.json canonical-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir candidate-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/lu/canonical.mlir function=_Z7lu_funciPA100_KiPS_PA100_iS4_S4_PiS5_S4_S5_ stage=full-joint-fission max-partition-factor=8 prepared-source-file=/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/lu-pre-neura.mlir max-fission-actions-per-task=64 expected-candidate-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/search/candidates/neighborhood-seed-1.mlir output-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay",
+          "--mlir-print-op-generic",
+          "-o",
+          "/dev/null"
+        ],
+        "ended_utc": "2026-10-07T13:10:57.747157+00:00",
+        "exit_code": 0,
+        "started_utc": "2026-10-07T13:10:57.666469+00:00",
+        "status": "finished",
+        "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/fission-replay.stderr.gz",
+        "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/fission-replay.stdout.gz"
+      },
+      "expected_search_candidate": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/search/candidates/neighborhood-seed-1.mlir",
+      "fission_action_count": 0,
+      "max_fission_actions_per_task": 64,
+      "max_partition_factor": 8,
+      "native_candidate_comparison": "exact-generic-module-after-removing-only-function-graph-variant-id",
+      "native_candidate_match": true,
+      "ordinary_action_count": 1,
+      "prepared_source_bytes": 45648,
+      "prepared_source_file": "/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/lu-pre-neura.mlir",
+      "prepared_source_public_binding": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/source-binding.json",
+      "prepared_source_replay_witness": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay/prepared-source.mlir",
+      "prepared_source_search_binding": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/checkpoint.json.binding.json",
+      "reconstructed_candidate": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay/candidate.mlir",
+      "replay_facts": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay/source-facts.json",
+      "replay_output_dir": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay",
+      "schema": "orbit-neighborhood-source-fission-replay-evidence-v1",
+      "stage": "full-joint-fission",
+      "status": "verified",
+      "typed_action_file": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/resources-lu-64-v2/lu-fission-first/original/points/052/native/rank-0/source-fission-replay-actions.json"
+    },
+    "sram_blocker": "target_sram_capacity_unestablished",
+    "sram_capacity_config": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/architectures/amoeba_4x4_cgra_2x2_sram_pending.json",
+    "sram_capacity_evaluated": false,
+    "sram_gate": "pending",
+    "started_utc": "2026-10-07T13:10:57.625388+00:00",
+    "status": "native_replayed"
+  },
+  "normalization": "empty terminal yield->return; whitespace removed outside strings; bijective SSA rename preserving operand connectivity",
+  "prediction": {
+    "objective": "predicted production scheduler makespan",
+    "predicted_whole_program_cycles": 15765,
+    "task_costs_by_body": {
+      "Task_0": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 180,
+        "predicted_ii": 2.796416997909546,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 180,
+          "row": 0,
+          "start_cycle": 0
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 3
+      },
+      "Task_1": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 290,
+        "predicted_ii": 4.518055438995361,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 1,
+          "end_cycle": 290,
+          "row": 1,
+          "start_cycle": 0
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 5
+      },
+      "Task_2": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 512,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 4827,
+        "predicted_ii": 9.427913665771484,
+        "represented_multiplicity": 512,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 5807,
+          "row": 0,
+          "start_cycle": 980
+        },
+        "source_multiplicity": 512,
+        "startup_cycles": 9
+      },
+      "Task_3": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 347,
+        "predicted_ii": 5.387444972991943,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 6954,
+          "row": 0,
+          "start_cycle": 6607
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 7
+      },
+      "Task_4": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 610,
+        "predicted_ii": 9.507587432861328,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 8364,
+          "row": 0,
+          "start_cycle": 7754
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 11
+      },
+      "Task_5": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 64,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 742,
+        "predicted_ii": 11.584107398986816,
+        "represented_multiplicity": 64,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 9115,
+          "row": 1,
+          "start_cycle": 8373
+        },
+        "source_multiplicity": 64,
+        "startup_cycles": 12
+      },
+      "Task_6": {
+        "cgra_cols": 2,
+        "cgra_rows": 2,
+        "current_source_work_count": 512,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 4,
+        "mapper_tile_rows": 4,
+        "predicted_duration": 2836,
+        "predicted_ii": 5.5276198387146,
+        "represented_multiplicity": 512,
+        "schedule": {
+          "col": 1,
+          "end_cycle": 10591,
+          "row": 0,
+          "start_cycle": 7755
+        },
+        "source_multiplicity": 512,
+        "startup_cycles": 11
+      },
+      "Task_7": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 512,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 4374,
+        "predicted_ii": 8.53999137878418,
+        "represented_multiplicity": 512,
+        "schedule": {
+          "col": 1,
+          "end_cycle": 15765,
+          "row": 1,
+          "start_cycle": 11391
+        },
+        "source_multiplicity": 512,
+        "startup_cycles": 10
+      },
+      "Task_8": {
+        "cgra_cols": 1,
+        "cgra_rows": 1,
+        "current_source_work_count": 8,
+        "internal_multiplicity": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 23,
+        "predicted_ii": 2.552049160003662,
+        "represented_multiplicity": 8,
+        "schedule": {
+          "col": 0,
+          "end_cycle": 8577,
+          "row": 0,
+          "start_cycle": 8554
+        },
+        "source_multiplicity": 8,
+        "startup_cycles": 5
+      }
+    }
+  },
+  "routes": [
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_2",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        0
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 929,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 129
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_0",
+      "ready_cycle": 929,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_3",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        2
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 6337,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 5537
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_2",
+      "ready_cycle": 6337,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_4",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        5
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 7459,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 6659
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7459,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_6",
+      "destination_col": 1,
+      "destination_row": 1,
+      "edge_indices": [
+        8
+      ],
+      "links": [
+        {
+          "col": 1,
+          "end_cycle": 1057,
+          "resource_kind": "local_channel",
+          "row": 1,
+          "start_cycle": 257
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_1",
+      "ready_cycle": 1057,
+      "source_col": 1,
+      "source_row": 1,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_6",
+      "destination_col": 1,
+      "destination_row": 0,
+      "edge_indices": [
+        9
+      ],
+      "links": [
+        {
+          "end_cycle": 7460,
+          "link_index": 0,
+          "resource_kind": "network_link",
+          "start_cycle": 6659
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7460,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_5",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        6
+      ],
+      "links": [
+        {
+          "end_cycle": 8046,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 8037
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 256,
+      "producer": "Task_4",
+      "ready_cycle": 8046,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 9
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_5",
+      "destination_col": 0,
+      "destination_row": 1,
+      "edge_indices": [
+        7
+      ],
+      "links": [
+        {
+          "end_cycle": 7460,
+          "link_index": 24,
+          "resource_kind": "network_link",
+          "start_cycle": 6659
+        }
+      ],
+      "path_latency_cycles": 1,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 7460,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 801
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_7",
+      "destination_col": 1,
+      "destination_row": 1,
+      "edge_indices": [
+        11
+      ],
+      "links": [
+        {
+          "col": 1,
+          "end_cycle": 10826,
+          "resource_kind": "local_channel",
+          "row": 1,
+          "start_cycle": 10026
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_6",
+      "ready_cycle": 10826,
+      "source_col": 1,
+      "source_row": 1,
+      "transfer_cycles": 800
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_7",
+      "destination_col": 1,
+      "destination_row": 1,
+      "edge_indices": [
+        12
+      ],
+      "links": [
+        {
+          "end_cycle": 8262,
+          "link_index": 0,
+          "resource_kind": "network_link",
+          "start_cycle": 7460
+        },
+        {
+          "end_cycle": 8262,
+          "link_index": 30,
+          "resource_kind": "network_link",
+          "start_cycle": 7460
+        }
+      ],
+      "path_latency_cycles": 2,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 8262,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 802
+    },
+    {
+      "bottleneck_bandwidth_bits_per_cycle": 32,
+      "consumer": "Task_8",
+      "destination_col": 0,
+      "destination_row": 0,
+      "edge_indices": [
+        14
+      ],
+      "links": [
+        {
+          "col": 0,
+          "end_cycle": 8259,
+          "resource_kind": "local_channel",
+          "row": 0,
+          "start_cycle": 7459
+        }
+      ],
+      "path_latency_cycles": 0,
+      "payload_bits": 25600,
+      "producer": "Task_3",
+      "ready_cycle": 8259,
+      "source_col": 0,
+      "source_row": 0,
+      "transfer_cycles": 800
+    }
+  ],
+  "schema": "orbit-r9-extra-native-receipt-v1"
+}
