@@ -51,6 +51,10 @@ REPLAY_FILES = (
     "config/architectures/amoeba_4x4_vectorcgra_sram.json",
 )
 DIRECT_REPLAY_FILES = (
+    "scripts/audit_fusion_fission_funnel.py",
+    "scripts/run_fusion_fission_controlled_probes.py",
+    "scripts/write_neighborhood_publication_command.py",
+    "scripts/write_neighborhood_source_contract.py",
     "scripts/cleanup_neighborhood_temporaries.py",
     "scripts/prepare_input0_source_domains.py",
     "scripts/prepare_input0_neighborhood_reproduction.py",
