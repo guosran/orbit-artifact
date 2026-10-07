@@ -138,7 +138,6 @@ source, destination, cohort = sys.argv[1:]
 document = json.load(open(source, encoding="utf-8"))
 document["cohort_id"] = cohort
 document["fixed1x1_cohort_id"] = cohort + "-fixed1x1"
-document["source_commit"] = "${ORBIT_SOURCE_COMMIT}"
 document["source_variant"] = "fresh-source-bound-fusion-fission"
 document["active"] = False
 with open(destination, "x", encoding="utf-8") as stream:
@@ -313,7 +312,7 @@ python3 "$RUNTIME_ROOT/scripts/render_fusion_fission_comparison.py" \
   --output-root "$DIAGNOSTICS_ROOT/comparison"
 ```
 
-The common-DFG AMOEBA Ray II23 record is an independent completed reference from the authenticated original F45 profiles: it covers the original 27 tasks, 216 profile queries, and 177,426 whole-program cycles. The other five common-AMOEBA workloads are not rerun for this reproduction. Preserve the authenticated F45 task count, shape, replica, trip-count, and II choices. Replicated task durations use the full-parent estimate `ceil(startup_cycles + II * (trip_count - 1))`; do not remap fission children or derive new II/task-count choices from the search. This reference does not seed the candidate search or alter the fission result.
+The common-DFG AMOEBA Ray II23 record is an independent completed reference from the authenticated original F45 profiles: it covers the original 27 tasks, 216 profile queries, and 177,426 whole-program cycles. The other five common-AMOEBA workloads are not rerun for this reproduction. Preserve the authenticated F45 task count, shape, active replicas, trip-count, and II choices. Replicated task duration is `ceil(full common-parent mapped duration / active replicas)`. Do not remap fission children or derive new II/task-count choices from the search. This reference does not seed the candidate search or alter the fission result.
 
 ## Acceptance and reporting limits
 
