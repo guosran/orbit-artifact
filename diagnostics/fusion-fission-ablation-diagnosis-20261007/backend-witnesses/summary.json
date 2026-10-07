@@ -1,0 +1,1498 @@
+{
+  "fixed_probe_workloads": [
+    {
+      "ranks": [
+        {
+          "action_families": [],
+          "action_path": [],
+          "actual_native_cycles": 18501,
+          "candidate_id": "neighborhood-0",
+          "dependencies_touching_selected_tasks": [
+            {
+              "consumer": "Task_2",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 25600,
+              "producer": "Task_0",
+              "producer_segment": "done_writes"
+            },
+            {
+              "consumer": "Task_2",
+              "consumer_segment": "will_writes",
+              "kind": "waw",
+              "payload_bits": null,
+              "producer": "Task_0",
+              "producer_segment": "done_writes"
+            }
+          ],
+          "independent_trace": "pass",
+          "mapper_equality": "pass",
+          "native_schedule": [
+            {
+              "duration_cycles": 129,
+              "end_cycle": 129,
+              "mapped_task_profile_duration_cycles": 129,
+              "mapper_compiled_ii": 2,
+              "native_trace_ii": null,
+              "start_cycle": 0,
+              "startup_cycles": null,
+              "task": "Task_0"
+            }
+          ],
+          "numeric": "pass",
+          "numeric_elements": 4025,
+          "numeric_mismatches": 0,
+          "production_ready": false,
+          "rank": 0,
+          "retained_per_operation_domain_policy": "retained-per-operation-not-disjoint",
+          "routes_touching_selected_tasks": [
+            {
+              "consumer": "Task_2",
+              "payload_bits": 25600,
+              "producer": "Task_0",
+              "ready_cycle": 929,
+              "transfer_cycles": 800
+            }
+          ],
+          "selected_tasks": [
+            {
+              "lineage": null,
+              "mapped_profile_duration_cycles": 129,
+              "mapped_task_grid": {
+                "cgra_count": 1,
+                "cgra_shape": "1x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 2,
+                "selected_trip_count": 64
+              },
+              "mapper_cache_task_id": "task-0",
+              "mapper_compiled_ii": 2,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 2
+              },
+              "mapper_visible_dfg_blake2b_256": "d5ddde955ac9d8356c55ea2fd341575dce999754a31e38a9611d5d01587294be",
+              "operations_per_original_firing": {
+                "loads": 1,
+                "operation_counts": {
+                  "arith.constant": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 5,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 1,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 16,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "ef8a43ac02544e91d2ca8206eb3cb27aa67e130c4d0aca81ec64ee704fc350a4",
+              "raw_source_task_ir_blake2b_256": "8f26f6a2a404ac45e17b32beeba8979c6744ebfcd76c6c807c7e80e13e8d79f5",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  }
+                ],
+                "domain_status": "certified-complete",
+                "output_coordinate_status": "proven",
+                "source_work_count": 64,
+                "taskflow_firing_count": 64
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg102) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x100xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<?x100xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg102"
+                ]
+              },
+              "temporary_memref_types_seen": []
+            }
+          ],
+          "sram_blocker": "target_sram_capacity_unestablished"
+        },
+        {
+          "action_families": [
+            "shape"
+          ],
+          "action_path": [
+            "shape:Task_0:2x1"
+          ],
+          "actual_native_cycles": 18438,
+          "candidate_id": "neighborhood-seed-1",
+          "dependencies_touching_selected_tasks": [
+            {
+              "consumer": "Task_2",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 25600,
+              "producer": "Task_0",
+              "producer_segment": "done_writes"
+            },
+            {
+              "consumer": "Task_2",
+              "consumer_segment": "will_writes",
+              "kind": "waw",
+              "payload_bits": null,
+              "producer": "Task_0",
+              "producer_segment": "done_writes"
+            }
+          ],
+          "independent_trace": "pass",
+          "mapper_equality": "pass",
+          "native_schedule": [
+            {
+              "duration_cycles": 66,
+              "end_cycle": 66,
+              "mapped_task_profile_duration_cycles": 66,
+              "mapper_compiled_ii": 1,
+              "native_trace_ii": null,
+              "start_cycle": 0,
+              "startup_cycles": null,
+              "task": "Task_0"
+            }
+          ],
+          "numeric": "pass",
+          "numeric_elements": 4025,
+          "numeric_mismatches": 0,
+          "production_ready": false,
+          "rank": 1,
+          "retained_per_operation_domain_policy": "retained-per-operation-not-disjoint",
+          "routes_touching_selected_tasks": [
+            {
+              "consumer": "Task_2",
+              "payload_bits": 25600,
+              "producer": "Task_0",
+              "ready_cycle": 866,
+              "transfer_cycles": 800
+            }
+          ],
+          "selected_tasks": [
+            {
+              "lineage": null,
+              "mapped_profile_duration_cycles": 66,
+              "mapped_task_grid": {
+                "cgra_count": 2,
+                "cgra_shape": "2x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 4,
+                "selected_trip_count": 64
+              },
+              "mapper_cache_task_id": "task-14",
+              "mapper_compiled_ii": 1,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 4
+              },
+              "mapper_visible_dfg_blake2b_256": "d5ddde955ac9d8356c55ea2fd341575dce999754a31e38a9611d5d01587294be",
+              "operations_per_original_firing": {
+                "loads": 1,
+                "operation_counts": {
+                  "arith.constant": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 5,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 1,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 16,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "ef8a43ac02544e91d2ca8206eb3cb27aa67e130c4d0aca81ec64ee704fc350a4",
+              "raw_source_task_ir_blake2b_256": "8f26f6a2a404ac45e17b32beeba8979c6744ebfcd76c6c807c7e80e13e8d79f5",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  }
+                ],
+                "domain_status": "certified-source-partition",
+                "output_coordinate_status": "proven",
+                "source_work_count": 64,
+                "taskflow_firing_count": 64
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg102) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x100xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<?x100xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg102"
+                ]
+              },
+              "temporary_memref_types_seen": []
+            }
+          ],
+          "sram_blocker": "target_sram_capacity_unestablished"
+        },
+        {
+          "action_families": [],
+          "action_path": [
+            "fission:Task_0:left=0"
+          ],
+          "actual_native_cycles": 18694,
+          "candidate_id": "neighborhood-seed-2",
+          "dependencies_touching_selected_tasks": [
+            {
+              "consumer": "Task_0.split.1",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 2048,
+              "producer": "Task_0.split.0",
+              "producer_segment": "done_writes"
+            },
+            {
+              "consumer": "Task_2",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 25600,
+              "producer": "Task_0.split.1",
+              "producer_segment": "done_writes"
+            },
+            {
+              "consumer": "Task_2",
+              "consumer_segment": "will_writes",
+              "kind": "waw",
+              "payload_bits": null,
+              "producer": "Task_0.split.1",
+              "producer_segment": "done_writes"
+            }
+          ],
+          "independent_trace": "pass",
+          "mapper_equality": "pass",
+          "native_schedule": [
+            {
+              "duration_cycles": 129,
+              "end_cycle": 129,
+              "mapped_task_profile_duration_cycles": 129,
+              "mapper_compiled_ii": 2,
+              "native_trace_ii": null,
+              "start_cycle": 0,
+              "startup_cycles": null,
+              "task": "Task_0.split.0"
+            },
+            {
+              "duration_cycles": 129,
+              "end_cycle": 322,
+              "mapped_task_profile_duration_cycles": 129,
+              "mapper_compiled_ii": 2,
+              "native_trace_ii": null,
+              "start_cycle": 193,
+              "startup_cycles": null,
+              "task": "Task_0.split.1"
+            }
+          ],
+          "numeric": "pass",
+          "numeric_elements": 4025,
+          "numeric_mismatches": 0,
+          "production_ready": false,
+          "rank": 2,
+          "retained_per_operation_domain_policy": "retained-per-operation-not-disjoint",
+          "routes_touching_selected_tasks": [
+            {
+              "consumer": "Task_0.split.1",
+              "payload_bits": 2048,
+              "producer": "Task_0.split.0",
+              "ready_cycle": 193,
+              "transfer_cycles": 64
+            },
+            {
+              "consumer": "Task_2",
+              "payload_bits": 25600,
+              "producer": "Task_0.split.1",
+              "ready_cycle": 1122,
+              "transfer_cycles": 800
+            }
+          ],
+          "selected_tasks": [
+            {
+              "lineage": {
+                "left_nodes": [
+                  0
+                ],
+                "parent_task": "Task_0",
+                "part_index": 0
+              },
+              "mapped_profile_duration_cycles": 129,
+              "mapped_task_grid": {
+                "cgra_count": 1,
+                "cgra_shape": "1x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 2,
+                "selected_trip_count": 64
+              },
+              "mapper_cache_task_id": "task-16",
+              "mapper_compiled_ii": 2,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 2
+              },
+              "mapper_visible_dfg_blake2b_256": "9849cfa00dd88031f359f04625bedcb3e60566e128f52890fc4381971d348713",
+              "operations_per_original_firing": {
+                "loads": 1,
+                "operation_counts": {
+                  "arith.constant": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 5,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 1,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 16,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "426c7a76a752e1132587603fda8b71793eace9c2c814f1bc68f8f846853c2c73",
+              "raw_source_task_ir_blake2b_256": "162feb72fe0175041ef7d82369a6399d890ac8238ad359026351c573accbc883",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  }
+                ],
+                "domain_status": "certified-complete",
+                "output_coordinate_status": "proven",
+                "source_work_count": 64,
+                "taskflow_firing_count": 64
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0.split.0",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  1,
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg109) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<8x8xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<8x8xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg109"
+                ]
+              },
+              "temporary_memref_types_seen": [
+                "memref<8x8xi32>"
+              ]
+            },
+            {
+              "lineage": {
+                "left_nodes": [
+                  0
+                ],
+                "parent_task": "Task_0",
+                "part_index": 1
+              },
+              "mapped_profile_duration_cycles": 129,
+              "mapped_task_grid": {
+                "cgra_count": 1,
+                "cgra_shape": "1x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 2,
+                "selected_trip_count": 64
+              },
+              "mapper_cache_task_id": "task-17",
+              "mapper_compiled_ii": 2,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 2
+              },
+              "mapper_visible_dfg_blake2b_256": "57a815302693963b9758aaee8030d7dfddd949ddcd694bd53d432ef2e13a9cd4",
+              "operations_per_original_firing": {
+                "loads": 1,
+                "operation_counts": {
+                  "arith.constant": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 5,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 1,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 16,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "d98351dd66458bc99b255007f86fdeab8837ae7641bf6fbc92919a43667f573d",
+              "raw_source_task_ir_blake2b_256": "3fa93c2700fed193ad611b9ba7e9567dea9e2fa11bee399806c2f8b34613f224",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 8,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 8
+                  }
+                ],
+                "domain_status": "certified-complete",
+                "output_coordinate_status": "proven",
+                "source_work_count": 64,
+                "taskflow_firing_count": 64
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0.split.1",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  2,
+                  1,
+                  1,
+                  2,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg103) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x100xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<?x100xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg103"
+                ]
+              },
+              "temporary_memref_types_seen": [
+                "memref<8x8xi32>"
+              ]
+            }
+          ],
+          "sram_blocker": "target_sram_capacity_unestablished"
+        }
+      ],
+      "search_manifest_schema": "orbit-neighborhood-search-v1",
+      "workload": "lu"
+    },
+    {
+      "ranks": [
+        {
+          "action_families": [],
+          "action_path": [],
+          "actual_native_cycles": 988258,
+          "candidate_id": "neighborhood-0",
+          "dependencies_touching_selected_tasks": [
+            {
+              "consumer": "Task_1",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 1048576,
+              "producer": "Task_0",
+              "producer_segment": "done_writes"
+            }
+          ],
+          "independent_trace": "pass",
+          "mapper_equality": "pass",
+          "native_schedule": [
+            {
+              "duration_cycles": 24195,
+              "end_cycle": 24195,
+              "mapped_task_profile_duration_cycles": 24195,
+              "mapper_compiled_ii": 3,
+              "native_trace_ii": null,
+              "start_cycle": 0,
+              "startup_cycles": null,
+              "task": "Task_0"
+            }
+          ],
+          "numeric": "pass",
+          "numeric_elements": 884736,
+          "numeric_mismatches": 0,
+          "production_ready": false,
+          "rank": 0,
+          "retained_per_operation_domain_policy": "retained-per-operation-not-disjoint",
+          "routes_touching_selected_tasks": [
+            {
+              "consumer": "Task_1",
+              "payload_bits": 1048576,
+              "producer": "Task_0",
+              "ready_cycle": 56963,
+              "transfer_cycles": 32768
+            }
+          ],
+          "selected_tasks": [
+            {
+              "lineage": null,
+              "mapped_profile_duration_cycles": 24195,
+              "mapped_task_grid": {
+                "cgra_count": 1,
+                "cgra_shape": "1x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 2,
+                "selected_trip_count": 8064
+              },
+              "mapper_cache_task_id": "task-5",
+              "mapper_compiled_ii": 3,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 2
+              },
+              "mapper_visible_dfg_blake2b_256": "5a9e0c887159d8e8772816af91d5ca79fce9661fc7e1ea0f4cf49ea6118ad191",
+              "operations_per_original_firing": {
+                "loads": 3,
+                "operation_counts": {
+                  "arith.constant": 3,
+                  "neura.add": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 16,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 3,
+                  "neura.mul": 3,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 35,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "753cc3d5395489a4df1348b3d7dc71ebfc53669555db7285c775d6052d560f7e",
+              "raw_source_task_ir_blake2b_256": "4bf426d8118c326d04f3b1d905ed9f213346de62fd65c831f40b493a278a1c0a",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 63,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 63
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 128,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 128
+                  }
+                ],
+                "domain_status": "certified-complete",
+                "output_coordinate_status": "proven",
+                "source_work_count": 8064,
+                "taskflow_firing_count": 8064
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  3,
+                  1,
+                  4,
+                  3,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg215) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<?x128xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg215"
+                ]
+              },
+              "temporary_memref_types_seen": []
+            }
+          ],
+          "sram_blocker": "target_sram_capacity_unestablished"
+        },
+        {
+          "action_families": [
+            "shape"
+          ],
+          "action_path": [
+            "shape:Task_0:2x1"
+          ],
+          "actual_native_cycles": 988258,
+          "candidate_id": "neighborhood-seed-1",
+          "dependencies_touching_selected_tasks": [
+            {
+              "consumer": "Task_1",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 1048576,
+              "producer": "Task_0",
+              "producer_segment": "done_writes"
+            }
+          ],
+          "independent_trace": "pass",
+          "mapper_equality": "pass",
+          "native_schedule": [
+            {
+              "duration_cycles": 24195,
+              "end_cycle": 24195,
+              "mapped_task_profile_duration_cycles": 24195,
+              "mapper_compiled_ii": 3,
+              "native_trace_ii": null,
+              "start_cycle": 0,
+              "startup_cycles": null,
+              "task": "Task_0"
+            }
+          ],
+          "numeric": "pass",
+          "numeric_elements": 884736,
+          "numeric_mismatches": 0,
+          "production_ready": false,
+          "rank": 1,
+          "retained_per_operation_domain_policy": "retained-per-operation-not-disjoint",
+          "routes_touching_selected_tasks": [
+            {
+              "consumer": "Task_1",
+              "payload_bits": 1048576,
+              "producer": "Task_0",
+              "ready_cycle": 56963,
+              "transfer_cycles": 32768
+            }
+          ],
+          "selected_tasks": [
+            {
+              "lineage": null,
+              "mapped_profile_duration_cycles": 24195,
+              "mapped_task_grid": {
+                "cgra_count": 2,
+                "cgra_shape": "2x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 4,
+                "selected_trip_count": 8064
+              },
+              "mapper_cache_task_id": "task-31",
+              "mapper_compiled_ii": 3,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 4
+              },
+              "mapper_visible_dfg_blake2b_256": "5a9e0c887159d8e8772816af91d5ca79fce9661fc7e1ea0f4cf49ea6118ad191",
+              "operations_per_original_firing": {
+                "loads": 3,
+                "operation_counts": {
+                  "arith.constant": 3,
+                  "neura.add": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 16,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 3,
+                  "neura.mul": 3,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 35,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "753cc3d5395489a4df1348b3d7dc71ebfc53669555db7285c775d6052d560f7e",
+              "raw_source_task_ir_blake2b_256": "4bf426d8118c326d04f3b1d905ed9f213346de62fd65c831f40b493a278a1c0a",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 63,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 63
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 128,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 128
+                  }
+                ],
+                "domain_status": "certified-source-partition",
+                "output_coordinate_status": "proven",
+                "source_work_count": 8064,
+                "taskflow_firing_count": 8064
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  3,
+                  1,
+                  4,
+                  3,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg215) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<?x128xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg215"
+                ]
+              },
+              "temporary_memref_types_seen": []
+            }
+          ],
+          "sram_blocker": "target_sram_capacity_unestablished"
+        },
+        {
+          "action_families": [],
+          "action_path": [
+            "fission:Task_0:left=0"
+          ],
+          "actual_native_cycles": 1012450,
+          "candidate_id": "neighborhood-seed-2",
+          "dependencies_touching_selected_tasks": [
+            {
+              "consumer": "Task_0.split.1",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 258048,
+              "producer": "Task_0.split.0",
+              "producer_segment": "done_writes"
+            },
+            {
+              "consumer": "Task_1",
+              "consumer_segment": "will_reads",
+              "kind": "raw",
+              "payload_bits": 1048576,
+              "producer": "Task_0.split.1",
+              "producer_segment": "done_writes"
+            }
+          ],
+          "independent_trace": "pass",
+          "mapper_equality": "pass",
+          "native_schedule": [
+            {
+              "duration_cycles": 16129,
+              "end_cycle": 16129,
+              "mapped_task_profile_duration_cycles": 16129,
+              "mapper_compiled_ii": 2,
+              "native_trace_ii": null,
+              "start_cycle": 0,
+              "startup_cycles": null,
+              "task": "Task_0.split.0"
+            },
+            {
+              "duration_cycles": 24195,
+              "end_cycle": 48388,
+              "mapped_task_profile_duration_cycles": 24195,
+              "mapper_compiled_ii": 3,
+              "native_trace_ii": null,
+              "start_cycle": 24193,
+              "startup_cycles": null,
+              "task": "Task_0.split.1"
+            }
+          ],
+          "numeric": "pass",
+          "numeric_elements": 884736,
+          "numeric_mismatches": 0,
+          "production_ready": false,
+          "rank": 2,
+          "retained_per_operation_domain_policy": "retained-per-operation-not-disjoint",
+          "routes_touching_selected_tasks": [
+            {
+              "consumer": "Task_0.split.1",
+              "payload_bits": 258048,
+              "producer": "Task_0.split.0",
+              "ready_cycle": 24193,
+              "transfer_cycles": 8064
+            },
+            {
+              "consumer": "Task_1",
+              "payload_bits": 1048576,
+              "producer": "Task_0.split.1",
+              "ready_cycle": 81156,
+              "transfer_cycles": 32768
+            }
+          ],
+          "selected_tasks": [
+            {
+              "lineage": {
+                "left_nodes": [
+                  0
+                ],
+                "parent_task": "Task_0",
+                "part_index": 0
+              },
+              "mapped_profile_duration_cycles": 16129,
+              "mapped_task_grid": {
+                "cgra_count": 1,
+                "cgra_shape": "1x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 2,
+                "selected_trip_count": 8064
+              },
+              "mapper_cache_task_id": "task-32",
+              "mapper_compiled_ii": 2,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 2
+              },
+              "mapper_visible_dfg_blake2b_256": "3edc5fbb066ccab964227059a361e7f3c65cca8e56aef68ff114cc9aac8892fb",
+              "operations_per_original_firing": {
+                "loads": 1,
+                "operation_counts": {
+                  "arith.constant": 3,
+                  "neura.counter": 2,
+                  "neura.data_mov": 5,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 1,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 17,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "f7339847f72d5f5c6cc0301df86adf0adf5da73d81fc4f9dd9e2028e9689878d",
+              "raw_source_task_ir_blake2b_256": "f7e063bd6206256fd786397f1aac91ad172d8d61d9cc5dd355ded1a6f224acff",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 63,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 63
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 128,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 128
+                  }
+                ],
+                "domain_status": "certified-complete",
+                "output_coordinate_status": "proven",
+                "source_work_count": 8064,
+                "taskflow_firing_count": 8064
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0.split.0",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  3,
+                  1,
+                  4,
+                  3,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg232) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<63x128xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<63x128xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg232"
+                ]
+              },
+              "temporary_memref_types_seen": [
+                "memref<63x128xi32>"
+              ]
+            },
+            {
+              "lineage": {
+                "left_nodes": [
+                  0
+                ],
+                "parent_task": "Task_0",
+                "part_index": 1
+              },
+              "mapped_profile_duration_cycles": 24195,
+              "mapped_task_grid": {
+                "cgra_count": 1,
+                "cgra_shape": "1x1",
+                "mapper_cache_hit": false,
+                "mapper_tile_cols": 2,
+                "mapper_tile_rows": 2,
+                "selected_trip_count": 8064
+              },
+              "mapper_cache_task_id": "task-33",
+              "mapper_compiled_ii": 3,
+              "mapper_grid": {
+                "cols": 2,
+                "rows": 2
+              },
+              "mapper_visible_dfg_blake2b_256": "e623e2542e3bd9353931addd6b3ef3348f68e00e215217efb0a876f5f592d08b",
+              "operations_per_original_firing": {
+                "loads": 3,
+                "operation_counts": {
+                  "arith.constant": 3,
+                  "neura.add": 2,
+                  "neura.counter": 2,
+                  "neura.data_mov": 16,
+                  "neura.kernel": 1,
+                  "neura.load_indexed": 3,
+                  "neura.mul": 3,
+                  "neura.store_indexed": 1,
+                  "neura.yield": 1,
+                  "taskflow.counter": 2,
+                  "taskflow.yield": 1
+                },
+                "static_task_region_operation_count": 35,
+                "stores": 1
+              },
+              "raw_source_kernel_region_blake2b_256": "52ec4d90c2cb82458d61682375a13214b1e54bba980628f1203ad2d73006209f",
+              "raw_source_task_ir_blake2b_256": "bbbae37f874400376fb9952f3107c895f50d4228c60d187566aa11c32af39db7",
+              "source_iteration": {
+                "counter_axes": [
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 63,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 0,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 63
+                  },
+                  {
+                    "carried_values": 0,
+                    "expanded_inside_mapper_firing": false,
+                    "extent": 128,
+                    "kind": "taskflow-counter",
+                    "lower": 0,
+                    "ordinal": 1,
+                    "parent_counter_ordinal": -1,
+                    "result_uses": 0,
+                    "step": 1,
+                    "upper": 128
+                  }
+                ],
+                "domain_status": "certified-complete",
+                "output_coordinate_status": "proven",
+                "source_work_count": 8064,
+                "taskflow_firing_count": 8064
+              },
+              "source_kernel_matches_mapper_func_body": true,
+              "task": "Task_0.split.1",
+              "task_interface": {
+                "operand_segment_sizes": [
+                  4,
+                  1,
+                  4,
+                  4,
+                  1
+                ],
+                "result_segment_sizes": [
+                  0,
+                  1,
+                  0
+                ],
+                "taskflow_yield_line": "\"taskflow.yield\"(%arg216) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()",
+                "taskflow_yield_operand_types": [
+                  "memref<?x128xi32>"
+                ],
+                "taskflow_yield_operands": [
+                  "%arg216"
+                ]
+              },
+              "temporary_memref_types_seen": [
+                "memref<63x128xi32>"
+              ]
+            }
+          ],
+          "sram_blocker": "target_sram_capacity_unestablished"
+        }
+      ],
+      "search_manifest_schema": "orbit-neighborhood-search-v1",
+      "workload": "harris"
+    }
+  ],
+  "hash_algorithm": "BLAKE2b-256",
+  "mapper_visible_dfg_method": "Matched the selected source neura.kernel region against one cache input.txt func.func body at the mapper grid recorded on the selected mapped task; the raw mapper-visible func.func wrapper and full cache-input bytes are hashed separately from source raw-IR spans.",
+  "native_evidence_limits": {
+    "dependency_ready_gap_claimed_as_resource_wait": false,
+    "interpretation": "Per-task mapper compiled_ii and profile duration are recorded from mapped task attributes; native trace contributes scheduled start/end/duration and routes. No startup or resource-wait value is inferred.",
+    "native_ii_from_mapped_task_attrs": true,
+    "per_task_resource_wait_reported": false,
+    "per_task_startup_cycles_reported": false,
+    "production_ready": false,
+    "separate_native_trace_ii_field": false,
+    "sram_gate": "pending: target_sram_capacity_unestablished"
+  },
+  "radar_typed_fusion_interface": {
+    "action": {
+      "family": "fusion",
+      "label": "fuse:Task_16:Task_17:producer-consumer-retained",
+      "mode": "producer-consumer-retained",
+      "source_partition_proof": "verified-and-refreshed"
+    },
+    "artifacts": [
+      {
+        "blake2b_256": "89e844ed2a050232b9b5994e6d3910ab7cc947c3f1b96756a7c7fc12149dd7c2",
+        "bytes": 463584,
+        "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/candidate.mlir",
+        "role": "typed fusion legality replay candidate; full module not copied"
+      },
+      {
+        "blake2b_256": "967ff8745c3a711f716ac9b5410675e92e96e4f50085305f6bc99b7790991a4a",
+        "bytes": 326762,
+        "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/source-facts.json",
+        "role": "source facts with embedded bindings; full file hashed but not copied"
+      },
+      {
+        "blake2b_256": "2946a89b4ace0e0232df6a30d7bd38213e0bcd0f74b9d66d7a1186b2f957ca73",
+        "bytes": 83920,
+        "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/actions.json",
+        "role": "typed action receipt; source-binding payload not copied"
+      },
+      {
+        "blake2b_256": "ed993cc034ca48189798bd9f6ea425f298417d1ae1310333e833a465e051f126",
+        "bytes": 1847,
+        "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/typed-replay.command.json",
+        "role": "typed replay command JSON"
+      }
+    ],
+    "candidate_task": "Task_16.fuse.Task_17",
+    "cost_native_limit": "Materialization facts record cost_catalog_read=false, native_mapping_run=false, prediction_run=false, and ranking_performed=false; this R9 fusion witness therefore carries no cost/native performance result.",
+    "cost_or_native_result": null,
+    "fused_and_external_consumer_tasks": [
+      {
+        "facts": {
+          "complete": true,
+          "counter_axes": [
+            {
+              "extent": 60,
+              "kind": "taskflow-counter",
+              "lower": 2,
+              "ordinal": 0,
+              "parent_counter_ordinal": -1,
+              "step": 1,
+              "upper": 62
+            },
+            {
+              "extent": 14,
+              "kind": "taskflow-counter",
+              "lower": 1,
+              "ordinal": 1,
+              "parent_counter_ordinal": -1,
+              "step": 1,
+              "upper": 15
+            }
+          ],
+          "current_counter_axes": [
+            {
+              "bound_status": "proven",
+              "lower": 2,
+              "ordinal": 0,
+              "output_axes": [
+                1
+              ],
+              "step": 1,
+              "upper": 62
+            },
+            {
+              "bound_status": "proven",
+              "lower": 1,
+              "ordinal": 1,
+              "output_axes": [
+                0
+              ],
+              "step": 1,
+              "upper": 15
+            }
+          ],
+          "domain_status": "certified-source-partition",
+          "output_coordinate_status": "proven",
+          "source_work_count": 840,
+          "task": "Task_16.fuse.Task_17",
+          "taskflow_firing_count": 840
+        },
+        "indexed_store_rhs_value_attrs": [
+          "%input2",
+          "%input4"
+        ],
+        "operation_statistics_per_task_firing": {
+          "body_bytes": 7817,
+          "compiled_ii": null,
+          "loads": 5,
+          "operation_count": 65,
+          "operation_counts": {
+            "arith.addi": 1,
+            "arith.constant": 4,
+            "neura.add": 2,
+            "neura.cast": 3,
+            "neura.counter": 2,
+            "neura.data_mov": 35,
+            "neura.icmp": 3,
+            "neura.kernel": 1,
+            "neura.load_indexed": 5,
+            "neura.mul": 3,
+            "neura.store_indexed": 2,
+            "neura.yield": 1,
+            "taskflow.counter": 2,
+            "taskflow.yield": 1
+          },
+          "selected_trip_count": null,
+          "source_firings": null,
+          "stores": 2
+        },
+        "raw_task_ir_blake2b_256": "4f50b66ddf8fccdad3a00400a8dd999b985ad196135e49267d1274276f98f5fc",
+        "raw_task_ir_bytes": 8040,
+        "task": "Task_16.fuse.Task_17",
+        "task_interface": {
+          "operand_segment_sizes": [
+            2,
+            2,
+            1,
+            2,
+            2
+          ],
+          "result_segment_sizes": [
+            0,
+            2,
+            0
+          ],
+          "taskflow_yield_line": "\"taskflow.yield\"(%arg59, %arg60) <{operandSegmentSizes = array<i32: 0, 2, 0>}> : (memref<?x256xi32>, memref<?x256xi32>) -> ()",
+          "taskflow_yield_operand_types": [
+            "memref<?x256xi32>",
+            "memref<?x256xi32>"
+          ],
+          "taskflow_yield_operands": [
+            "%arg59",
+            "%arg60"
+          ]
+        }
+      },
+      {
+        "facts": {
+          "complete": true,
+          "counter_axes": [
+            {
+              "extent": 60,
+              "kind": "taskflow-counter",
+              "lower": 2,
+              "ordinal": 0,
+              "parent_counter_ordinal": -1,
+              "step": 1,
+              "upper": 62
+            },
+            {
+              "extent": 14,
+              "kind": "taskflow-counter",
+              "lower": 1,
+              "ordinal": 1,
+              "parent_counter_ordinal": -1,
+              "step": 1,
+              "upper": 15
+            }
+          ],
+          "current_counter_axes": [
+            {
+              "bound_status": "proven",
+              "lower": 2,
+              "ordinal": 0,
+              "output_axes": [
+                1
+              ],
+              "step": 1,
+              "upper": 62
+            },
+            {
+              "bound_status": "proven",
+              "lower": 1,
+              "ordinal": 1,
+              "output_axes": [
+                0
+              ],
+              "step": 1,
+              "upper": 15
+            }
+          ],
+          "domain_status": "certified-source-partition",
+          "output_coordinate_status": "proven",
+          "source_work_count": 840,
+          "task": "Task_18",
+          "taskflow_firing_count": 840
+        },
+        "indexed_store_rhs_value_attrs": [
+          "%input3"
+        ],
+        "operation_statistics_per_task_firing": {
+          "body_bytes": 6304,
+          "compiled_ii": null,
+          "loads": 3,
+          "operation_count": 52,
+          "operation_counts": {
+            "arith.addi": 1,
+            "arith.constant": 4,
+            "neura.add": 2,
+            "neura.cast": 3,
+            "neura.counter": 2,
+            "neura.data_mov": 25,
+            "neura.icmp": 3,
+            "neura.kernel": 1,
+            "neura.load_indexed": 3,
+            "neura.mul": 3,
+            "neura.store_indexed": 1,
+            "neura.yield": 1,
+            "taskflow.counter": 2,
+            "taskflow.yield": 1
+          },
+          "selected_trip_count": null,
+          "source_firings": null,
+          "stores": 1
+        },
+        "raw_task_ir_blake2b_256": "41b8eae1761f93fb8d3545ebe1fbe4df882dbc8b3cedf164240166adb9e8b8c6",
+        "raw_task_ir_bytes": 6502,
+        "task": "Task_18",
+        "task_interface": {
+          "operand_segment_sizes": [
+            2,
+            1,
+            2,
+            2,
+            1
+          ],
+          "result_segment_sizes": [
+            0,
+            1,
+            0
+          ],
+          "taskflow_yield_line": "\"taskflow.yield\"(%arg49) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x256xi32>) -> ()",
+          "taskflow_yield_operand_types": [
+            "memref<?x256xi32>"
+          ],
+          "taskflow_yield_operands": [
+            "%arg49"
+          ]
+        }
+      }
+    ],
+    "hash_algorithm": "BLAKE2b-256",
+    "public_output_interface": {
+      "Task_18_remains_separate": true,
+      "fused_result_segment_sizes": [
+        0,
+        2,
+        0
+      ],
+      "fused_taskflow_yield_operand_types": [
+        "memref<?x256xi32>",
+        "memref<?x256xi32>"
+      ],
+      "fused_taskflow_yield_operands": [
+        "%arg59",
+        "%arg60"
+      ],
+      "preserved_external_indexed_store_targets": [
+        "%input2",
+        "%input4"
+      ]
+    },
+    "schema": "orbit-r9-typed-fusion-interface-witness-v1",
+    "source_facts_summary": {
+      "cost_catalog_read": false,
+      "fission_source_replay_verified": false,
+      "native_mapping_run": false,
+      "prediction_run": false,
+      "ranking_performed": false,
+      "source_iteration_domain_verified": true,
+      "step_status": "applied"
+    },
+    "workload": "radar"
+  },
+  "receipts": [
+    "receipts/lu-rank-0.json",
+    "receipts/lu-rank-1.json",
+    "receipts/lu-rank-2.json",
+    "receipts/harris-rank-0.json",
+    "receipts/harris-rank-1.json",
+    "receipts/harris-rank-2.json",
+    "receipts/radar-pc-16-17.json"
+  ],
+  "representative_ir_file": {
+    "blake2b_256": "2381518a2af6b65aa4e28cc1ac106b886609aaa92c62a245d5ed815fd8cfe863",
+    "bytes": 44762,
+    "path": "/tmp/orbit-artifact-r9-backend-witnesses-20261007/diagnostics/fusion-fission-ablation-diagnosis-20261007/backend-witnesses/representative-kernels.mlir.txt"
+  },
+  "result_root": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007",
+  "runtime_executable": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+  "schema": "orbit-r9-backend-witness-summary-v1",
+  "scope": "Exact R9 fixed native probe evidence and typed radar fusion interface witness; no new mapper/native/numeric experiment.",
+  "scope_notes": [
+    "LU original Task_0 and each fission child preserve 64 taskflow firings over the same 8x8 source counter domain.",
+    "Harris original Task_0 and each fission child preserve 8064 taskflow firings over the same 63x128 source counter domain.",
+    "Child firing counts are retained per operation and are not disjoint partitions; do not sum child trip counts.",
+    "The fission witness records an explicit temporary and newly visible inter-child data dependency; exact child edge and payload appear per receipt.",
+    "R9 radar fusion materialization keeps two public stores/result ports on Task_16.fuse.Task_17 while Task_18 remains separate; no R9 fusion cost/native performance record is available before cost/native execution.",
+    "All outcomes apply only to these six controlled fixed-probe records and the one typed fusion legality replay; they do not establish general performance."
+  ],
+  "search_manifest_schema": "orbit-neighborhood-search-v1",
+  "source_task_extraction": {
+    "function": "_task_spans",
+    "helper": "/home/x/shiran/project/orbit-artifact/scripts/run_fusion_fission_controlled_probes.py",
+    "string_masking": "helper _mask_strings; trailing source-iteration binding excluded from copied task excerpts"
+  }
+}

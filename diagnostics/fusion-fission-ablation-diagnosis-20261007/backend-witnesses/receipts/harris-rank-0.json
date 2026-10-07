@@ -1,0 +1,667 @@
+{
+  "artifacts": [
+    {
+      "blake2b_256": "be8f1f6a52876cac327b214bfe40cb82aa6fd2406fc68b272da96acdaa8d1a59",
+      "bytes": 84841,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/top5.jsonl",
+      "role": "legacy-v1 search manifest"
+    },
+    {
+      "blake2b_256": "df7bea3ac7132624813d62ec880869285baff58a70df832a10228e68c12e934d",
+      "bytes": 461132,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay/candidate.mlir",
+      "role": "exact typed source-replay candidate module; full module not copied"
+    },
+    {
+      "blake2b_256": "ed13e5835735f8048393d6dacc0099a01d509e4f6ec40ff653d63afcc24e463b",
+      "bytes": 326098,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay/source-facts.json",
+      "role": "source facts with embedded bindings; full file hashed but not copied"
+    },
+    {
+      "blake2b_256": "534b7ccfc5beef3a82e068de8b1cdff238cd72512fbe814afd7cb163090d1ce3",
+      "bytes": 1694,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapper.command.json",
+      "role": "mapper command JSON"
+    },
+    {
+      "blake2b_256": "964c7a2efb5793c8d525a455c3ca7ebc23745a2c7dc8aa482929e662e23eef56",
+      "bytes": 1417,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.command.json",
+      "role": "native command JSON"
+    },
+    {
+      "blake2b_256": "60b599e8e338dfaae3f482325543aded9ac3d06a522284aa0ea2921188e678a8",
+      "bytes": 2030,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/fission-replay.command.json",
+      "role": "source replay command JSON"
+    },
+    {
+      "blake2b_256": "2deb2d82d9eb5c7d7fc4ae0e0950efc7fb967b16c8e207206b7386668530f234",
+      "bytes": 684254,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapped.mlir",
+      "role": "mapped output MLIR; full module not copied"
+    },
+    {
+      "blake2b_256": "18f6dcaddda5b967969f8b32d661b7da481744b4f45e07e6c277531ee19fcf8e",
+      "bytes": 735264,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir",
+      "role": "native output MLIR with embedded independent trace; full module not copied"
+    },
+    {
+      "blake2b_256": "214fb4bf0ad1d8166252f7dc36b793174b0a5df44953b2adf1d391b83e42da0b",
+      "bytes": 301,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/independent-trace.json",
+      "role": "independent trace validation result"
+    },
+    {
+      "blake2b_256": "c7a7055c0eed466b39f6d27f7e9a6f7ee7fa6231e034ffe0a50dfa51c729d571",
+      "bytes": 9442,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/latest-batch.json",
+      "role": "numeric latest batch; selected rank receipt embedded"
+    },
+    {
+      "blake2b_256": "958b8127d322b3eb6aa6586cbb91fa36c81f150ba950b66768840b6047d8ab42",
+      "bytes": 11471,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/result.json",
+      "role": "native fixed result JSON"
+    }
+  ],
+  "hash_algorithm": "BLAKE2b-256",
+  "independent_trace_json": {
+    "candidate_id": "neighborhood-0",
+    "dependency_count": 29,
+    "graph_variant_id": "graph-0",
+    "native_cycles": 988258,
+    "occupied_cell_count": 7,
+    "route_count": 29,
+    "route_resource_count": 19,
+    "schema": "orbit-embedded-native-trace-validation-v1",
+    "status": "pass",
+    "task_count": 24
+  },
+  "mapper_command_json": {
+    "argv": [
+      "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+      "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/candidates/neighborhood-0.mlir",
+      "--verify-each",
+      "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+      "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+      "--materialize-analytical-task-candidate=candidates=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/replay/neighborhood-0-shape.json candidate-id=shape-neighborhood-0",
+      "--map-joint-scheduling-tasks=scores=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/replay/neighborhood-0-score.jsonl candidate-id=neighborhood-0 mapping-cache-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-r9-diagnosis",
+      "--mlir-print-op-generic",
+      "-o",
+      "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapped.mlir"
+    ],
+    "ended_utc": "2026-10-07T12:25:21.009994+00:00",
+    "exit_code": 0,
+    "started_utc": "2026-10-07T12:25:17.239733+00:00",
+    "status": "finished",
+    "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapper.stderr.gz",
+    "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapper.stdout.gz"
+  },
+  "native_command_json": {
+    "argv": [
+      "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+      "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapped.mlir",
+      "--verify-each",
+      "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+      "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+      "--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy=critical-path communication-mode=explicit exact-replay-timing=mapped",
+      "--mlir-print-op-generic",
+      "-o",
+      "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir"
+    ],
+    "ended_utc": "2026-10-07T12:25:21.110723+00:00",
+    "exit_code": 0,
+    "started_utc": "2026-10-07T12:25:21.011679+00:00",
+    "status": "finished",
+    "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.stderr.gz",
+    "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.stdout.gz"
+  },
+  "native_result_json": {
+    "candidate_id": "neighborhood-0",
+    "control_role": null,
+    "ended_utc": "2026-10-07T12:25:21.133073+00:00",
+    "fixed_location_equality": "scheduler-selected",
+    "graph_variant_id": "graph-0",
+    "independent_trace": "pass",
+    "mapper_cache_hits": 5,
+    "mapper_cache_misses": 19,
+    "mapper_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/candidates/neighborhood-0.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--materialize-analytical-task-candidate=candidates=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/replay/neighborhood-0-shape.json candidate-id=shape-neighborhood-0",
+        "--map-joint-scheduling-tasks=scores=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/replay/neighborhood-0-score.jsonl candidate-id=neighborhood-0 mapping-cache-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-r9-diagnosis",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapped.mlir"
+      ],
+      "ended_utc": "2026-10-07T12:25:21.009994+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T12:25:17.239733+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapper.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapper.stdout.gz"
+    },
+    "mapper_equality": "pass",
+    "native_command": {
+      "argv": [
+        "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/mapped.mlir",
+        "--verify-each",
+        "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+        "--joint-inter-task-network-spec=/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/networks/amoeba_4x4_mesh_latency1_bandwidth32.yaml",
+        "--orchestrate-tasks-on-accelerators=orchestration-strategy=analytical-based-task-orchestration scheduling-mode=spatial-temporal dispatch-policy=critical-path communication-mode=explicit exact-replay-timing=mapped",
+        "--mlir-print-op-generic",
+        "-o",
+        "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir"
+      ],
+      "ended_utc": "2026-10-07T12:25:21.110723+00:00",
+      "exit_code": 0,
+      "started_utc": "2026-10-07T12:25:21.011679+00:00",
+      "status": "finished",
+      "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.stderr.gz",
+      "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.stdout.gz"
+    },
+    "native_cycles": 988258,
+    "numeric": "pass",
+    "numeric_gate_record": {
+      "actual_nonzero": 240029,
+      "commands": [
+        {
+          "argv": [
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir",
+            "--verify-each",
+            "--lower-joint-taskflow-to-host-scf=input0-numeric-program=harris",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/host.mlir"
+          ],
+          "elapsed_seconds": 0.02394365705549717,
+          "exit_code": 0,
+          "step": "host"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-opt",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/host.mlir",
+            "--verify-each",
+            "--convert-scf-to-cf",
+            "--convert-cf-to-llvm",
+            "--convert-arith-to-llvm",
+            "--finalize-memref-to-llvm",
+            "--convert-func-to-llvm",
+            "--reconcile-unrealized-casts",
+            "-o",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/llvm.mlir"
+          ],
+          "elapsed_seconds": 0.03962398413568735,
+          "exit_code": 0,
+          "step": "llvm"
+        },
+        {
+          "argv": [
+            "/home/x/shiran/llvm-project/build/bin/mlir-runner",
+            "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/llvm.mlir",
+            "-e",
+            "main",
+            "-entry-point-result=i64",
+            "-O2",
+            "-shared-libs",
+            "/home/x/shiran/llvm-project/build/lib/libmlir_runner_utils.so",
+            "-shared-libs",
+            "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/libharris_reference.so"
+          ],
+          "elapsed_seconds": 0.5223501231521368,
+          "exit_code": 0,
+          "step": "run"
+        }
+      ],
+      "compiler_owned_fixture_and_execution": true,
+      "element_comparisons": 884736,
+      "expected_mismatches": 0,
+      "expected_nonzero": 240029,
+      "independent_reference": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/libharris_reference.so",
+      "mismatches": 0,
+      "negative_control": false,
+      "rank": 0,
+      "schema": "orbit-input0-cpp-host-numeric-gate-v1",
+      "scope": "mapped-native",
+      "source": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir",
+      "stage": "controlled-fission-harris",
+      "stage_admission": "not_claimed",
+      "status": "pass",
+      "workload": "harris"
+    },
+    "predicted_cycles": 1017733,
+    "prediction_mapper_equal": false,
+    "prediction_start_equality": false,
+    "production_ready": false,
+    "rank": 0,
+    "ranking_certified": false,
+    "replay_timing_policy": "production-scheduler-with-mapped-durations",
+    "scheduler_backend": "orchestrate-tasks-on-accelerators",
+    "source_fission_replay": {
+      "active_transfer_arguments": [],
+      "active_transfer_require_proven": null,
+      "candidate_id": "neighborhood-0",
+      "canonical_input": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir",
+      "command": {
+        "argv": [
+          "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+          "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir",
+          "--verify-each",
+          "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+          "--replay-joint-neighborhood-actions=action-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay-actions.json canonical-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir candidate-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir function=_Z11harris_funciPA128_KiS1_S1_PA128_iS3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_ stage=full-joint-fission max-partition-factor=8 prepared-source-file=/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/harris-pre-neura.mlir max-fission-actions-per-task=64 expected-candidate-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/candidates/neighborhood-0.mlir output-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay",
+          "--mlir-print-op-generic",
+          "-o",
+          "/dev/null"
+        ],
+        "ended_utc": "2026-10-07T12:25:17.234521+00:00",
+        "exit_code": 0,
+        "started_utc": "2026-10-07T12:25:17.121235+00:00",
+        "status": "finished",
+        "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/fission-replay.stderr.gz",
+        "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/fission-replay.stdout.gz"
+      },
+      "expected_search_candidate": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/candidates/neighborhood-0.mlir",
+      "fission_action_count": 0,
+      "max_fission_actions_per_task": 64,
+      "max_partition_factor": 8,
+      "native_candidate_comparison": "exact-generic-module-after-removing-only-function-graph-variant-id",
+      "native_candidate_match": true,
+      "ordinary_action_count": 0,
+      "prepared_source_bytes": 87454,
+      "prepared_source_file": "/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/harris-pre-neura.mlir",
+      "prepared_source_public_binding": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/source-binding.json",
+      "prepared_source_replay_witness": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay/prepared-source.mlir",
+      "prepared_source_search_binding": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/checkpoint.json.binding.json",
+      "reconstructed_candidate": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay/candidate.mlir",
+      "replay_facts": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay/source-facts.json",
+      "replay_output_dir": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay",
+      "schema": "orbit-neighborhood-source-fission-replay-evidence-v1",
+      "stage": "full-joint-fission",
+      "status": "verified",
+      "typed_action_file": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay-actions.json"
+    },
+    "sram_blocker": "target_sram_capacity_unestablished",
+    "sram_capacity_config": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/config/architectures/amoeba_4x4_cgra_2x2_sram_pending.json",
+    "sram_capacity_evaluated": false,
+    "sram_gate": "pending",
+    "started_utc": "2026-10-07T12:25:17.020683+00:00",
+    "status": "native_replayed"
+  },
+  "native_schedule": {
+    "dependencies_touching_selected_tasks": [
+      {
+        "consumer": "Task_1",
+        "consumer_index": 0,
+        "consumer_segment": "will_reads",
+        "kind": "raw",
+        "payload_bits": 1048576,
+        "producer": "Task_0",
+        "producer_index": 0,
+        "producer_segment": "done_writes"
+      }
+    ],
+    "explicit_resource_wait_field_present": false,
+    "explicit_startup_field_present": false,
+    "native_makespan_cycles": 988258,
+    "native_trace_reports_separate_ii": false,
+    "routes_touching_selected_tasks": [
+      {
+        "bottleneck_bandwidth_bits_per_cycle": 32,
+        "consumer": "Task_1",
+        "destination_col": 0,
+        "destination_row": 0,
+        "payload_bits": 1048576,
+        "producer": "Task_0",
+        "ready_cycle": 56963,
+        "source_col": 0,
+        "source_row": 0,
+        "transfer_cycles": 32768
+      }
+    ],
+    "selected_tasks": [
+      {
+        "dependencies_touching_task": [
+          {
+            "consumer": "Task_1",
+            "consumer_index": 0,
+            "consumer_segment": "will_reads",
+            "kind": "raw",
+            "payload_bits": 1048576,
+            "producer": "Task_0",
+            "producer_index": 0,
+            "producer_segment": "done_writes"
+          }
+        ],
+        "duration_cycles": 24195,
+        "end_cycle": 24195,
+        "mapped_task_profile_duration_cycles": 24195,
+        "mapper_compiled_ii": 3,
+        "mapper_recurrence_mii": 1,
+        "mapper_resource_mii": 3,
+        "native_trace_ii": null,
+        "positions": [
+          {
+            "col": 0,
+            "row": 0
+          }
+        ],
+        "routes_touching_task": [
+          {
+            "bottleneck_bandwidth_bits_per_cycle": 32,
+            "consumer": "Task_1",
+            "destination_col": 0,
+            "destination_row": 0,
+            "payload_bits": 1048576,
+            "producer": "Task_0",
+            "ready_cycle": 56963,
+            "source_col": 0,
+            "source_row": 0,
+            "transfer_cycles": 32768
+          }
+        ],
+        "start_cycle": 0,
+        "startup_cycles": null,
+        "startup_or_wait_note": "native trace records task start/end and routes but has no explicit per-task startup or resource-wait field; no gap is labeled as pure resource wait",
+        "task": "Task_0"
+      }
+    ]
+  },
+  "numeric_element_comparisons": 884736,
+  "numeric_pass_receipt": {
+    "actual_nonzero": 240029,
+    "commands": [
+      {
+        "argv": [
+          "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+          "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir",
+          "--verify-each",
+          "--lower-joint-taskflow-to-host-scf=input0-numeric-program=harris",
+          "-o",
+          "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/host.mlir"
+        ],
+        "elapsed_seconds": 0.02394365705549717,
+        "exit_code": 0,
+        "step": "host"
+      },
+      {
+        "argv": [
+          "/home/x/shiran/llvm-project/build/bin/mlir-opt",
+          "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/host.mlir",
+          "--verify-each",
+          "--convert-scf-to-cf",
+          "--convert-cf-to-llvm",
+          "--convert-arith-to-llvm",
+          "--finalize-memref-to-llvm",
+          "--convert-func-to-llvm",
+          "--reconcile-unrealized-casts",
+          "-o",
+          "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/llvm.mlir"
+        ],
+        "elapsed_seconds": 0.03962398413568735,
+        "exit_code": 0,
+        "step": "llvm"
+      },
+      {
+        "argv": [
+          "/home/x/shiran/llvm-project/build/bin/mlir-runner",
+          "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/numeric/harris/controlled-fission-harris-rank-0/llvm.mlir",
+          "-e",
+          "main",
+          "-entry-point-result=i64",
+          "-O2",
+          "-shared-libs",
+          "/home/x/shiran/llvm-project/build/lib/libmlir_runner_utils.so",
+          "-shared-libs",
+          "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/libharris_reference.so"
+        ],
+        "elapsed_seconds": 0.5223501231521368,
+        "exit_code": 0,
+        "step": "run"
+      }
+    ],
+    "compiler_owned_fixture_and_execution": true,
+    "element_comparisons": 884736,
+    "expected_mismatches": 0,
+    "expected_nonzero": 240029,
+    "independent_reference": "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/selected-native-numeric-gate/libharris_reference.so",
+    "mismatches": 0,
+    "negative_control": false,
+    "rank": 0,
+    "schema": "orbit-input0-cpp-host-numeric-gate-v1",
+    "scope": "mapped-native",
+    "source": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/native.mlir",
+    "stage": "controlled-fission-harris",
+    "stage_admission": "not_claimed",
+    "status": "pass",
+    "workload": "harris"
+  },
+  "schema": "orbit-r9-fixed-fission-backend-receipt-v1",
+  "scope": {
+    "candidate_id": "neighborhood-0",
+    "graph_variant_id": "graph-0",
+    "rank": 0,
+    "search_manifest_schema": "orbit-neighborhood-search-v1",
+    "workload": "harris"
+  },
+  "search_selection_summary": {
+    "action_path": [],
+    "candidate_id": "neighborhood-0",
+    "candidate_key": "graph-0|1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;1x1;",
+    "certified": false,
+    "control_candidate": true,
+    "control_roles": [
+      "identity"
+    ],
+    "graph_variant_id": "graph-0",
+    "predicted_whole_program_cycles": 1017733,
+    "rank": 0,
+    "record_type": "selection",
+    "schema": "orbit-neighborhood-search-v1",
+    "selection_record_blake2b_256": "91654016051a06e0cf80ca543a5159771fde0900cbdcf8aa00412dd426499607",
+    "target_predicted_schedule": [
+      {
+        "col": 0,
+        "cols": 1,
+        "end_cycle": 29562,
+        "idle_cycles": 0,
+        "row": 0,
+        "rows": 1,
+        "start_cycle": 0,
+        "task": "Task_0"
+      }
+    ],
+    "target_predicted_task_costs": [
+      {
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "predicted_duration": 29562,
+        "predicted_ii": 3.6656155586242676,
+        "predicted_startup_cycles": 6,
+        "support_status": "supported",
+        "task": "Task_0",
+        "trip_count": 8064
+      }
+    ],
+    "target_task_choices": [
+      {
+        "cols": 1,
+        "mapper_tile_cols": 2,
+        "mapper_tile_rows": 2,
+        "rows": 1,
+        "task": "Task_0",
+        "trip_count": 8064
+      }
+    ],
+    "task_shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "Task_0"
+      }
+    ],
+    "valid": true
+  },
+  "source_fission_replay_command_json": {
+    "argv": [
+      "/tmp/orbit-input0-v60-memory-fusion-fission-r5-20261006/runtime-frozen-r6/.work/control-variables-and-tiling-20261006/mlir-amoeba-opt-memory-fusion-fission-r9-original-ray-ii23-stable-features-20261006",
+      "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir",
+      "--verify-each",
+      "--architecture-spec=/home/x/shiran/project/orbit-artifact/config/architectures/amoeba_4x4_cgra_2x2_context6.yaml",
+      "--replay-joint-neighborhood-actions=action-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay-actions.json canonical-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir candidate-input=/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v59-inplace-proof-r4/source-domain-prep/harris/canonical.mlir function=_Z11harris_funciPA128_KiS1_S1_PA128_iS3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_S3_ stage=full-joint-fission max-partition-factor=8 prepared-source-file=/home/x/shiran/project/orbit-artifact/.work/source-fission-integration-20261006/harris-pre-neura.mlir max-fission-actions-per-task=64 expected-candidate-file=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/search/candidates/neighborhood-0.mlir output-dir=/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/source-fission-replay",
+      "--mlir-print-op-generic",
+      "-o",
+      "/dev/null"
+    ],
+    "ended_utc": "2026-10-07T12:25:17.234521+00:00",
+    "exit_code": 0,
+    "started_utc": "2026-10-07T12:25:17.121235+00:00",
+    "status": "finished",
+    "stderr_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/fission-replay.stderr.gz",
+    "stdout_log": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/fixed-probes-v3/fission-harris/native/rank-0/fission-replay.stdout.gz"
+  },
+  "source_task_witnesses": [
+    {
+      "lineage": null,
+      "mapper": {
+        "cache_input_blake2b_256": "da852267d7694dab0a791d7dcb5e46bb1c737b8c6f62ab81b4bc8e831b7b0e82",
+        "cache_input_bytes": 4414,
+        "cache_input_path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/mapper-cache-r9-diagnosis/task-5/input.txt",
+        "cache_task_id": "task-5",
+        "mapped_task_grid": {
+          "cgra_count": 1,
+          "cgra_shape": "1x1",
+          "mapper_cache_hit": false,
+          "mapper_tile_cols": 2,
+          "mapper_tile_rows": 2,
+          "selected_trip_count": 8064
+        },
+        "mapper_grid": {
+          "cols": 2,
+          "rows": 2
+        },
+        "mapper_visible_dfg_blake2b_256": "5a9e0c887159d8e8772816af91d5ca79fce9661fc7e1ea0f4cf49ea6118ad191",
+        "mapper_visible_dfg_wrapper_bytes": 3734,
+        "normalization": "terminal neura.yield->func.return; remove whitespace outside strings; alpha-rename SSA identifiers outside strings",
+        "source_kernel_normalized_equals_mapper_func_body": true
+      },
+      "operations_per_original_firing": {
+        "loads": 3,
+        "normalization": "static operation statements per one original-domain firing; each recorded task retains the complete original loop domain",
+        "operation_counts": {
+          "arith.constant": 3,
+          "neura.add": 2,
+          "neura.counter": 2,
+          "neura.data_mov": 16,
+          "neura.kernel": 1,
+          "neura.load_indexed": 3,
+          "neura.mul": 3,
+          "neura.store_indexed": 1,
+          "neura.yield": 1,
+          "taskflow.counter": 2,
+          "taskflow.yield": 1
+        },
+        "static_task_region_operation_count": 35,
+        "stores": 1
+      },
+      "raw_source_kernel_region_blake2b_256": "753cc3d5395489a4df1348b3d7dc71ebfc53669555db7285c775d6052d560f7e",
+      "raw_source_kernel_region_bytes": 3722,
+      "raw_source_task_ir_blake2b_256": "4bf426d8118c326d04f3b1d905ed9f213346de62fd65c831f40b493a278a1c0a",
+      "raw_source_task_ir_bytes": 5098,
+      "source_facts": {
+        "canonical_witness_blake2b_256": "dfe49af691567f36a8aec642508edef3b7b16b9a237544357d8de3f5f731e757",
+        "complete": true,
+        "counter_axes": [
+          {
+            "carried_values": 0,
+            "expanded_inside_mapper_firing": false,
+            "extent": 63,
+            "kind": "taskflow-counter",
+            "lower": 0,
+            "ordinal": 0,
+            "parent_counter_ordinal": -1,
+            "result_uses": 0,
+            "step": 1,
+            "upper": 63
+          },
+          {
+            "carried_values": 0,
+            "expanded_inside_mapper_firing": false,
+            "extent": 128,
+            "kind": "taskflow-counter",
+            "lower": 0,
+            "ordinal": 1,
+            "parent_counter_ordinal": -1,
+            "result_uses": 0,
+            "step": 1,
+            "upper": 128
+          }
+        ],
+        "current_counter_axes": [
+          {
+            "bound_status": "proven",
+            "lower": 0,
+            "ordinal": 0,
+            "output_axes": [
+              0
+            ],
+            "step": 1,
+            "upper": 63
+          },
+          {
+            "bound_status": "proven",
+            "lower": 0,
+            "ordinal": 1,
+            "output_axes": [
+              1
+            ],
+            "step": 1,
+            "upper": 128
+          }
+        ],
+        "domain_reason": "",
+        "domain_status": "certified-complete",
+        "internal_multiplicity": 1,
+        "output_coordinate_reason": "",
+        "output_coordinate_status": "proven",
+        "partition_proof_blake2b_256": null,
+        "represented_multiplicity": 8064,
+        "source_multiplicity": 8064,
+        "source_work_count": 8064,
+        "task": "Task_0",
+        "taskflow_firing_count": 8064
+      },
+      "task": "Task_0",
+      "task_interface": {
+        "operand_segment_sizes": [
+          3,
+          1,
+          4,
+          3,
+          1
+        ],
+        "result_segment_sizes": [
+          0,
+          1,
+          0
+        ],
+        "taskflow_yield_line": "\"taskflow.yield\"(%arg215) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()",
+        "taskflow_yield_operand_types": [
+          "memref<?x128xi32>"
+        ],
+        "taskflow_yield_operands": [
+          "%arg215"
+        ]
+      },
+      "temporary_memref_types_seen": []
+    }
+  ]
+}

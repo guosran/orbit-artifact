@@ -1,0 +1,282 @@
+{
+  "action": {
+    "family": "fusion",
+    "label": "fuse:Task_16:Task_17:producer-consumer-retained",
+    "mode": "producer-consumer-retained",
+    "source_partition_proof": "verified-and-refreshed"
+  },
+  "artifacts": [
+    {
+      "blake2b_256": "89e844ed2a050232b9b5994e6d3910ab7cc947c3f1b96756a7c7fc12149dd7c2",
+      "bytes": 463584,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/candidate.mlir",
+      "role": "typed fusion legality replay candidate; full module not copied"
+    },
+    {
+      "blake2b_256": "967ff8745c3a711f716ac9b5410675e92e96e4f50085305f6bc99b7790991a4a",
+      "bytes": 326762,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/source-facts.json",
+      "role": "source facts with embedded bindings; full file hashed but not copied"
+    },
+    {
+      "blake2b_256": "2946a89b4ace0e0232df6a30d7bd38213e0bcd0f74b9d66d7a1186b2f957ca73",
+      "bytes": 83920,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/replay/actions.json",
+      "role": "typed action receipt; source-binding payload not copied"
+    },
+    {
+      "blake2b_256": "ed993cc034ca48189798bd9f6ea425f298417d1ae1310333e833a465e051f126",
+      "bytes": 1847,
+      "path": "/tmp/orbit-ff-ablation-diagnosis-r9-20261007/legality/radar-pc-16-17/typed-replay.command.json",
+      "role": "typed replay command JSON"
+    }
+  ],
+  "candidate_task": "Task_16.fuse.Task_17",
+  "cost_native_limit": "Materialization facts record cost_catalog_read=false, native_mapping_run=false, prediction_run=false, and ranking_performed=false; this R9 fusion witness therefore carries no cost/native performance result.",
+  "cost_or_native_result": null,
+  "fused_and_external_consumer_tasks": [
+    {
+      "facts": {
+        "complete": true,
+        "counter_axes": [
+          {
+            "extent": 60,
+            "kind": "taskflow-counter",
+            "lower": 2,
+            "ordinal": 0,
+            "parent_counter_ordinal": -1,
+            "step": 1,
+            "upper": 62
+          },
+          {
+            "extent": 14,
+            "kind": "taskflow-counter",
+            "lower": 1,
+            "ordinal": 1,
+            "parent_counter_ordinal": -1,
+            "step": 1,
+            "upper": 15
+          }
+        ],
+        "current_counter_axes": [
+          {
+            "bound_status": "proven",
+            "lower": 2,
+            "ordinal": 0,
+            "output_axes": [
+              1
+            ],
+            "step": 1,
+            "upper": 62
+          },
+          {
+            "bound_status": "proven",
+            "lower": 1,
+            "ordinal": 1,
+            "output_axes": [
+              0
+            ],
+            "step": 1,
+            "upper": 15
+          }
+        ],
+        "domain_status": "certified-source-partition",
+        "output_coordinate_status": "proven",
+        "source_work_count": 840,
+        "task": "Task_16.fuse.Task_17",
+        "taskflow_firing_count": 840
+      },
+      "indexed_store_rhs_value_attrs": [
+        "%input2",
+        "%input4"
+      ],
+      "operation_statistics_per_task_firing": {
+        "body_bytes": 7817,
+        "compiled_ii": null,
+        "loads": 5,
+        "operation_count": 65,
+        "operation_counts": {
+          "arith.addi": 1,
+          "arith.constant": 4,
+          "neura.add": 2,
+          "neura.cast": 3,
+          "neura.counter": 2,
+          "neura.data_mov": 35,
+          "neura.icmp": 3,
+          "neura.kernel": 1,
+          "neura.load_indexed": 5,
+          "neura.mul": 3,
+          "neura.store_indexed": 2,
+          "neura.yield": 1,
+          "taskflow.counter": 2,
+          "taskflow.yield": 1
+        },
+        "selected_trip_count": null,
+        "source_firings": null,
+        "stores": 2
+      },
+      "raw_task_ir_blake2b_256": "4f50b66ddf8fccdad3a00400a8dd999b985ad196135e49267d1274276f98f5fc",
+      "raw_task_ir_bytes": 8040,
+      "task": "Task_16.fuse.Task_17",
+      "task_interface": {
+        "operand_segment_sizes": [
+          2,
+          2,
+          1,
+          2,
+          2
+        ],
+        "result_segment_sizes": [
+          0,
+          2,
+          0
+        ],
+        "taskflow_yield_line": "\"taskflow.yield\"(%arg59, %arg60) <{operandSegmentSizes = array<i32: 0, 2, 0>}> : (memref<?x256xi32>, memref<?x256xi32>) -> ()",
+        "taskflow_yield_operand_types": [
+          "memref<?x256xi32>",
+          "memref<?x256xi32>"
+        ],
+        "taskflow_yield_operands": [
+          "%arg59",
+          "%arg60"
+        ]
+      }
+    },
+    {
+      "facts": {
+        "complete": true,
+        "counter_axes": [
+          {
+            "extent": 60,
+            "kind": "taskflow-counter",
+            "lower": 2,
+            "ordinal": 0,
+            "parent_counter_ordinal": -1,
+            "step": 1,
+            "upper": 62
+          },
+          {
+            "extent": 14,
+            "kind": "taskflow-counter",
+            "lower": 1,
+            "ordinal": 1,
+            "parent_counter_ordinal": -1,
+            "step": 1,
+            "upper": 15
+          }
+        ],
+        "current_counter_axes": [
+          {
+            "bound_status": "proven",
+            "lower": 2,
+            "ordinal": 0,
+            "output_axes": [
+              1
+            ],
+            "step": 1,
+            "upper": 62
+          },
+          {
+            "bound_status": "proven",
+            "lower": 1,
+            "ordinal": 1,
+            "output_axes": [
+              0
+            ],
+            "step": 1,
+            "upper": 15
+          }
+        ],
+        "domain_status": "certified-source-partition",
+        "output_coordinate_status": "proven",
+        "source_work_count": 840,
+        "task": "Task_18",
+        "taskflow_firing_count": 840
+      },
+      "indexed_store_rhs_value_attrs": [
+        "%input3"
+      ],
+      "operation_statistics_per_task_firing": {
+        "body_bytes": 6304,
+        "compiled_ii": null,
+        "loads": 3,
+        "operation_count": 52,
+        "operation_counts": {
+          "arith.addi": 1,
+          "arith.constant": 4,
+          "neura.add": 2,
+          "neura.cast": 3,
+          "neura.counter": 2,
+          "neura.data_mov": 25,
+          "neura.icmp": 3,
+          "neura.kernel": 1,
+          "neura.load_indexed": 3,
+          "neura.mul": 3,
+          "neura.store_indexed": 1,
+          "neura.yield": 1,
+          "taskflow.counter": 2,
+          "taskflow.yield": 1
+        },
+        "selected_trip_count": null,
+        "source_firings": null,
+        "stores": 1
+      },
+      "raw_task_ir_blake2b_256": "41b8eae1761f93fb8d3545ebe1fbe4df882dbc8b3cedf164240166adb9e8b8c6",
+      "raw_task_ir_bytes": 6502,
+      "task": "Task_18",
+      "task_interface": {
+        "operand_segment_sizes": [
+          2,
+          1,
+          2,
+          2,
+          1
+        ],
+        "result_segment_sizes": [
+          0,
+          1,
+          0
+        ],
+        "taskflow_yield_line": "\"taskflow.yield\"(%arg49) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x256xi32>) -> ()",
+        "taskflow_yield_operand_types": [
+          "memref<?x256xi32>"
+        ],
+        "taskflow_yield_operands": [
+          "%arg49"
+        ]
+      }
+    }
+  ],
+  "hash_algorithm": "BLAKE2b-256",
+  "public_output_interface": {
+    "Task_18_remains_separate": true,
+    "fused_result_segment_sizes": [
+      0,
+      2,
+      0
+    ],
+    "fused_taskflow_yield_operand_types": [
+      "memref<?x256xi32>",
+      "memref<?x256xi32>"
+    ],
+    "fused_taskflow_yield_operands": [
+      "%arg59",
+      "%arg60"
+    ],
+    "preserved_external_indexed_store_targets": [
+      "%input2",
+      "%input4"
+    ]
+  },
+  "schema": "orbit-r9-typed-fusion-interface-witness-v1",
+  "source_facts_summary": {
+    "cost_catalog_read": false,
+    "fission_source_replay_verified": false,
+    "native_mapping_run": false,
+    "prediction_run": false,
+    "ranking_performed": false,
+    "source_iteration_domain_verified": true,
+    "step_status": "applied"
+  },
+  "workload": "radar"
+}

@@ -1,0 +1,373 @@
+=== LU rank-0 Task_0 : exact source task region (trailing source-control binding omitted) ===
+    %7 = "taskflow.task"(%arg1, %arg3, %6, %arg1, %arg3) <{operandSegmentSizes = array<i32: 1, 1, 1, 1, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0"}> ({
+    ^bb0(%arg101: memref<?x100xi32>, %arg102: memref<?x100xi32>, %arg103: index):
+      %541 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %542 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %543 = "taskflow.counter"(%541, %arg103, %542) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %544 = "taskflow.counter"(%543, %541, %arg103, %542) <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg101, %arg102, %arg103) <{accelerator = "neura", operandSegmentSizes = array<i32: 3, 0>}> ({
+      ^bb0(%arg104: !neura.data<memref<?x100xi32>, i1>, %arg105: !neura.data<memref<?x100xi32>, i1>, %arg106: !neura.data<index, i1>):
+        %545 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %546 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %547 = "neura.data_mov"(%545) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %548 = "neura.data_mov"(%546) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %549 = "neura.load_indexed"(%547, %548) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %550 = "neura.data_mov"(%549) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %551 = "neura.data_mov"(%545) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %552 = "neura.data_mov"(%546) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%550, %551, %552) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input1"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x100xi32>, memref<?x100xi32>, index) -> ()
+      "taskflow.yield"(%arg102) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x100xi32>) -> ()
+    }
+
+=== LU rank-1 Task_0 : exact source task region (trailing source-control binding omitted) ===
+    %7 = "taskflow.task"(%arg1, %arg3, %6, %arg1, %arg3) <{operandSegmentSizes = array<i32: 1, 1, 1, 1, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0"}> ({
+    ^bb0(%arg101: memref<?x100xi32>, %arg102: memref<?x100xi32>, %arg103: index):
+      %541 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %542 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %543 = "taskflow.counter"(%541, %arg103, %542) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %544 = "taskflow.counter"(%543, %541, %arg103, %542) <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg101, %arg102, %arg103) <{accelerator = "neura", operandSegmentSizes = array<i32: 3, 0>}> ({
+      ^bb0(%arg104: !neura.data<memref<?x100xi32>, i1>, %arg105: !neura.data<memref<?x100xi32>, i1>, %arg106: !neura.data<index, i1>):
+        %545 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %546 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %547 = "neura.data_mov"(%545) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %548 = "neura.data_mov"(%546) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %549 = "neura.load_indexed"(%547, %548) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %550 = "neura.data_mov"(%549) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %551 = "neura.data_mov"(%545) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %552 = "neura.data_mov"(%546) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%550, %551, %552) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input1"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x100xi32>, memref<?x100xi32>, index) -> ()
+      "taskflow.yield"(%arg102) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x100xi32>) -> ()
+    }
+
+=== LU rank-2 Task_0.split.0 : exact source task region (trailing source-control binding omitted) ===
+    %8 = "taskflow.task"(%arg1, %7, %6, %arg1, %7) <{operandSegmentSizes = array<i32: 1, 1, 1, 1, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0.split.0"}> ({
+    ^bb0(%arg108: memref<?x100xi32>, %arg109: memref<8x8xi32>, %arg110: index):
+      %555 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %556 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %557 = "taskflow.counter"(%555, %arg110, %556) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %558 = "taskflow.counter"(%557, %555, %arg110, %556) <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg108, %arg109, %arg110) <{accelerator = "neura", operandSegmentSizes = array<i32: 3, 0>}> ({
+      ^bb0(%arg111: !neura.data<memref<?x100xi32>, i1>, %arg112: !neura.data<memref<8x8xi32>, i1>, %arg113: !neura.data<index, i1>):
+        %559 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %560 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %561 = "neura.data_mov"(%559) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %562 = "neura.data_mov"(%560) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %563 = "neura.load_indexed"(%561, %562) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %564 = "neura.data_mov"(%563) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %565 = "neura.data_mov"(%559) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %566 = "neura.data_mov"(%560) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%564, %565, %566) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input1"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x100xi32>, memref<8x8xi32>, index) -> ()
+      "taskflow.yield"(%arg109) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<8x8xi32>) -> ()
+    }
+
+=== LU rank-2 Task_0.split.1 : exact source task region (trailing source-control binding omitted) ===
+    %9 = "taskflow.task"(%8, %arg1, %arg3, %6, %7, %arg1, %arg3) <{operandSegmentSizes = array<i32: 2, 1, 1, 2, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0.split.1"}> ({
+    ^bb0(%arg101: memref<8x8xi32>, %arg102: memref<?x100xi32>, %arg103: memref<?x100xi32>, %arg104: index):
+      %543 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %544 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %545 = "taskflow.counter"(%543, %arg104, %544) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %546 = "taskflow.counter"(%545, %543, %arg104, %544) <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg101, %arg103, %arg104) <{accelerator = "neura", operandSegmentSizes = array<i32: 3, 0>}> ({
+      ^bb0(%arg105: !neura.data<memref<8x8xi32>, i1>, %arg106: !neura.data<memref<?x100xi32>, i1>, %arg107: !neura.data<index, i1>):
+        %547 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %548 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %549 = "neura.data_mov"(%547) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %550 = "neura.data_mov"(%548) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %551 = "neura.load_indexed"(%549, %550) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %552 = "neura.data_mov"(%551) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %553 = "neura.data_mov"(%547) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %554 = "neura.data_mov"(%548) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%552, %553, %554) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input1"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<8x8xi32>, memref<?x100xi32>, index) -> ()
+      "taskflow.yield"(%arg103) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x100xi32>) -> ()
+    }
+
+=== HARRIS rank-0 Task_0 : exact source task region (trailing source-control binding omitted) ===
+    %11 = "taskflow.task"(%arg1, %arg2, %arg3, %arg4, %10, %1, %2, %3, %arg1, %arg2, %arg3, %arg4) <{operandSegmentSizes = array<i32: 3, 1, 4, 3, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0"}> ({
+    ^bb0(%arg212: memref<?x128xi32>, %arg213: memref<?x128xi32>, %arg214: memref<?x128xi32>, %arg215: memref<?x128xi32>, %arg216: index, %arg217: i32, %arg218: i32, %arg219: i32):
+      %884 = "arith.constant"() <{value = 128 : index}> : () -> index
+      %885 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %886 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %887 = "taskflow.counter"(%885, %arg216, %886) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %888 = "taskflow.counter"(%887, %885, %884, %886) <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg212, %arg217, %arg213, %arg218, %arg214, %arg219, %arg215, %arg216) <{accelerator = "neura", operandSegmentSizes = array<i32: 8, 0>}> ({
+      ^bb0(%arg220: !neura.data<memref<?x128xi32>, i1>, %arg221: !neura.data<i32, i1>, %arg222: !neura.data<memref<?x128xi32>, i1>, %arg223: !neura.data<i32, i1>, %arg224: !neura.data<memref<?x128xi32>, i1>, %arg225: !neura.data<i32, i1>, %arg226: !neura.data<memref<?x128xi32>, i1>, %arg227: !neura.data<index, i1>):
+        %889 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input7"} : () -> !neura.data<index, i1>
+        %890 = "neura.counter"() <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = 128 : index} : () -> !neura.data<index, i1>
+        %891 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %892 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %893 = "neura.load_indexed"(%891, %892) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %894 = "neura.data_mov"(%893) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %895 = "neura.mul"(%894) {rhs_value = "%input1"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %896 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %897 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %898 = "neura.load_indexed"(%896, %897) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input2"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %899 = "neura.data_mov"(%898) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %900 = "neura.mul"(%899) {rhs_value = "%input3"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %901 = "neura.data_mov"(%895) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %902 = "neura.data_mov"(%900) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %903 = "neura.add"(%901, %902) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %904 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %905 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %906 = "neura.load_indexed"(%904, %905) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input4"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %907 = "neura.data_mov"(%906) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %908 = "neura.mul"(%907) {rhs_value = "%input5"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %909 = "neura.data_mov"(%903) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %910 = "neura.data_mov"(%908) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %911 = "neura.add"(%909, %910) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %912 = "neura.data_mov"(%911) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %913 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %914 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%912, %913, %914) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input6"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x128xi32>, i32, memref<?x128xi32>, i32, memref<?x128xi32>, i32, memref<?x128xi32>, index) -> ()
+      "taskflow.yield"(%arg215) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()
+    }
+
+=== HARRIS rank-1 Task_0 : exact source task region (trailing source-control binding omitted) ===
+    %11 = "taskflow.task"(%arg1, %arg2, %arg3, %arg4, %10, %1, %2, %3, %arg1, %arg2, %arg3, %arg4) <{operandSegmentSizes = array<i32: 3, 1, 4, 3, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0"}> ({
+    ^bb0(%arg212: memref<?x128xi32>, %arg213: memref<?x128xi32>, %arg214: memref<?x128xi32>, %arg215: memref<?x128xi32>, %arg216: index, %arg217: i32, %arg218: i32, %arg219: i32):
+      %884 = "arith.constant"() <{value = 128 : index}> : () -> index
+      %885 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %886 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %887 = "taskflow.counter"(%885, %arg216, %886) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %888 = "taskflow.counter"(%887, %885, %884, %886) <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg212, %arg217, %arg213, %arg218, %arg214, %arg219, %arg215, %arg216) <{accelerator = "neura", operandSegmentSizes = array<i32: 8, 0>}> ({
+      ^bb0(%arg220: !neura.data<memref<?x128xi32>, i1>, %arg221: !neura.data<i32, i1>, %arg222: !neura.data<memref<?x128xi32>, i1>, %arg223: !neura.data<i32, i1>, %arg224: !neura.data<memref<?x128xi32>, i1>, %arg225: !neura.data<i32, i1>, %arg226: !neura.data<memref<?x128xi32>, i1>, %arg227: !neura.data<index, i1>):
+        %889 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input7"} : () -> !neura.data<index, i1>
+        %890 = "neura.counter"() <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = 128 : index} : () -> !neura.data<index, i1>
+        %891 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %892 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %893 = "neura.load_indexed"(%891, %892) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %894 = "neura.data_mov"(%893) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %895 = "neura.mul"(%894) {rhs_value = "%input1"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %896 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %897 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %898 = "neura.load_indexed"(%896, %897) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input2"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %899 = "neura.data_mov"(%898) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %900 = "neura.mul"(%899) {rhs_value = "%input3"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %901 = "neura.data_mov"(%895) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %902 = "neura.data_mov"(%900) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %903 = "neura.add"(%901, %902) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %904 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %905 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %906 = "neura.load_indexed"(%904, %905) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input4"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %907 = "neura.data_mov"(%906) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %908 = "neura.mul"(%907) {rhs_value = "%input5"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %909 = "neura.data_mov"(%903) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %910 = "neura.data_mov"(%908) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %911 = "neura.add"(%909, %910) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %912 = "neura.data_mov"(%911) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %913 = "neura.data_mov"(%889) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %914 = "neura.data_mov"(%890) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%912, %913, %914) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input6"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x128xi32>, i32, memref<?x128xi32>, i32, memref<?x128xi32>, i32, memref<?x128xi32>, index) -> ()
+      "taskflow.yield"(%arg215) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()
+    }
+
+=== HARRIS rank-2 Task_0.split.0 : exact source task region (trailing source-control binding omitted) ===
+    %12 = "taskflow.task"(%arg1, %arg2, %arg3, %11, %10, %1, %2, %3, %arg1, %arg2, %arg3, %11) <{operandSegmentSizes = array<i32: 3, 1, 4, 3, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0.split.0"}> ({
+    ^bb0(%arg229: memref<?x128xi32>, %arg230: memref<?x128xi32>, %arg231: memref<?x128xi32>, %arg232: memref<63x128xi32>, %arg233: index, %arg234: i32, %arg235: i32, %arg236: i32):
+      %917 = "arith.constant"() <{value = 128 : index}> : () -> index
+      %918 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %919 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %920 = "taskflow.counter"(%918, %arg233, %919) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %921 = "taskflow.counter"(%920, %918, %917, %919) <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg229, %arg232, %arg233) <{accelerator = "neura", operandSegmentSizes = array<i32: 3, 0>}> ({
+      ^bb0(%arg237: !neura.data<memref<?x128xi32>, i1>, %arg238: !neura.data<memref<63x128xi32>, i1>, %arg239: !neura.data<index, i1>):
+        %922 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input2"} : () -> !neura.data<index, i1>
+        %923 = "neura.counter"() <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = 128 : index} : () -> !neura.data<index, i1>
+        %924 = "neura.data_mov"(%922) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %925 = "neura.data_mov"(%923) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %926 = "neura.load_indexed"(%924, %925) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %927 = "neura.data_mov"(%926) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %928 = "neura.data_mov"(%922) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %929 = "neura.data_mov"(%923) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%927, %928, %929) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input1"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x128xi32>, memref<63x128xi32>, index) -> ()
+      "taskflow.yield"(%arg232) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<63x128xi32>) -> ()
+    }
+
+=== HARRIS rank-2 Task_0.split.1 : exact source task region (trailing source-control binding omitted) ===
+    %13 = "taskflow.task"(%12, %arg1, %arg2, %arg3, %arg4, %10, %1, %2, %3, %11, %arg1, %arg2, %arg3, %arg4) <{operandSegmentSizes = array<i32: 4, 1, 4, 4, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_0.split.1"}> ({
+    ^bb0(%arg212: memref<63x128xi32>, %arg213: memref<?x128xi32>, %arg214: memref<?x128xi32>, %arg215: memref<?x128xi32>, %arg216: memref<?x128xi32>, %arg217: index, %arg218: i32, %arg219: i32, %arg220: i32):
+      %886 = "arith.constant"() <{value = 128 : index}> : () -> index
+      %887 = "arith.constant"() <{value = 0 : index}> : () -> index
+      %888 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %889 = "taskflow.counter"(%887, %arg217, %888) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %890 = "taskflow.counter"(%889, %887, %886, %888) <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg212, %arg218, %arg214, %arg219, %arg215, %arg220, %arg216, %arg217) <{accelerator = "neura", operandSegmentSizes = array<i32: 8, 0>}> ({
+      ^bb0(%arg221: !neura.data<memref<63x128xi32>, i1>, %arg222: !neura.data<i32, i1>, %arg223: !neura.data<memref<?x128xi32>, i1>, %arg224: !neura.data<i32, i1>, %arg225: !neura.data<memref<?x128xi32>, i1>, %arg226: !neura.data<i32, i1>, %arg227: !neura.data<memref<?x128xi32>, i1>, %arg228: !neura.data<index, i1>):
+        %891 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = "%input7"} : () -> !neura.data<index, i1>
+        %892 = "neura.counter"() <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 0 : index, step_value = 1 : index, upper_bound_value = 128 : index} : () -> !neura.data<index, i1>
+        %893 = "neura.data_mov"(%891) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %894 = "neura.data_mov"(%892) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %895 = "neura.load_indexed"(%893, %894) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %896 = "neura.data_mov"(%895) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %897 = "neura.mul"(%896) {rhs_value = "%input1"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %898 = "neura.data_mov"(%891) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %899 = "neura.data_mov"(%892) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %900 = "neura.load_indexed"(%898, %899) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input2"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %901 = "neura.data_mov"(%900) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %902 = "neura.mul"(%901) {rhs_value = "%input3"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %903 = "neura.data_mov"(%897) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %904 = "neura.data_mov"(%902) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %905 = "neura.add"(%903, %904) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %906 = "neura.data_mov"(%891) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %907 = "neura.data_mov"(%892) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %908 = "neura.load_indexed"(%906, %907) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input4"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %909 = "neura.data_mov"(%908) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %910 = "neura.mul"(%909) {rhs_value = "%input5"} : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %911 = "neura.data_mov"(%905) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %912 = "neura.data_mov"(%910) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %913 = "neura.add"(%911, %912) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %914 = "neura.data_mov"(%913) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %915 = "neura.data_mov"(%891) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %916 = "neura.data_mov"(%892) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%914, %915, %916) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input6"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<63x128xi32>, i32, memref<?x128xi32>, i32, memref<?x128xi32>, i32, memref<?x128xi32>, index) -> ()
+      "taskflow.yield"(%arg216) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x128xi32>) -> ()
+    }
+
+=== RADAR typed legality replay Task_16.fuse.Task_17 : exact source task region (trailing source-control binding omitted) ===
+    %24:2 = "taskflow.task"(%19, %23, %arg26, %arg27, %7, %arg21, %arg25, %arg26, %arg27) <{operandSegmentSizes = array<i32: 2, 2, 1, 2, 2>, resultSegmentSizes = array<i32: 0, 2, 0>, task_name = "Task_16.fuse.Task_17"}> ({
+    ^bb0(%arg57: memref<?x256xi32>, %arg58: memref<?x256xi32>, %arg59: memref<?x256xi32>, %arg60: memref<?x256xi32>, %arg61: index):
+      %143 = "arith.constant"() <{value = 15 : index}> : () -> index
+      %144 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %145 = "arith.constant"() <{value = 2 : index}> : () -> index
+      %146 = "arith.constant"() <{value = -2 : index}> : () -> index
+      %147 = "arith.addi"(%arg61, %146) <{overflowFlags = #arith.overflow<none>}> : (index, index) -> index
+      %148 = "taskflow.counter"(%145, %147, %144) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %149 = "taskflow.counter"(%148, %144, %143, %144) <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg57, %arg58, %arg59, %147, %arg60) <{accelerator = "neura", operandSegmentSizes = array<i32: 5, 0>}> ({
+      ^bb0(%arg62: !neura.data<memref<?x256xi32>, i1>, %arg63: !neura.data<memref<?x256xi32>, i1>, %arg64: !neura.data<memref<?x256xi32>, i1>, %arg65: !neura.data<index, i1>, %arg66: !neura.data<memref<?x256xi32>, i1>):
+        %150 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 2 : index, step_value = 1 : index, upper_bound_value = "%input3"} : () -> !neura.data<index, i1>
+        %151 = "neura.counter"() <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 1 : index, step_value = 1 : index, upper_bound_value = 15 : index} : () -> !neura.data<index, i1>
+        %152 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %153 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %154 = "neura.load_indexed"(%152, %153) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %155 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %156 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %157 = "neura.load_indexed"(%155, %156) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input1"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %158 = "neura.data_mov"(%154) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %159 = "neura.data_mov"(%157) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %160 = "neura.icmp"(%158, %159) <{cmpType = "sgt"}> : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i1, i1>
+        %161 = "neura.data_mov"(%160) : (!neura.data<i1, i1>) -> !neura.data<i1, i1>
+        %162 = "neura.cast"(%161) <{cast_type = "extui"}> : (!neura.data<i1, i1>) -> !neura.data<i32, i1>
+        %163 = "neura.data_mov"(%162) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %164 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %165 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%163, %164, %165) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input2"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        %166 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %167 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %168 = "neura.load_indexed"(%166, %167) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %169 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %170 = "neura.add"(%169) {rhs_value = -1 : index} : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %171 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %172 = "neura.data_mov"(%170) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %173 = "neura.load_indexed"(%171, %172) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %174 = "neura.data_mov"(%168) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %175 = "neura.data_mov"(%173) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %176 = "neura.icmp"(%174, %175) <{cmpType = "sgt"}> : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i1, i1>
+        %177 = "neura.data_mov"(%176) : (!neura.data<i1, i1>) -> !neura.data<i1, i1>
+        %178 = "neura.cast"(%177) <{cast_type = "extui"}> : (!neura.data<i1, i1>) -> !neura.data<i32, i1>
+        %179 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %180 = "neura.add"(%179) {rhs_value = 1 : index} : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %181 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %182 = "neura.data_mov"(%180) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %183 = "neura.load_indexed"(%181, %182) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %184 = "neura.data_mov"(%168) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %185 = "neura.data_mov"(%183) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %186 = "neura.icmp"(%184, %185) <{cmpType = "sgt"}> : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i1, i1>
+        %187 = "neura.data_mov"(%186) : (!neura.data<i1, i1>) -> !neura.data<i1, i1>
+        %188 = "neura.cast"(%187) <{cast_type = "extui"}> : (!neura.data<i1, i1>) -> !neura.data<i32, i1>
+        %189 = "neura.data_mov"(%178) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %190 = "neura.data_mov"(%188) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %191 = "neura.mul"(%189, %190) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %192 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %193 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %194 = "neura.data_mov"(%163) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %195 = "neura.data_mov"(%191) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %196 = "neura.mul"(%194, %195) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %197 = "neura.data_mov"(%196) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %198 = "neura.data_mov"(%168) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %199 = "neura.mul"(%197, %198) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %200 = "neura.data_mov"(%199) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %201 = "neura.data_mov"(%151) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %202 = "neura.data_mov"(%150) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%200, %201, %202) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input4"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> : () -> ()
+      }) : (memref<?x256xi32>, memref<?x256xi32>, memref<?x256xi32>, index, memref<?x256xi32>) -> ()
+      "taskflow.yield"(%arg59, %arg60) <{operandSegmentSizes = array<i32: 0, 2, 0>}> : (memref<?x256xi32>, memref<?x256xi32>) -> ()
+    }
+
+=== RADAR typed legality replay Task_18 : exact source task region (trailing source-control binding omitted) ===
+    %25 = "taskflow.task"(%24#1, %19, %arg28, %7, %2, %arg27, %arg21, %arg28) <{operandSegmentSizes = array<i32: 2, 1, 2, 2, 1>, resultSegmentSizes = array<i32: 0, 1, 0>, task_name = "Task_18"}> ({
+    ^bb0(%arg47: memref<?x256xi32>, %arg48: memref<?x256xi32>, %arg49: memref<?x256xi32>, %arg50: index, %arg51: i32):
+      %95 = "arith.constant"() <{value = 15 : index}> : () -> index
+      %96 = "arith.constant"() <{value = 1 : index}> : () -> index
+      %97 = "arith.constant"() <{value = 2 : index}> : () -> index
+      %98 = "arith.constant"() <{value = -2 : index}> : () -> index
+      %99 = "arith.addi"(%arg50, %98) <{overflowFlags = #arith.overflow<none>}> : (index, index) -> index
+      %100 = "taskflow.counter"(%97, %99, %96) <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32}> : (index, index, index) -> index
+      %101 = "taskflow.counter"(%100, %96, %95, %96) <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32}> : (index, index, index, index) -> index
+      "neura.kernel"(%arg47, %arg51, %arg48, %arg49, %99) <{accelerator = "neura", operandSegmentSizes = array<i32: 5, 0>}> ({
+      ^bb0(%arg52: !neura.data<memref<?x256xi32>, i1>, %arg53: !neura.data<i32, i1>, %arg54: !neura.data<memref<?x256xi32>, i1>, %arg55: !neura.data<memref<?x256xi32>, i1>, %arg56: !neura.data<index, i1>):
+        %102 = "neura.counter"() <{counter_dynamism = "symbol_bound", counter_hierarchy = "root", counter_id = 0 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 2 : index, step_value = 1 : index, upper_bound_value = "%input4"} : () -> !neura.data<index, i1>
+        %103 = "neura.counter"() <{counter_dynamism = "constant_bound", counter_hierarchy = "leaf", counter_id = 1 : i32, operandSegmentSizes = array<i32: 0, 0, 0>}> {lower_bound_value = 1 : index, step_value = 1 : index, upper_bound_value = 15 : index} : () -> !neura.data<index, i1>
+        %104 = "neura.data_mov"(%103) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %105 = "neura.data_mov"(%102) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %106 = "neura.load_indexed"(%104, %105) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input0"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %107 = "neura.data_mov"(%106) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %108 = "neura.icmp"(%107) <{cmpType = "sgt"}> {rhs_value = "%input1"} : (!neura.data<i32, i1>) -> !neura.data<i1, i1>
+        %109 = "neura.data_mov"(%108) : (!neura.data<i1, i1>) -> !neura.data<i1, i1>
+        %110 = "neura.cast"(%109) <{cast_type = "extui"}> : (!neura.data<i1, i1>) -> !neura.data<i32, i1>
+        %111 = "neura.data_mov"(%103) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %112 = "neura.add"(%111) {rhs_value = -1 : index} : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %113 = "neura.data_mov"(%112) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %114 = "neura.data_mov"(%102) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %115 = "neura.load_indexed"(%113, %114) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input2"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %116 = "neura.data_mov"(%106) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %117 = "neura.data_mov"(%115) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %118 = "neura.icmp"(%116, %117) <{cmpType = "sgt"}> : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i1, i1>
+        %119 = "neura.data_mov"(%118) : (!neura.data<i1, i1>) -> !neura.data<i1, i1>
+        %120 = "neura.cast"(%119) <{cast_type = "extui"}> : (!neura.data<i1, i1>) -> !neura.data<i32, i1>
+        %121 = "neura.data_mov"(%103) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %122 = "neura.add"(%121) {rhs_value = 1 : index} : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %123 = "neura.data_mov"(%122) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %124 = "neura.data_mov"(%102) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %125 = "neura.load_indexed"(%123, %124) <{operandSegmentSizes = array<i32: 0, 2>}> {lhs_value = "%input2"} : (!neura.data<index, i1>, !neura.data<index, i1>) -> !neura.data<i32, i1>
+        %126 = "neura.data_mov"(%106) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %127 = "neura.data_mov"(%125) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %128 = "neura.icmp"(%126, %127) <{cmpType = "sgt"}> : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i1, i1>
+        %129 = "neura.data_mov"(%128) : (!neura.data<i1, i1>) -> !neura.data<i1, i1>
+        %130 = "neura.cast"(%129) <{cast_type = "extui"}> : (!neura.data<i1, i1>) -> !neura.data<i32, i1>
+        %131 = "neura.data_mov"(%110) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %132 = "neura.data_mov"(%120) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %133 = "neura.mul"(%131, %132) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %134 = "neura.data_mov"(%133) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %135 = "neura.data_mov"(%130) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %136 = "neura.mul"(%134, %135) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %137 = "neura.data_mov"(%136) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %138 = "neura.data_mov"(%106) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %139 = "neura.mul"(%137, %138) : (!neura.data<i32, i1>, !neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %140 = "neura.data_mov"(%139) : (!neura.data<i32, i1>) -> !neura.data<i32, i1>
+        %141 = "neura.data_mov"(%103) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        %142 = "neura.data_mov"(%102) : (!neura.data<index, i1>) -> !neura.data<index, i1>
+        "neura.store_indexed"(%140, %141, %142) <{operandSegmentSizes = array<i32: 1, 0, 2>}> {rhs_value = "%input3"} : (!neura.data<i32, i1>, !neura.data<index, i1>, !neura.data<index, i1>) -> ()
+        "neura.yield"() <{operandSegmentSizes = array<i32: 0, 0>}> {yield_type = "void"} : () -> ()
+      }) {dataflow_mode = "predicate"} : (memref<?x256xi32>, i32, memref<?x256xi32>, memref<?x256xi32>, index) -> ()
+      "taskflow.yield"(%arg49) <{operandSegmentSizes = array<i32: 0, 1, 0>}> : (memref<?x256xi32>) -> ()
+    }
+
