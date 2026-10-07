@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -174,3 +175,56 @@ def test_cli_accepts_parent_requested_explicit_aliases():
     assert args.source_contract == Path("/c")
     assert args.llvm_build == Path("/llvm")
     assert args.output_root == Path("/out")
+
+
+def test_cli_path_overrides_resolve_from_artifact_root_not_config_base(tmp_path):
+    artifact_root = tmp_path / "artifact"
+    config_base = artifact_root / "inputs"
+    cli_base = artifact_root / "cli-config"
+    config_base.mkdir(parents=True)
+    (cli_base / "reference").mkdir(parents=True)
+    for relative in ("canonical.mlir", "parent-cost.json", "model-cache.json",
+                     "configured-architecture.yaml", "configured-network.yaml",
+                     "configured-sram.json"):
+        (config_base / relative).write_text("{}\n", encoding="utf-8")
+    for relative in ("architecture.yaml", "network.yaml", "sram.json"):
+        (cli_base / relative).write_text("{}\n", encoding="utf-8")
+
+    config_path = artifact_root / "probe-config.json"
+    config_path.write_text(json.dumps({
+        "config_base": "inputs",
+        "workloads": {"harris": {
+            "canonical": "canonical.mlir",
+            "parent_cost_file": "parent-cost.json",
+            "model_cache": "model-cache.json",
+            "architecture": "configured-architecture.yaml",
+            "inter_task_network": "configured-network.yaml",
+            "sram_config": "configured-sram.json",
+            "reference_root": "configured-reference",
+        }},
+    }), encoding="utf-8")
+
+    # argparse's type=Path is the actual source of the CLI override values.
+    args = probes._parse_args([
+        "--artifact-root", str(artifact_root), "--source-root", str(tmp_path),
+        "--pin", "test-pin", "--optimizer", str(tmp_path / "optimizer"),
+        "--source-contract", str(tmp_path / "contract.json"),
+        "--protocol", str(tmp_path / "protocol.json"),
+        "--config", str(config_path), "--llvm-build", str(tmp_path / "llvm"),
+        "--output-root", str(tmp_path / "out"),
+        "--architecture", "cli-config/architecture.yaml",
+        "--inter-task-network", "cli-config/network.yaml",
+        "--sram-config", "cli-config/sram.json",
+        "--reference-root", "cli-config/reference",
+    ])
+
+    workload = probes.load_workload_config(config_path, artifact_root,
+                                           "harris", args)
+    assert isinstance(args.architecture, Path)
+    assert workload["canonical"] == (config_base / "canonical.mlir").resolve()
+    assert workload["parent_cost_file"] == (config_base / "parent-cost.json").resolve()
+    assert workload["model_cache"] == (config_base / "model-cache.json").resolve()
+    assert workload["architecture"] == (cli_base / "architecture.yaml").resolve()
+    assert workload["inter_task_network"] == (cli_base / "network.yaml").resolve()
+    assert workload["sram_config"] == (cli_base / "sram.json").resolve()
+    assert workload["reference_root"] == (cli_base / "reference").resolve()

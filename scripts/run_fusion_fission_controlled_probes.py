@@ -109,6 +109,8 @@ def _resolve_config_path(value: Any, *, base: Path, artifact_root: Path,
                          description: str, required: bool = True) -> Path | None:
     if value is None and not required:
         return None
+    if isinstance(value, os.PathLike):
+        value = os.fspath(value)
     if not isinstance(value, str) or not value:
         raise ProbeError(f"config is missing {description}")
     expanded = value.replace("${ARTIFACT_ROOT}", str(artifact_root))
@@ -169,6 +171,10 @@ def load_workload_config(config_path: Path, artifact_root: Path,
             "architecture", "inter_task_network", "sram_config", "reference_root"
         } else None
         value = override if override is not None else pick(key)
+        # CLI paths are supplied by argparse as Path objects. Resolve them
+        # against the artifact checkout, while paths read from the JSON config
+        # remain relative to config_base.
+        base = artifact_root if override is not None else config_base
         fallback: Path | None = None
         if key == "architecture":
             fallback = artifact_root / "config/architectures/amoeba_4x4_cgra_2x2_context6.yaml"
@@ -178,7 +184,7 @@ def load_workload_config(config_path: Path, artifact_root: Path,
             fallback = artifact_root / "config/architectures/amoeba_4x4_cgra_2x2_sram_pending.json"
         elif key == "reference_root":
             fallback = artifact_root / ".work/selected-native-numeric-gate"
-        paths[key] = (_resolve_config_path(value, base=config_base,
+        paths[key] = (_resolve_config_path(value, base=base,
                                            artifact_root=artifact_root,
                                            description=f"{workload}.{description}",
                                            required=False)
@@ -1425,6 +1431,25 @@ def run(args: argparse.Namespace) -> int:
         header.update(status="incomplete",
                       fixture_check_failure="one or more existing native fixtures failed")
         _write_json(output_root / "run.json", header)
+        failures = [row for row in args.fixture_check_evidence
+                    if row["status"] != "pass"]
+        print(f"controlled fusion/fission fixture checks failed ({len(failures)}):",
+              file=sys.stderr)
+        for row in failures:
+            detail = row.get("failure")
+            nested = row.get("fixtures")
+            if isinstance(nested, list):
+                failed = [
+                    f"{Path(item.get('fixture', 'fixture')).name} "
+                    f"(exit {item.get('command', {}).get('exit_code')})"
+                    for item in nested if item.get("status") != "pass"
+                ]
+                detail = ", ".join(failed) or detail
+            command = row.get("command")
+            if detail is None and isinstance(command, dict):
+                detail = f"exit {command.get('exit_code')}"
+            print(f"  - {row.get('kind', 'fixture')}: "
+                  f"{detail or row.get('status')}", file=sys.stderr)
         return 1
     errors: list[str] = []
     results: list[dict[str, Any]] = []
@@ -1471,6 +1496,11 @@ def run(args: argparse.Namespace) -> int:
     header.update(status="complete" if not errors else "incomplete",
                   controls=results, failures=errors)
     _write_json(output_root / "run.json", header)
+    if errors:
+        print(f"controlled fusion/fission probes failed ({len(errors)}):",
+              file=sys.stderr)
+        for error in errors:
+            print(f"  - {error}", file=sys.stderr)
     return 0 if not errors else 1
 
 
