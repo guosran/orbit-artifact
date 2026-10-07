@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import copy
 from datetime import datetime, timezone
 import importlib.util
 import json
@@ -469,6 +470,97 @@ def _diagnostic_search_command(nr: Any, *, optimizer: Path, canonical: Path,
     return command
 
 
+def _protocol_search_budget(protocol: Mapping[str, Any]) -> dict[str, Any]:
+    search = protocol.get("search")
+    if not isinstance(search, Mapping):
+        raise ProbeError("protocol has no search object for C++ budget binding")
+    names = ("max_rounds", "max_unique_complete_candidates_scored",
+             "beam_width", "diversity_min_slots", "max_partition_factor",
+             "native_shortlist", "max_fission_actions_per_task",
+             "diagnostic_ii_ceiling", "round_score_quota")
+    return {name: search.get(name) for name in names}
+
+
+def _validate_search_budget_binding(protocol: Mapping[str, Any],
+                                    options: Mapping[str, int]) -> None:
+    """Mirror every strict budget comparison in C++ search binding."""
+    search = protocol.get("search")
+    if not isinstance(search, Mapping):
+        raise ProbeError("protocol has no search object for C++ budget binding")
+    fields = {
+        "max_rounds": "max_rounds",
+        "max_candidates": "max_unique_complete_candidates_scored",
+        "beam_width": "beam_width",
+        "diversity_slots": "diversity_min_slots",
+        "max_partition_factor": "max_partition_factor",
+    }
+    mismatches = {
+        protocol_field: {"protocol": search.get(protocol_field),
+                         "cxx_option": options.get(option)}
+        for option, protocol_field in fields.items()
+        if search.get(protocol_field) != options.get(option)
+    }
+    if mismatches:
+        raise ProbeError("diagnostic search budgets do not match their bound "
+                         f"protocol: {mismatches}")
+
+
+def _write_diagnostic_protocol(protocol: Mapping[str, Any], *,
+                               output_dir: Path, candidate_budget: int
+                               ) -> tuple[Path, dict[str, Any], dict[str, Any]]:
+    """Bind bounded controls to a diagnostic-only protocol copy.
+
+    The C++ pass rejects zero max-rounds and requires its five budget options
+    to equal the bound protocol. One round with an exact identity-plus-seed
+    candidate cap admits only the explicit controls for scoring.
+    """
+    if candidate_budget not in (2, 3):
+        raise ProbeError("controlled diagnostic searches must score exactly 2 or 3 candidates")
+    diagnostic = copy.deepcopy(dict(protocol))
+    search = diagnostic.get("search")
+    if not isinstance(search, dict):
+        raise ProbeError("common protocol has no mutable search object")
+    main_budget = _protocol_search_budget(protocol)
+    required_main = {"max_rounds": 4,
+                     "max_unique_complete_candidates_scored": 4096,
+                     "beam_width": 16, "diversity_min_slots": 4,
+                     "native_shortlist": 5}
+    if any(main_budget.get(name) != value for name, value in required_main.items()):
+        raise ProbeError("common protocol no longer has the preserved main-curve "
+                         f"budget: {main_budget}")
+    options = {"max_rounds": 1, "max_candidates": candidate_budget,
+               "beam_width": 1, "diversity_slots": 1,
+               "max_partition_factor": main_budget["max_partition_factor"]}
+    search.update(max_rounds=options["max_rounds"],
+                  max_unique_complete_candidates_scored=options["max_candidates"],
+                  beam_width=options["beam_width"],
+                  diversity_min_slots=options["diversity_slots"])
+    _validate_search_budget_binding(diagnostic, options)
+    if search.get("native_shortlist") != main_budget["native_shortlist"]:
+        raise ProbeError("diagnostic protocol changed the common native shortlist")
+
+    path = output_dir / "diagnostic-common-protocol.json"
+    if path.exists() or path.is_symlink():
+        raise ProbeError(f"diagnostic protocol path already exists: {path}")
+    _write_json(path, diagnostic)
+    execution = diagnostic.get("execution")
+    receipt = {
+        "diagnostic_only": True,
+        "path": str(path.resolve()),
+        "main_curve_search_budget": main_budget,
+        "diagnostic_search_budget": _protocol_search_budget(diagnostic),
+        "protocol_execution_budget": {
+            "scoring_workers": (execution.get("scoring_workers")
+                                if isinstance(execution, Mapping) else None)},
+        "cxx_search_options": options,
+        "scored_candidate_composition": {
+            "identity": 1, "explicit_control_seeds": candidate_budget - 1,
+            "total": candidate_budget},
+        "main_curve_budget_changed": False,
+    }
+    return path.resolve(), diagnostic, receipt
+
+
 def _history_key(value: Mapping[str, Any]) -> str:
     history = value.get("action_history")
     if not isinstance(history, dict) or history.get("known") is not True:
@@ -867,7 +959,9 @@ def _run_search(*, nr: Any, optimizer: Path, canonical: Path, function: str,
                 cost_cache: Path | None, parent_cost_file: Path,
                 network: Path, workload: str, seed_facts: Sequence[Mapping[str, Any]],
                 prepared_source: Path | None, fission_cap: int | None,
-                output_dir: Path, artifact_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+                output_dir: Path, artifact_root: Path,
+                diagnostic_budget_receipt: Mapping[str, Any]
+                ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     search_dir = output_dir / "search"
     search_dir.mkdir(parents=True, exist_ok=False)
     seed_manifest = output_dir / "diagnostic-seeds.jsonl"
@@ -875,6 +969,15 @@ def _run_search(*, nr: Any, optimizer: Path, canonical: Path, function: str,
                                        for row in seed_facts), encoding="utf-8")
     checkpoint = output_dir / "checkpoint.json"
     candidate_budget = 1 + len(seed_facts)  # C++ identity plus explicit controls.
+    options = {"max_rounds": 1, "max_candidates": candidate_budget,
+               "beam_width": 1, "diversity_slots": 1,
+               "max_partition_factor": protocol.get("search", {}).get(
+                   "max_partition_factor")}
+    _validate_search_budget_binding(protocol, options)
+    if (diagnostic_budget_receipt.get("diagnostic_only") is not True or
+            diagnostic_budget_receipt.get("cxx_search_options") != options or
+            diagnostic_budget_receipt.get("main_curve_budget_changed") is not False):
+        raise ProbeError("diagnostic budget receipt does not match the exact C++ search options")
     _assert_cxx_path_safe(*(path for path in
                             (optimizer, canonical, output_dir, architecture,
                              checkpoint, seed_manifest, protocol_path,
@@ -914,6 +1017,7 @@ def _run_search(*, nr: Any, optimizer: Path, canonical: Path, function: str,
                       "top5": str(top5_path), "header": header,
                       "footer": end, "search_summary": footer,
                       "candidate_score_budget": candidate_budget,
+                      "diagnostic_search_protocol": dict(diagnostic_budget_receipt),
                       "main_curve_budget_changed": False,
                       "selections": selections}
     _write_json(output_dir / "search-evidence.json", archive_record)
@@ -985,9 +1089,12 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
             fused_source_tasks[expected_memory["fused"]].get("complete") is not True):
         raise ProbeError("C++ fusion source domains are not complete for all parent/fused tasks")
     seed_fact = facts
+    diagnostic_protocol_path, diagnostic_protocol, budget_receipt = \
+        _write_diagnostic_protocol(protocol_data, output_dir=probe_root,
+                                   candidate_budget=2)
     source_binding_path = probe_root / "source-binding.json"
     binding = _source_binding(
-        nr, protocol=protocol_data, protocol_path=args.protocol.resolve(),
+        nr, protocol=diagnostic_protocol, protocol_path=diagnostic_protocol_path,
         canonical=canonical, optimizer=args.optimizer.resolve(),
         architecture=data["architecture"], model_cache=data["model_cache"],
         cost_cache=data["cost_cache"], parent_cost_file=data["parent_cost_file"],
@@ -997,12 +1104,13 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
     selections, search_evidence = _run_search(
         nr=nr, optimizer=args.optimizer.resolve(), canonical=canonical,
         function=function, stage=FUSION_STAGE, architecture=data["architecture"],
-        protocol=protocol_data, protocol_path=args.protocol.resolve(),
+        protocol=diagnostic_protocol, protocol_path=diagnostic_protocol_path,
         source_contract=source_contract, model_cache=data["model_cache"],
         cost_cache=data["cost_cache"], parent_cost_file=data["parent_cost_file"],
         network=data["inter_task_network"], workload=workload,
         seed_facts=[seed_fact], prepared_source=None, fission_cap=None,
-        output_dir=probe_root, artifact_root=artifact_root)
+        output_dir=probe_root, artifact_root=artifact_root,
+        diagnostic_budget_receipt=budget_receipt)
     transformed_selection = _selected_row(selections, seed_fact)
     identity_controls = nr.load_cpp_controls(
         probe_root / "search/controls.jsonl", require_previous=False)
@@ -1037,7 +1145,7 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         network=data["inter_task_network"], sram_config=data["sram_config"],
         mapping_cache=output_root / "mapper-cache" / workload,
         stage=FUSION_STAGE, workload=workload, canonical=canonical,
-        function=function, protocol_path=args.protocol.resolve(),
+        function=function, protocol_path=diagnostic_protocol_path,
         source_contract=source_contract, source_binding=source_binding_path,
         prepared_source=None, max_partition_factor=max_partition_factor,
         fission_cap=None, output_dir=probe_root)
@@ -1079,6 +1187,7 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         "typed_replay_facts": facts,
         "typed_replay_command": direct_command,
         "fresh_score_search": search_evidence,
+        "diagnostic_search_protocol": budget_receipt,
         "native_summary": replay_summary,
         "numeric_command": numeric_command,
         "numeric_gate": numeric,
@@ -1202,9 +1311,12 @@ def _fission_probe(*, args: argparse.Namespace, nr: Any, replay: Any,
     children, fission_step = _verified_fission_children(
         parent_facts, split_facts, parent_task, left_nodes)
 
+    diagnostic_protocol_path, diagnostic_protocol, budget_receipt = \
+        _write_diagnostic_protocol(protocol_data, output_dir=probe_root,
+                                   candidate_budget=3)
     binding_path = probe_root / "source-binding.json"
     binding = _source_binding(
-        nr, protocol=protocol_data, protocol_path=args.protocol.resolve(),
+        nr, protocol=diagnostic_protocol, protocol_path=diagnostic_protocol_path,
         canonical=canonical, optimizer=args.optimizer.resolve(),
         architecture=data["architecture"], model_cache=data["model_cache"],
         cost_cache=data["cost_cache"], parent_cost_file=data["parent_cost_file"],
@@ -1214,14 +1326,14 @@ def _fission_probe(*, args: argparse.Namespace, nr: Any, replay: Any,
     selections, search_evidence = _run_search(
         nr=nr, optimizer=args.optimizer.resolve(), canonical=canonical,
         function=function, stage=FISSION_STAGE,
-        architecture=data["architecture"], protocol=protocol_data,
-        protocol_path=args.protocol.resolve(), source_contract=source_contract,
+        architecture=data["architecture"], protocol=diagnostic_protocol,
+        protocol_path=diagnostic_protocol_path, source_contract=source_contract,
         model_cache=data["model_cache"], cost_cache=data["cost_cache"],
         parent_cost_file=data["parent_cost_file"],
         network=data["inter_task_network"], workload=workload,
         seed_facts=[parent_facts, split_facts], prepared_source=prepared,
         fission_cap=fission_cap, output_dir=probe_root,
-        artifact_root=artifact_root)
+        artifact_root=artifact_root, diagnostic_budget_receipt=budget_receipt)
     parent_selection = _selected_row(selections, parent_facts)
     split_selection = _selected_row(selections, split_facts)
     parent_resources = _resource_count(parent_selection)
@@ -1253,7 +1365,7 @@ def _fission_probe(*, args: argparse.Namespace, nr: Any, replay: Any,
         network=data["inter_task_network"], sram_config=data["sram_config"],
         mapping_cache=output_root / "mapper-cache" / workload,
         stage=FISSION_STAGE, workload=workload, canonical=canonical,
-        function=function, protocol_path=args.protocol.resolve(),
+        function=function, protocol_path=diagnostic_protocol_path,
         source_contract=source_contract, source_binding=binding_path,
         prepared_source=prepared, max_partition_factor=max_partition_factor,
         fission_cap=fission_cap, output_dir=probe_root)
@@ -1320,6 +1432,7 @@ def _fission_probe(*, args: argparse.Namespace, nr: Any, replay: Any,
                                             "current_control_binding_present": True}
                                            for row in children]}},
         "fresh_score_search": search_evidence,
+        "diagnostic_search_protocol": budget_receipt,
         "native_summary": replay_summary,
         "numeric_command": numeric_command,
         "resource_comparison": {"unsplit_parent_task_cgra_count": parent_pair_resources,

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import copy
 from pathlib import Path
 import sys
 from types import SimpleNamespace
@@ -75,6 +76,112 @@ def test_search_command_has_only_explicit_diagnostic_seeds_and_budget(tmp_path):
     assert captured["max_rounds"] == 1
     assert captured["max_candidates"] == 2
     assert captured["beam_width"] == captured["diversity_slots"] == 1
+
+
+def _captured_r10c_common_protocol():
+    # Search/execution budget fields taken from the actual bound R10c protocol.
+    return {
+        "schema": "orbit-amoeba-input0-neighborhood-v3",
+        "source_commit": "45cef07ffa91f289398bcd82bbd0f9207f021a55",
+        "stage_scheme": "full-joint-fission",
+        "scheduler": {"backend": "orbit-production",
+                      "dispatch_policy": "critical-path",
+                      "timing": "common-explicit-network"},
+        "execution": {"scoring_workers": 4, "cpus_per_lane": 4},
+        "search": {
+            "max_rounds": 4,
+            "max_unique_complete_candidates_scored": 4096,
+            "beam_width": 16,
+            "diversity_min_slots": 4,
+            "max_partition_factor": 8,
+            "native_shortlist": 5,
+            "max_fission_actions_per_task": 64,
+            "diagnostic_ii_ceiling": 20,
+            "supported_shape_bootstrap_policy":
+                "minimum-area-supported-model-shape-v1",
+        },
+    }
+
+
+@pytest.mark.parametrize("candidate_budget", [2, 3])
+def test_r10c_diagnostic_protocol_matches_every_cpp_budget_without_touching_main(
+        tmp_path, candidate_budget):
+    main = _captured_r10c_common_protocol()
+    original = copy.deepcopy(main)
+    path, diagnostic, receipt = probes._write_diagnostic_protocol(
+        main, output_dir=tmp_path, candidate_budget=candidate_budget)
+    options = {"max_rounds": 1, "max_candidates": candidate_budget,
+               "beam_width": 1, "diversity_slots": 1,
+               "max_partition_factor": 8}
+
+    probes._validate_search_budget_binding(diagnostic, options)
+    assert json.loads(path.read_text(encoding="utf-8")) == diagnostic
+    assert main == original
+    expected = copy.deepcopy(original)
+    expected["search"].update(
+        max_rounds=1,
+        max_unique_complete_candidates_scored=candidate_budget,
+        beam_width=1,
+        diversity_min_slots=1)
+    assert diagnostic == expected
+    assert probes._protocol_search_budget(original) == {
+        "max_rounds": 4,
+        "max_unique_complete_candidates_scored": 4096,
+        "beam_width": 16,
+        "diversity_min_slots": 4,
+        "max_partition_factor": 8,
+        "native_shortlist": 5,
+        "max_fission_actions_per_task": 64,
+        "diagnostic_ii_ceiling": 20,
+        "round_score_quota": None,
+    }
+    assert probes._protocol_search_budget(diagnostic) == {
+        "max_rounds": 1,
+        "max_unique_complete_candidates_scored": candidate_budget,
+        "beam_width": 1,
+        "diversity_min_slots": 1,
+        "max_partition_factor": 8,
+        "native_shortlist": 5,
+        "max_fission_actions_per_task": 64,
+        "diagnostic_ii_ceiling": 20,
+        "round_score_quota": None,
+    }
+    assert receipt["protocol_execution_budget"] == {"scoring_workers": 4}
+    assert receipt["cxx_search_options"] == options
+    assert receipt["main_curve_budget_changed"] is False
+    assert receipt["scored_candidate_composition"] == {
+        "identity": 1, "explicit_control_seeds": candidate_budget - 1,
+        "total": candidate_budget}
+
+
+@pytest.mark.parametrize(("option", "protocol_field"), [
+    ("max_rounds", "max_rounds"),
+    ("max_candidates", "max_unique_complete_candidates_scored"),
+    ("beam_width", "beam_width"),
+    ("diversity_slots", "diversity_min_slots"),
+    ("max_partition_factor", "max_partition_factor"),
+])
+def test_r10c_cpp_budget_guard_checks_each_protocol_bound_field(option,
+                                                                protocol_field):
+    protocol = _captured_r10c_common_protocol()
+    options = {"max_rounds": 4, "max_candidates": 4096,
+               "beam_width": 16, "diversity_slots": 4,
+               "max_partition_factor": 8}
+    probes._validate_search_budget_binding(protocol, options)
+    options[option] += 1
+    with pytest.raises(probes.ProbeError, match=protocol_field):
+        probes._validate_search_budget_binding(protocol, options)
+
+
+def test_r10c_main_curve_protocol_rejects_old_bounded_cli_options():
+    # This is the exact R10c mismatch: bounded command values were paired with
+    # the unmodified 4/4096/16/4 main protocol and C++ failed before search.
+    main = _captured_r10c_common_protocol()
+    old_cli = {"max_rounds": 1, "max_candidates": 2,
+               "beam_width": 1, "diversity_slots": 1,
+               "max_partition_factor": 8}
+    with pytest.raises(probes.ProbeError, match="search budgets do not match"):
+        probes._validate_search_budget_binding(main, old_cli)
 
 
 def test_body_statistics_are_read_only_counts_from_generic_cpp_output(tmp_path):
