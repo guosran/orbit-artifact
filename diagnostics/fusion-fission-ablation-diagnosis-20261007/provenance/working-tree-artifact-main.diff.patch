@@ -1,0 +1,162 @@
+diff --git a/docs/SEQUENTIAL_FIXED_FISSION_RERUN.md b/docs/SEQUENTIAL_FIXED_FISSION_RERUN.md
+index 408b81d..9a20361 100644
+--- a/docs/SEQUENTIAL_FIXED_FISSION_RERUN.md
++++ b/docs/SEQUENTIAL_FIXED_FISSION_RERUN.md
+@@ -56,3 +56,28 @@ python3 scripts/show_sequential_comparison.py
+ 这是一次查询：未完成时显示状态，全部完成时审计并导出主表、预算/时间曲线、
+ 阶段敏感性、转交补充、最终方案索引和事实性论文结论。它不重跑搜索。
+ 主表加速比始终是 `Sequential native cycles / Joint native cycles`。
++
++存储恢复采用独立绑定的适配器；不修改已封存的 v3 搜索、mapper、模型和验证脚本。
++原协调器在八项七门验证通过后，被无关数值结果的归档清理错误阻断：搜索完成清理
++会移除未入选成本目录的源路径，但早先搬到 `/tmp` 的相同字节仍在；旧清理器要求
++所有搬移目录都已进入主辅助归档。新适配器为主归档之外的字节写入逐成员 SHA-256
++验证的 `staged-catalogue-supplemental.tar.gz` 与清单后再清理，不丢弃原始证据。
++实际 `top5.jsonl`、搜索完成记录和归档标志均阻止继续搬移；清理仍要求七门验证和
++成功退出记录。每单元的 `catalogue-storage-recovery-overhead.jsonl` 单列耗时。
++
++恢复只跳过已验证单元；这些单元沿用原 CPU lane 的绑定来鉴别，不再运行搜索或
++mapper。后续单元按原两条四核 lane 运行。原全量参数保存在 queue manifest 中，
++原协调器初始化、进程和失败队列记录保存在 `storage-recovery/pre-resume-*.json`；
++`runtime-recovery.json` 绑定额外适配器代码、恢复前开销和零额外评估/mapper 调用，
++并保存八项结果、统计、执行与配置绑定的 SHA，最终再次检查字节保持一致。
++
++恢复命令（仅在旧协调器及本恢复进程都已退出时执行，避免重复运行）：
++
++```sh
++/usr/bin/python3 -u .work/sequential-storage-20261007/recovery-runtime/resume_sequential_storage_recovery.py \
++  --manifest .work/sequential-fixed-fission-v3/queue-manifest.json \
++  --adapter .work/sequential-storage-20261007/recovery-runtime/sequential_catalogue_storage_recovery.py
++```
++
++本次已验证 GCN/Harris 部分表与预测收敛曲线保存在
++`diagnostics/sequential-comparison-fixed-fission-4096-partial/`，不作为五程序完整结论。
+diff --git a/reference/sequential-comparison/active-run.json b/reference/sequential-comparison/active-run.json
+index dcad014..a5b71a0 100644
+--- a/reference/sequential-comparison/active-run.json
++++ b/reference/sequential-comparison/active-run.json
+@@ -5,11 +5,13 @@
+   "supplement_output_dir": "diagnostics/sequential-fixed-fission-transfer-4096",
+   "launch_file": "results/sequential-comparison-fixed-fission-4096/launch.json",
+   "queue_manifest": ".work/sequential-fixed-fission-v3/queue-manifest.json",
+-  "supervisor_pid": 1030537,
++  "supervisor_pid": 2555054,
+   "previous_batch": "results/sequential-comparison-4096-fast2-host",
+   "previous_batch_status": "completed, preserved, excluded from fixed-trunk-fission cohort",
+   "previous_supplement": "results/sequential-budget-transfer-4096",
+   "scope": "fixed repaired main plus current source-owned fission; no old result reuse",
+   "objective_calls_per_flow": 4096,
+-  "cores": 8
++  "cores": 8,
++  "storage_recovery_launch": "results/sequential-comparison-fixed-fission-4096/storage-recovery-launch.json",
++  "storage_recovery_runtime": ".work/sequential-storage-20261007/recovery-runtime/bindings.json"
+ }
+diff --git a/scripts/run_sequential_comparison.py b/scripts/run_sequential_comparison.py
+index c652da2..f50e8ff 100644
+--- a/scripts/run_sequential_comparison.py
++++ b/scripts/run_sequential_comparison.py
+@@ -63,7 +63,8 @@ def complete(cell):
+ 
+ 
+ def make_protocol(template, budget, rounds, scoring_workers, round_score_quota=None,
+-                  search_stage="full-joint", budget_policy="fixed-split"):
++                  search_stage="full-joint", budget_policy="fixed-split", *,
++                  beam_width=16, diversity_slots=4):
+     round_score_quota = round_score_quota or (budget + 7) // 8
+     protocol = read(template)
+     protocol["experiment_kind"] = "joint-versus-sequential"
+@@ -72,7 +73,8 @@ def make_protocol(template, budget, rounds, scoring_workers, round_score_quota=N
+     protocol["source_variant"] = "sequential-comparison-v4-objective-controlled"
+     protocol["source_binding"] = "Exact serialized compiler/source/model witnesses plus SHA-256 content guards for executable, protocol, inputs and replay reuse; cost cache identity unchanged"
+     protocol["search"].update(max_rounds=rounds, round_score_quota=round_score_quota,
+-        max_unique_complete_candidates_scored=budget, beam_width=16, diversity_min_slots=4)
++        max_unique_complete_candidates_scored=budget, beam_width=beam_width,
++        diversity_min_slots=diversity_slots)
+     protocol["execution"]["scoring_workers"] = scoring_workers
+     protocol["comparison_search_stage"] = search_stage
+     protocol.pop("historical_native_winners", None)
+@@ -193,9 +195,13 @@ def run_cell(args, workload, method, entry, protocol, cpus):
+     cell.mkdir(parents=True, exist_ok=True)
+     common_protocol = protocol
+     protocol = cell / "protocol.json"
+-    write_exact(protocol, method_protocol(read(common_protocol), flow))
+-    method_rounds = read(protocol)["search"]["max_rounds"]
+-    search_stage = read(protocol).get("comparison_search_stage", "full-joint")
++    cell_protocol = method_protocol(read(common_protocol), flow)
++    write_exact(protocol, cell_protocol)
++    search_config = cell_protocol["search"]
++    method_rounds = search_config["max_rounds"]
++    beam_width = search_config["beam_width"]
++    diversity_slots = search_config["diversity_min_slots"]
++    search_stage = cell_protocol.get("comparison_search_stage", "full-joint")
+     if search_stage == "full-joint-fission" and not entry.get("prepared_source_file"):
+         raise ValueError(f"fission comparison requires prepared source for {workload}")
+     binding = {"workload": workload, "method": label, "decision_flow": flow,
+@@ -245,7 +251,8 @@ def run_cell(args, workload, method, entry, protocol, cpus):
+         "--inter-task-network", str(args.inter_task_network),
+         "--sram-config", str(args.sram_config), "--mapping-cache", str(cell / "mapping-cache"),
+         "--output-dir", str(cell), "--max-candidates", str(args.budget),
+-        "--max-rounds", str(method_rounds), "--beam-width", "16", "--diversity-slots", "4",
++        "--max-rounds", str(method_rounds), "--beam-width", str(beam_width),
++        "--diversity-slots", str(diversity_slots),
+         "--jobs", str(args.cpus_per_worker)]
+     if entry.get("function"):
+         argv.extend(["--function", entry["function"]])
+@@ -270,6 +277,8 @@ def run_cell(args, workload, method, entry, protocol, cpus):
+         "coordinator_initialization_wall_seconds": initialization_seconds,
+         "elapsed_cell_seconds_including_coordinator_initialization": time.monotonic() - prelaunch_started,
+         "status": "validated" if complete(cell) else "incomplete"}
++    if beam_width != 16 or diversity_slots != 4:
++        record.update(beam_width=beam_width, diversity_slots=diversity_slots)
+     replay.atomic_write(cell / "execution.json", record)
+     print(json.dumps({k: v for k, v in record.items() if k != "argv"}), flush=True)
+     return record
+@@ -287,6 +296,8 @@ def main():
+         help="Common nonbinding safety ceiling; defaults to twice the objective allowance")
+     parser.add_argument("--round-score-quota", type=int,
+         help="Common fixed objective quota per expansion round; defaults to ceil(total allowance / 8)")
++    parser.add_argument("--beam-width", type=int, default=16)
++    parser.add_argument("--diversity-slots", type=int, default=4)
+     parser.add_argument("--workers", type=int, default=3)
+     parser.add_argument("--cpus-per-worker", type=int, default=4)
+     parser.add_argument("--compact-completed", action="store_true",
+@@ -302,6 +313,8 @@ def main():
+     args.round_score_quota = args.round_score_quota or (args.budget + 7) // 8
+     if args.budget < 32 or args.max_rounds < 2 * args.budget or args.round_score_quota < 1 or args.workers * args.cpus_per_worker > 12:
+         parser.error("budget >=32, nonbinding round cap >=2*budget, positive common quota, and at most twelve host CPUs required")
++    if args.beam_width < 1 or args.diversity_slots < 0 or args.diversity_slots >= args.beam_width:
++        parser.error("beam width must be positive and diversity slots must be nonnegative and smaller than beam width")
+     for key, value in vars(args).items():
+         if isinstance(value, Path):
+             setattr(args, key, value.resolve())
+@@ -319,7 +332,8 @@ def main():
+     if args.sequential_budget_policy == "transfer-unused":
+         method_specs = [TRANSFER_METHOD]
+     protocol = make_protocol(args.protocol_template, args.budget, args.max_rounds, args.cpus_per_worker,
+-                             args.round_score_quota, args.search_stage, args.sequential_budget_policy)
++                             args.round_score_quota, args.search_stage, args.sequential_budget_policy,
++                             beam_width=args.beam_width, diversity_slots=args.diversity_slots)
+     protocol["execution"].update(workload_lanes=args.workers, cpus_per_lane=args.cpus_per_worker,
+                                   max_host_cores=args.workers * args.cpus_per_worker)
+     contract = read(args.source_contract_file)
+@@ -341,7 +355,7 @@ def main():
+     if len(available) < args.workers * args.cpus_per_worker:
+         raise ValueError("insufficient CPU affinity for disjoint lanes")
+     lanes = [available[i * args.cpus_per_worker:(i + 1) * args.cpus_per_worker] for i in range(args.workers)]
+-    write_exact(args.output_root / "experiment-plan.json", {
++    plan = {
+         "schema": "orbit-sequential-comparison-plan-v1", "budget": args.budget,
+         "main_graph_budget_percent": 50, "sensitivity_graph_budget_percents": [25, 75],
+         "joint_max_rounds": args.max_rounds,
+@@ -360,7 +374,10 @@ def main():
+                                   "exact_bytes": (ROOT / "scripts" / filename).read_text()}
+                                  for filename in (("run_sequential_comparison.py", "neighborhood_replay.py", "compact_sequential_raw.py")
+                                                   if args.compact_completed else ("run_sequential_comparison.py", "neighborhood_replay.py"))],
+-    })
++    }
++    if args.beam_width != 16 or args.diversity_slots != 4:
++        plan.update(beam_width=args.beam_width, diversity_slots=args.diversity_slots)
++    write_exact(args.output_root / "experiment-plan.json", plan)
+     jobs = Queue()
+     for workload in args.workloads:
+         for method in method_specs:
