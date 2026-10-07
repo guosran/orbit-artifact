@@ -300,10 +300,13 @@ def _fusion_action(control: Mapping[str, Any]) -> dict[str, Any]:
         primitives=[_primitive("fusion", first, second, mode)])
 
 
-def fusion_actions(control: Mapping[str, Any], fused_task: str) -> list[dict[str, Any]]:
+def fusion_actions(control: Mapping[str, Any], fused_task: str, *,
+                   shape_rows: int = 1, shape_cols: int = 2) -> list[dict[str, Any]]:
+    if (shape_rows, shape_cols) not in {(1, 2), (2, 1)}:
+        raise ProbeError("same-resource fusion controls support only 1x2 or 2x1")
     fusion = _fusion_action(control)
-    shape = _typed_action("shape", f"shape:{fused_task}:1x2",
-                          shape_task=fused_task, rows=1, cols=2)
+    shape = _typed_action("shape", f"shape:{fused_task}:{shape_rows}x{shape_cols}",
+                          shape_task=fused_task, rows=shape_rows, cols=shape_cols)
     return [fusion, shape]
 
 
@@ -1138,7 +1141,11 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         max_partition_factor=max_partition_factor, artifact_root=artifact_root)
     fused_task = _compiler_fused_task_name(
         parent_facts, name_facts, control["first"], control["second"])
-    actions = fusion_actions(control, fused_task)
+    requested_fusion_shape = (args.pc_fusion_shape if control["family"] == "fusion"
+                              else "1x2")
+    fusion_rows, fusion_cols = (int(part) for part in requested_fusion_shape.split("x"))
+    actions = fusion_actions(control, fused_task,
+                             shape_rows=fusion_rows, shape_cols=fusion_cols)
     facts, direct_command = _direct_replay(
         optimizer=args.optimizer.resolve(), architecture=data["architecture"],
         canonical=canonical, function=function, stage=FUSION_STAGE,
@@ -1214,8 +1221,9 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
     fused_shape = fused_costs.get(expected_memory["fused"], {}).get("shape")
     if any(shape != {"rows": 1, "cols": 1} for shape in parent_shapes.values()):
         raise ProbeError(f"same-resource fusion parent tasks are not both 1x1: {parent_shapes}")
-    if fused_shape != {"rows": 1, "cols": 2}:
-        raise ProbeError(f"C++ fused task shape is not the explicit 1x2 control: {fused_shape}")
+    expected_fused_shape = {"rows": fusion_rows, "cols": fusion_cols}
+    if fused_shape != expected_fused_shape:
+        raise ProbeError(f"C++ fused task shape is not the explicit control: {fused_shape}")
     parent_pair_resources = sum(shape["rows"] * shape["cols"]
                                 for shape in parent_shapes.values() if shape)
     fused_task_resources = fused_shape["rows"] * fused_shape["cols"]
@@ -1267,6 +1275,7 @@ def _fusion_probe(*, name: str, control: Mapping[str, Any], args: argparse.Names
         "kind": control["family"],
         "typed_actions": actions,
         "typed_action_history": transformed_selection.get("action_history"),
+        "requested_fused_shape": expected_fused_shape,
         "parent_source_replay": {"facts": parent_facts, "command": parent_command},
         "fusion_name_discovery_replay": {"facts": name_facts,
                                          "command": name_command},
@@ -1663,6 +1672,8 @@ def _parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--reference-root", type=Path)
     parser.add_argument("--fission-workload", choices=("lu", "harris"), default="lu")
     parser.add_argument("--fission-task", default="Task_0")
+    parser.add_argument("--pc-fusion-shape", choices=("1x2", "2x1"), default="1x2",
+                        help="same-two-CGRA orientation for the Harris/Radar PC controls; sibling stays 1x2")
     parser.add_argument("--skip-fission", action="store_true")
     parser.add_argument("--skip-fusion", action="store_true")
     return parser.parse_args(argv)
@@ -1716,6 +1727,7 @@ def run(args: argparse.Namespace) -> int:
         "config": str(args.config),
         "llvm_build": str(args.llvm_build),
         "output_root": str(output_root),
+        "pc_fusion_shape": args.pc_fusion_shape,
         "main_curve_budget_changed": False,
         "negative_fixture_commands": negative_fixture_commands(args.optimizer,
                                                                   args.source_root),

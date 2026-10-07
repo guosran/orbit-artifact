@@ -35,6 +35,27 @@ def test_fusion_controls_preserve_the_parent_pair_resource_count():
     assert sibling[0]["family"] == "sibling-fusion"
     assert sibling[0]["primitives"][0]["mode"] == "sibling"
     assert sibling[1]["shapeRows"] * sibling[1]["shapeCols"] == 2
+    assert (pc[1]["shapeRows"], pc[1]["shapeCols"]) == (1, 2)
+
+
+def test_pc_fusion_shape_option_keeps_the_two_cgra_control_explicit():
+    args = probes._parse_args([
+        "--artifact-root", "/tmp/artifact", "--source-root", "/tmp/source",
+        "--source-pin", "pin", "--optimizer", "/tmp/optimizer",
+        "--source-contract", "/tmp/contract", "--protocol", "/tmp/protocol",
+        "--config", "/tmp/config", "--llvm-build", "/tmp/llvm",
+        "--output-root", "/tmp/output", "--pc-fusion-shape", "2x1",
+    ])
+    actions = probes.fusion_actions(probes.WORKLOAD_CONTROLS["harris"],
+                                    "Task_0.fuse.Task_1",
+                                    shape_rows=2, shape_cols=1)
+
+    assert args.pc_fusion_shape == "2x1"
+    assert (actions[1]["shapeRows"], actions[1]["shapeCols"]) == (2, 1)
+    assert actions[1]["shapeRows"] * actions[1]["shapeCols"] == 2
+    with pytest.raises(probes.ProbeError):
+        probes.fusion_actions(probes.WORKLOAD_CONTROLS["harris"],
+                              "Task_0.fuse.Task_1", shape_rows=1, shape_cols=1)
 
 
 def test_cut_selection_uses_only_source_census_legal_rows():
