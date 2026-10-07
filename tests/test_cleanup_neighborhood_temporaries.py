@@ -51,7 +51,7 @@ class NeighborhoodTemporaryCleanupTests(unittest.TestCase):
                                "candidate_path": str(candidate),
                                "score_file": str(score),
                                "shape_manifest_file": str(manifest)})
-        selections.append({"record_type": "footer", "complete": False})
+        selections.append({"record_type": "footer", "complete": True})
         (search / "top5.jsonl").write_text("\n".join(json.dumps(row) for row in selections) + "\n")
 
         control_candidate = search / "candidates" / "identity.mlir"
@@ -73,6 +73,62 @@ class NeighborhoodTemporaryCleanupTests(unittest.TestCase):
         (search / "spaces" / "graph-0" / "space.jsonl").write_text("spill\n")
         (search / "witnesses" / "graph-0" / "proof.json").write_text("spill\n")
         return stage, search
+
+    def add_family_best_witness(self, stage: Path, search: Path, *,
+                                missing_module: bool = False) -> Path:
+        diagnostics = search / "diagnostics"
+        diagnostics.mkdir(parents=True, exist_ok=True)
+        module = search / "candidates" / "family-witness-module.mlir"
+        cost = search / "costs-graph-catalogue-family.json"
+        source_binding = search / "checkpoint.json.binding.json"
+        for path, contents in (
+                (module, "module witness\n"),
+                (cost, '{"schema":"family-cost-witness"}\n'),
+                (source_binding, '{"schema":"source-binding-witness"}\n'),
+                (stage / "prepared-source.mlir", "prepared source witness\n"),
+                (stage / "protocol.json", '{"schema":"protocol-witness"}\n'),
+                (stage / "source-contract.json", '{"schema":"contract-witness"}\n'),
+                (stage / "architecture.yaml", "architecture witness\n")):
+            path.write_text(contents, encoding="utf-8")
+        inline_module = "module { /* exact inline witness */ }"
+        cost_json = json.dumps({"schema": "family-cost-witness"})
+        witness = {
+            "schema": cleanup._FAMILY_WITNESS_SCHEMA,
+            "candidate_id": "neighborhood-family",
+            "candidate_key": "graph-family|unit-shapes",
+            "parent_candidate_id": "",
+            "graph_variant_id": "graph-family",
+            "graph_facts_key": "graph-family",
+            "binding": {
+                "architecture_path": str(stage / "architecture.yaml"),
+                "prepared_source_path": str(stage / "prepared-source.mlir"),
+                "protocol_path": str(stage / "protocol.json"),
+                "source_contract_path": str(stage / "source-contract.json"),
+                "source_binding_witness": str(source_binding),
+            },
+            "candidate_path_at_archive": str(
+                search / "candidates" / "missing-family-module.mlir"
+                if missing_module else module),
+            "candidate_module_ir": inline_module,
+            "candidate_module_bytes": len(inline_module.encode("utf-8")),
+            "candidate_module_operation_count": 1,
+            "cost_catalogue_path_at_archive": str(cost),
+            "cost_catalogue_snapshot_available": True,
+            "cost_catalogue_snapshot_bytes": len(cost_json.encode("utf-8")),
+            "cost_catalogue_exact_json": cost_json,
+            "task_choices": [],
+            "task_costs": [],
+            "task_schedule": [],
+            "predicted_whole_program_cycles": 12,
+            "action_history": {"schema": "orbit-joint-neighborhood-typed-actions-v1",
+                               "known": True, "canonicalFactKey": "graph-family",
+                               "actions": [], "fissionActions": []},
+            "action_path": ["fission:Task_1:left=1", "shape:Task_1.split.1:2x1"],
+            "typed_path_families": ["fission"],
+        }
+        path = diagnostics / "family-best-witness-neighborhood-family.json"
+        path.write_text(json.dumps(witness, indent=2) + "\n", encoding="utf-8")
+        return path
 
     def test_keeps_every_candidate_and_replay_file_named_by_shortlist_or_controls(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -109,6 +165,96 @@ class NeighborhoodTemporaryCleanupTests(unittest.TestCase):
             self.assertTrue((stage / "result.json").is_file())
             self.assertTrue((stage / "numeric-result.json").is_file())
             self.assertTrue((search / "candidates" / "winner-4.mlir").is_file())
+
+    def test_closed_search_preserves_family_witness_dependencies_and_funnel_ledgers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stage, search = self.prepare(Path(directory))
+            witness = self.add_family_best_witness(stage, search)
+            for name, contents in (
+                    ("archive.jsonl", "final archive\n"),
+                    ("archive.journal.jsonl", "append journal\n"),
+                    ("archive.jsonl.gz", "compressed final archive\n"),
+                    ("archive.journal.jsonl.gz", "compressed journal\n"),
+                    ("finalarchive.jsonl", "named final archive\n"),
+                    ("candidate-family-funnel.jsonl", "candidate funnel\n"),
+                    ("diagnostics/family-funnel.jsonl", "diagnostic funnel\n"),
+                    ("diagnostics/family-funnel-summary.json", "{}\n")):
+                path = search / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(contents, encoding="utf-8")
+            (search / "costs-graph-catalogue-unrelated.json").write_text(
+                "unrelated cost spill\n", encoding="utf-8")
+            (search / "archive-temporary.jsonl").write_text(
+                "unrelated archive spill\n", encoding="utf-8")
+
+            receipt = cleanup.cleanup_search_temporaries(stage)
+
+            self.assertEqual(receipt["status"], "cleaned")
+            self.assertTrue(witness.is_file())
+            for name in ("archive.jsonl", "archive.journal.jsonl",
+                         "archive.jsonl.gz", "archive.journal.jsonl.gz",
+                         "finalarchive.jsonl", "candidate-family-funnel.jsonl",
+                         "diagnostics/family-funnel.jsonl",
+                         "diagnostics/family-funnel-summary.json"):
+                self.assertTrue((search / name).is_file(), name)
+            self.assertTrue((search / "costs-graph-catalogue-family.json").is_file())
+            self.assertTrue((search / "candidates" / "family-witness-module.mlir").is_file())
+            self.assertTrue((search / "checkpoint.json.binding.json").is_file())
+            self.assertFalse((search / "costs-graph-catalogue-unrelated.json").exists())
+            self.assertFalse((search / "archive-temporary.jsonl").exists())
+            self.assertFalse((search / "candidates" / "orphan.mlir").exists())
+            self.assertTrue(any(item["path"].endswith("costs-graph-catalogue-family.json")
+                                for item in receipt["retained"]))
+            self.assertTrue(any(item["path"].endswith("family-witness-module.mlir")
+                                for item in receipt["retained"]))
+
+    def test_malformed_family_witness_refuses_before_any_spill_is_deleted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stage, search = self.prepare(Path(directory))
+            diagnostics = search / "diagnostics"
+            diagnostics.mkdir()
+            malformed = diagnostics / "family-best-witness-broken.json"
+            malformed.write_text('{"schema":', encoding="utf-8")
+
+            receipt = cleanup.cleanup_search_temporaries(stage)
+
+            self.assertEqual(receipt["status"], "refused")
+            self.assertIn("family-best witness is malformed", receipt["reason"])
+            self.assertTrue((search / "costs-graph-catalogue-999.json").is_file())
+            self.assertTrue((search / "candidates" / "orphan.mlir").is_file())
+            self.assertTrue((search / "archive-complete.jsonl").is_file())
+
+    def test_missing_archived_module_path_uses_exact_inline_module_witness(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stage, search = self.prepare(Path(directory))
+            witness = self.add_family_best_witness(
+                stage, search, missing_module=True)
+
+            receipt = cleanup.cleanup_search_temporaries(stage)
+
+            self.assertEqual(receipt["status"], "cleaned")
+            self.assertTrue(witness.is_file())
+            self.assertTrue((search / "costs-graph-catalogue-family.json").is_file())
+            self.assertFalse((search / "candidates" / "missing-family-module.mlir").exists())
+            self.assertFalse((search / "candidates" / "orphan.mlir").exists())
+            self.assertTrue(any(item["path"].endswith("missing-family-module.mlir")
+                                and "inline-module-witness" in item["reason"]
+                                for item in receipt["skipped"]))
+
+    def test_missing_source_binding_reference_refuses_cleanup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            stage, search = self.prepare(Path(directory))
+            witness_path = self.add_family_best_witness(stage, search)
+            witness = json.loads(witness_path.read_text(encoding="utf-8"))
+            witness["binding"]["protocol_path"] = str(stage / "missing-protocol.json")
+            witness_path.write_text(json.dumps(witness), encoding="utf-8")
+
+            receipt = cleanup.cleanup_search_temporaries(stage)
+
+            self.assertEqual(receipt["status"], "refused")
+            self.assertIn("family-best witness references a missing file", receipt["reason"])
+            self.assertTrue((search / "costs-graph-catalogue-999.json").is_file())
+            self.assertTrue((search / "candidates" / "orphan.mlir").is_file())
 
     def test_symlinked_auxiliary_directory_is_never_followed(self):
         with tempfile.TemporaryDirectory() as directory:

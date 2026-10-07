@@ -25,9 +25,21 @@ PROTECTED_SEARCH_FILES = {
     "controls.jsonl",
     "graph-manifests.json",
     "search-output.mlir",
+    # C++'s final search/family evidence is needed for post hoc funnel audits.
+    "archive.jsonl",
+    "archive.jsonl.gz",
+    "archive.journal.jsonl",
+    "archive.journal.jsonl.gz",
+    "finalarchive.jsonl",
+    "finalarchive.jsonl.gz",
+    "candidate-family-funnel.jsonl",
+    "diagnostics/family-funnel.jsonl",
+    "diagnostics/family-funnel-summary.json",
 }
 _COST_FILE = re.compile(r"^costs-.+\.json$")
 _ARCHIVE_FILE = re.compile(r"^archive.*\.jsonl(?:\.gz)?$")
+_FAMILY_BEST_WITNESS = re.compile(r"^family-best-witness-.+\.json$")
+_FAMILY_WITNESS_SCHEMA = "orbit-joint-neighborhood-family-best-witness-v1"
 
 
 class CleanupRefused(RuntimeError):
@@ -159,6 +171,11 @@ def _inside(path: Path, root: Path) -> bool:
 
 def _target_category(path: Path, search_dir: Path) -> str | None:
     relative = path.relative_to(search_dir)
+    if relative.as_posix() in PROTECTED_SEARCH_FILES:
+        return "protected-search-evidence"
+    if (relative.parts[:-1] == ("diagnostics",) and
+            _FAMILY_BEST_WITNESS.match(path.name)):
+        return "compiler-family-best-witness"
     if any(part in {"spaces", "witnesses"} for part in relative.parts[:-1]):
         return "space-or-witness-tree"
     if len(relative.parts) >= 2 and relative.parts[0] == "candidates" and path.suffix == ".mlir":
@@ -211,6 +228,121 @@ def _walk_symlinks(root: Path) -> Iterable[Path]:
                 yield from _walk_symlinks(path)
         except OSError:
             continue
+
+
+def _diagnostic_file_references(value: Any) -> Iterable[tuple[str, str]]:
+    """Yield real file references embedded in compiler family witnesses.
+
+    Action histories also have fields named ``action_path``; those are
+    semantic labels, not filesystem paths, so this narrower walker excludes
+    them while retaining source, module, cost, protocol, and binding paths.
+    """
+    if isinstance(value, Mapping):
+        for key, child in value.items():
+            key_text = str(key).lower()
+            is_file_reference = (
+                key_text not in {"action_path", "alternate_action_paths",
+                                 "typed_path_families"} and
+                (key_text in {"path", "paths", "manifest"} or
+                 key_text.endswith(("_path", "_paths", "_file", "_files",
+                                    "_manifest", "_witness")) or
+                 "_path_" in key_text or "_file_" in key_text or
+                 "manifest_file" in key_text))
+            if is_file_reference:
+                if isinstance(child, str) and child:
+                    yield key_text, child
+                elif isinstance(child, (list, tuple)):
+                    for item in child:
+                        if isinstance(item, str) and item:
+                            yield key_text, item
+            yield from _diagnostic_file_references(child)
+    elif isinstance(value, (list, tuple)):
+        for child in value:
+            yield from _diagnostic_file_references(child)
+
+
+def _validate_family_best_witnesses(search_dir: Path,
+                                    stage_dir: Path
+                                    ) -> tuple[set[Path], list[str]]:
+    """Validate retained family proof JSON and collect its referenced files.
+
+    A malformed, incomplete, symlinked, or source-stale witness refuses
+    cleanup before any spill is unlinked. Existing archive locators are kept;
+    an already-missing candidate locator is tolerated only when its exact
+    module snapshot is embedded and byte-count checked. Unrelated candidate
+    modules and cost catalogues remain eligible for cleanup.
+    """
+    diagnostics_dir = search_dir / "diagnostics"
+    if diagnostics_dir.is_symlink():
+        raise CleanupRefused("family diagnostic directory is a symlink")
+    if not diagnostics_dir.exists():
+        return set(), []
+    if not diagnostics_dir.is_dir():
+        raise CleanupRefused("family diagnostic path is not a directory")
+
+    referenced: set[Path] = set()
+    missing_inline_module_paths: list[str] = []
+    for entry in sorted(os.scandir(diagnostics_dir), key=lambda item: item.name):
+        if not _FAMILY_BEST_WITNESS.match(entry.name):
+            continue
+        witness_path = Path(entry.path)
+        if entry.is_symlink():
+            raise CleanupRefused(f"family-best witness is a symlink: {witness_path}")
+        if not entry.is_file(follow_symlinks=False):
+            raise CleanupRefused(f"family-best witness is not a regular file: {witness_path}")
+        try:
+            witness = _read_json(witness_path)
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise CleanupRefused(f"family-best witness is malformed: {witness_path}: {error}") from error
+        if witness.get("schema") != _FAMILY_WITNESS_SCHEMA:
+            raise CleanupRefused(f"family-best witness has an unknown schema: {witness_path}")
+        required = {
+            "candidate_id": str,
+            "graph_variant_id": str,
+            "binding": dict,
+            "candidate_module_ir": str,
+            "candidate_module_bytes": int,
+            "cost_catalogue_exact_json": str,
+            "cost_catalogue_snapshot_available": bool,
+            "cost_catalogue_snapshot_bytes": int,
+            "task_choices": list,
+            "task_costs": list,
+            "task_schedule": list,
+        }
+        for field, expected_type in required.items():
+            value = witness.get(field)
+            if (type(value) is not expected_type or
+                    (expected_type is str and not value)):
+                raise CleanupRefused(f"family-best witness lacks valid {field}: {witness_path}")
+        if (witness["candidate_module_bytes"] !=
+                len(witness["candidate_module_ir"].encode("utf-8"))):
+            raise CleanupRefused(f"family-best witness module byte count is inconsistent: {witness_path}")
+        if (not witness["cost_catalogue_snapshot_available"] or
+                witness["cost_catalogue_snapshot_bytes"] !=
+                len(witness["cost_catalogue_exact_json"].encode("utf-8"))):
+            raise CleanupRefused(f"family-best witness cost snapshot is incomplete: {witness_path}")
+        try:
+            cost_snapshot = json.loads(witness["cost_catalogue_exact_json"])
+        except json.JSONDecodeError as error:
+            raise CleanupRefused(
+                f"family-best witness has invalid embedded cost catalogue: {witness_path}: {error}") from error
+        if not isinstance(cost_snapshot, dict):
+            raise CleanupRefused(f"family-best witness cost catalogue is not an object: {witness_path}")
+
+        referenced.add(witness_path.resolve(strict=True))
+        for field, raw_path in _diagnostic_file_references(witness):
+            resolved = _resolve_reference(raw_path, search_dir, stage_dir)
+            if resolved is None or not resolved.is_file():
+                # These are historical archive locations. The witness also
+                # embeds byte-count-checked exact snapshots, so a path already
+                # removed by an earlier cleanup does not invalidate the proof.
+                if field == "candidate_path_at_archive":
+                    missing_inline_module_paths.append(raw_path)
+                    continue
+                raise CleanupRefused(
+                    f"family-best witness references a missing file: {raw_path}")
+            referenced.add(resolved)
+    return referenced, missing_inline_module_paths
 
 
 def _write_receipt(stage_dir: Path, receipt: dict[str, Any]) -> dict[str, Any]:
@@ -288,6 +420,13 @@ def cleanup_search_temporaries(stage_dir: Path, *, enabled: bool = True) -> dict
             path = search_dir / name
             if path.exists() and not path.is_symlink():
                 referenced.add(path.resolve(strict=True))
+        family_witness_references, missing_inline_module_paths = \
+            _validate_family_best_witnesses(search_dir, stage_dir)
+        referenced.update(family_witness_references)
+        receipt["skipped"].extend({
+            "path": raw_path,
+            "reason": "archived-module-path-missing; exact-byte-inline-module-witness-retained"}
+            for raw_path in missing_inline_module_paths)
 
         planned: list[tuple[Path, str]] = []
         receipt["skipped"].extend({"path": str(path), "reason": "symlink-not-followed"}
