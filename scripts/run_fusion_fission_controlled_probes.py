@@ -953,6 +953,96 @@ def _selected_row(rows: Sequence[Mapping[str, Any]], expected: Mapping[str, Any]
     return matched[0]
 
 
+def _validate_search_receipt(*, rows: Sequence[Mapping[str, Any]],
+                             summary: Mapping[str, Any],
+                             seed_facts: Sequence[Mapping[str, Any]],
+                             protocol: Mapping[str, Any], protocol_path: Path,
+                             source_pin: str, stage: str,
+                             candidate_budget: int
+                             ) -> tuple[list[dict[str, Any]], dict[str, Any], dict[str, Any]]:
+    """Require the C++ search's complete, protocol-bound best-found receipt.
+
+    The current C++ JSONL contract records success as ``status=best-found``;
+    it does not emit a ``complete`` boolean.  Accept that specific terminal
+    status only when the summary, header, footer, budget, source binding, and
+    every explicit typed seed agree.  This rejects truncated output and other
+    terminal statuses while preserving the C++-owned ranking and scores.
+    """
+    if len(rows) < 3:
+        raise ProbeError("C++ top-five archive is truncated before header/selections/footer")
+    headers = [row for row in rows if row.get("record_type") == "header"]
+    footers = [row for row in rows if row.get("record_type") == "footer"]
+    if (len(headers) != 1 or len(footers) != 1 or
+            rows[0].get("record_type") != "header" or
+            rows[-1].get("record_type") != "footer"):
+        raise ProbeError("C++ top-five archive must have one leading header and terminal footer")
+    header, footer = dict(headers[0]), dict(footers[0])
+    selections = [dict(row) for row in rows if row.get("record_type") == "selection"]
+    if len(selections) != candidate_budget:
+        raise ProbeError("C++ archive selection count differs from identity plus explicit seeds")
+
+    required = {
+        "schema": "orbit-neighborhood-search-v2",
+        "source_commit": source_pin,
+        "stage": stage,
+        "protocol_path": str(protocol_path.resolve()),
+        "max_candidates": candidate_budget,
+        "max_rounds": 1,
+        "beam_width": 1,
+        "diversity_slots": 1,
+        "max_partition_factor": protocol.get("search", {}).get("max_partition_factor"),
+        "best_found": True,
+        "identity_control_retained": True,
+        "stop_reason": "max-unique-candidates",
+        "unique_complete_candidates_scored": candidate_budget,
+        "unique_scored_candidates": candidate_budget,
+        "unique_valid_candidates": candidate_budget,
+        "native_shortlist_count": candidate_budget,
+        "native_top5_required": True,
+    }
+    if (footer.get("status") != "best-found" or
+            header.get("status") is not None):
+        raise ProbeError("C++ search footer is not terminal best-found")
+    for label, receipt in (("header", header), ("footer", footer)):
+        for field, expected in required.items():
+            if receipt.get(field) != expected:
+                raise ProbeError(f"C++ search {label} has an unbound or incomplete {field}")
+    if summary.get("record_type") is not None or summary.get("status") is not None:
+        raise ProbeError("C++ search summary has unexpected terminal record metadata")
+    footer_payload = {key: value for key, value in footer.items()
+                      if key not in {"record_type", "status"}}
+    if dict(summary) != footer_payload:
+        raise ProbeError("C++ search summary does not exactly match the JSONL footer")
+
+    ranks = [row.get("rank") for row in selections]
+    if any(not isinstance(rank, int) or isinstance(rank, bool) for rank in ranks) or \
+            ranks != list(range(candidate_budget)):
+        raise ProbeError("C++ selections do not contain the complete ordered diagnostic ranks")
+    if any(row.get("valid") is not True for row in selections):
+        raise ProbeError("C++ archive contains an invalid controlled selection")
+    history_keys = [_history_key(row) for row in selections]
+    if len(set(history_keys)) != len(history_keys):
+        raise ProbeError("C++ archive repeats a typed action history")
+    for seed in seed_facts:
+        _selected_row(selections, seed)
+
+    # The identity selection is the no-op history over the same canonical
+    # initial shapes as the explicit controls.  Require it as the only extra
+    # selection so a different, hidden candidate cannot consume diagnostic
+    # budget or stand in for the canonical comparison.
+    seed_history = seed_facts[0].get("action_history")
+    if not isinstance(seed_history, dict):
+        raise ProbeError("explicit C++ seed lacks typed history for identity binding")
+    identity_history = dict(seed_history)
+    identity_history.update(actions=[], fissionActions=[])
+    identity = {"action_history": identity_history}
+    if sum(_history_key(row) == _history_key(identity) for row in selections) != 1:
+        raise ProbeError("C++ archive omitted the canonical identity selection")
+    if any(_history_key(row) not in {*history_keys} for row in selections):
+        raise ProbeError("C++ archive contains an unexpected typed diagnostic candidate")
+    return selections, header, footer
+
+
 def _run_search(*, nr: Any, optimizer: Path, canonical: Path, function: str,
                 stage: str, architecture: Path, protocol: Mapping[str, Any],
                 protocol_path: Path, source_contract: Path, model_cache: Path,
@@ -998,20 +1088,16 @@ def _run_search(*, nr: Any, optimizer: Path, canonical: Path, function: str,
     if command_record.get("exit_code") != 0:
         raise ProbeError(f"C++ diagnostic fresh-score search failed; see {command_record['stderr']}")
     result_path = search_dir / "search-summary.json"
-    footer = _read_json(result_path, "C++ search summary") if result_path.is_file() else {}
+    footer = _read_json(result_path, "C++ search summary")
     top5_path = nr.find_output_file(search_dir,
                                    ("global-top5.jsonl", "top5.jsonl", "native-top5.jsonl"))
     rows = nr.read_jsonl(top5_path)
-    selections = [nr.normalize_selection(row) for row in rows
-                  if row.get("record_type") == "selection"]
-    if len(selections) < len(seed_facts):
-        raise ProbeError("C++ archive omitted one or more explicit controlled candidates")
-    for seed in seed_facts:
-        _selected_row(selections, seed)
-    header = next((row for row in rows if row.get("record_type") == "header"), {})
-    end = next((row for row in reversed(rows) if row.get("record_type") == "footer"), {})
-    if end and end.get("complete") is not True:
-        raise ProbeError("C++ search top-five footer is not complete")
+    selections, header, end = _validate_search_receipt(
+        rows=rows, summary=footer, seed_facts=seed_facts,
+        protocol=protocol, protocol_path=protocol_path,
+        source_pin=str(protocol.get("source_commit", "")), stage=stage,
+        candidate_budget=candidate_budget)
+    selections = [nr.normalize_selection(row) for row in selections]
     archive_record = {"command": command_record,
                       "seed_manifest": str(seed_manifest),
                       "top5": str(top5_path), "header": header,

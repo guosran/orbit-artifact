@@ -154,6 +154,103 @@ def test_r10c_diagnostic_protocol_matches_every_cpp_budget_without_touching_main
         "total": candidate_budget}
 
 
+def _r10e_best_found_archive(candidate_budget=2):
+    protocol_path = Path("/tmp/r10e-bound-protocol.json")
+    protocol = {"source_commit": "6c7473f625a744fc09ca55152b96d5f42f316177",
+                "search": {"max_partition_factor": 8}}
+    initial_shapes = [{"task": "Task_0", "rows": 1, "cols": 1},
+                      {"task": "Task_1", "rows": 1, "cols": 1}]
+    histories = []
+    for index in range(candidate_budget - 1):
+        history = {"known": True, "initialShapes": initial_shapes,
+                   "actions": ([{"family": "fusion", "label": "fuse:Task_0:Task_1"}]
+                               if index == 0 else
+                               [{"family": "shape", "label": "shape:Task_0:2x1"}]),
+                   "fissionActions": ([{"parentTask": "Task_0", "leftNodes": [0]}]
+                                      if index > 0 else [])}
+        histories.append(history)
+    identity = {"known": True, "initialShapes": initial_shapes,
+                "actions": [], "fissionActions": []}
+    selections = [
+        {"record_type": "selection", "rank": rank,
+         "candidate_id": f"neighborhood-seed-{rank}",
+         "graph_variant_id": f"graph-{rank}", "valid": True,
+         "action_history": history}
+        for rank, history in enumerate([*histories, identity])
+    ]
+    fields = {
+        "schema": "orbit-neighborhood-search-v2",
+        "source_commit": protocol["source_commit"],
+        "stage": "full-joint-fission" if candidate_budget == 3 else "full-joint",
+        "protocol_path": str(protocol_path),
+        "max_candidates": candidate_budget, "max_rounds": 1,
+        "beam_width": 1, "diversity_slots": 1, "max_partition_factor": 8,
+        "best_found": True, "identity_control_retained": True,
+        "stop_reason": "max-unique-candidates",
+        "unique_complete_candidates_scored": candidate_budget,
+        "unique_scored_candidates": candidate_budget,
+        "unique_valid_candidates": candidate_budget,
+        "native_shortlist_count": candidate_budget,
+        "native_top5_required": True,
+        "source_binding_witness": "/tmp/checkpoint.json.binding.json",
+    }
+    header = {"record_type": "header", **fields}
+    footer = {"record_type": "footer", "status": "best-found", **fields}
+    return protocol_path, protocol, histories, [header, *selections, footer], fields
+
+
+@pytest.mark.parametrize("candidate_budget", [2, 3])
+def test_r10e_best_found_footer_is_bound_to_all_controlled_seeds_and_identity(
+        candidate_budget):
+    protocol_path, protocol, seeds, rows, summary = _r10e_best_found_archive(
+        candidate_budget)
+    selections, header, footer = probes._validate_search_receipt(
+        rows=rows, summary=summary, seed_facts=[{"action_history": history}
+                                                for history in seeds],
+        protocol=protocol, protocol_path=protocol_path,
+        source_pin=protocol["source_commit"], stage=rows[0]["stage"],
+        candidate_budget=candidate_budget)
+
+    assert len(selections) == candidate_budget
+    assert header["record_type"] == "header"
+    assert footer["status"] == "best-found"
+
+
+@pytest.mark.parametrize("mutation", [
+    "failed-status", "truncated", "wrong-source", "wrong-protocol",
+    "wrong-stage", "under-scored", "summary-mismatch", "hidden-selection",
+])
+def test_r10e_best_found_footer_rejects_failed_or_unbound_receipts(mutation):
+    protocol_path, protocol, seeds, rows, summary = _r10e_best_found_archive()
+    rows = copy.deepcopy(rows)
+    summary = copy.deepcopy(summary)
+    if mutation == "failed-status":
+        rows[-1]["status"] = "failed"
+    elif mutation == "truncated":
+        rows.pop()
+    elif mutation == "wrong-source":
+        rows[-1]["source_commit"] = "other-pin"
+    elif mutation == "wrong-protocol":
+        rows[-1]["protocol_path"] = "/tmp/other-protocol.json"
+    elif mutation == "wrong-stage":
+        rows[-1]["stage"] = "shape-only"
+    elif mutation == "under-scored":
+        rows[-1]["unique_complete_candidates_scored"] = 1
+    elif mutation == "summary-mismatch":
+        summary["stop_reason"] = "truncated"
+    elif mutation == "hidden-selection":
+        rows.insert(-1, {"record_type": "selection", "rank": 2, "valid": True,
+                         "action_history": rows[1]["action_history"]})
+
+    with pytest.raises(probes.ProbeError):
+        probes._validate_search_receipt(
+            rows=rows, summary=summary,
+            seed_facts=[{"action_history": history} for history in seeds],
+            protocol=protocol, protocol_path=protocol_path,
+            source_pin=protocol["source_commit"], stage="full-joint",
+            candidate_budget=2)
+
+
 @pytest.mark.parametrize(("option", "protocol_field"), [
     ("max_rounds", "max_rounds"),
     ("max_candidates", "max_unique_complete_candidates_scored"),
