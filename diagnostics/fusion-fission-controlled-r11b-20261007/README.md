@@ -4,7 +4,9 @@ These R11b controls all completed exact C++ source replay, fresh C++ scoring, na
 
 The pin acceptance receipt says the immutable optimizer copy was accepted and the current 140-file source snapshot exactly matches the implementation snapshot used to build it. The separate source-proof receipt has 25 passing records, including positive exact-source replays and expected rejection cases. The R11b mapping unblock is a narrow same-block, unannotated, exact-type `DataMov` producer peel. It does not relax the mapper globally.
 
-| Control | Same total resources | Native cycles: transformed vs identity/parent | Actual mapped II | Memory operations in source task bodies | Numeric and trace |
+The fix-before evidence is the separate R10e cohort on source namespace `6c7473f625a744fc09ca55152b96d5f42f316177`: its four Harris/Radar PC orientation runs aborted in the native mapper at `mapping_util.cpp:1088` (`!producer_locs.empty()`). The preserved R10e receipts are under `/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/{pc-harris-task0-task1,pc-radar-task16-task17}` for 1x2 and `/tmp/orbit-r10e-controlled-fusion-fission-3676f1e-pc2x1-20261007/{pc-harris-task0-task1,pc-radar-task16-task17}` for 2x1. The R11b rows below are fresh runs on source namespace `4547a3853452438af0a74f20342b4bc182cc9107` in new output roots; they are not reruns of those old receipts.
+
+| Control | Equal resource allocations | Native cycles: transformed vs identity/parent | Actual mapped II | Memory operations in source task bodies | Numeric and trace |
 |---|---|---|---|---|---|
 | Harris Task_0 + Task_1, fused 1x2 | Pair 2 CGRAs; program 24 CGRAs | 955,485 vs 988,258 (−32,773; −3.3162%) | Parents 3/7; fused 10 | 4 loads/2 stores → 3/2 | 884,736 comparisons, 0 mismatches; pass |
 | Harris Task_0 + Task_1, fused 2x1 | Pair 2 CGRAs; program 24 CGRAs | 939,361 vs 988,258 (−48,897; −4.9478%) | Parents 3/7; fused 8 | 4 loads/2 stores → 3/2 | 884,736 comparisons, 0 mismatches; pass |
@@ -12,6 +14,8 @@ The pin acceptance receipt says the immutable optimizer copy was accepted and th
 | Radar Task_16 + Task_17, fused 2x1 | Pair 2 CGRAs; program 21 CGRAs | 1,312,031 vs 1,317,811 (−5,780; −0.4386%) | Parents 2/6; fused 6 | 6 loads/2 stores → 5/2 | 259,904 comparisons, 0 mismatches; pass |
 | Radar sibling Task_4 + Task_5, fused 1x2 | Pair 2 CGRAs; program 21 CGRAs | 1,579,954 vs 1,317,811 (+262,143; +19.8923%) | Parents 7/7; fused 9 | 8 loads/2 stores → 4/2 | 259,904 comparisons, 0 mismatches; pass |
 | LU Task_0 fission | Parent 2x1 vs children 1x1 + 1x1; program 10 CGRAs | 18,694 vs parent 18,438 (+256; +1.3884%) | Parent 1; children 2/2 | Parent 1 load/1 store; children each 1/1 | 4,025 comparisons, 0 mismatches; pass |
+
+Resource terminology: “program 24/21/10 CGRAs” is the sum of the per-task CGRA allocations in a whole-program candidate. Tasks reuse the physical grid over time, so this sum is neither the hardware size nor simultaneous demand or peak occupancy. The configured hardware remains 16 CGRAs and 64 PEs. This receipt reports no observed peak-occupancy value.
 
 The memory counts are from the exact C++ replayed source task bodies. Both public stores remain in every fusion pair; the PC rewrites remove one real load, while the sibling rewrite removes four loads. Target task source body sizes/operation counts, whole-program C++ predicted scores, exact candidate IDs, native ledger IDs, native mapped body sizes, per-task fresh cost details, domain facts, and raw receipt paths are in `summary.json`.
 

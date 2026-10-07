@@ -116,7 +116,7 @@
   "measurement_notes": {
     "target_body_statistics": "Serialized task-region byte and operation counts are wrapper statistics over the exact C++ replay/candidate MLIR. Fresh task costs come from C++ score rows; actual compiled II comes from compiler-emitted native mapped MLIR.",
     "native_cycles": "Whole-program cycle counts from the per-candidate native ledger; separate from C++ predicted whole-program cycles and per-task predicted durations.",
-    "resource_counts": "Targeted pair/children CGRAs are distinguished from the whole-program sum of task CGRAs.",
+    "resource_counts": "Fields named whole_program_cgras_* are the sum of per-task CGRA allocations across the workflow candidate. Tasks reuse the physical grid over time, so this sum is not physical hardware size, simultaneous demand, or peak occupancy. Hardware is 16 CGRAs and 64 PEs; this receipt reports no observed peak-occupancy value.",
     "candidate_pairing": "Pair search and native rows by candidate_id. For fusion identity controls, neighborhood-0 is search selection rank 1 but native ledger rank 5; rank alone is not a stable cross-ledger key.",
     "local_paths": "Absolute paths below point to preserved local evidence and command receipts. They do not define portable source, model, pin, protocol, config, prepared-source, or runtime-contract bindings."
   },
@@ -1403,5 +1403,44 @@
       "native/summary.json",
       "native rank mapped MLIR and per-row native/trace/numeric command receipts"
     ]
+  },
+  "resource_accounting": {
+    "physical_hardware": {
+      "cgras": 16,
+      "processing_elements": 64
+    },
+    "whole_program_cgra_count_definition": "sum of per-task CGRA allocations assigned across the entire task graph",
+    "allocation_reuse": "Tasks reuse the physical grid over time.",
+    "sum_is_physical_hardware_size": false,
+    "sum_is_simultaneous_demand": false,
+    "sum_is_peak_occupancy": false,
+    "observed_peak_occupancy": "not reported"
+  },
+  "before_after_context": {
+    "before": {
+      "cohort": "R10e fix-before evidence",
+      "source_namespace_commit": "6c7473f625a744fc09ca55152b96d5f42f316177",
+      "status": "four-preserved-native-mapper-aborts",
+      "failure": "Native mapper aborted at mapping_util.cpp:1088 because no producer locations were found; no fused native cycles, numeric pass, or performance result were claimed.",
+      "preserved_receipts": {
+        "harris_pc_1x2": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/pc-harris-task0-task1",
+        "radar_pc_1x2": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/pc-radar-task16-task17",
+        "harris_pc_2x1": "/tmp/orbit-r10e-controlled-fusion-fission-3676f1e-pc2x1-20261007/pc-harris-task0-task1",
+        "radar_pc_2x1": "/tmp/orbit-r10e-controlled-fusion-fission-3676f1e-pc2x1-20261007/pc-radar-task16-task17",
+        "prior_public_summary": "diagnostics/fusion-fission-controlled-r10e-20261007/summary.json"
+      },
+      "these_old_roots_were_rerun_for_R11b": false
+    },
+    "after": {
+      "cohort": "R11b fresh-pin controls",
+      "source_namespace_commit": "4547a3853452438af0a74f20342b4bc182cc9107",
+      "pc_orientation_runs": 4,
+      "all_four_native_numeric_trace_pass": true,
+      "new_output_roots": [
+        "/tmp/orbit-r11b-controlled-fusion-fission-1x2-20261007",
+        "/tmp/orbit-r11b-controlled-fusion-fission-2x1-20261007"
+      ]
+    },
+    "interpretation": "R10e is the preserved fix-before evidence; R11b is the fresh after run on new source-bound output roots."
   }
 }
