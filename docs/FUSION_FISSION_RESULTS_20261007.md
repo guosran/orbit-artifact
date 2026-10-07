@@ -1,21 +1,21 @@
 # Fusion/fission comparison: results and status
 
-**Current status (2026-10-07): R11 is the planned fresh six-workload, five-stage cohort, and none of its 30 stages has started.** R10c and R10e preflights are closed; their source-owned census and controlled probes do not count as full S1–S5 stages. The renderer keeps all 30 fresh cells pending and does not carry R9 values forward.
+**Current status (2026-10-07): the fresh R11b six-workload, five-stage cohort is running.** LU S1 and S2 have completed; the other stage results remain pending until their own native, numeric, trace, and binding gates pass. R11b preflights, six controlled transformation cases, and the common-DFG AMOEBA original-Ray reference are complete. Controlled cases do not count as full S1–S5 stages or enter the main curve.
 
 The comparison is whole-program scheduled cycles, with lower values better. R9 is a separate, completed historical cohort. Fixed 1×1 and common-DFG AMOEBA are independently gated reference records.
 
-| Workload | Fixed 1×1 | Common AMOEBA | R9 S1 | R9 S2 | R9 S3 | R9 S4 | R9 S5 | R11 S1 | R11 S2 | R11 S3 | R11 S4 | R11 S5 |
+| Workload | Fixed 1×1 | Common AMOEBA | R9 S1 | R9 S2 | R9 S3 | R9 S4 | R9 S5 | R11b S1 | R11b S2 | R11b S3 | R11b S4 | R11b S5 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | LLaMA | 1,129,656,837 | 757,412,371 | 762,655,252 | 595,551,249 | 424,250,388 | 424,250,388 | 424,250,388 | pending | pending | pending | pending | pending |
-| LU | 18,501 | 9,811 | 11,347 | 9,486 | 9,486 | 9,486 | 9,486 | pending | pending | pending | pending | pending |
+| LU | 18,501 | 9,811 | 11,347 | 9,486 | 9,486 | 9,486 | 9,486 | 11,347 | 9,486 | pending | pending | pending |
 | Harris | 988,258 | 926,769 | 941,012 | 899,620 | 621,600 | 621,600 | 621,600 | pending | pending | pending | pending | pending |
 | Radar | 1,317,811 | 1,317,811 | 1,309,622 | 1,309,622 | 1,309,622 | 1,309,622 | 1,309,622 | pending | pending | pending | pending | pending |
 | GCN | 95,775 | 83,802 | 89,388 | 86,987 | 86,987 | 86,987 | 86,987 | pending | pending | pending | pending | pending |
-| Original Ray | N/A¹ | pending² | 176,711 | 176,711 | 176,711 | 176,711 | 176,711 | pending | pending | pending | pending | pending |
+| Original Ray | N/A¹ | 177,426² | 176,711 | 176,711 | 176,711 | 176,711 | 176,711 | pending | pending | pending | pending | pending |
 
-¹ Fixed 1×1 Ray is not applicable: the compiler-proved Task 13 unit-CGRA model lower bound is II 83, above the diagnostic runtime ceiling II 23. The baseline mapper was not run. This is not a failed mapping result. ² The common-DFG AMOEBA Ray record has not been supplied. Its cell stays pending. Its profile/F45 investigation is separate from native replay: the initial retime profile failed because Task 13 lacked an expected profile attribute; the profile is being checked against the candidate inventory before source annotation. Profile attempts for 2×2 and 1×4 each found four candidates (profile outputs 32,405 and 30,934); unit shape was absent and 1×4 was the exact fallback. No common-Ray baseline replay is claimed until the new pin checks pass.
+¹ Fixed 1×1 Ray is not applicable: the compiler-proved Task 13 unit-CGRA II lower bound is 83, above the diagnostic runtime ceiling 23. The baseline mapper was not run. ² The completed common-DFG AMOEBA Ray replay retains the original 27 tasks and F45 count/shape/active-replica choices. Its 216 authenticated profile attempts are retained; Task 13 uses four CGRAs in shape 1×4 with two active replicas. Full-parent mapped duration is 30,934 and its effective duration is `ceil(30934 / 2) = 15467`. Four denotes CGRA count, not four profile candidates. The complete program measures 177,426 cycles, with mapper equality, independent trace, and all 61,892 numeric comparisons passing. See the [common-Ray receipt](../diagnostics/common-amoeba-original-ray-r11-20261007/README.md).
 
-The R9 public summary and all 30 stage receipts report native top-five replay, numeric pass, independent trace pass, and independent stage initialization. In that historical cohort S4 and S5 match S3 for all six workloads. This is an observed outcome, not proof that fusion or fission is ineffective or that the search found every useful candidate. R9 used a different pinned runtime and remains separate from the pending R11 cohort.
+The R9 public summary and all 30 stage receipts report native top-five replay, numeric pass, independent trace pass, and independent stage initialization. In that historical cohort S4 and S5 match S3 for all six workloads. This is an observed outcome, not proof that fusion or fission is ineffective or that the search found every useful candidate. R9 used a different pinned runtime and remains separate from the fresh R11b cohort.
 
 R9's receipt defines its reported stage-cycle source as the minimum whole-program native cycles across measured top-five candidates and controls. The audit retains native top five, controls, and the final `previous-winner.jsonl` selection as separate evidence; the table above does not relabel the stage-cycle minimum as the selected winner.
 
@@ -45,26 +45,36 @@ The S5 cut census reports 30 Harris cuts, one LU cut, and 56 original-Ray cuts (
 - Source commit `45cef07` fixes parallel candidate-history association so moving a candidate into the beam cannot leave its family-funnel event with a moved-from candidate ID.
 - Artifact commit `d55b29c` protects the family-funnel and archive journals, summary, and compiler family-best witnesses/cost snapshots during closed-stage cleanup. This preserves evidence for future runs; it does not restore journals deleted from R9.
 - The controlled-probe worker also corrected a bounded-harness `best-found` footer bug. Its small diagnostic receipts are not full-stage winner evidence; use the candidate and native receipts, not a footer label, for claims.
-- R10e's retained producer-consumer probes for Harris Task 0+1 and Radar Task 16+17 pass source-level exact-count checks for one eliminated load and zero eliminated stores. The four R10e 1×2/2×1 native PC orientations still fail at `calculateAward` (`mapping_util.cpp:1088`, no producer locations), so they supply no fused whole-program cycles or numeric result. Source commit `7c35269` adds a narrow identity-`DataMov` forwarding fix that peels only identity wrappers and rejects non-identity or cross-block chains; the fix still needs a fresh-pin native recheck. Preserve the tamper negatives and make no performance claim for PC fusion yet.
+- R10e's retained producer-consumer probes for Harris Task 0+1 and Radar Task 16+17 pass source-level exact-count checks for one eliminated load and zero eliminated stores. The four R10e 1×2/2×1 native PC orientations still fail at `calculateAward` (`mapping_util.cpp:1088`, no producer locations), so they supply no fused whole-program cycles or numeric result. Source commit `7c35269` adds a narrow identity-`DataMov` forwarding fix that peels only identity wrappers and rejects non-identity or cross-block chains; all four fresh R11b native PC orientation rechecks now pass. The before/after roots and source namespaces remain separate, and the tamper negatives stay enforced.
 
-These changes establish legality, replay, accounting, and evidence preservation. They do not establish a full-cohort performance improvement. The R11 six-by-five stages are still pending.
+The narrow source fixes establish legality, exact replay, accounting, evidence preservation, and native mapping for the tested controls. The full R11b cohort remains in progress; its performance conclusions require the complete new family funnel and measurements.
 
 ## Controlled memory-operation probes
 
-R10e controlled probes are separate from the full-program search and do not enter the comparison curve. Source-proven retained producer-consumer fusion removes one consumer load while preserving both observable output stores:
+These completed R11b cases use the new immutable pin and are separate from the full search. All pass exact source replay, fresh C++ cost/scoring, native mapper equality, numeric validation, and independent trace. Each compared pair has the same total eight PEs. Both public output stores remain; only source-proven loads or private intermediate stores can be removed.
 
-| Workload and pair | Loads before → after | Stores before → after |
-|---|---:|---:|
-| Harris Task 0 + Task 1 | 4 → 3 | 2 → 2 |
-| Radar Task 16 + Task 17 | 6 → 5 | 2 → 2 |
+| Case | Loads / stores before → after | Transformed vs same-resource control cycles | Change |
+|---|---|---:|---:|
+| Harris Task 0+1 PC, fused 1×2 | 4/2 → 3/2 | 955,485 / 988,258 | −3.3162% |
+| Harris Task 0+1 PC, fused 2×1 | 4/2 → 3/2 | 939,361 / 988,258 | −4.9478% |
+| Radar Task 16+17 PC, fused 1×2 | 6/2 → 5/2 | 1,310,353 / 1,317,811 | −0.5659% |
+| Radar Task 16+17 PC, fused 2×1 | 6/2 → 5/2 | 1,312,031 / 1,317,811 | −0.4386% |
+| Radar Task 4+5 sibling, fused 1×2 | 8/2 → 4/2 | 1,579,954 / 1,317,811 | +19.8923% |
+| LU Task 0, children 1×1+1×1 vs parent 2×1 | Parent 1/1; each child 1/1 | 18,694 / 18,438 | +1.3884% |
 
-The packaged R10e Radar Task 4 + Task 5 sibling-fusion receipt shares equivalent reads: loads fall from 8 to 4 and both public output stores remain. The parent tasks each use 1×1 (II 7/7); the same-resource fused 1×2 task has II 9. Whole-program communication edges fall from 33 to 31. The full program measures 1,579,954 cycles versus 1,317,811 for the identity control (+262,143, +19.8923%). Mapper equality, independent trace, and 259,904-value numeric checks pass. This is a diagnostic candidate, not a search winner; fewer memory operations do not by themselves imply a faster schedule.
+The PC load elimination has a measured benefit in these controls. The sibling case halves the pair's loads but raises the mapped II from 7/7 to 9. Its program has 31 communication edges versus 33 for the identity, yet runs slower. Its predicted whole-program score prefers the fused candidate (1,276,089 versus 1,348,048), while native cycles reverse that ranking. This is a measured model-ranking error for this candidate, not an accuracy claim about every fusion.
 
-R10e also has a source-fission positive for LU Task 0. Its census found one legal operation cut, `left_nodes=[0]`. Two 1×1 children use the same total resources as the 2×1 parent. The parent control measures 18,438 cycles and the fission candidate 18,694 (+256, +1.3884%); both pass exact source replay, mapper equality, independent trace, and numeric validation. Each child retains a certified source domain and reports 64 source work/firings. The witness policy is `retained-per-operation-not-disjoint-firing-partitions`: these are not disjoint firing partitions and must not be summed as unique parent firings. The scorer-owned child bodies are 2,529 and 2,559 bytes; the mapped task bodies are 4,214 and 4,244 bytes, each 16 operations at compiled II 2. This is a controlled positive, not a full-search winner or a full-program speedup.
+LU has one source-owned cut, `left_nodes=[0]`, with full operation coverage/no duplication and exact typed replay. Each child retains 64 source work/firings under `retained-per-operation-not-disjoint-firing-partitions`; these are operation-domain counts and must not be added as unique parent firings. Scorer-owned child bodies are 2,529/2,559 bytes, each 16 operations, with startup 3, predicted II 2.7964169979 and duration 180. Mapped bodies are 4,214/4,244 bytes at actual II 2/2, versus parent II 1. The program adds one communication edge (11 versus 10) and runs 256 cycles slower. Native per-child startup/duration are not emitted and remain unknown.
 
-The source-count table above records R10e retained-PC facts, not native fused results. All four R10e Harris/Radar 1×2 and 2×1 PC mapping attempts aborted at `calculateAward` (`mapping_util.cpp:1088`) before fused cycles or numeric results were produced. The narrow identity-`DataMov` fix needs a fresh-pin recheck. The sibling and fission receipts, along with their evidence scope and limits, are in the packaged [R10e controlled receipts](../diagnostics/fusion-fission-controlled-r10e-20261007/README.md) and [summary](../diagnostics/fusion-fission-controlled-r10e-20261007/summary.json).
+The [R11b controlled receipt](../diagnostics/fusion-fission-controlled-r11b-20261007/README.md) and [structured summary](../diagnostics/fusion-fission-controlled-r11b-20261007/summary.json) record all task bodies, resource allocations, actual and predicted costs, domains, commands, candidate-ID joins, and positive/negative proofs. Whole-program per-task CGRA allocation sums reuse the grid over time and are not simultaneous demand; the physical target is 16 CGRAs/64 PEs.
 
-Private producer-consumer intermediate storage may eliminate its paired producer store and consumer load only when exclusivity is proved. Publicly observable outputs retain their stores. These checks are not a substitute for the exact source/effect/alias/domain proof required for each rewrite.
+The earlier [R10e receipts](../diagnostics/fusion-fission-controlled-r10e-20261007/README.md) retain four PC native aborts at `mapping_util.cpp:1088`. The R11b passes are new measurements on the fixed source, with different output roots. Private forwarding positives and forged metadata/alias/effect/stale-domain negatives remain fail-closed.
+
+## Source preparation and LLaMA restrictions
+
+All six current canonical programs exactly reproduce their bound native source lowering. The fission census is unchanged: LLaMA 0, LU 1, Harris 30, Radar 0, GCN 0, original Ray 56. Original Ray Task 13 remains unsupported by generic fission because its multiple carried outputs require a separate complete proof; no specialized pre-split graph enters this cohort.
+
+Actual non-mapper materializer probes accept the three independent LLaMA GEMM sibling pairs (Tasks 0+1, 0+2, 1+2), including their independent reserve/phi slots. A facts-only `unknown/needs-stateful-kernel-support` label is conservative and does not establish rejection. The direct GEMM PC edges 0→3, 1→3, and 2→6 fail the earlier static-counter-domain equality check: 20,971,520 versus 26,214,400 firings. Their later stateful-kernel checks are not reached. These observations establish source/materialization behavior only; search scores, shortlist admission, and native performance must come from the new full-cohort records.
 
 ## Reproducing the comparison
 
@@ -76,8 +86,8 @@ FIXED1X1_SUMMARY=/path/to/fixed1x1/summary.json
 COMMON_AMOEBA_SUMMARY=/path/to/common-amoeba/summary.json
 R9_SUMMARY="$ARTIFACT_ROOT/diagnostics/input0-memory-fusion-fission-r9-20261007/summary.json"
 R9_RECEIPTS="$ARTIFACT_ROOT/diagnostics/input0-memory-fusion-fission-r9-20261007/stage-receipts.json"
-R11_RESULTS_ROOT=/path/to/fresh-six-by-five-results
-R11_PUBLIC_SUMMARY=/path/to/fresh-public-summary.json
+R11B_RESULTS_ROOT=/path/to/fresh-six-by-five-results
+R11B_PUBLIC_SUMMARY=/path/to/fresh-public-summary.json
 RENDER_ROOT=/path/to/separate-comparison-output
 
 python3 "$ARTIFACT_ROOT/scripts/render_fusion_fission_comparison.py" \
@@ -85,11 +95,13 @@ python3 "$ARTIFACT_ROOT/scripts/render_fusion_fission_comparison.py" \
   --common-amoeba-summary "$COMMON_AMOEBA_SUMMARY" \
   --historical-summary "$R9_SUMMARY" \
   --historical-stage-receipts "$R9_RECEIPTS" \
-  --full-results-root "$R11_RESULTS_ROOT" \
-  --public-stage-summary "$R11_PUBLIC_SUMMARY" \
+  --full-results-root "$R11B_RESULTS_ROOT" \
+  --public-stage-summary "$R11B_PUBLIC_SUMMARY" \
   --output-root "$RENDER_ROOT"
 ```
 
-The output directory receives `comparison.json`, portable `comparison.md`, and standalone `comparison.svg` plus `comparison.png` when matplotlib is installed. Stage cycles are consumed from `result.json` only after native top-five replay, numeric, trace, independent-stage and source-binding checks pass. Incomplete values become JSON `null` and visible pending/incomplete labels; they are never converted to zero. The public stage summary contributes status and capture provenance only, not cycle values. Optionally provide `--common-amoeba-ray-result PATH` once that independently validated record exists. Before a fresh run starts, omit `--full-results-root` and `--public-stage-summary`; the renderer reports `not-started` rather than manufacturing stage records.
+The output directory receives `comparison.json`, portable `comparison.md`, and standalone `comparison.svg` plus `comparison.png` when matplotlib is installed. Stage cycles are consumed from `result.json` only after native top-five replay, numeric, trace, independent-stage and source-binding checks pass. Incomplete values become JSON `null` and visible pending/incomplete labels; they are never converted to zero. The public stage summary contributes status and capture provenance only, not cycle values. Provide `--common-amoeba-ray-result PATH` for the completed 177,426-cycle original-Ray record. Before a fresh run starts, omit `--full-results-root` and `--public-stage-summary`; the renderer reports `not-started` rather than manufacturing stage records.
 
 The run contract is four rounds, at most 4,096 unique complete-program scores, beam width 16, diversity 4, native top five plus controls, with each stage initialized independently from the canonical program. The search is bounded and does not prove a global optimum. Do not mix records from a different graph, budget, stage initialization, or winner-selection policy.
+
+The [fresh reproduction runbook](FUSION_FISSION_REPRODUCTION_20261007.md) gives clean-clone build, pin, contract, source preparation, frozen-runtime paths, queue, census, and rendering commands. Captured local paths remain provenance; a new execution requires new bindings and a new result root.
