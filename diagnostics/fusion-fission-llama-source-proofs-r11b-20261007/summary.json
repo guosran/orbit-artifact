@@ -1,0 +1,749 @@
+{
+  "schema": "orbit-llama-fusion-source-proof-r11b-v1",
+  "artifact_kind": "source-fact-and-post-neura-materializer-proof",
+  "status": "source_probes_complete_full_cohort_incomplete",
+  "cohort": {
+    "namespace": "R11b",
+    "source_namespace": "4547a38",
+    "full_workload_set": 6,
+    "full_stage_status_at_observation": "running",
+    "active_workloads_at_observation": [
+      "lu"
+    ],
+    "llama_search_started": false,
+    "full_cohort_complete": false,
+    "performance_result_claimed": false
+  },
+  "scope": {
+    "includes": [
+      "prepared source facts",
+      "complete sibling-pair source census",
+      "six direct compiler materializer dry-runs",
+      "caller alias-proof summary"
+    ],
+    "excludes": [
+      "action menu generation or attempted search",
+      "fresh cost scoring",
+      "native mapper execution",
+      "numeric or trace validation",
+      "performance comparison"
+    ],
+    "build_or_mapper_or_search_run": false
+  },
+  "source_facts": {
+    "schema": "amoeba-joint-task-graph-facts-v1",
+    "mode": "fact_only",
+    "task_count": 9,
+    "dependency_record_count": 11,
+    "source_iteration_domain_proof": {
+      "status": "cpp-verifier-passed",
+      "task_count": 9,
+      "receipt_path": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/source-iteration-domain-proof.json"
+    },
+    "legal_actions": [],
+    "action_diagnostics": [
+      {
+        "accepted": 0,
+        "considered": 0,
+        "kind": "tiling",
+        "rejected": 0,
+        "rejection_reason": "none",
+        "rejection_reasons": []
+      },
+      {
+        "accepted": 0,
+        "considered": 0,
+        "kind": "fusion",
+        "rejected": 0,
+        "rejection_reason": "none",
+        "rejection_reasons": []
+      },
+      {
+        "accepted": 0,
+        "considered": 0,
+        "kind": "cotiling",
+        "rejected": 0,
+        "rejection_reason": "none",
+        "rejection_reasons": []
+      }
+    ],
+    "legal_action_semantics": "The facts artifact is mode=fact_only. Empty legal_actions and considered=0 action_diagnostics describe this fact-only extraction mode; they are not generated-menu, attempted-action, scoring, or search counts.",
+    "sibling_pair_census": {
+      "definition": "All unordered task pairs in the complete pairwise sibling scan; source_status is decided by the source independent-sibling contract (same loop domain, movable ordered pair, no dependency either way, and shared input). This is only the sibling-pair inventory, not the full action space or graph census.",
+      "pair_count": 36,
+      "source_status_counts": {
+        "legal": 3,
+        "illegal": 33,
+        "unknown": 0
+      },
+      "legal_pair_materialization_counts": {
+        "unknown_needs_stateful_kernel_support": 3,
+        "actual_materializer_dry_runs_passed": 3
+      },
+      "candidate_inventory_complete": true,
+      "materialization_inventory_complete": false,
+      "source_illegal_reason": "sibling_contract_rejected",
+      "interpretation_limit": "The 33 rejected pair rows are not all other transformations, candidate classes, or graph actions; they do not establish a zero candidate surface."
+    },
+    "direct_gemm_raw_dependencies_selected_for_pc_probes": [
+      {
+        "producer": "Task_0",
+        "consumer": "Task_3",
+        "dependency_evidence": {
+          "kind": "raw",
+          "origin": "taskflow",
+          "scope": "tensor_wide",
+          "payload_bytes": 524288,
+          "payload_bits": 4194304
+        },
+        "producer_task_facts": {
+          "task_name": "Task_0",
+          "static_dims": [
+            320,
+            256,
+            256
+          ],
+          "source_iteration_work_count": 20971520,
+          "taskflow_trip_count": 20971520,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "consumer_task_facts": {
+          "task_name": "Task_3",
+          "static_dims": [
+            320,
+            320,
+            256
+          ],
+          "source_iteration_work_count": 26214400,
+          "taskflow_trip_count": 26214400,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            320
+          ],
+          "caller_shape": [
+            512,
+            512
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "post_neura_materializer_dry_run": {
+          "mode": "producer-consumer-retained",
+          "status": "rejected",
+          "exit_code": 1,
+          "command_record_id": "pc_0_3",
+          "diagnostic": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir:302:11: error: post-Neura fusion requires matching static Taskflow counter domains",
+          "diagnostic_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/pc_0_3.stderr.log",
+          "first_failing_guard": {
+            "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+            "lines": "3246-3254",
+            "condition": "matching static Taskflow counter domains"
+          },
+          "later_stateful_kernel_guard_reached": false
+        }
+      },
+      {
+        "producer": "Task_1",
+        "consumer": "Task_3",
+        "dependency_evidence": {
+          "kind": "raw",
+          "origin": "taskflow",
+          "scope": "tensor_wide",
+          "payload_bytes": 524288,
+          "payload_bits": 4194304
+        },
+        "producer_task_facts": {
+          "task_name": "Task_1",
+          "static_dims": [
+            320,
+            256,
+            256
+          ],
+          "source_iteration_work_count": 20971520,
+          "taskflow_trip_count": 20971520,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "consumer_task_facts": {
+          "task_name": "Task_3",
+          "static_dims": [
+            320,
+            320,
+            256
+          ],
+          "source_iteration_work_count": 26214400,
+          "taskflow_trip_count": 26214400,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            320
+          ],
+          "caller_shape": [
+            512,
+            512
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "post_neura_materializer_dry_run": {
+          "mode": "producer-consumer-retained",
+          "status": "rejected",
+          "exit_code": 1,
+          "command_record_id": "pc_1_3",
+          "diagnostic": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir:302:11: error: post-Neura fusion requires matching static Taskflow counter domains",
+          "diagnostic_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/pc_1_3.stderr.log",
+          "first_failing_guard": {
+            "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+            "lines": "3246-3254",
+            "condition": "matching static Taskflow counter domains"
+          },
+          "later_stateful_kernel_guard_reached": false
+        }
+      },
+      {
+        "producer": "Task_2",
+        "consumer": "Task_6",
+        "dependency_evidence": {
+          "kind": "raw",
+          "origin": "taskflow",
+          "scope": "tensor_wide",
+          "payload_bytes": 524288,
+          "payload_bits": 4194304
+        },
+        "producer_task_facts": {
+          "task_name": "Task_2",
+          "static_dims": [
+            320,
+            256,
+            256
+          ],
+          "source_iteration_work_count": 20971520,
+          "taskflow_trip_count": 20971520,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "consumer_task_facts": {
+          "task_name": "Task_6",
+          "static_dims": [
+            320,
+            256,
+            320
+          ],
+          "source_iteration_work_count": 26214400,
+          "taskflow_trip_count": 26214400,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 320
+        },
+        "post_neura_materializer_dry_run": {
+          "mode": "producer-consumer-retained",
+          "status": "rejected",
+          "exit_code": 1,
+          "command_record_id": "pc_2_6",
+          "diagnostic": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir:511:11: error: post-Neura fusion requires matching static Taskflow counter domains",
+          "diagnostic_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/pc_2_6.stderr.log",
+          "first_failing_guard": {
+            "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+            "lines": "3246-3254",
+            "condition": "matching static Taskflow counter domains"
+          },
+          "later_stateful_kernel_guard_reached": false
+        }
+      }
+    ],
+    "selected_tasks": [
+      {
+        "task_name": "Task_0",
+        "static_dims": [
+          320,
+          256,
+          256
+        ],
+        "source_iteration_work_count": 20971520,
+        "taskflow_trip_count": 20971520,
+        "source_iteration_domain_status": "certified-complete",
+        "produced_shape": [
+          320,
+          256
+        ],
+        "caller_shape": [
+          512,
+          256
+        ],
+        "auxiliary_read_count": 2,
+        "k_extent": 256
+      },
+      {
+        "task_name": "Task_1",
+        "static_dims": [
+          320,
+          256,
+          256
+        ],
+        "source_iteration_work_count": 20971520,
+        "taskflow_trip_count": 20971520,
+        "source_iteration_domain_status": "certified-complete",
+        "produced_shape": [
+          320,
+          256
+        ],
+        "caller_shape": [
+          512,
+          256
+        ],
+        "auxiliary_read_count": 2,
+        "k_extent": 256
+      },
+      {
+        "task_name": "Task_2",
+        "static_dims": [
+          320,
+          256,
+          256
+        ],
+        "source_iteration_work_count": 20971520,
+        "taskflow_trip_count": 20971520,
+        "source_iteration_domain_status": "certified-complete",
+        "produced_shape": [
+          320,
+          256
+        ],
+        "caller_shape": [
+          512,
+          256
+        ],
+        "auxiliary_read_count": 2,
+        "k_extent": 256
+      },
+      {
+        "task_name": "Task_3",
+        "static_dims": [
+          320,
+          320,
+          256
+        ],
+        "source_iteration_work_count": 26214400,
+        "taskflow_trip_count": 26214400,
+        "source_iteration_domain_status": "certified-complete",
+        "produced_shape": [
+          320,
+          320
+        ],
+        "caller_shape": [
+          512,
+          512
+        ],
+        "auxiliary_read_count": 2,
+        "k_extent": 256
+      },
+      {
+        "task_name": "Task_6",
+        "static_dims": [
+          320,
+          256,
+          320
+        ],
+        "source_iteration_work_count": 26214400,
+        "taskflow_trip_count": 26214400,
+        "source_iteration_domain_status": "certified-complete",
+        "produced_shape": [
+          320,
+          256
+        ],
+        "caller_shape": [
+          512,
+          256
+        ],
+        "auxiliary_read_count": 2,
+        "k_extent": 320
+      }
+    ],
+    "ordinary_body_load_store_operation_counts": {
+      "value": null,
+      "status": "not_counted_in_this_source-fact/materializer receipt"
+    }
+  },
+  "caller_alias_evidence": {
+    "proof_mode": "prepared-external-caller",
+    "target_function": "_Z10llama_funciPA256_KiS1_S1_S1_S1_S1_S1_PA256_i",
+    "memref_argument_count": 8,
+    "distinct_memref_alloc_roots_observed": 8,
+    "interpretation": "Prepared external-caller proof lists eight separately allocated memref arguments. The actual sibling materializer also passed its disjoint output/read-write alias guards for all three tested pairs; this is not a search-wide alias census."
+  },
+  "post_neura_materializer_probes": {
+    "runtime_pin": {
+      "type": "frozen R11b executable supplied for the cohort",
+      "path": "/tmp/orbit-input0-fusion-fission-r11b-20261007/runtime-frozen-r11b/.work/control-variables-and-tiling-20261007/mlir-amoeba-opt-fusion-fission-funnel-r11b-20261007",
+      "cpu_affinity": "8-11",
+      "input_canonical_mlir": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir",
+      "verify_each": true,
+      "command_receipt_record_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/commands.json"
+    },
+    "sibling_fusion": [
+      {
+        "pair": [
+          "Task_0",
+          "Task_1"
+        ],
+        "facts_pair": {
+          "source_status": "legal",
+          "materialization_status": "unknown",
+          "reason": "needs-stateful-kernel-support"
+        },
+        "post_neura_materializer_dry_run": {
+          "status": "passed",
+          "exit_code": 0,
+          "command_record_id": "sibling_0_1",
+          "output_command_record_id": "sibling_0_1_write_output",
+          "fused_task_name_observed": "Task_0.fuse.Task_1",
+          "sibling_fusion_metadata_observed": true,
+          "materialized_mlir_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_0_1.materialized.mlir",
+          "stdout_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_0_1.materialize.stdout.log",
+          "stderr_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_0_1.materialize.stderr.log"
+        }
+      },
+      {
+        "pair": [
+          "Task_0",
+          "Task_2"
+        ],
+        "facts_pair": {
+          "source_status": "legal",
+          "materialization_status": "unknown",
+          "reason": "needs-stateful-kernel-support"
+        },
+        "post_neura_materializer_dry_run": {
+          "status": "passed",
+          "exit_code": 0,
+          "command_record_id": "sibling_0_2",
+          "output_command_record_id": "sibling_0_2_write_output",
+          "fused_task_name_observed": "Task_0.fuse.Task_2",
+          "sibling_fusion_metadata_observed": true,
+          "materialized_mlir_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_0_2.materialized.mlir",
+          "stdout_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_0_2.materialize.stdout.log",
+          "stderr_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_0_2.materialize.stderr.log"
+        }
+      },
+      {
+        "pair": [
+          "Task_1",
+          "Task_2"
+        ],
+        "facts_pair": {
+          "source_status": "legal",
+          "materialization_status": "unknown",
+          "reason": "needs-stateful-kernel-support"
+        },
+        "post_neura_materializer_dry_run": {
+          "status": "passed",
+          "exit_code": 0,
+          "command_record_id": "sibling_1_2",
+          "output_command_record_id": "sibling_1_2_write_output",
+          "fused_task_name_observed": "Task_1.fuse.Task_2",
+          "sibling_fusion_metadata_observed": true,
+          "materialized_mlir_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_1_2.materialized.mlir",
+          "stdout_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_1_2.materialize.stdout.log",
+          "stderr_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/sibling_1_2.materialize.stderr.log"
+        }
+      }
+    ],
+    "producer_consumer_fusion": [
+      {
+        "producer": "Task_0",
+        "consumer": "Task_3",
+        "dependency_evidence": {
+          "kind": "raw",
+          "origin": "taskflow",
+          "scope": "tensor_wide",
+          "payload_bytes": 524288,
+          "payload_bits": 4194304
+        },
+        "producer_task_facts": {
+          "task_name": "Task_0",
+          "static_dims": [
+            320,
+            256,
+            256
+          ],
+          "source_iteration_work_count": 20971520,
+          "taskflow_trip_count": 20971520,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "consumer_task_facts": {
+          "task_name": "Task_3",
+          "static_dims": [
+            320,
+            320,
+            256
+          ],
+          "source_iteration_work_count": 26214400,
+          "taskflow_trip_count": 26214400,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            320
+          ],
+          "caller_shape": [
+            512,
+            512
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "post_neura_materializer_dry_run": {
+          "mode": "producer-consumer-retained",
+          "status": "rejected",
+          "exit_code": 1,
+          "command_record_id": "pc_0_3",
+          "diagnostic": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir:302:11: error: post-Neura fusion requires matching static Taskflow counter domains",
+          "diagnostic_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/pc_0_3.stderr.log",
+          "first_failing_guard": {
+            "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+            "lines": "3246-3254",
+            "condition": "matching static Taskflow counter domains"
+          },
+          "later_stateful_kernel_guard_reached": false
+        }
+      },
+      {
+        "producer": "Task_1",
+        "consumer": "Task_3",
+        "dependency_evidence": {
+          "kind": "raw",
+          "origin": "taskflow",
+          "scope": "tensor_wide",
+          "payload_bytes": 524288,
+          "payload_bits": 4194304
+        },
+        "producer_task_facts": {
+          "task_name": "Task_1",
+          "static_dims": [
+            320,
+            256,
+            256
+          ],
+          "source_iteration_work_count": 20971520,
+          "taskflow_trip_count": 20971520,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "consumer_task_facts": {
+          "task_name": "Task_3",
+          "static_dims": [
+            320,
+            320,
+            256
+          ],
+          "source_iteration_work_count": 26214400,
+          "taskflow_trip_count": 26214400,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            320
+          ],
+          "caller_shape": [
+            512,
+            512
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "post_neura_materializer_dry_run": {
+          "mode": "producer-consumer-retained",
+          "status": "rejected",
+          "exit_code": 1,
+          "command_record_id": "pc_1_3",
+          "diagnostic": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir:302:11: error: post-Neura fusion requires matching static Taskflow counter domains",
+          "diagnostic_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/pc_1_3.stderr.log",
+          "first_failing_guard": {
+            "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+            "lines": "3246-3254",
+            "condition": "matching static Taskflow counter domains"
+          },
+          "later_stateful_kernel_guard_reached": false
+        }
+      },
+      {
+        "producer": "Task_2",
+        "consumer": "Task_6",
+        "dependency_evidence": {
+          "kind": "raw",
+          "origin": "taskflow",
+          "scope": "tensor_wide",
+          "payload_bytes": 524288,
+          "payload_bits": 4194304
+        },
+        "producer_task_facts": {
+          "task_name": "Task_2",
+          "static_dims": [
+            320,
+            256,
+            256
+          ],
+          "source_iteration_work_count": 20971520,
+          "taskflow_trip_count": 20971520,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 256
+        },
+        "consumer_task_facts": {
+          "task_name": "Task_6",
+          "static_dims": [
+            320,
+            256,
+            320
+          ],
+          "source_iteration_work_count": 26214400,
+          "taskflow_trip_count": 26214400,
+          "source_iteration_domain_status": "certified-complete",
+          "produced_shape": [
+            320,
+            256
+          ],
+          "caller_shape": [
+            512,
+            256
+          ],
+          "auxiliary_read_count": 2,
+          "k_extent": 320
+        },
+        "post_neura_materializer_dry_run": {
+          "mode": "producer-consumer-retained",
+          "status": "rejected",
+          "exit_code": 1,
+          "command_record_id": "pc_2_6",
+          "diagnostic": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir:511:11: error: post-Neura fusion requires matching static Taskflow counter domains",
+          "diagnostic_log_path": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/pc_2_6.stderr.log",
+          "first_failing_guard": {
+            "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+            "lines": "3246-3254",
+            "condition": "matching static Taskflow counter domains"
+          },
+          "later_stateful_kernel_guard_reached": false
+        }
+      }
+    ],
+    "interpretation": "A successful sibling materializer dry-run proves only these exact source IR pairs materialize. A PC failure reports the first reached failing guard; it does not prove later guards would pass."
+  },
+  "source_guard_references": [
+    {
+      "repository": "/home/x/shiran/project/orbit",
+      "file": "lib/Backend/Neura/Orchestration/JointScheduling/ExtractJointTaskGraphFactsPass.cpp",
+      "lines": "1365-1385",
+      "meaning": "independentSiblings source pair predicate: movable ordering, equal loop domain, no taskflow dependency in either direction, and a shared read/input."
+    },
+    {
+      "repository": "/home/x/shiran/project/orbit",
+      "file": "lib/Backend/Neura/Orchestration/JointScheduling/ExtractJointTaskGraphFactsPass.cpp",
+      "lines": "1977-2001",
+      "meaning": "facts-only materialization remains unknown for stateful iter_args or kernel outputs; it does not execute the separate materializer."
+    },
+    {
+      "repository": "/home/x/shiran/project/orbit",
+      "file": "lib/Backend/Neura/Orchestration/JointScheduling/ExtractJointTaskGraphFactsPass.cpp",
+      "lines": "2666-2708",
+      "meaning": "fact_only enumerates the full sibling pair inventory and preserves source and materialization statuses separately."
+    },
+    {
+      "repository": "/home/x/shiran/project/orbit",
+      "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "lines": "2213-2280, 2443-2448",
+      "meaning": "sibling materializer proves independently carried reserve/phi state with no cross-slot recurrence."
+    },
+    {
+      "repository": "/home/x/shiran/project/orbit",
+      "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "lines": "2400-2424",
+      "meaning": "sibling fusion requires distinct write roots and read/write roots; all tested pairs passed these checks."
+    },
+    {
+      "repository": "/home/x/shiran/project/orbit",
+      "file": "lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "lines": "3246-3254, 3272-3280",
+      "meaning": "PC analysis requires matching static Taskflow counter domains before reaching the later stateless-kernel guard."
+    }
+  ],
+  "evidence_provenance": {
+    "prepared_facts": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/facts.json",
+    "canonical_mlir": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/canonical.mlir",
+    "caller_noalias_proof": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/caller-noalias-proof.json",
+    "source_iteration_domain_proof": "/home/x/shiran/project/orbit-artifact/.work/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/source-domain-prep-r11b/llama/source-iteration-domain-proof.json",
+    "probe_receipt_root": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007",
+    "probe_report": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/report.md",
+    "probe_commands_and_captured_streams": "/tmp/orbit-r11b-llama-fusion-restriction-proof-20261007/commands.json",
+    "full_run_root": "/tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007",
+    "full_run_batch_receipt": "/tmp/orbit-input0-fusion-fission-r11b-20261007/results/input0-neighborhood-2x2-v62-fusion-fission-complete-20261007/parallel/batch.json",
+    "path_semantics": "Absolute paths identify the local R11b capture and runtime used for these observations. They are provenance pointers, not clean-clone runtime bindings or reusable command inputs."
+  },
+  "limitations": [
+    "No LLaMA full-stage search or mapper result is present in this receipt.",
+    "Source facts legal_actions=[] and action_diagnostics considered=0 are mode-specific and must not be reported as zero generated, attempted, scored, or selected actions.",
+    "The three PC probes reached static counter-domain rejection; stateful-kernel and later memory/output guards were not reached for those PC pairs.",
+    "The 33 source-illegal sibling rows only describe this complete pairwise sibling contract inventory.",
+    "R11b six-workload full cohort was still running on LU at the recorded batch observation; this receipt makes no performance claim."
+  ]
+}
