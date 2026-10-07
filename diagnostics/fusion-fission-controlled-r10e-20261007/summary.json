@@ -1,0 +1,309 @@
+{
+  "cohort": "fusion-fission-controlled-r10e-20261007",
+  "diagnostic_only": true,
+  "evidence_pointers": {
+    "lu_census": "/tmp/orbit-r10e-controlled-fission-v2helper-lu-20261007/fission-lu/census/source-cut-census.json",
+    "lu_native_ledger": "/tmp/orbit-r10e-controlled-fission-v2helper-lu-20261007/fission-lu/native/summary.json",
+    "lu_replay_facts": "/tmp/orbit-r10e-controlled-fission-v2helper-lu-20261007/fission-lu/fission-control-replay/replay/source-facts.json",
+    "lu_result": "/tmp/orbit-r10e-controlled-fission-v2helper-lu-20261007/fission-lu/result.json",
+    "lu_root": "/tmp/orbit-r10e-controlled-fission-v2helper-lu-20261007/fission-lu",
+    "pc_1x2_root": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007",
+    "pc_2x1_root": "/tmp/orbit-r10e-controlled-fusion-fission-3676f1e-pc2x1-20261007",
+    "pc_failures_local_only": true,
+    "reusability": "These absolute paths are local evidence pointers, not reusable source, model, pin, protocol, prepared-source, or runtime-contract bindings.",
+    "sibling_native_ledger": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/sibling-radar-task4-task5/native/summary.json",
+    "sibling_result": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/sibling-radar-task4-task5/result.json",
+    "sibling_root": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/sibling-radar-task4-task5",
+    "sibling_search_selection": "/tmp/orbit-r10e-controlled-fusion-fission-2f0d66a-v2-20261007/sibling-radar-task4-task5/search/top5.jsonl"
+  },
+  "formal_go": false,
+  "implementation_receipts": {
+    "focused_tests": {
+      "passed": 31,
+      "run": "tests/test_run_fusion_fission_controlled_probes.py"
+    },
+    "helper_matches_main_commit": "31f540bfdbbbb98298ec3e0cd6b3b62e207e35e0",
+    "helpers_byte_identical_to_main": [
+      "scripts/replay_cpp_global_top5.py",
+      "tests/test_replay_cpp_global_top5_fission.py"
+    ],
+    "pc_orientation_flag_commit": "3676f1efc3d2b58c9f4bbd8d8a012649a6b31da8",
+    "strict_fission_helper_commit": "6a69f5abb21b26c67f2f369f56a4460673a25b2b",
+    "working_tree_clean_after_tests": true
+  },
+  "main_curve_inclusion": false,
+  "negative_and_forwarding_fixtures": {
+    "cases": [
+      "private forwarded store/load positive and tamper negatives",
+      "forged source proof",
+      "alias",
+      "effect",
+      "stale domain"
+    ],
+    "expected_diagnostic_commands_exit_zero": true,
+    "status": "pass"
+  },
+  "protocol_separation": {
+    "diagnostic_searches_and_native_controls_enter_main_curve": false,
+    "execution": "R10e source pin only; no new experiments were run after the source-fix investigation began",
+    "main_curve_budget_changed": false,
+    "search_budget": "isolated small explicit seed-plus-identity controls; per-case command/protocol receipts in local evidence roots",
+    "sram_admission": "pending"
+  },
+  "results": {
+    "lu_task0_fission": {
+      "children": {
+        "Task_0.split.0": {
+          "fresh_score_predicted_duration": 180,
+          "fresh_score_predicted_ii": 2.7964169979,
+          "fresh_score_startup_cycles": 3,
+          "loads": 1,
+          "mapped_body_bytes": 4214,
+          "mapped_operations": 16,
+          "mapper_compiled_ii": 2,
+          "operations": 16,
+          "selected_trip_count": 64,
+          "shape": "1x1",
+          "source_body_bytes": 2529,
+          "source_firings": 64,
+          "stores": 1
+        },
+        "Task_0.split.1": {
+          "fresh_score_predicted_duration": 180,
+          "fresh_score_predicted_ii": 2.7964169979,
+          "fresh_score_startup_cycles": 3,
+          "loads": 1,
+          "mapped_body_bytes": 4244,
+          "mapped_operations": 16,
+          "mapper_compiled_ii": 2,
+          "operations": 16,
+          "selected_trip_count": 64,
+          "shape": "1x1",
+          "source_body_bytes": 2559,
+          "source_firings": 64,
+          "stores": 1
+        }
+      },
+      "fission_candidate": {
+        "candidate_id": "neighborhood-seed-2",
+        "communication_edges": 11,
+        "full_module_body_bytes": 259354,
+        "global_cpp_rank": 2,
+        "native_cycles": 18694,
+        "native_delta_vs_parent_control": 256,
+        "native_percent_delta_vs_parent_control": 1.3884,
+        "native_validation_rank": 2,
+        "predicted_cycles": 18646,
+        "whole_program_cgras": 10
+      },
+      "independent_trace": "pass-for-fission-and-parent-control",
+      "interpretation": "This is a positive source-replay, native, numeric, and trace proof at equal total resources; measured fission is 256 cycles slower than the same-resource parent control, so it is not a performance win.",
+      "native_child_startup_and_duration": "not emitted per child by the native checker; do not infer from the whole-program cycle count",
+      "native_mapper_equality": "pass-for-fission-and-parent-control",
+      "numeric": {
+        "element_comparisons_per_row": 4025,
+        "mismatches_per_row": 0,
+        "nonzero_per_row": 1025,
+        "status": "pass-for-fission-and-parent-control"
+      },
+      "same_resource_parent_control": {
+        "candidate_id": "neighborhood-seed-1",
+        "fresh_score_predicted_duration": 143,
+        "fresh_score_predicted_ii": 2.2181453705,
+        "fresh_score_startup_cycles": 3,
+        "full_module_body_bytes": 249773,
+        "global_cpp_rank": 0,
+        "mapped_task_body_bytes": 4152,
+        "mapper_compiled_ii": 1,
+        "native_cycles": 18438,
+        "native_validation_rank": 0,
+        "predicted_cycles": 18365,
+        "shape": "2x1",
+        "target_cgras": 2,
+        "task_body_bytes": 2537,
+        "whole_program_cgras": 10
+      },
+      "source_cut": {
+        "left_nodes": [
+          0
+        ],
+        "legal_cut_count_for_task": 1,
+        "parent_body_bytes": 2537,
+        "parent_body_operations": 16,
+        "parent_loads": 1,
+        "parent_stores": 1
+      },
+      "source_program": "original LU Task_0",
+      "source_replay": {
+        "child_current_source_work_count_each": 64,
+        "child_current_taskflow_firing_count_each": 64,
+        "child_domain_bindings_present": true,
+        "child_domains_certified_complete": true,
+        "child_output_coordinates_proven": true,
+        "counter_domain_policy": "retained-per-operation-not-disjoint-firing-partitions",
+        "disjoint_source_firing_claim": false,
+        "exact_source_replay_step": "exact-source-replay-verified",
+        "operation_partition_counts_reported": false,
+        "per_child_source_work_and_multiplicity": 64,
+        "status": "verified-by-C++-verifyTaskflowFissionReplay",
+        "typed_action": "fission:Task_0:left=0"
+      },
+      "status": "complete-native-numeric-trace-pass"
+    },
+    "pc_memory_fusion": {
+      "cases": [
+        {
+          "native_mapper_exit": -6,
+          "parents": [
+            "Task_0",
+            "Task_1"
+          ],
+          "program": "Harris",
+          "shape": "1x2"
+        },
+        {
+          "native_mapper_exit": -6,
+          "parents": [
+            "Task_16",
+            "Task_17"
+          ],
+          "program": "Radar",
+          "shape": "1x2"
+        },
+        {
+          "native_mapper_exit": -6,
+          "parents": [
+            "Task_0",
+            "Task_1"
+          ],
+          "program": "Harris",
+          "shape": "2x1"
+        },
+        {
+          "native_mapper_exit": -6,
+          "parents": [
+            "Task_16",
+            "Task_17"
+          ],
+          "program": "Radar",
+          "shape": "2x1"
+        }
+      ],
+      "failure": "R10e mapper abort in thirdparty/neura/lib/NeuraDialect/Mapping/mapping_util.cpp:1088: calculateAward assertion !producer_locs.empty() (No locations found for producer)",
+      "status": "four-preserved-native-mapper-aborts",
+      "status_interpretation": "Old-pin mapper failures; no fused native cycles, numeric pass, performance result, or winner claim. A source fix is being integrated and all four cases require fresh-pin rerun."
+    },
+    "radar_sibling_fusion": {
+      "communication_edges": {
+        "fused": 31,
+        "identity": 33
+      },
+      "full_module_body_bytes": {
+        "fused": 461531,
+        "identity": 463334
+      },
+      "fused_shape": "1x2",
+      "global_cpp_selection": {
+        "fused": {
+          "candidate_id": "neighborhood-seed-1",
+          "rank": 0
+        },
+        "identity": {
+          "candidate_id": "neighborhood-0",
+          "rank": 1
+        }
+      },
+      "independent_trace": "pass-for-both-rows",
+      "interpretation": "Same-resource sibling fusion is semantically valid, but this measured native control is slower than the identity parent control. It is not a performance win.",
+      "mapped_task_body_bytes": {
+        "Task_4": 27561,
+        "Task_5": 27561,
+        "fused": 48872
+      },
+      "memory_effect": {
+        "fused_loads": 4,
+        "fused_stores": 2,
+        "parent_pair_loads": 8,
+        "parent_pair_stores": 2,
+        "public_output_stores_preserved": true,
+        "removed_loads": 4,
+        "removed_stores": 0
+      },
+      "native_cycles": {
+        "delta": 262143,
+        "fused": 1579954,
+        "identity": 1317811,
+        "percent_delta": 19.8923
+      },
+      "native_mapper_equality": "pass-for-both-rows",
+      "native_mapper_ii": {
+        "fused": 9,
+        "parents": {
+          "Task_4": 7,
+          "Task_5": 7
+        }
+      },
+      "native_validation_rows": {
+        "fused": {
+          "candidate_id": "neighborhood-seed-1",
+          "local_rank": 0
+        },
+        "identity": {
+          "candidate_id": "neighborhood-0",
+          "local_rank": 5
+        }
+      },
+      "numeric": {
+        "element_comparisons_per_row": 259904,
+        "mismatches_per_row": 0,
+        "nonzero_per_row": 40583,
+        "status": "pass-for-both-rows"
+      },
+      "parent_shapes": {
+        "Task_4": "1x1",
+        "Task_5": "1x1"
+      },
+      "predicted_complete_program_cycles": {
+        "fused": 1276089,
+        "identity": 1348048
+      },
+      "source_program": "original Radar Task_4 and Task_5",
+      "source_task_body_bytes_and_ops": {
+        "Task_4": {
+          "body_bytes": 9043,
+          "loads": 4,
+          "operations": 75,
+          "stores": 1
+        },
+        "Task_5": {
+          "body_bytes": 9043,
+          "loads": 4,
+          "operations": 75,
+          "stores": 1
+        },
+        "fused": {
+          "body_bytes": 15027,
+          "loads": 4,
+          "operations": 137,
+          "stores": 2
+        }
+      },
+      "status": "complete-native-numeric-trace-pass",
+      "target_cgras_parent_and_fused": 2,
+      "whole_program_cgras_parent_and_fused": 21
+    }
+  },
+  "schema": "orbit-controlled-fusion-fission-receipt-v1",
+  "source_binding": {
+    "contract_identity": "local byte-bound contract; no content hash",
+    "evidence_paths_are_reusable_bindings": false,
+    "model_payloads": 1,
+    "optimizer_line": "R10e",
+    "replay_payloads": 26,
+    "runtime_contract_status": "captured-and-accepted-by-C++-search",
+    "source_commit": "6c7473f625a744fc09ca55152b96d5f42f316177",
+    "source_files": 140
+  },
+  "status": "diagnostic-controls-complete-with-pc-mapper-aborts",
+  "winner_claim": false
+}

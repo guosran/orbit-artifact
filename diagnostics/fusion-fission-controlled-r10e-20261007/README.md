@@ -1,0 +1,21 @@
+# Controlled R10e fusion and fission receipts
+
+This directory records isolated diagnostic controls run against the R10e optimizer built from source commit `6c7473f625a744fc09ca55152b96d5f42f316177`. The private source contract captured 140 source files, one model payload, and 26 replay payloads. Those bindings are local to the captured runs; the paths below are evidence pointers only.
+
+The controls ran separately from the main curve. Each used explicit C++-owned typed rewrites, fresh C++ score replay, and a small diagnostic candidate budget. `main_curve_budget_changed` is false and none of these rows is admitted to the main curve. This is a semantic/native diagnostic, not a production-ready result or formal performance GO; target SRAM admission remains pending.
+
+| Control | Equal-resource configurations | Native result | Other checks |
+|---|---|---|---|
+| Radar sibling fusion | Task_4 1x1 + Task_5 1x1 vs fused Task_4.fuse.Task_5 1x2; 2 targeted CGRAs; 21 whole-program CGRAs either way | Identity 1,317,811 cycles; fused 1,579,954 (+262,143, +19.8923%). Mapper II 7/7 on parents, 9 fused. Communication edges 33 to 31. | Mapper equality, independent trace, and 259,904-value numeric comparison pass on both rows. |
+| LU Task_0 fission | Parent Task_0 2x1 vs two children 1x1; 2 targeted CGRAs; 10 whole-program CGRAs either way | Same-resource parent control 18,438 cycles; fission 18,694 (+256, +1.3884%). Child mapper II is 2 for each child. | C++ exact source replay, mapper equality, independent trace, and 4,025-value numeric comparison pass on parent and fission rows. |
+| Harris/Radar PC fusion | Task_0+Task_1 or Task_16+Task_17; both 1x2 and 2x1 fused orientations preserve the pair's two CGRAs | All four R10e mapper attempts abort at `calculateAward` (`mapping_util.cpp:1088`, no producer locations). | Retained as failures; no fused native cycle or numeric claim. They need rerun on the fixed source pin. |
+
+The Radar fused task reduced the original pair's loads from 8 to 4 while preserving both public stores. Its native result is slower, so this control establishes valid forwarding behavior but no performance benefit.
+
+For LU, the source cut census found one legal cut, `left_nodes=[0]`. C++ replay verifies the exact fission source operation partition and proves both children retain the certified source domain. Each child reports current source work count 64 and current Taskflow firing count 64, source and represented multiplicity 64, with source/current control bindings and output coordinates proven. The proof policy is `retained-per-operation-not-disjoint-firing-partitions`; these 64-count child domains are not disjoint firing partitions and must not be summed as unique parent firings. The census reports the selected left node but does not publish separate numeric counts for both sides of the source operation partition. No such counts are inferred here.
+
+The scorer-owned child bodies were 2,529 and 2,559 bytes (16 serialized operations each, one load and one store). After native mapping, the corresponding serialized task bodies were 4,214 and 4,244 bytes (16 operations each); each maps at compiled II 2 with trip count 64. Fresh child-cost replay reports startup 3, predicted II 2.7964169979, and predicted duration 180 per child. The native checker reports whole-program cycles and mapped II, but does not emit native per-child startup or duration; those are not inferred from the full-program cycle count.
+
+The main source tree is integrating a mapper fix after the four PC failures. Those failures came from the old R10e pin and are not evidence that the memory fusion is semantically invalid. All four orientations require a fresh source pin, fresh source contract, and fresh output root after integration. No experiment was run from this worker after the fix investigation began.
+
+`summary.json` contains compact measurements and local raw-evidence paths. Do not reuse its absolute paths as current pin, contract, protocol, prepared-source, model, or output bindings. Run a new source contract and a fresh diagnostic output root for any follow-up. The focused controlled-harness tests pass (31 tests); the fission replay helper files match main commit `31f540bfdbbbb98298ec3e0cd6b3b62e207e35e` byte for byte.
