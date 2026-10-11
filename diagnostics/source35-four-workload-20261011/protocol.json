@@ -1,0 +1,107 @@
+{
+  "ablation": {
+    "adjacent_raw_tolerance": 1,
+    "canonical_independent_start": true,
+    "cells": 24,
+    "cumulative_open_spaces": true,
+    "fixed_actual_calls": 1,
+    "history_minima_or_warm_start": false,
+    "objective_cap": 256
+  },
+  "active_workloads": [
+    "radar",
+    "lu",
+    "llama",
+    "harris"
+  ],
+  "base_policy": "schedule-structure-window-axis-tie-v35",
+  "base_search_source_commit": "7c72cc4b4cd2d11f2c2449d8243dad93cf083067",
+  "evaluation_identity": {
+    "architecture_sha256": "6f4a9a1815dcc0d97c00fd6ee20424fa9420ace90654da29e70d283cba7a611f",
+    "compiler_source_commit": "7c72cc4b4cd2d11f2c2449d8243dad93cf083067",
+    "model_namespace": "orbit-per-cgra-2x2-direct-4member-v1",
+    "model_sha256": "54dd347aaa9c1ee902f74b5457d74db0fe1d6857b6abde02e2d261151b0f5952",
+    "network_sha256": "c6db3f413d2351046998020c06b3c240922accf4c12fcd42f653490ccaca7a07",
+    "predictor_source_namespace": "6a1b6fcf6e155651e96b3b881565ad58fdf0c03e"
+  },
+  "main": {
+    "Joint_additional_objective_native_numeric_calls": 0,
+    "Joint_original_paid_Full256_reused": true,
+    "cells": 16,
+    "logical_calls": 4096,
+    "new_Sequential_physical_calls": 3072,
+    "objective_cap_per_method": 256,
+    "phase_caps": {
+      "sequential25": [
+        64,
+        192
+      ],
+      "sequential50": [
+        128,
+        128
+      ],
+      "sequential75": [
+        192,
+        64
+      ]
+    },
+    "unused_A": "discarded; no transfer"
+  },
+  "methods": [
+    "joint",
+    "sequential25",
+    "sequential50",
+    "sequential75"
+  ],
+  "native_acceptance": {
+    "fixed_control_shortlist": 1,
+    "no_replacement": true,
+    "normal_scheduler_refusals_require_certificate": true,
+    "numeric_mismatch_fails_unit": true,
+    "original_predicted_shortlist": 5
+  },
+  "native_source_commit": "9e7015c3bd4d44dd2ec37df6f02c09aaa0372e55",
+  "presentation": {
+    "baseline": "ORBIT=1",
+    "geomean": {
+      "joint": 1.0,
+      "sequential25": 1.4837534670576333,
+      "sequential50": 1.4380076904677672,
+      "sequential75": 1.5153574875796627
+    },
+    "lower_better": true,
+    "ratio": "method cycles / ORBIT cycles"
+  },
+  "recorded_native_binary_sha256": "80f11127c25360b591cbd705d3e7d25d3060ba90cf2978f8d5a56133cf58a761",
+  "recorded_search_binary_sha256": "2304dae3f8e1165950da939a84f58f5322371fa7edc74dd24ba5057991de4f6a",
+  "recorded_seq25_binary_sha256": "4e0cd354b7731bb7989f1928373d2d0a4b895eb99bee6b52d52c6a7055fa68c9",
+  "schema": "orbit-source35-four-workload-public-snapshot-v1",
+  "search": {
+    "beam": 16,
+    "checkpoint_actions": 4096,
+    "diversity": 4,
+    "max_fission_actions_per_task": 64,
+    "max_partition_factor": 4,
+    "rounds": 20,
+    "scoring_workers": 1,
+    "timeout_seconds": 21600
+  },
+  "seq25_guard_only_extension": {
+    "all_search_budget_cost_mapper_scheduler_bodies_unchanged": true,
+    "changes": [
+      "Permit25 in existing C++ option guard",
+      "Update diagnostic wording"
+    ],
+    "equivalence_bridge_sha256": "6df186f6fdba85a6383f47145e698543787d4bce9529d563e4ee9b4182c1b270",
+    "source_proof_sha256": "e7ba29924e48a268201ccbde19f36ca86e09da93948c52b520b1224a0d255770"
+  },
+  "seq25_search_source_commit": "93bfea39833ca88511ed7c7dc4e94bbffb943eee",
+  "stages": [
+    "fixed",
+    "shape",
+    "replica",
+    "tiling",
+    "fusion",
+    "fission"
+  ]
+}
