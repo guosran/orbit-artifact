@@ -1,0 +1,9 @@
+{
+  "schema": "orbit-readonly-analysis-development-failure-v1",
+  "script": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-replica-original-five-predictor-rank-readonly-20261012/analyze.py",
+  "script_sha256": "e83b9f27efd0b78582fbacf0f25c4be379bbf50d6ecfa079020fee14d95c3186",
+  "status": "failed-before-output",
+  "reason": "Parser v1 compared mapper PE tile rows/cols directly to CGRA shape rows/cols. Original selection explicitly defines per-CGRA tile2x2; CGRA1x3 corresponds to mapper PE2x6.",
+  "correction": "New v2 reads and binds each original shape selection; checks actual task shape and mapper tiles against its architecture scaling. No experiment, score, native or source bytes changed.",
+  "extra_calls": 0
+}

@@ -1,0 +1,7 @@
+First compile the isolated one-TU source with complete pre/post source, compiler, header and link bindings, the shared two-GiB build lease, and no search/native/numeric calls. Preserve Source37 and all frozen results.
+
+Then prepare one fresh canonical GCN Full64 mechanism check, zero native and numeric calls. Keep rounds20, beam16, diversity4, one scoring worker, quota1, fair pending, refresh, parent progress, complete supported-shape bootstrap and the original cache input. All scheduler calls including rejects count within64; semantic rejected/duplicate attempts remain in the original ledger. This is a mechanism probe, not a matched256 quality result. No target/winner injection.
+
+Replay all parent menus, authenticated graph/schedule observations and existing cost catalogues, reconstruct every critical-positive bit and target comparison, all three-category exclusions, original shape parameter sequence, finite4-charge/64-zero windows, parent queues, exact-edge uniqueness and64 contiguous objective charges. Report actual service targets and retained/cut paths, including negative outcomes. A followup256 search with original-five native and strict numerical validation needs its own exact Root-reviewed preparation after this mechanism closes.
+
+Do not add the separate parameter representative proposal, preserve newly opened structural windows, change target feedback, or modify I/O in this cohort.
