@@ -1,0 +1,84 @@
+{
+  "workload": "gcn",
+  "source": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/native/b256/gcn/fission/native/rank-0/native.mlir",
+  "status": "pass",
+  "scope": "mapped-native host semantics; no hardware timing claim",
+  "commands": [
+    {
+      "argv": [
+        "/home/shiran/project/orbit-repair-study/binaries/mlir-amoeba-opt-80f11127c25360b5",
+        "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/native/b256/gcn/fission/native/rank-0/native.mlir",
+        "--verify-each",
+        "--lower-joint-taskflow-to-host-scf=input0-numeric-program=gcn",
+        "-o",
+        "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/host.mlir"
+      ],
+      "negative_control": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.031935467035509646
+    },
+    {
+      "argv": [
+        "/home/shiran/project/orbit-exact-study/build-env/llvm-build/bin/mlir-opt",
+        "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/host.mlir",
+        "--verify-each",
+        "--convert-scf-to-cf",
+        "--convert-cf-to-llvm",
+        "--convert-arith-to-llvm",
+        "--finalize-memref-to-llvm",
+        "--convert-func-to-llvm",
+        "--reconcile-unrealized-casts",
+        "-o",
+        "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/llvm.mlir"
+      ],
+      "negative_control": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.06388689298182726
+    },
+    {
+      "argv": [
+        "/home/shiran/project/orbit-exact-study/build-env/llvm-build/bin/mlir-runner",
+        "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/llvm.mlir",
+        "-e",
+        "main",
+        "-entry-point-result=i64",
+        "-O2",
+        "-shared-libs",
+        "/home/shiran/project/orbit-exact-study/build-env/llvm-build/lib/libmlir_runner_utils.so",
+        "-shared-libs",
+        "/home/shiran/project/orbit-repair-study/validation/reference-libs/libgcn_reference.so"
+      ],
+      "negative_control": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.214315596036613
+    }
+  ],
+  "negative_control_reused": {
+    "certificate": "/home/shiran/project/orbit-repair-study/experiments/final-v4/numeric-controls-native-v5/gcn/negative-certificate.json",
+    "sha256": "173bb2829b50ecf818a3f74ce69791820e58f5b274666498d47260c229d6aac7"
+  },
+  "positive": {
+    "mismatches": 0,
+    "comparisons": 603920,
+    "actual_nonzero": 7663,
+    "expected_nonzero": 7663
+  },
+  "elapsed_seconds": 0.6762841160525568,
+  "outputs": {
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/llvm.command.json": "3e21fded6db6b9fbae182b80b9c9b32bc565cf8acbcf3ee7f90467ce831250e6",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/host.mlir": "cc71b14b324f36500b520d96f53454921127c5c277194afa119dbf2a8a8c04f2",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/positive.stdout.log": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/positive.stderr.log": "64b7bb5e06d735d0e70716b5040e26fe4e3047aa0ced63db702fa61d533d8241",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/launch.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/host.command.json": "c89470553e8f11f4e6bca86cf511f06831637ecce3541604b8236403dddd5ae2",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/host.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/host.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/positive.command.json": "ba2e9116300f2a110c31de4a230d5d58d73f7410a64df283b7260771d1ad298f",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/.launch.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/usage.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/llvm.mlir": "8805532f9e2765b462d22f55c4ad76eac27a3fc928b7e47eb55b3869d6555363",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/llvm.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/llvm.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/numeric/b256/gcn/fission/rank-0/launch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

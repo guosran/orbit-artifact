@@ -1,0 +1,60 @@
+{
+  "schema": "orbit-v37-gcn-closed-pair-performance-readonly-v1",
+  "status": "verified-isolated-research",
+  "source_commit": "151cf509063bf93276665cea05fb71235f6dd123",
+  "rows": [
+    {
+      "domain": "replica",
+      "native_cycles": 922559,
+      "objective_calls": 256,
+      "candidate_semantic_attempts": 1985,
+      "zero_debit_attempts": 1730,
+      "zero_debit_fraction": 0.871536523929471,
+      "charged_candidate_attempts": 255,
+      "bootstrap_objective_calls": 1,
+      "search_wall_seconds": 295.97,
+      "search_user_seconds": 292.17,
+      "search_system_seconds": 3.95,
+      "maximum_rss_kib": 552492,
+      "gnu_time_filesystem_outputs_raw": 4859936,
+      "communication_window_paid": 49,
+      "communication_windows": 19
+    },
+    {
+      "domain": "fission",
+      "native_cycles": 931310,
+      "objective_calls": 256,
+      "candidate_semantic_attempts": 165627,
+      "zero_debit_attempts": 165372,
+      "zero_debit_fraction": 0.9984603959499357,
+      "charged_candidate_attempts": 255,
+      "bootstrap_objective_calls": 1,
+      "search_wall_seconds": 3312.2,
+      "search_user_seconds": 2959.66,
+      "search_system_seconds": 108.41,
+      "maximum_rss_kib": 6963312,
+      "gnu_time_filesystem_outputs_raw": 206769696,
+      "communication_window_paid": 52,
+      "communication_windows": 19
+    }
+  ],
+  "full_over_replica_search_wall_ratio": 11.190999087745379,
+  "additional_objective_calls": 0,
+  "additional_native_calls": 0,
+  "additional_numeric_calls": 0,
+  "paper_admission": false,
+  "limitations": [
+    "Independent canonical starts differ in legal cumulative action domain. Timings are observations from this host, not an isolated I/O or materializer profile.",
+    "Zero-debit attempts combine legality rejections and duplicates; this count does not prove every such check can be removed.",
+    "GNU time filesystem output values are preserved as raw block accounting; they are neither retained artifact sizes nor measured physical disk bandwidth.",
+    "Potential optimization must preserve attempt order, feedback, queue cursors and budget debit; removing actions changes the controller."
+  ],
+  "input_sha256": {
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-replica256-continuation1/runs/b256/gcn/replica/usage.txt": "ef3cc784203fd85813fac7875c80ef2bb67b45d74eac03d941ae2ebd8e6039c6",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-replica256-continuation1/runs/b256/gcn/replica/search-audit.json": "97d852a90a41a3f532cab6954e1872ec31f40e010fe5110734ec513654a8f91e",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-replica256-continuation1/runs/b256/gcn/replica/completion.json": "db58aaca380f957c74461b9e685928742dfba0e490de5be5a951f9783d63149f",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/runs/b256/gcn/fission/usage.txt": "4409ca20d100843d696545be4ddb6084c3c48a0e6881a30fbf37cb8c20b0424a",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/runs/b256/gcn/fission/search-audit.json": "6f637e3d55985e5289af313ab4d29abe61d741573c26369e872bbe8dcea8649d",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/retained-communication-shape-window-v37-full256-continuation1/runs/b256/gcn/fission/completion.json": "eb394e97a661df0620f4b1236268227527daca9cf3e2a916b58ad9ffde7c3fff"
+  }
+}
