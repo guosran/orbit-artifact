@@ -1,0 +1,214 @@
+{
+  "schema": "orbit-v38-gcn-matched-replica-tiling-full-comparison-v1",
+  "status": "verified-isolated-research",
+  "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+  "policy": "schedule-structure-critical-positive-compute-v38",
+  "rows": [
+    {
+      "stage": "replica",
+      "feature_policy": "cumulative-replica",
+      "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+      "native_cycles": 920639,
+      "original_exact_five_native": [
+        920639,
+        921040,
+        921039,
+        920954,
+        920954
+      ],
+      "original_exact_five_predicted": [
+        920897,
+        921073,
+        921095,
+        921179,
+        921179
+      ],
+      "objective_calls": 256,
+      "extra_objective_calls": 0,
+      "native_evaluated": 5,
+      "numeric_validated": 5,
+      "certified_scheduler_rejected": 0,
+      "search_usage": {
+        "wall": "5:50.14",
+        "user_cpu_seconds": 351.13,
+        "system_cpu_seconds": 5.42,
+        "peak_rss_kib": 655836.0,
+        "filesystem_output_blocks": 7054912.0
+      },
+      "first_tier_guided_paid_targets": {
+        "Task_16": 4,
+        "Task_17": 1,
+        "Task_18": 1,
+        "Task_21": 4,
+        "Task_23": 1,
+        "Task_24": 1,
+        "Task_10": 1,
+        "Task_11": 1,
+        "Task_12": 1,
+        "Task_9": 1,
+        "Task_15": 2,
+        "Task_22": 4,
+        "Task_26": 1
+      },
+      "semantic_attempts": 4651,
+      "zero_debit_attempts": 4396,
+      "communication_shape_window_paid": 52,
+      "replaced_structural_window_count": 0,
+      "report": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-replica256-continuation1/closed-report/REPORT.json"
+    },
+    {
+      "stage": "tiling",
+      "feature_policy": "cumulative-tiling",
+      "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+      "native_cycles": 918724,
+      "original_exact_five_native": [
+        918724,
+        919123,
+        919123,
+        919124,
+        919124
+      ],
+      "original_exact_five_predicted": [
+        919269,
+        919647,
+        919647,
+        919648,
+        919648
+      ],
+      "objective_calls": 256,
+      "extra_objective_calls": 0,
+      "native_evaluated": 5,
+      "numeric_validated": 5,
+      "certified_scheduler_rejected": 0,
+      "search_usage": {
+        "wall": "27:27.07",
+        "user_cpu_seconds": 1578.52,
+        "system_cpu_seconds": 48.16,
+        "peak_rss_kib": 3729004.0,
+        "filesystem_output_blocks": 95066776.0
+      },
+      "first_tier_guided_paid_targets": {
+        "Task_16": 4,
+        "Task_17": 2,
+        "Task_18": 3,
+        "Task_21": 4,
+        "Task_23": 2,
+        "Task_24": 2,
+        "Task_10": 2,
+        "Task_11": 2,
+        "Task_12": 6,
+        "Task_9": 2,
+        "Task_15": 2,
+        "Task_22": 4,
+        "Task_26": 1
+      },
+      "semantic_attempts": 91151,
+      "zero_debit_attempts": 90896,
+      "communication_shape_window_paid": 57,
+      "replaced_structural_window_count": 6,
+      "report": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/closed-report/REPORT.json"
+    },
+    {
+      "stage": "full",
+      "feature_policy": "all",
+      "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+      "native_cycles": 918724,
+      "original_exact_five_native": [
+        918724,
+        919123,
+        919123,
+        919124,
+        919124
+      ],
+      "original_exact_five_predicted": [
+        919269,
+        919647,
+        919647,
+        919648,
+        919648
+      ],
+      "objective_calls": 256,
+      "extra_objective_calls": 0,
+      "native_evaluated": 5,
+      "numeric_validated": 5,
+      "certified_scheduler_rejected": 0,
+      "search_usage": {
+        "wall": "1:05:28",
+        "user_cpu_seconds": 3411.15,
+        "system_cpu_seconds": 141.42,
+        "peak_rss_kib": 7439504.0,
+        "filesystem_output_blocks": 280297440.0
+      },
+      "first_tier_guided_paid_targets": {
+        "Task_16": 4,
+        "Task_17": 2,
+        "Task_18": 3,
+        "Task_21": 4,
+        "Task_23": 2,
+        "Task_24": 2,
+        "Task_10": 2,
+        "Task_11": 2,
+        "Task_12": 6,
+        "Task_9": 2,
+        "Task_15": 2,
+        "Task_22": 4,
+        "Task_26": 1
+      },
+      "semantic_attempts": 201377,
+      "zero_debit_attempts": 201122,
+      "communication_shape_window_paid": 57,
+      "replaced_structural_window_count": 6,
+      "report": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-full256-continuation1/closed-report/REPORT.json"
+    }
+  ],
+  "raw_native_cycle_differences": {
+    "tiling_minus_replica": -1915,
+    "full_minus_tiling": 0,
+    "full_minus_replica": -1915
+  },
+  "full_regresses_from_tiling_by_more_than_one_cycle": false,
+  "practical_tie_tolerance_cycles": 1,
+  "exact_argv_difference_checks": [
+    {
+      "domain": "cumulative-tiling",
+      "difference_indices": [
+        9,
+        28
+      ]
+    },
+    {
+      "domain": "all",
+      "difference_indices": [
+        9,
+        28
+      ]
+    }
+  ],
+  "additional_objective_calls": 0,
+  "additional_native_calls": 0,
+  "additional_numeric_calls": 0,
+  "paper_admission": false,
+  "formal_admission": false,
+  "main_execution": false,
+  "limitations": [
+    "Only the cumulative legal domain and output path differ between the three independent canonical starts.",
+    "Native cycles and every original finalist outcome retain exact integers; the one-cycle tolerance does not alter recorded values.",
+    "Full can select a state feasible in a smaller domain. Native improvement alone cannot establish fusion or fission usefulness.",
+    "Source35/37 values belong to different search policies and are excluded from this same-source join."
+  ],
+  "input_sha256": {
+    "/home/shiran/project/orbit-repair-study/diagnosis_critical_positive_compute_v38_gcn_triple2561_report.py": "8167e918fc0ab829b3eb6811fb190f2cdb8f41c5db3445b1dace010fb698c581",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-replica256-continuation1/closed-report/REPORT.json": "6acf1c1801eda95290fe7c5ebec89e8002053fc7a40205a67aa5e9fcb95eac8e",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-replica256-continuation1/closed-report/FINAL.json": "66092f2a7850a786cfb60bd5e069098e4d6f3080004f029d77fe8979d954c064",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-replica256-continuation1/prepared-v2/gcn-256-runner-binding.json": "9eb0347301a2e6432df56314fcbfde1ee3583db0f9e52cae63666001d47d6ec7",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-replica256-continuation1/prepared-v2/pipeline-binding.json": "df698cdd46260fafe7c8119e5841e287f1035408406fc3c0bc9cf780594bbc14",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/closed-report/REPORT.json": "4ea90f1f8f8d613b07456edce67d28319e32adb205548815ceb4e811c6b17fc1",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/closed-report/FINAL.json": "a9066ed16fcfa10cff63f938a62ace4face60a981fb70c57fbaf146abebb1452",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/prepared-v1/gcn-256-runner-binding.json": "483a6db30a66db622732d30ea9bab9e98cd04f2a36e9dc6ebf377d41be968f53",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/prepared-v1/pipeline-binding.json": "ac81a9ace3604dbffff851abff7acb48165c911448792de138005aab653b4898",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-full256-continuation1/closed-report/REPORT.json": "c71d0839266fc766245a1b3667ac8ed77a970294d7787173c4c9520fdddbbc19",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-full256-continuation1/closed-report/FINAL.json": "ed84e7e1f0925fdab29aaa64054c2f813be641a8dde6002b32a586bf5713add3",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-full256-continuation1/prepared-v2/gcn-256-runner-binding.json": "34a1d1bc4c8e4b8c514bf8b4d862e1066a6ed780996ee70c6988597b117513a4",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-full256-continuation1/prepared-v2/pipeline-binding.json": "2970c6b861f16bb6a466a92a06135d45151c6621d30275c339525264258d06a8"
+  }
+}

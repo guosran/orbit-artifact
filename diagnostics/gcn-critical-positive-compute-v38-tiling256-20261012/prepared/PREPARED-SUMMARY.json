@@ -1,0 +1,115 @@
+{
+  "status": "prepared-not-authorized",
+  "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+  "optimizer_sha256": "9996d1b97787242cea42d88511ce530bfa4cb523883705b0746a72a1ff17d7cc",
+  "native_optimizer_sha256": "80f11127c25360b591cbd705d3e7d25d3060ba90cf2978f8d5a56133cf58a761",
+  "actual_policy": "schedule-structure-critical-positive-compute-v38",
+  "stage": "tiling",
+  "feature_policy": "cumulative-tiling",
+  "prepared_sha256": "ac81a9ace3604dbffff851abff7acb48165c911448792de138005aab653b4898",
+  "runner_binding_sha256": "483a6db30a66db622732d30ea9bab9e98cd04f2a36e9dc6ebf377d41be968f53",
+  "driver_sha256": "145e303ca861066ac3f3b56165d5a2585bef3070a8bfe3bdb567583631f3ee09",
+  "auditor_sha256": "f63475d0179035c98316aa9cc3050bba68cd214e2b302a09eac04d0fe7236ccf",
+  "preparer_sha256": "1f3f3c32f4469c42330be67ec0764db807bd3c514df36f403291825e2154240f",
+  "input_count": 1383,
+  "argv": [
+    "/home/shiran/project/orbit-exact-study/build-env/venv/bin/python",
+    "/home/shiran/project/orbit-repair-study/search/run_critical_positive_compute_v38_controller.py",
+    "--case",
+    "/home/shiran/project/orbit-repair-study/full_prepared-v4/gcn/case.json",
+    "--optimizer",
+    "/home/shiran/project/orbit-repair-study/binaries/mlir-amoeba-opt-9996d1b97787242c",
+    "--source",
+    "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source",
+    "--output",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/runs/b256/gcn/tiling",
+    "--flow",
+    "joint",
+    "--budget",
+    "256",
+    "--rounds",
+    "20",
+    "--beam",
+    "16",
+    "--diversity",
+    "4",
+    "--workers",
+    "1",
+    "--quota-scale",
+    "1",
+    "--fair-pending",
+    "--refresh-frontier",
+    "--parent-progress",
+    "--feature-policy",
+    "cumulative-tiling",
+    "--shape-enumeration-order",
+    "ascending",
+    "--bootstrap-supported-shapes",
+    "--checkpoint-actions",
+    "4096",
+    "--timeout",
+    "21600",
+    "--cache-from",
+    "/home/shiran/project/orbit-repair-study/experiments/final-v4/full/b4096/gcn/joint-original-parameters/ml-cache.json",
+    "--directional-search",
+    "--retained-communication-window",
+    "--critical-positive-compute"
+  ],
+  "argv_differences_from_sealed_source38": {
+    "full": [
+      {
+        "index": 9,
+        "option": "--output",
+        "new": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/runs/b256/gcn/tiling",
+        "control": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-full256-continuation1/runs/b256/gcn/fission"
+      },
+      {
+        "index": 28,
+        "option": "--feature-policy",
+        "new": "cumulative-tiling",
+        "control": "all"
+      }
+    ],
+    "replica": [
+      {
+        "index": 9,
+        "option": "--output",
+        "new": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/runs/b256/gcn/tiling",
+        "control": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-replica256-continuation1/runs/b256/gcn/replica"
+      },
+      {
+        "index": 28,
+        "option": "--feature-policy",
+        "new": "cumulative-tiling",
+        "control": "cumulative-replica"
+      }
+    ]
+  },
+  "canonical_start": true,
+  "injected_states": 0,
+  "new_control_objective_calls": 0,
+  "requested_objective_calls": 256,
+  "requested_native_calls": 5,
+  "requested_strict_numeric_ranks": 5,
+  "whole_worker_peak_gib": 9,
+  "numeric_workers": 2,
+  "minimum_disk_gib": 50,
+  "wait_seconds": 60,
+  "resource_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "MALLOC_ARENA_MAX": "2",
+    "MALLOC_TRIM_THRESHOLD_": "131072",
+    "MALLOC_MMAP_THRESHOLD_": "131072"
+  },
+  "control_native_cycles": {
+    "full": 918724,
+    "replica": 920639
+  },
+  "source_domain_sha256": "688c200332b5637404b9b27caddc6df08644aa1441567df28efa206a921c1d90",
+  "source_filter_invariant": "No compiler code changed. Literal cumulative level=3 admits replica/tile/k-tile and family=lineage-replacement lineage-reset, denies fusion/sibling-fusion, fission, and unknown primitives.",
+  "default_or_paper_admission": false,
+  "unit_exists": false,
+  "epoch": 1791740449.8406432
+}

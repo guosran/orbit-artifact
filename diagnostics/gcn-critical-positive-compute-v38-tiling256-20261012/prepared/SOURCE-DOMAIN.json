@@ -1,0 +1,23 @@
+{
+  "schema": "orbit-source38-cumulative-tiling-domain-v1",
+  "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+  "cpp": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+  "cpp_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25",
+  "exact_filter_cpp": "    if (StringRef(featurePolicy.getValue()).starts_with(\"cumulative-\")) {\n      const unsigned level = featurePolicy == \"cumulative-fixed\" ? 0 :\n          featurePolicy == \"cumulative-shape\" ? 1 :\n          featurePolicy == \"cumulative-replica\" ? 2 :\n          featurePolicy == \"cumulative-tiling\" ? 3 : 4;\n      if (level == 0) return \"feature_policy_fixed_1x1\";\n      if (!parent.actionHistory.fissionActions.empty())\n        return \"feature_policy_cumulative_parent_fission\";\n      if (action.family == \"fission\") return \"feature_policy_cumulative_fission\";\n      for (const auto &primitive : action.primitives) {\n        const StringRef kind = primitive.kind;\n        const unsigned required =\n            (action.family == \"lineage-replacement\" && kind == \"lineage-reset\") ? 1 :\n            kind == \"replica\" ? 2 :\n            (kind == \"tile\" || kind == \"k-tile\") ? 3 :\n            (kind == \"fusion\" || kind == \"sibling-fusion\") ? 4 : 5;\n        if (required > level) return \"feature_policy_cumulative_primitive\";\n      }\n    }\n",
+  "level": 3,
+  "forbidden_action_family": "fission",
+  "forbidden_parent_fission": true,
+  "primitive_required_levels": {
+    "lineage_replacement_lineage_reset": 1,
+    "replica": 2,
+    "tile": 3,
+    "k_tile": 3,
+    "fusion": 4,
+    "sibling_fusion": 4,
+    "unknown": 5
+  },
+  "lineage_reset_special_case": "required=1 only for action.family=lineage-replacement and primitive.kind=lineage-reset",
+  "runtime_filter_unchanged": true,
+  "source_changes": 0,
+  "free_candidates": 0
+}

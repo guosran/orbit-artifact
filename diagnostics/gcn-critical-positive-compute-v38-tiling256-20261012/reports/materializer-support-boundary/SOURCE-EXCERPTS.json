@@ -1,0 +1,3122 @@
+{
+  "excerpts": [
+    {
+      "excerpt_sha256": "7382e68e5a77ffcb755afbaff8dc48509d4ed09e959f7e9978b016b39a2c78cc",
+      "first_line": 203,
+      "last_line": 220,
+      "numbered_lines": [
+        {
+          "line": 203,
+          "text": "static bool provesDistinctStorage(Value lhs, Value rhs) {"
+        },
+        {
+          "line": 204,
+          "text": "  lhs = canonicalStorageRoot(lhs);"
+        },
+        {
+          "line": 205,
+          "text": "  rhs = canonicalStorageRoot(rhs);"
+        },
+        {
+          "line": 206,
+          "text": "  if (!lhs || !rhs || lhs == rhs)"
+        },
+        {
+          "line": 207,
+          "text": "    return false;"
+        },
+        {
+          "line": 208,
+          "text": "  Operation *lhsDefinition = lhs.getDefiningOp();"
+        },
+        {
+          "line": 209,
+          "text": "  Operation *rhsDefinition = rhs.getDefiningOp();"
+        },
+        {
+          "line": 210,
+          "text": "  bool lhsAllocation ="
+        },
+        {
+          "line": 211,
+          "text": "      lhsDefinition && isa<memref::AllocOp, memref::AllocaOp>(lhsDefinition);"
+        },
+        {
+          "line": 212,
+          "text": "  bool rhsAllocation ="
+        },
+        {
+          "line": 213,
+          "text": "      rhsDefinition && isa<memref::AllocOp, memref::AllocaOp>(rhsDefinition);"
+        },
+        {
+          "line": 214,
+          "text": "  if (lhsAllocation && rhsAllocation)"
+        },
+        {
+          "line": 215,
+          "text": "    return lhsDefinition != rhsDefinition;"
+        },
+        {
+          "line": 216,
+          "text": "  if (lhsAllocation && isNoAliasFunctionArgument(rhs))"
+        },
+        {
+          "line": 217,
+          "text": "    return true;"
+        },
+        {
+          "line": 218,
+          "text": "  if (rhsAllocation && isNoAliasFunctionArgument(lhs))"
+        },
+        {
+          "line": 219,
+          "text": "    return true;"
+        },
+        {
+          "line": 220,
+          "text": "  return isNoAliasFunctionArgument(lhs) && isNoAliasFunctionArgument(rhs);"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Transforms/Optimizations/FissionTaskPass.cpp",
+      "purpose": "Same storage root never establishes disjointness.",
+      "source_sha256": "300eb94f51f15eb7adb8f5a1c60397e204f6757f19fcb680f2f4b46a8f0389f5"
+    },
+    {
+      "excerpt_sha256": "c6b1c388617a26dc11f2060f3a19cdbabadccd04acaa3d6b16fa10308a54b6a3",
+      "first_line": 267,
+      "last_line": 311,
+      "numbered_lines": [
+        {
+          "line": 267,
+          "text": "static FailureOr<FissionPlan> analyzeFission(TaskflowTaskOp task,"
+        },
+        {
+          "line": 268,
+          "text": "                                             std::string &error) {"
+        },
+        {
+          "line": 269,
+          "text": "  FissionPlan plan;"
+        },
+        {
+          "line": 270,
+          "text": "  plan.task = task;"
+        },
+        {
+          "line": 271,
+          "text": "  if (!task || !task.getBody().hasOneBlock()) {"
+        },
+        {
+          "line": 272,
+          "text": "    error = \"fission requires a selected single-block task\";"
+        },
+        {
+          "line": 273,
+          "text": "    return failure();"
+        },
+        {
+          "line": 274,
+          "text": "  }"
+        },
+        {
+          "line": 275,
+          "text": "  if (isNamedControlPredecessor(task)) {"
+        },
+        {
+          "line": 276,
+          "text": "    error = \"fission rejects tasks named by unsupported control edges\";"
+        },
+        {
+          "line": 277,
+          "text": "    return failure();"
+        },
+        {
+          "line": 278,
+          "text": "  }"
+        },
+        {
+          "line": 279,
+          "text": "  if (hasFissionTaskNameCollision(task)) {"
+        },
+        {
+          "line": 280,
+          "text": "    error = \"fission-derived task name collides with an existing task\";"
+        },
+        {
+          "line": 281,
+          "text": "    return failure();"
+        },
+        {
+          "line": 282,
+          "text": "  }"
+        },
+        {
+          "line": 283,
+          "text": "  if (!task.getDoneReads().empty() || task.getWillWrites().empty() ||"
+        },
+        {
+          "line": 284,
+          "text": "      task.getDoneWrites().size() != task.getWillWrites().size() || !task.getValueOutputs().empty() ||"
+        },
+        {
+          "line": 285,
+          "text": "      task.getOriginalWriteMemrefs().size() != task.getWillWrites().size() ||"
+        },
+        {
+          "line": 286,
+          "text": "      task.getOriginalReadMemrefs().size() != task.getWillReads().size()) {"
+        },
+        {
+          "line": 287,
+          "text": "    error = \"fission requires tensor write results, matching read/write \""
+        },
+        {
+          "line": 288,
+          "text": "            \"provenance, and no read/value result\";"
+        },
+        {
+          "line": 289,
+          "text": "    return failure();"
+        },
+        {
+          "line": 290,
+          "text": "  }"
+        },
+        {
+          "line": 291,
+          "text": "  for (NamedAttribute attribute : task->getAttrs())"
+        },
+        {
+          "line": 292,
+          "text": "    if (!isStructuralOrSafeTaskAttribute(attribute)) {"
+        },
+        {
+          "line": 293,
+          "text": "      error = \"fission rejects unsupported task state attribute \" +"
+        },
+        {
+          "line": 294,
+          "text": "              attribute.getName().str();"
+        },
+        {
+          "line": 295,
+          "text": "      return failure();"
+        },
+        {
+          "line": 296,
+          "text": "    }"
+        },
+        {
+          "line": 297,
+          "text": "  for (Value input : task.getOriginalReadMemrefs())"
+        },
+        {
+          "line": 298,
+          "text": "    for (Value output : task.getOriginalWriteMemrefs())"
+        },
+        {
+          "line": 299,
+          "text": "      if (!provesDistinctStorage(input, output)) {"
+        },
+        {
+          "line": 300,
+          "text": "        error = \"fission requires a proof that each read input is disjoint \""
+        },
+        {
+          "line": 301,
+          "text": "                \"from the task output\";"
+        },
+        {
+          "line": 302,
+          "text": "        return failure();"
+        },
+        {
+          "line": 303,
+          "text": "      }"
+        },
+        {
+          "line": 304,
+          "text": ""
+        },
+        {
+          "line": 305,
+          "text": "  for (auto [index, output] : llvm::enumerate(task.getOriginalWriteMemrefs()))"
+        },
+        {
+          "line": 306,
+          "text": "    for (Value other : task.getOriginalWriteMemrefs().drop_front(index + 1))"
+        },
+        {
+          "line": 307,
+          "text": "      if (!provesDistinctStorage(output, other)) {"
+        },
+        {
+          "line": 308,
+          "text": "        error = \"fission requires pairwise disjoint output storage\";"
+        },
+        {
+          "line": 309,
+          "text": "        return failure();"
+        },
+        {
+          "line": 310,
+          "text": "      }"
+        },
+        {
+          "line": 311,
+          "text": ""
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Transforms/Optimizations/FissionTaskPass.cpp",
+      "purpose": "Early task ABI and storage support guards precede a DFG plan.",
+      "source_sha256": "300eb94f51f15eb7adb8f5a1c60397e204f6757f19fcb680f2f4b46a8f0389f5"
+    },
+    {
+      "excerpt_sha256": "ad763bf630073208a33b26bdd5dff3289101ef0cb04067093e702eeff7756ac6",
+      "first_line": 424,
+      "last_line": 431,
+      "numbered_lines": [
+        {
+          "line": 424,
+          "text": "  for (Operation &operation : hyperblockBody.without_terminator()) {"
+        },
+        {
+          "line": 425,
+          "text": "    if (&operation == plan.initialization.getOperation() ||"
+        },
+        {
+          "line": 426,
+          "text": "        &operation == plan.initializationCondition.getOperation()) continue;"
+        },
+        {
+          "line": 427,
+          "text": "    if (operation.getNumRegions() != 0 ||"
+        },
+        {
+          "line": 428,
+          "text": "        (!isa<memref::LoadOp, memref::StoreOp>(&operation) &&"
+        },
+        {
+          "line": 429,
+          "text": "         (!isPure(&operation) || !isMemoryEffectFree(&operation)))) {"
+        },
+        {
+          "line": 430,
+          "text": "      error = \"fission rejects nested regions and unknown effects\";"
+        },
+        {
+          "line": 431,
+          "text": "      return failure();"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Transforms/Optimizations/FissionTaskPass.cpp",
+      "purpose": "Generic region/purity/effects guard; label is not a subpredicate trace.",
+      "source_sha256": "300eb94f51f15eb7adb8f5a1c60397e204f6757f19fcb680f2f4b46a8f0389f5"
+    },
+    {
+      "excerpt_sha256": "6a4aac4982ad442b78677907c453ca338d8022ff7e780f944533dd9c38958272",
+      "first_line": 876,
+      "last_line": 939,
+      "numbered_lines": [
+        {
+          "line": 876,
+          "text": "mlir::amoeba::neura::enumerateTaskflowFissionPartitions(TaskflowTaskOp task,"
+        },
+        {
+          "line": 877,
+          "text": "                                                        uint64_t maxCuts,"
+        },
+        {
+          "line": 878,
+          "text": "                                                        std::string &error) {"
+        },
+        {
+          "line": 879,
+          "text": "  error.clear();"
+        },
+        {
+          "line": 880,
+          "text": "  FailureOr<FissionPlan> analyzed = analyzeFission(task, error);"
+        },
+        {
+          "line": 881,
+          "text": "  if (failed(analyzed))"
+        },
+        {
+          "line": 882,
+          "text": "    return SmallVector<SmallVector<unsigned>>{};"
+        },
+        {
+          "line": 883,
+          "text": "  FissionPlan plan = std::move(*analyzed);"
+        },
+        {
+          "line": 884,
+          "text": ""
+        },
+        {
+          "line": 885,
+          "text": "  SmallVector<SmallVector<unsigned>> partitions;"
+        },
+        {
+          "line": 886,
+          "text": "  SmallVector<unsigned> leftNodes;"
+        },
+        {
+          "line": 887,
+          "text": "  SmallVector<bool> selected(plan.nodes.size(), false);"
+        },
+        {
+          "line": 888,
+          "text": "  bool overflow = false;"
+        },
+        {
+          "line": 889,
+          "text": "  std::string rejectedCut;"
+        },
+        {
+          "line": 890,
+          "text": "  std::function<void(unsigned)> enumerate = [&](unsigned nodeIndex) {"
+        },
+        {
+          "line": 891,
+          "text": "    if (overflow)"
+        },
+        {
+          "line": 892,
+          "text": "      return;"
+        },
+        {
+          "line": 893,
+          "text": "    if (nodeIndex == plan.nodes.size()) {"
+        },
+        {
+          "line": 894,
+          "text": "      std::string validationError;"
+        },
+        {
+          "line": 895,
+          "text": "      if (failed(validatePartition(plan, leftNodes, validationError))) {"
+        },
+        {
+          "line": 896,
+          "text": "        if (rejectedCut.empty())"
+        },
+        {
+          "line": 897,
+          "text": "          rejectedCut = std::move(validationError);"
+        },
+        {
+          "line": 898,
+          "text": "        return;"
+        },
+        {
+          "line": 899,
+          "text": "      }"
+        },
+        {
+          "line": 900,
+          "text": "      if (partitions.size() == maxCuts) {"
+        },
+        {
+          "line": 901,
+          "text": "        overflow = true;"
+        },
+        {
+          "line": 902,
+          "text": "        return;"
+        },
+        {
+          "line": 903,
+          "text": "      }"
+        },
+        {
+          "line": 904,
+          "text": "      partitions.push_back(leftNodes);"
+        },
+        {
+          "line": 905,
+          "text": "      return;"
+        },
+        {
+          "line": 906,
+          "text": "    }"
+        },
+        {
+          "line": 907,
+          "text": ""
+        },
+        {
+          "line": 908,
+          "text": "    enumerate(nodeIndex + 1);"
+        },
+        {
+          "line": 909,
+          "text": "    if (overflow)"
+        },
+        {
+          "line": 910,
+          "text": "      return;"
+        },
+        {
+          "line": 911,
+          "text": "    if (!llvm::all_of(plan.predecessors[nodeIndex], [&](unsigned predecessor) {"
+        },
+        {
+          "line": 912,
+          "text": "          return selected[predecessor];"
+        },
+        {
+          "line": 913,
+          "text": "        }))"
+        },
+        {
+          "line": 914,
+          "text": "      return;"
+        },
+        {
+          "line": 915,
+          "text": "    bool prefixInputsAvailable ="
+        },
+        {
+          "line": 916,
+          "text": "        llvm::all_of(plan.nodes[nodeIndex]->getOperands(), [&](Value operand) {"
+        },
+        {
+          "line": 917,
+          "text": "          auto argument = dyn_cast<BlockArgument>(operand);"
+        },
+        {
+          "line": 918,
+          "text": "          if (!argument ||"
+        },
+        {
+          "line": 919,
+          "text": "              argument.getOwner() == &plan.hyperblock.getBody().front())"
+        },
+        {
+          "line": 920,
+          "text": "            return true;"
+        },
+        {
+          "line": 921,
+          "text": "          return argument.getOwner() == &plan.task.getBody().front() &&"
+        },
+        {
+          "line": 922,
+          "text": "                 taskArgumentAvailableInStage(operand, plan.task, true);"
+        },
+        {
+          "line": 923,
+          "text": "        });"
+        },
+        {
+          "line": 924,
+          "text": "    if (!prefixInputsAvailable)"
+        },
+        {
+          "line": 925,
+          "text": "      return;"
+        },
+        {
+          "line": 926,
+          "text": "    selected[nodeIndex] = true;"
+        },
+        {
+          "line": 927,
+          "text": "    leftNodes.push_back(nodeIndex);"
+        },
+        {
+          "line": 928,
+          "text": "    enumerate(nodeIndex + 1);"
+        },
+        {
+          "line": 929,
+          "text": "    leftNodes.pop_back();"
+        },
+        {
+          "line": 930,
+          "text": "    selected[nodeIndex] = false;"
+        },
+        {
+          "line": 931,
+          "text": "  };"
+        },
+        {
+          "line": 932,
+          "text": "  enumerate(0);"
+        },
+        {
+          "line": 933,
+          "text": "  if (overflow) {"
+        },
+        {
+          "line": 934,
+          "text": "    // Keep the first maxCuts legal cuts in the deterministic dependency-aware"
+        },
+        {
+          "line": 935,
+          "text": "    // exclude/include DFS.  This is a bounded candidate domain, not a claim"
+        },
+        {
+          "line": 936,
+          "text": "    // that every legal partition has been enumerated.  Legality is unchanged."
+        },
+        {
+          "line": 937,
+          "text": "    error = \"deterministic-cut-cap: legal cut enumeration truncated at \" +"
+        },
+        {
+          "line": 938,
+          "text": "            std::to_string(maxCuts);"
+        },
+        {
+          "line": 939,
+          "text": "  }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Transforms/Optimizations/FissionTaskPass.cpp",
+      "purpose": "Early unsupported returns empty; dependency-aware cut DFS executes only after support.",
+      "source_sha256": "300eb94f51f15eb7adb8f5a1c60397e204f6757f19fcb680f2f4b46a8f0389f5"
+    },
+    {
+      "excerpt_sha256": "6a512ba09cb046a2da5804fd0af65faae49b1c3e23d93a42fd84271f459252f6",
+      "first_line": 1639,
+      "last_line": 1719,
+      "numbered_lines": [
+        {
+          "line": 1639,
+          "text": "  if (stageId >= 5 && names.size() >= 2) {"
+        },
+        {
+          "line": 1640,
+          "text": "    // Producer/consumer actions must follow an authenticated SSA edge.  Task"
+        },
+        {
+          "line": 1641,
+          "text": "    // names are sorted for deterministic output, so using names[0]/names[1]"
+        },
+        {
+          "line": 1642,
+          "text": "    // here would reverse the fixture's consumer/tensor pair."
+        },
+        {
+          "line": 1643,
+          "text": "    SmallVector<DependencyPair> edges = dependencyPairs(module, functionName);"
+        },
+        {
+          "line": 1644,
+          "text": "    for (const DependencyPair &edge : edges) {"
+        },
+        {
+          "line": 1645,
+          "text": "      const std::string &producer = edge.producer;"
+        },
+        {
+          "line": 1646,
+          "text": "      const std::string &consumer = edge.consumer;"
+        },
+        {
+          "line": 1647,
+          "text": "      std::string fused = fusedTaskName(producer, consumer);"
+        },
+        {
+          "line": 1648,
+          "text": ""
+        },
+        {
+          "line": 1649,
+          "text": "      for (StringRef mode : {StringRef(\"producer-consumer-retained\"),"
+        },
+        {
+          "line": 1650,
+          "text": "                             StringRef(\"producer-consumer-forwarded\")}) {"
+        },
+        {
+          "line": 1651,
+          "text": "        NeighborhoodAction action;"
+        },
+        {
+          "line": 1652,
+          "text": "        action.family = \"fusion\";"
+        },
+        {
+          "line": 1653,
+          "text": "        action.primitives.push_back(fusionPrimitive(producer, consumer, mode));"
+        },
+        {
+          "line": 1654,
+          "text": "        action.label = (Twine(\"fuse:\") + producer + \":\" + consumer + \":\" +"
+        },
+        {
+          "line": 1655,
+          "text": "                        mode)"
+        },
+        {
+          "line": 1656,
+          "text": "                           .str();"
+        },
+        {
+          "line": 1657,
+          "text": "        addUniqueAction(actions, std::move(action));"
+        },
+        {
+          "line": 1658,
+          "text": "      }"
+        },
+        {
+          "line": 1659,
+          "text": ""
+        },
+        {
+          "line": 1660,
+          "text": "      // Complete local path: fuse the authenticated edge, then tile the"
+        },
+        {
+          "line": 1661,
+          "text": "      // actual source-owned fused task name."
+        },
+        {
+          "line": 1662,
+          "text": "      NeighborhoodAction fuseTile;"
+        },
+        {
+          "line": 1663,
+          "text": "      fuseTile.family = \"fusion-plus-tiling\";"
+        },
+        {
+          "line": 1664,
+          "text": "      fuseTile.primitives.push_back("
+        },
+        {
+          "line": 1665,
+          "text": "          fusionPrimitive(producer, consumer, \"producer-consumer-forwarded\"));"
+        },
+        {
+          "line": 1666,
+          "text": "      fuseTile.primitives.push_back(tilePrimitive(fused, 0, 2));"
+        },
+        {
+          "line": 1667,
+          "text": "      fuseTile.label = (Twine(\"fuse-then-tile:\") + producer + \":\" + consumer)"
+        },
+        {
+          "line": 1668,
+          "text": "                           .str();"
+        },
+        {
+          "line": 1669,
+          "text": "      addUniqueAction(actions, std::move(fuseTile));"
+        },
+        {
+          "line": 1670,
+          "text": ""
+        },
+        {
+          "line": 1671,
+          "text": "      // Complete local path in the opposite order.  Both tasks are tiled and"
+        },
+        {
+          "line": 1672,
+          "text": "      // the fusion targets corresponding derived shards, so this remains the"
+        },
+        {
+          "line": 1673,
+          "text": "      // same producer/consumer edge rather than an unrelated pair or an"
+        },
+        {
+          "line": 1674,
+          "text": "      // obsolete pre-tile task name."
+        },
+        {
+          "line": 1675,
+          "text": "      std::string producerShard = producer + \".tile.0.0\";"
+        },
+        {
+          "line": 1676,
+          "text": "      std::string consumerShard = consumer + \".tile.0.0\";"
+        },
+        {
+          "line": 1677,
+          "text": "      NeighborhoodAction tileFuse;"
+        },
+        {
+          "line": 1678,
+          "text": "      tileFuse.family = \"tiling-plus-fusion\";"
+        },
+        {
+          "line": 1679,
+          "text": "      tileFuse.primitives.push_back(tilePrimitive(producer, 0, 2));"
+        },
+        {
+          "line": 1680,
+          "text": "      tileFuse.primitives.push_back(tilePrimitive(consumer, 0, 2));"
+        },
+        {
+          "line": 1681,
+          "text": "      tileFuse.primitives.push_back(fusionPrimitive("
+        },
+        {
+          "line": 1682,
+          "text": "          producerShard, consumerShard, \"producer-consumer-forwarded\"));"
+        },
+        {
+          "line": 1683,
+          "text": "      tileFuse.label = (Twine(\"tile-then-fuse:\") + producer + \":\" + consumer)"
+        },
+        {
+          "line": 1684,
+          "text": "                           .str();"
+        },
+        {
+          "line": 1685,
+          "text": "      addUniqueAction(actions, std::move(tileFuse));"
+        },
+        {
+          "line": 1686,
+          "text": ""
+        },
+        {
+          "line": 1687,
+          "text": "      NeighborhoodAction coTile;"
+        },
+        {
+          "line": 1688,
+          "text": "      coTile.family = \"producer-consumer-co-tiling\";"
+        },
+        {
+          "line": 1689,
+          "text": "      coTile.primitives.push_back(tilePrimitive(producer, 0, 2));"
+        },
+        {
+          "line": 1690,
+          "text": "      coTile.primitives.push_back(tilePrimitive(consumer, 0, 2));"
+        },
+        {
+          "line": 1691,
+          "text": "      coTile.label = (Twine(\"co-tile:\") + producer + \":\" + consumer).str();"
+        },
+        {
+          "line": 1692,
+          "text": "      addUniqueAction(actions, std::move(coTile));"
+        },
+        {
+          "line": 1693,
+          "text": ""
+        },
+        {
+          "line": 1694,
+          "text": "      NeighborhoodAction fusionShape;"
+        },
+        {
+          "line": 1695,
+          "text": "      fusionShape.family = \"fusion-plus-shape\";"
+        },
+        {
+          "line": 1696,
+          "text": "      fusionShape.primitives.push_back("
+        },
+        {
+          "line": 1697,
+          "text": "          fusionPrimitive(producer, consumer, \"producer-consumer-retained\"));"
+        },
+        {
+          "line": 1698,
+          "text": "      fusionShape.shapeTask = fused;"
+        },
+        {
+          "line": 1699,
+          "text": "      fusionShape.shapeRows = 1;"
+        },
+        {
+          "line": 1700,
+          "text": "      fusionShape.shapeCols = 2;"
+        },
+        {
+          "line": 1701,
+          "text": "      fusionShape.label ="
+        },
+        {
+          "line": 1702,
+          "text": "          (Twine(\"fuse-plus-shape:\") + fused + \":1x2\").str();"
+        },
+        {
+          "line": 1703,
+          "text": "      addUniqueAction(actions, std::move(fusionShape));"
+        },
+        {
+          "line": 1704,
+          "text": "    }"
+        },
+        {
+          "line": 1705,
+          "text": ""
+        },
+        {
+          "line": 1706,
+          "text": "    // Sibling fusion is a separate legal source-owned mode.  Enumerate each"
+        },
+        {
+          "line": 1707,
+          "text": "    // unordered pair once; the materializer remains the legality oracle."
+        },
+        {
+          "line": 1708,
+          "text": "    for (size_t i = 0; i < names.size(); ++i) {"
+        },
+        {
+          "line": 1709,
+          "text": "      for (size_t j = i + 1; j < names.size(); ++j) {"
+        },
+        {
+          "line": 1710,
+          "text": "        NeighborhoodAction sibling;"
+        },
+        {
+          "line": 1711,
+          "text": "        sibling.family = \"sibling-fusion\";"
+        },
+        {
+          "line": 1712,
+          "text": "        sibling.primitives.push_back("
+        },
+        {
+          "line": 1713,
+          "text": "            fusionPrimitive(names[i], names[j], \"sibling\"));"
+        },
+        {
+          "line": 1714,
+          "text": "        sibling.label = (Twine(\"sibling-fuse:\") + names[i] + \":\" + names[j])"
+        },
+        {
+          "line": 1715,
+          "text": "                            .str();"
+        },
+        {
+          "line": 1716,
+          "text": "        addUniqueAction(actions, std::move(sibling));"
+        },
+        {
+          "line": 1717,
+          "text": "      }"
+        },
+        {
+          "line": 1718,
+          "text": "    }"
+        },
+        {
+          "line": 1719,
+          "text": "  }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "purpose": "SSA PC menu, composite primitive order, and unfiltered lexicographic sibling pairs.",
+      "source_sha256": "0582e0711a0d1595dbfe844d5ae03be3fbd3209e3efb6217387b15972d422191"
+    },
+    {
+      "excerpt_sha256": "caca2d309e78beea4a68a09f3b86ad746ca45df7ef6e9a8696cc8cc427db7da5",
+      "first_line": 1721,
+      "last_line": 1747,
+      "numbered_lines": [
+        {
+          "line": 1721,
+          "text": "  if (stageId >= 6) {"
+        },
+        {
+          "line": 1722,
+          "text": "    if (!preparedTaskflowSource) {"
+        },
+        {
+          "line": 1723,
+          "text": "      if (enumerationError)"
+        },
+        {
+          "line": 1724,
+          "text": "        *enumerationError ="
+        },
+        {
+          "line": 1725,
+          "text": "            \"full-joint-fission requires the authenticated prepared Taskflow source\";"
+        },
+        {
+          "line": 1726,
+          "text": "      return {};"
+        },
+        {
+          "line": 1727,
+          "text": "    }"
+        },
+        {
+          "line": 1728,
+          "text": "    if (maxFissionActionsPerTask == 0) {"
+        },
+        {
+          "line": 1729,
+          "text": "      if (enumerationError)"
+        },
+        {
+          "line": 1730,
+          "text": "        *enumerationError = \"max-fission-actions-per-task must be positive\";"
+        },
+        {
+          "line": 1731,
+          "text": "      return {};"
+        },
+        {
+          "line": 1732,
+          "text": "    }"
+        },
+        {
+          "line": 1733,
+          "text": "    std::string selectError;"
+        },
+        {
+          "line": 1734,
+          "text": "    if (failed(selectTaskFunction(preparedTaskflowSource, functionName,"
+        },
+        {
+          "line": 1735,
+          "text": "                                  selectError))) {"
+        },
+        {
+          "line": 1736,
+          "text": "      if (enumerationError)"
+        },
+        {
+          "line": 1737,
+          "text": "        *enumerationError ="
+        },
+        {
+          "line": 1738,
+          "text": "            \"prepared Taskflow source function is unavailable: \" +"
+        },
+        {
+          "line": 1739,
+          "text": "            selectError;"
+        },
+        {
+          "line": 1740,
+          "text": "      return {};"
+        },
+        {
+          "line": 1741,
+          "text": "    }"
+        },
+        {
+          "line": 1742,
+          "text": "    for (const NeighborhoodAction &action : precomputedFissionActions)"
+        },
+        {
+          "line": 1743,
+          "text": "      addUniqueAction(actions, action);"
+        },
+        {
+          "line": 1744,
+          "text": "  }"
+        },
+        {
+          "line": 1745,
+          "text": ""
+        },
+        {
+          "line": 1746,
+          "text": "  return actions;"
+        },
+        {
+          "line": 1747,
+          "text": "}"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "purpose": "Each parent menu appends the precomputed original-source fission actions.",
+      "source_sha256": "0582e0711a0d1595dbfe844d5ae03be3fbd3209e3efb6217387b15972d422191"
+    },
+    {
+      "excerpt_sha256": "cdf302f751073415a328d7bd3c48424a16ef7d1ff2aaf528474fa95bdbfedc09",
+      "first_line": 1751,
+      "last_line": 1809,
+      "numbered_lines": [
+        {
+          "line": 1751,
+          "text": "enumerateTaskflowFissionNeighborhoodActions("
+        },
+        {
+          "line": 1752,
+          "text": "    ModuleOp preparedTaskflowSource, StringRef functionName,"
+        },
+        {
+          "line": 1753,
+          "text": "    uint64_t maxFissionActionsPerTask,"
+        },
+        {
+          "line": 1754,
+          "text": "    std::vector<std::string> &diagnostics, std::string &error) {"
+        },
+        {
+          "line": 1755,
+          "text": "  diagnostics.clear();"
+        },
+        {
+          "line": 1756,
+          "text": "  error.clear();"
+        },
+        {
+          "line": 1757,
+          "text": "  if (!preparedTaskflowSource || maxFissionActionsPerTask == 0) {"
+        },
+        {
+          "line": 1758,
+          "text": "    error = \"fission enumeration requires prepared source and a positive cut cap\";"
+        },
+        {
+          "line": 1759,
+          "text": "    return failure();"
+        },
+        {
+          "line": 1760,
+          "text": "  }"
+        },
+        {
+          "line": 1761,
+          "text": "  FailureOr<func::FuncOp> sourceFunction ="
+        },
+        {
+          "line": 1762,
+          "text": "      selectTaskFunction(preparedTaskflowSource, functionName, error);"
+        },
+        {
+          "line": 1763,
+          "text": "  if (failed(sourceFunction))"
+        },
+        {
+          "line": 1764,
+          "text": "    return failure();"
+        },
+        {
+          "line": 1765,
+          "text": "  std::vector<NeighborhoodAction> actions;"
+        },
+        {
+          "line": 1766,
+          "text": "  sourceFunction->walk([&](TaskflowTaskOp task) {"
+        },
+        {
+          "line": 1767,
+          "text": "    if (!error.empty())"
+        },
+        {
+          "line": 1768,
+          "text": "      return;"
+        },
+        {
+          "line": 1769,
+          "text": "    std::string diagnostic;"
+        },
+        {
+          "line": 1770,
+          "text": "    FailureOr<SmallVector<SmallVector<unsigned>>> partitions ="
+        },
+        {
+          "line": 1771,
+          "text": "        mlir::amoeba::neura::enumerateTaskflowFissionPartitions("
+        },
+        {
+          "line": 1772,
+          "text": "            task, maxFissionActionsPerTask, diagnostic);"
+        },
+        {
+          "line": 1773,
+          "text": "    if (failed(partitions)) {"
+        },
+        {
+          "line": 1774,
+          "text": "      error = \"fission_enumeration_limit_exceeded:\" +"
+        },
+        {
+          "line": 1775,
+          "text": "              task.getTaskName().str() + \":\" + diagnostic;"
+        },
+        {
+          "line": 1776,
+          "text": "      return;"
+        },
+        {
+          "line": 1777,
+          "text": "    }"
+        },
+        {
+          "line": 1778,
+          "text": "    if (partitions->empty()) {"
+        },
+        {
+          "line": 1779,
+          "text": "      diagnostics.push_back(task.getTaskName().str() + \":unsupported:\" +"
+        },
+        {
+          "line": 1780,
+          "text": "                            diagnostic);"
+        },
+        {
+          "line": 1781,
+          "text": "      return;"
+        },
+        {
+          "line": 1782,
+          "text": "    }"
+        },
+        {
+          "line": 1783,
+          "text": "    diagnostics.push_back(task.getTaskName().str() + \":supported:\" +"
+        },
+        {
+          "line": 1784,
+          "text": "                          std::to_string(partitions->size()));"
+        },
+        {
+          "line": 1785,
+          "text": "    if (!diagnostic.empty())"
+        },
+        {
+          "line": 1786,
+          "text": "      diagnostics.push_back(task.getTaskName().str() + \":\" + diagnostic);"
+        },
+        {
+          "line": 1787,
+          "text": "    for (const SmallVector<unsigned> &leftNodes : *partitions) {"
+        },
+        {
+          "line": 1788,
+          "text": "      NeighborhoodAction action;"
+        },
+        {
+          "line": 1789,
+          "text": "      action.family = \"fission\";"
+        },
+        {
+          "line": 1790,
+          "text": "      NeighborhoodPrimitive primitive;"
+        },
+        {
+          "line": 1791,
+          "text": "      primitive.kind = \"fission\";"
+        },
+        {
+          "line": 1792,
+          "text": "      primitive.firstTask = task.getTaskName().str();"
+        },
+        {
+          "line": 1793,
+          "text": "      primitive.leftNodes.assign(leftNodes.begin(), leftNodes.end());"
+        },
+        {
+          "line": 1794,
+          "text": "      action.primitives.push_back(std::move(primitive));"
+        },
+        {
+          "line": 1795,
+          "text": "      std::string label = \"fission:\" + task.getTaskName().str() + \":left=\";"
+        },
+        {
+          "line": 1796,
+          "text": "      for (unsigned index = 0; index < leftNodes.size(); ++index) {"
+        },
+        {
+          "line": 1797,
+          "text": "        if (index)"
+        },
+        {
+          "line": 1798,
+          "text": "          label += \",\";"
+        },
+        {
+          "line": 1799,
+          "text": "        label += std::to_string(leftNodes[index]);"
+        },
+        {
+          "line": 1800,
+          "text": "      }"
+        },
+        {
+          "line": 1801,
+          "text": "      action.label = std::move(label);"
+        },
+        {
+          "line": 1802,
+          "text": "      actions.push_back(std::move(action));"
+        },
+        {
+          "line": 1803,
+          "text": "    }"
+        },
+        {
+          "line": 1804,
+          "text": "  });"
+        },
+        {
+          "line": 1805,
+          "text": "  if (!error.empty())"
+        },
+        {
+          "line": 1806,
+          "text": "    return failure();"
+        },
+        {
+          "line": 1807,
+          "text": "  llvm::stable_sort(actions, [](const NeighborhoodAction &lhs,"
+        },
+        {
+          "line": 1808,
+          "text": "                                const NeighborhoodAction &rhs) {"
+        },
+        {
+          "line": 1809,
+          "text": "    return lhs.label < rhs.label;"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "purpose": "Prepared source support reasons feed immutable pass-start fission actions.",
+      "source_sha256": "0582e0711a0d1595dbfe844d5ae03be3fbd3209e3efb6217387b15972d422191"
+    },
+    {
+      "excerpt_sha256": "92aaacde94683e87be1e1a1ba9ef5b9da09181191852c760bf0e49b67d222e60",
+      "first_line": 1907,
+      "last_line": 1927,
+      "numbered_lines": [
+        {
+          "line": 1907,
+          "text": "      reason = \"fusion_second_task_missing\";"
+        },
+        {
+          "line": 1908,
+          "text": "      diagnostic = primitive.secondTask;"
+        },
+        {
+          "line": 1909,
+          "text": "      return false;"
+        },
+        {
+          "line": 1910,
+          "text": "    }"
+        },
+        {
+          "line": 1911,
+          "text": "    if (!runMaterializer(*trial, functionName, primitive, reason, diagnostic,"
+        },
+        {
+          "line": 1912,
+          "text": "                         maxPartitionFactor))"
+        },
+        {
+          "line": 1913,
+          "text": "      return false;"
+        },
+        {
+          "line": 1914,
+          "text": "    if (!recordPartitionLineage(*trial, functionName, primitive, sourceLineage,"
+        },
+        {
+          "line": 1915,
+          "text": "                                 namesBefore, reason, maxPartitionFactor)) {"
+        },
+        {
+          "line": 1916,
+          "text": "      diagnostic = \"materialized_partition_lineage_authentication:\" +"
+        },
+        {
+          "line": 1917,
+          "text": "                   primitive.firstTask;"
+        },
+        {
+          "line": 1918,
+          "text": "      return false;"
+        },
+        {
+          "line": 1919,
+          "text": "    }"
+        },
+        {
+          "line": 1920,
+          "text": "    if (isFusion(primitive.kind) &&"
+        },
+        {
+          "line": 1921,
+          "text": "        !recordFusionLineage(*trial, canonical, functionName, primitive,"
+        },
+        {
+          "line": 1922,
+          "text": "                              fusionLineage, reason, maxPartitionFactor))"
+        },
+        {
+          "line": 1923,
+          "text": "      return false;"
+        },
+        {
+          "line": 1924,
+          "text": "    std::vector<NeighborhoodShape> refreshed;"
+        },
+        {
+          "line": 1925,
+          "text": "    synchronizeShapes(*trial, functionName, nextShapes, refreshed);"
+        },
+        {
+          "line": 1926,
+          "text": "    nextShapes = std::move(refreshed);"
+        },
+        {
+          "line": 1927,
+          "text": "  }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodActions.cpp",
+      "purpose": "Primitive failure returns before later primitives can execute.",
+      "source_sha256": "0582e0711a0d1595dbfe844d5ae03be3fbd3209e3efb6217387b15972d422191"
+    },
+    {
+      "excerpt_sha256": "08e53f721d53c3cbc6c3d51d948cf748cde32b99600a74c986ce8ed5b6a88770",
+      "first_line": 1260,
+      "last_line": 1268,
+      "numbered_lines": [
+        {
+          "line": 1260,
+          "text": "      task.getOriginalWriteMemrefs().size() != 1 ||"
+        },
+        {
+          "line": 1261,
+          "text": "      !task.getDoneReads().empty() || !task.getValueOutputs().empty() ||"
+        },
+        {
+          "line": 1262,
+          "text": "      task.getOriginalReadMemrefs().size() != task.getWillReads().size())"
+        },
+        {
+          "line": 1263,
+          "text": "    return reject(task,"
+        },
+        {
+          "line": 1264,
+          "text": "                  \"post-Neura tiling requires one output state and no yielded \""
+        },
+        {
+          "line": 1265,
+          "text": "                  \"read/value state\");"
+        },
+        {
+          "line": 1266,
+          "text": "  if (axis < 0 || axis > 1 || factor < 2)"
+        },
+        {
+          "line": 1267,
+          "text": "    return reject(task, \"post-Neura tiling requires an M/N axis (0 or 1) and \""
+        },
+        {
+          "line": 1268,
+          "text": "                        \"factor >= 2\");"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Tiling ABI failure precedes fusion in tile-then-fuse.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "59a9a85b920972bf80f08d3463c3ce5015c1ddc3905c3f15c6e81e0ce0fb171f",
+      "first_line": 1361,
+      "last_line": 1368,
+      "numbered_lines": [
+        {
+          "line": 1361,
+          "text": "    if (!type || !type.getLayout().isIdentity() ||"
+        },
+        {
+          "line": 1362,
+          "text": "        type.getRank() > static_cast<int64_t>(plan.taskCounters.size()))"
+        },
+        {
+          "line": 1363,
+          "text": "      return reject(task, \"post-Neura tiling requires identity memrefs with \""
+        },
+        {
+          "line": 1364,
+          "text": "                          \"rank no greater than the retained counter rank\");"
+        },
+        {
+          "line": 1365,
+          "text": "  }"
+        },
+        {
+          "line": 1366,
+          "text": "  SmallVector<Value> roots(task.getOriginalReadMemrefs());"
+        },
+        {
+          "line": 1367,
+          "text": "  roots.push_back(task.getOriginalWriteMemrefs().front());"
+        },
+        {
+          "line": 1368,
+          "text": "  Value outputRoot = roots.back();"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Tiling retained-rank failure.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "0e10f9d8adb6bbf5d8578c074cff6838a2c25697f592d703af9eaa93124c0ce2",
+      "first_line": 1388,
+      "last_line": 1393,
+      "numbered_lines": [
+        {
+          "line": 1388,
+          "text": "            !(stateType.getRank() == 1 && hasInPlaceRoot && axis == 0))"
+        },
+        {
+          "line": 1389,
+          "text": "          return reject(task,"
+        },
+        {
+          "line": 1390,
+          "text": "                        \"dynamic output tiling requires one rank-2 output or \""
+        },
+        {
+          "line": 1391,
+          "text": "                        \"a proven rank-1 in-place output\");"
+        },
+        {
+          "line": 1392,
+          "text": "        plan.outputShape = provenShape;"
+        },
+        {
+          "line": 1393,
+          "text": "        plan.outputNeedsStaticView = true;"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Tiling dynamic output rank failure.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "f3e90fc8b2cfc535e1851238eef4e1320a83a13edaba8601a1561876240bf780",
+      "first_line": 1412,
+      "last_line": 1419,
+      "numbered_lines": [
+        {
+          "line": 1412,
+          "text": "            return reject(task, \"dynamic output lacks a proven dimension\");"
+        },
+        {
+          "line": 1413,
+          "text": "          extent = provenShape[dimension];"
+        },
+        {
+          "line": 1414,
+          "text": "        }"
+        },
+        {
+          "line": 1415,
+          "text": "        if (!lower || !upper || *lower < 0 || *upper <= *lower ||"
+        },
+        {
+          "line": 1416,
+          "text": "            *upper > extent)"
+        },
+        {
+          "line": 1417,
+          "text": "          return reject(task,"
+        },
+        {
+          "line": 1418,
+          "text": "                        \"output counter domain is outside the proven shape\");"
+        },
+        {
+          "line": 1419,
+          "text": "      }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Tiling output domain failure.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "b0f109f04e0c912c5aa692ec3d0c10f5706744b048e2880e537e7a79d8f01062",
+      "first_line": 1437,
+      "last_line": 1446,
+      "numbered_lines": [
+        {
+          "line": 1437,
+          "text": "          extent = provenShape[counterAxis];"
+        },
+        {
+          "line": 1438,
+          "text": "        }"
+        },
+        {
+          "line": 1439,
+          "text": "        if (!lower || !upper || *lower < 0 || *upper <= *lower ||"
+        },
+        {
+          "line": 1440,
+          "text": "            *upper > extent)"
+        },
+        {
+          "line": 1441,
+          "text": "          return reject(task,"
+        },
+        {
+          "line": 1442,
+          "text": "                        \"retained counter domain is outside the proven \""
+        },
+        {
+          "line": 1443,
+          "text": "                        \"memref shape\");"
+        },
+        {
+          "line": 1444,
+          "text": "      }"
+        },
+        {
+          "line": 1445,
+          "text": "    }"
+        },
+        {
+          "line": 1446,
+          "text": "  }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Tiling retained domain failure.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "91055058460af9ec633689fee2de4990c7348a05ef0a463fd025bdd2e60662b7",
+      "first_line": 2283,
+      "last_line": 2334,
+      "numbered_lines": [
+        {
+          "line": 2283,
+          "text": "// The fact extractor permits unrelated operations between two siblings when"
+        },
+        {
+          "line": 2284,
+          "text": "// their memory effects are known not to conflict.  Recheck that proof here;"
+        },
+        {
+          "line": 2285,
+          "text": "// this post-conversion pass must never move a task across an operation whose"
+        },
+        {
+          "line": 2286,
+          "text": "// storage aliasing it cannot prove."
+        },
+        {
+          "line": 2287,
+          "text": "static bool siblingCanMoveFirstToSecond(TaskflowTaskOp first,"
+        },
+        {
+          "line": 2288,
+          "text": "                                        TaskflowTaskOp second) {"
+        },
+        {
+          "line": 2289,
+          "text": "  if (!first || !second || first == second ||"
+        },
+        {
+          "line": 2290,
+          "text": "      first->hasAttr(\"amoeba.control_predecessors\") ||"
+        },
+        {
+          "line": 2291,
+          "text": "      second->hasAttr(\"amoeba.control_predecessors\") ||"
+        },
+        {
+          "line": 2292,
+          "text": "      first->getBlock() != second->getBlock() ||"
+        },
+        {
+          "line": 2293,
+          "text": "      !first->isBeforeInBlock(second))"
+        },
+        {
+          "line": 2294,
+          "text": "    return false;"
+        },
+        {
+          "line": 2295,
+          "text": "  auto completeMemoryProvenance = [](TaskflowTaskOp task) {"
+        },
+        {
+          "line": 2296,
+          "text": "    return task.getOriginalReadMemrefs().size() == task.getWillReads().size() &&"
+        },
+        {
+          "line": 2297,
+          "text": "           task.getOriginalWriteMemrefs().size() == task.getWillWrites().size();"
+        },
+        {
+          "line": 2298,
+          "text": "  };"
+        },
+        {
+          "line": 2299,
+          "text": "  if (!completeMemoryProvenance(first) || !completeMemoryProvenance(second))"
+        },
+        {
+          "line": 2300,
+          "text": "    return false;"
+        },
+        {
+          "line": 2301,
+          "text": "  SmallVector<Value> firstReads(first.getOriginalReadMemrefs().begin(),"
+        },
+        {
+          "line": 2302,
+          "text": "                                first.getOriginalReadMemrefs().end());"
+        },
+        {
+          "line": 2303,
+          "text": "  SmallVector<Value> firstWrites(first.getOriginalWriteMemrefs().begin(),"
+        },
+        {
+          "line": 2304,
+          "text": "                                 first.getOriginalWriteMemrefs().end());"
+        },
+        {
+          "line": 2305,
+          "text": "  for (Operation *operation = first->getNextNode();"
+        },
+        {
+          "line": 2306,
+          "text": "       operation && operation != second.getOperation();"
+        },
+        {
+          "line": 2307,
+          "text": "       operation = operation->getNextNode()) {"
+        },
+        {
+          "line": 2308,
+          "text": "    if (isa<TaskflowChannelOp, arith::ConstantOp, memref::AllocOp,"
+        },
+        {
+          "line": 2309,
+          "text": "            memref::AllocaOp>(operation))"
+        },
+        {
+          "line": 2310,
+          "text": "      continue;"
+        },
+        {
+          "line": 2311,
+          "text": "    auto crossed = dyn_cast<TaskflowTaskOp>(operation);"
+        },
+        {
+          "line": 2312,
+          "text": "    if (!crossed || crossed->hasAttr(\"amoeba.control_predecessors\") ||"
+        },
+        {
+          "line": 2313,
+          "text": "        !completeMemoryProvenance(crossed))"
+        },
+        {
+          "line": 2314,
+          "text": "      return false;"
+        },
+        {
+          "line": 2315,
+          "text": "    for (Value result : first->getResults())"
+        },
+        {
+          "line": 2316,
+          "text": "      for (OpOperand &use : result.getUses())"
+        },
+        {
+          "line": 2317,
+          "text": "        if (use.getOwner() == crossed.getOperation())"
+        },
+        {
+          "line": 2318,
+          "text": "          return false;"
+        },
+        {
+          "line": 2319,
+          "text": "    // Shared reads preserve memory values under this movement.  Only a"
+        },
+        {
+          "line": 2320,
+          "text": "    // pair containing a write needs a storage-disjointness proof."
+        },
+        {
+          "line": 2321,
+          "text": "    for (Value lhs : firstReads)"
+        },
+        {
+          "line": 2322,
+          "text": "      for (Value rhs : crossed.getOriginalWriteMemrefs())"
+        },
+        {
+          "line": 2323,
+          "text": "        if (!provesDistinctStorage(lhs, rhs))"
+        },
+        {
+          "line": 2324,
+          "text": "          return false;"
+        },
+        {
+          "line": 2325,
+          "text": "    for (Value lhs : firstWrites)"
+        },
+        {
+          "line": 2326,
+          "text": "      for (Value rhs : crossed.getOriginalReadMemrefs())"
+        },
+        {
+          "line": 2327,
+          "text": "        if (!provesDistinctStorage(lhs, rhs))"
+        },
+        {
+          "line": 2328,
+          "text": "          return false;"
+        },
+        {
+          "line": 2329,
+          "text": "    for (Value lhs : firstWrites)"
+        },
+        {
+          "line": 2330,
+          "text": "      for (Value rhs : crossed.getOriginalWriteMemrefs())"
+        },
+        {
+          "line": 2331,
+          "text": "        if (!provesDistinctStorage(lhs, rhs))"
+        },
+        {
+          "line": 2332,
+          "text": "          return false;"
+        },
+        {
+          "line": 2333,
+          "text": "  }"
+        },
+        {
+          "line": 2334,
+          "text": "  return true;"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Directed block motion and intervening memory/dependency proof.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "98f9fb2ac26828507c6ca102cb386853dcdaa3f8955832f0aaf275e1a6dfc54a",
+      "first_line": 2353,
+      "last_line": 2425,
+      "numbered_lines": [
+        {
+          "line": 2353,
+          "text": "  }"
+        },
+        {
+          "line": 2354,
+          "text": "  TaskflowTaskOp first = firstMatches.front();"
+        },
+        {
+          "line": 2355,
+          "text": "  TaskflowTaskOp second = secondMatches.front();"
+        },
+        {
+          "line": 2356,
+          "text": "  if (!siblingCanMoveFirstToSecond(first, second))"
+        },
+        {
+          "line": 2357,
+          "text": "    return reject(second, \"post-Neura sibling fusion requires an ordered pair \""
+        },
+        {
+          "line": 2358,
+          "text": "                           \"with proven nonconflicting intervening effects\");"
+        },
+        {
+          "line": 2359,
+          "text": ""
+        },
+        {
+          "line": 2360,
+          "text": "  auto rejectTask = [&](TaskflowTaskOp task, StringRef reason)"
+        },
+        {
+          "line": 2361,
+          "text": "      -> FailureOr<NeuraSiblingFusionPlan> {"
+        },
+        {
+          "line": 2362,
+          "text": "    return reject(task, (Twine(\"post-Neura sibling fusion \") + reason).str());"
+        },
+        {
+          "line": 2363,
+          "text": "  };"
+        },
+        {
+          "line": 2364,
+          "text": "  if (!first.getBody().hasOneBlock() || !second.getBody().hasOneBlock())"
+        },
+        {
+          "line": 2365,
+          "text": "    return rejectTask(second, \"requires one body block per task\");"
+        },
+        {
+          "line": 2366,
+          "text": "  if (first.getDoneReads().size() != 0 || second.getDoneReads().size() != 0)"
+        },
+        {
+          "line": 2367,
+          "text": "    return rejectTask(second, \"requires no done-read completion states\");"
+        },
+        {
+          "line": 2368,
+          "text": "  if (first.getValueOutputs().size() != 0 || second.getValueOutputs().size() != 0)"
+        },
+        {
+          "line": 2369,
+          "text": "    return rejectTask(second, \"requires no value outputs\");"
+        },
+        {
+          "line": 2370,
+          "text": "  auto dependsOn = [](TaskflowTaskOp consumer, TaskflowTaskOp producer) {"
+        },
+        {
+          "line": 2371,
+          "text": "    auto depends = [&](Value input) {"
+        },
+        {
+          "line": 2372,
+          "text": "      Value source = input;"
+        },
+        {
+          "line": 2373,
+          "text": "      while (auto channel = source.getDefiningOp<TaskflowChannelOp>())"
+        },
+        {
+          "line": 2374,
+          "text": "        source = channel.getSource();"
+        },
+        {
+          "line": 2375,
+          "text": "      return source.getDefiningOp<TaskflowTaskOp>() == producer;"
+        },
+        {
+          "line": 2376,
+          "text": "    };"
+        },
+        {
+          "line": 2377,
+          "text": "    for (Value input : consumer.getWillReads())"
+        },
+        {
+          "line": 2378,
+          "text": "      if (depends(input))"
+        },
+        {
+          "line": 2379,
+          "text": "        return true;"
+        },
+        {
+          "line": 2380,
+          "text": "    for (Value input : consumer.getValueInputs())"
+        },
+        {
+          "line": 2381,
+          "text": "      if (depends(input))"
+        },
+        {
+          "line": 2382,
+          "text": "        return true;"
+        },
+        {
+          "line": 2383,
+          "text": "    return false;"
+        },
+        {
+          "line": 2384,
+          "text": "  };"
+        },
+        {
+          "line": 2385,
+          "text": "  if (dependsOn(second, first) || dependsOn(first, second))"
+        },
+        {
+          "line": 2386,
+          "text": "    return rejectTask(second, \"rejects an inter-task dependency\");"
+        },
+        {
+          "line": 2387,
+          "text": "  if (first.getWillWrites().empty() || second.getWillWrites().empty() ||"
+        },
+        {
+          "line": 2388,
+          "text": "      first.getWillWrites().size() != first.getDoneWrites().size() ||"
+        },
+        {
+          "line": 2389,
+          "text": "      second.getWillWrites().size() != second.getDoneWrites().size() ||"
+        },
+        {
+          "line": 2390,
+          "text": "      first.getOriginalReadMemrefs().size() != first.getWillReads().size() ||"
+        },
+        {
+          "line": 2391,
+          "text": "      second.getOriginalReadMemrefs().size() != second.getWillReads().size() ||"
+        },
+        {
+          "line": 2392,
+          "text": "      first.getOriginalWriteMemrefs().size() != first.getWillWrites().size() ||"
+        },
+        {
+          "line": 2393,
+          "text": "      second.getOriginalWriteMemrefs().size() != second.getWillWrites().size())"
+        },
+        {
+          "line": 2394,
+          "text": "    return rejectTask(second, \"requires complete memory-only input/output provenance\");"
+        },
+        {
+          "line": 2395,
+          "text": "  if (!matchingStaticCounters(collectTaskCounters(first),"
+        },
+        {
+          "line": 2396,
+          "text": "                              collectTaskCounters(second), first, second) ||"
+        },
+        {
+          "line": 2397,
+          "text": "      collectTaskCounters(first).empty())"
+        },
+        {
+          "line": 2398,
+          "text": "    return rejectTask(second, \"requires matching static Taskflow counter domains\");"
+        },
+        {
+          "line": 2399,
+          "text": ""
+        },
+        {
+          "line": 2400,
+          "text": "  // Sibling fusion is a sequential execution in one kernel.  Shared reads"
+        },
+        {
+          "line": 2401,
+          "text": "  // are legal; any uncertain read/write or write/write alias would change the"
+        },
+        {
+          "line": 2402,
+          "text": "  // original independent-task semantics and therefore rejects the action."
+        },
+        {
+          "line": 2403,
+          "text": "  SmallVector<Value> reads;"
+        },
+        {
+          "line": 2404,
+          "text": "  SmallVector<Value> writes;"
+        },
+        {
+          "line": 2405,
+          "text": "  SmallVector<Value> allWrites;"
+        },
+        {
+          "line": 2406,
+          "text": "  auto appendRoots = [](SmallVectorImpl<Value> &out, ValueRange values) {"
+        },
+        {
+          "line": 2407,
+          "text": "    for (Value value : values)"
+        },
+        {
+          "line": 2408,
+          "text": "      if (!llvm::is_contained(out, value))"
+        },
+        {
+          "line": 2409,
+          "text": "        out.push_back(value);"
+        },
+        {
+          "line": 2410,
+          "text": "  };"
+        },
+        {
+          "line": 2411,
+          "text": "  appendRoots(reads, first.getOriginalReadMemrefs());"
+        },
+        {
+          "line": 2412,
+          "text": "  appendRoots(reads, second.getOriginalReadMemrefs());"
+        },
+        {
+          "line": 2413,
+          "text": "  appendRoots(writes, first.getOriginalWriteMemrefs());"
+        },
+        {
+          "line": 2414,
+          "text": "  appendRoots(writes, second.getOriginalWriteMemrefs());"
+        },
+        {
+          "line": 2415,
+          "text": "  llvm::append_range(allWrites, first.getOriginalWriteMemrefs());"
+        },
+        {
+          "line": 2416,
+          "text": "  llvm::append_range(allWrites, second.getOriginalWriteMemrefs());"
+        },
+        {
+          "line": 2417,
+          "text": "  for (size_t lhs = 0; lhs < allWrites.size(); ++lhs)"
+        },
+        {
+          "line": 2418,
+          "text": "    for (size_t rhs = lhs + 1; rhs < allWrites.size(); ++rhs)"
+        },
+        {
+          "line": 2419,
+          "text": "      if (!provesDistinctStorage(allWrites[lhs], allWrites[rhs]))"
+        },
+        {
+          "line": 2420,
+          "text": "        return rejectTask(second, \"rejects ambiguous output aliasing\");"
+        },
+        {
+          "line": 2421,
+          "text": "  for (Value read : reads)"
+        },
+        {
+          "line": 2422,
+          "text": "    for (Value write : writes)"
+        },
+        {
+          "line": 2423,
+          "text": "      if (!provesDistinctStorage(read, write))"
+        },
+        {
+          "line": 2424,
+          "text": "        return rejectTask(second, \"rejects read/write aliasing\");"
+        },
+        {
+          "line": 2425,
+          "text": ""
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "Sibling completion states, dependency, counters, and alias requirements.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "6a6b36cdea64bb645a9005bdeddaff75e5d91b8843b1d56fc504cce4acca6e8c",
+      "first_line": 3163,
+      "last_line": 3245,
+      "numbered_lines": [
+        {
+          "line": 3163,
+          "text": "static FailureOr<NeuraFusionPlan>"
+        },
+        {
+          "line": 3164,
+          "text": "analyzePostNeuraFusion(ModuleOp module, StringRef producerName,"
+        },
+        {
+          "line": 3165,
+          "text": "                       StringRef consumerName, StringRef mode) {"
+        },
+        {
+          "line": 3166,
+          "text": "  bool forwarded = mode == \"producer-consumer-forwarded\";"
+        },
+        {
+          "line": 3167,
+          "text": "  if (!forwarded && mode != \"producer-consumer-retained\") {"
+        },
+        {
+          "line": 3168,
+          "text": "    module.emitError()"
+        },
+        {
+          "line": 3169,
+          "text": "        << \"post-Neura fusion-mode must be producer-consumer-retained or \""
+        },
+        {
+          "line": 3170,
+          "text": "           \"producer-consumer-forwarded\";"
+        },
+        {
+          "line": 3171,
+          "text": "    return failure();"
+        },
+        {
+          "line": 3172,
+          "text": "  }"
+        },
+        {
+          "line": 3173,
+          "text": "  SmallVector<TaskflowTaskOp> producers;"
+        },
+        {
+          "line": 3174,
+          "text": "  SmallVector<TaskflowTaskOp> consumers;"
+        },
+        {
+          "line": 3175,
+          "text": "  module.walk([&](TaskflowTaskOp task) {"
+        },
+        {
+          "line": 3176,
+          "text": "    if (task.getTaskName() == producerName)"
+        },
+        {
+          "line": 3177,
+          "text": "      producers.push_back(task);"
+        },
+        {
+          "line": 3178,
+          "text": "    if (task.getTaskName() == consumerName)"
+        },
+        {
+          "line": 3179,
+          "text": "      consumers.push_back(task);"
+        },
+        {
+          "line": 3180,
+          "text": "  });"
+        },
+        {
+          "line": 3181,
+          "text": "  if (producers.size() != 1 || consumers.size() != 1) {"
+        },
+        {
+          "line": 3182,
+          "text": "    module.emitError()"
+        },
+        {
+          "line": 3183,
+          "text": "        << \"post-Neura fusion names must each identify exactly one task\";"
+        },
+        {
+          "line": 3184,
+          "text": "    return failure();"
+        },
+        {
+          "line": 3185,
+          "text": "  }"
+        },
+        {
+          "line": 3186,
+          "text": "  TaskflowTaskOp producer = producers.front();"
+        },
+        {
+          "line": 3187,
+          "text": "  TaskflowTaskOp consumer = consumers.front();"
+        },
+        {
+          "line": 3188,
+          "text": "  if (producer == consumer || producer->getBlock() != consumer->getBlock() ||"
+        },
+        {
+          "line": 3189,
+          "text": "      !producer->isBeforeInBlock(consumer))"
+        },
+        {
+          "line": 3190,
+          "text": "    return reject(consumer, \"post-Neura fusion requires an ordered task pair \""
+        },
+        {
+          "line": 3191,
+          "text": "                            \"in one block\");"
+        },
+        {
+          "line": 3192,
+          "text": ""
+        },
+        {
+          "line": 3193,
+          "text": "  SmallVector<TaskflowChannelOp> channels;"
+        },
+        {
+          "line": 3194,
+          "text": "  Value producerResult;"
+        },
+        {
+          "line": 3195,
+          "text": "  Value consumerInput;"
+        },
+        {
+          "line": 3196,
+          "text": "  for (Value input : consumer.getWillReads()) {"
+        },
+        {
+          "line": 3197,
+          "text": "    Value source = input;"
+        },
+        {
+          "line": 3198,
+          "text": "    SmallVector<TaskflowChannelOp> path;"
+        },
+        {
+          "line": 3199,
+          "text": "    while (auto channel = source.getDefiningOp<TaskflowChannelOp>()) {"
+        },
+        {
+          "line": 3200,
+          "text": "      if (!source.hasOneUse())"
+        },
+        {
+          "line": 3201,
+          "text": "        return reject(consumer, \"post-Neura fusion requires an exclusive \""
+        },
+        {
+          "line": 3202,
+          "text": "                                \"channel path\");"
+        },
+        {
+          "line": 3203,
+          "text": "      path.push_back(channel);"
+        },
+        {
+          "line": 3204,
+          "text": "      source = channel.getSource();"
+        },
+        {
+          "line": 3205,
+          "text": "    }"
+        },
+        {
+          "line": 3206,
+          "text": "    if (!llvm::is_contained(producer.getDoneWrites(), source))"
+        },
+        {
+          "line": 3207,
+          "text": "      continue;"
+        },
+        {
+          "line": 3208,
+          "text": "    if (producerResult) {"
+        },
+        {
+          "line": 3209,
+          "text": "      return reject(consumer, \"post-Neura fusion requires exactly one RAW \""
+        },
+        {
+          "line": 3210,
+          "text": "                              \"producer-to-consumer value\");"
+        },
+        {
+          "line": 3211,
+          "text": "    }"
+        },
+        {
+          "line": 3212,
+          "text": "    producerResult = source;"
+        },
+        {
+          "line": 3213,
+          "text": "    consumerInput = input;"
+        },
+        {
+          "line": 3214,
+          "text": "    channels = std::move(path);"
+        },
+        {
+          "line": 3215,
+          "text": "  }"
+        },
+        {
+          "line": 3216,
+          "text": "  if (!producerResult)"
+        },
+        {
+          "line": 3217,
+          "text": "    return reject(consumer, \"post-Neura fusion found no producer-consumer RAW \""
+        },
+        {
+          "line": 3218,
+          "text": "                            \"edge\");"
+        },
+        {
+          "line": 3219,
+          "text": "  if (!producerResult.hasOneUse() || !consumerInput.hasOneUse())"
+        },
+        {
+          "line": 3220,
+          "text": "    return reject(consumer, \"post-Neura fusion requires a single-use \""
+        },
+        {
+          "line": 3221,
+          "text": "                            \"intermediate state\");"
+        },
+        {
+          "line": 3222,
+          "text": ""
+        },
+        {
+          "line": 3223,
+          "text": "  // The fused operation is placed at the consumer.  Moving the producer"
+        },
+        {
+          "line": 3224,
+          "text": "  // there is legal only when every crossed task has complete memory"
+        },
+        {
+          "line": 3225,
+          "text": "  // provenance and all read/write or write/write pairs are proved disjoint."
+        },
+        {
+          "line": 3226,
+          "text": "  // Keep shared reads, private allocations and constant scaffolding; reject"
+        },
+        {
+          "line": 3227,
+          "text": "  // control predecessors, unknown effects and producer-result consumers."
+        },
+        {
+          "line": 3228,
+          "text": "  if (!siblingCanMoveFirstToSecond(producer, consumer))"
+        },
+        {
+          "line": 3229,
+          "text": "    return reject(consumer, \"post-Neura fusion cannot prove nonconflicting \""
+        },
+        {
+          "line": 3230,
+          "text": "                            \"intervening effects\");"
+        },
+        {
+          "line": 3231,
+          "text": "  for (Value result : producer.getDoneReads())"
+        },
+        {
+          "line": 3232,
+          "text": "    if (!result.use_empty())"
+        },
+        {
+          "line": 3233,
+          "text": "      return reject(producer, \"post-Neura fusion currently requires no \""
+        },
+        {
+          "line": 3234,
+          "text": "                              \"producer done-read state\");"
+        },
+        {
+          "line": 3235,
+          "text": "  if (!producer.getValueOutputs().empty() || !consumer.getDoneReads().empty() ||"
+        },
+        {
+          "line": 3236,
+          "text": "      !consumer.getValueOutputs().empty())"
+        },
+        {
+          "line": 3237,
+          "text": "    return reject(consumer, \"post-Neura fusion requires memory-only task \""
+        },
+        {
+          "line": 3238,
+          "text": "                            \"states\");"
+        },
+        {
+          "line": 3239,
+          "text": "  if (producer.getWillWrites().size() != 1 ||"
+        },
+        {
+          "line": 3240,
+          "text": "      consumer.getWillWrites().size() != 1 ||"
+        },
+        {
+          "line": 3241,
+          "text": "      producer.getOriginalWriteMemrefs().size() != 1 ||"
+        },
+        {
+          "line": 3242,
+          "text": "      consumer.getOriginalWriteMemrefs().size() != 1)"
+        },
+        {
+          "line": 3243,
+          "text": "    return reject(consumer, \"post-Neura fusion requires one producer and one \""
+        },
+        {
+          "line": 3244,
+          "text": "                            \"consumer output state\");"
+        },
+        {
+          "line": 3245,
+          "text": ""
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp",
+      "purpose": "PC ordered/channel/single-use/motion guards precede rewrite.",
+      "source_sha256": "2a4a95aef6ac3c892705937c26b3b1e35733a71ed54f5c8fecb055e6a7f0e837"
+    },
+    {
+      "excerpt_sha256": "6f92056e6206aba7493b5ea70246d78c2a089305ce5a5c2542fd32e82b958fea",
+      "first_line": 2450,
+      "last_line": 2487,
+      "numbered_lines": [
+        {
+          "line": 2450,
+          "text": "    const bool fissionStage = stageNumber(stage) == 6;"
+        },
+        {
+          "line": 2451,
+          "text": "    if (fissionStage != !preparedSourceFile.empty()) {"
+        },
+        {
+          "line": 2452,
+          "text": "      fatal(fissionStage"
+        },
+        {
+          "line": 2453,
+          "text": "                ? \"full-joint-fission requires prepared-source-file\""
+        },
+        {
+          "line": 2454,
+          "text": "                : \"prepared-source-file is valid only for full-joint-fission\");"
+        },
+        {
+          "line": 2455,
+          "text": "      return;"
+        },
+        {
+          "line": 2456,
+          "text": "    }"
+        },
+        {
+          "line": 2457,
+          "text": "    if (fissionStage) {"
+        },
+        {
+          "line": 2458,
+          "text": "      std::string sourceBytes;"
+        },
+        {
+          "line": 2459,
+          "text": "      if (!readFileBytes(preparedSourceFile, sourceBytes, error)) {"
+        },
+        {
+          "line": 2460,
+          "text": "        fatal(error);"
+        },
+        {
+          "line": 2461,
+          "text": "        return;"
+        },
+        {
+          "line": 2462,
+          "text": "      }"
+        },
+        {
+          "line": 2463,
+          "text": "      preparedTaskflowSource = parseSourceString<ModuleOp>("
+        },
+        {
+          "line": 2464,
+          "text": "          sourceBytes, canonical.getContext());"
+        },
+        {
+          "line": 2465,
+          "text": "      if (!preparedTaskflowSource ||"
+        },
+        {
+          "line": 2466,
+          "text": "          failed(verify(preparedTaskflowSource->getOperation()))) {"
+        },
+        {
+          "line": 2467,
+          "text": "        fatal(\"prepared-source-file is not a verified ModuleOp\");"
+        },
+        {
+          "line": 2468,
+          "text": "        return;"
+        },
+        {
+          "line": 2469,
+          "text": "      }"
+        },
+        {
+          "line": 2470,
+          "text": "      preparedTaskflowSourceBytes = std::move(sourceBytes);"
+        },
+        {
+          "line": 2471,
+          "text": "      if (failed(verifyTaskflowFissionCanonicalLowering("
+        },
+        {
+          "line": 2472,
+          "text": "              preparedTaskflowSource.get(), canonical, error))) {"
+        },
+        {
+          "line": 2473,
+          "text": "        fatal(\"prepared source does not reproduce canonical Neura input: \" +"
+        },
+        {
+          "line": 2474,
+          "text": "              error);"
+        },
+        {
+          "line": 2475,
+          "text": "        return;"
+        },
+        {
+          "line": 2476,
+          "text": "      }"
+        },
+        {
+          "line": 2477,
+          "text": "      preparedSourceCanonicalVerified = true;"
+        },
+        {
+          "line": 2478,
+          "text": "      FailureOr<std::vector<NeighborhoodAction>> enumeratedFissions ="
+        },
+        {
+          "line": 2479,
+          "text": "          enumerateTaskflowFissionNeighborhoodActions("
+        },
+        {
+          "line": 2480,
+          "text": "              preparedTaskflowSource.get(), functionName,"
+        },
+        {
+          "line": 2481,
+          "text": "              static_cast<uint64_t>(maxFissionActionsPerTask.getValue()),"
+        },
+        {
+          "line": 2482,
+          "text": "              fissionSupportDiagnostics, error);"
+        },
+        {
+          "line": 2483,
+          "text": "      if (failed(enumeratedFissions)) {"
+        },
+        {
+          "line": 2484,
+          "text": "        fatal(error.empty() ? \"fission cut enumeration failed\" : error);"
+        },
+        {
+          "line": 2485,
+          "text": "        return;"
+        },
+        {
+          "line": 2486,
+          "text": "      }"
+        },
+        {
+          "line": 2487,
+          "text": "      canonicalFissionActions = std::move(*enumeratedFissions);"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Prepared/canonical proof and one-time cut catalogue setup.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "be7e8adb5bf3779fa74cfa311530836d7baae0a26fb46825fea6ad8051e302a3",
+      "first_line": 1638,
+      "last_line": 1661,
+      "numbered_lines": [
+        {
+          "line": 1638,
+          "text": "    unsigned round, unsigned maxPartitionFactor,"
+        },
+        {
+          "line": 1639,
+          "text": "    ModuleOp preparedTaskflowSource, uint64_t maxFissionActionsPerTask,"
+        },
+        {
+          "line": 1640,
+          "text": "    ArrayRef<NeighborhoodAction> canonicalFissionActions,"
+        },
+        {
+          "line": 1641,
+          "text": "    FamilyFunnelRound &roundFunnel, bool descendingShapes,"
+        },
+        {
+          "line": 1642,
+          "text": "    const std::function<std::string(const SearchState &, NeighborhoodAction &)> &filter,"
+        },
+        {
+          "line": 1643,
+          "text": "    std::string &enumerationError) {"
+        },
+        {
+          "line": 1644,
+          "text": "  enumerationError.clear();"
+        },
+        {
+          "line": 1645,
+          "text": "  const bool fissionStage ="
+        },
+        {
+          "line": 1646,
+          "text": "      stage == \"full-joint-fission\" || stage == \"s6\" ||"
+        },
+        {
+          "line": 1647,
+          "text": "      stage == \"S6\" ||"
+        },
+        {
+          "line": 1648,
+          "text": "      stage == \"shape-temporal-replica-tiling-fusion-fission\";"
+        },
+        {
+          "line": 1649,
+          "text": "  using TargetMap = std::map<std::string, TargetActionStream>;"
+        },
+        {
+          "line": 1650,
+          "text": "  using FamilyMap = std::map<std::string, TargetMap>;"
+        },
+        {
+          "line": 1651,
+          "text": "  std::vector<FamilyMap> grouped(beam.size());"
+        },
+        {
+          "line": 1652,
+          "text": "  std::set<std::string> familyNames;"
+        },
+        {
+          "line": 1653,
+          "text": ""
+        },
+        {
+          "line": 1654,
+          "text": "  for (auto indexed : llvm::enumerate(beam)) {"
+        },
+        {
+          "line": 1655,
+          "text": "    std::string actionEnumerationError;"
+        },
+        {
+          "line": 1656,
+          "text": "    auto actions = enumerateNeighborhoodActions("
+        },
+        {
+          "line": 1657,
+          "text": "        indexed.value().module.get(), functionName, indexed.value().shapes,"
+        },
+        {
+          "line": 1658,
+          "text": "        stage, round, maxPartitionFactor, preparedTaskflowSource,"
+        },
+        {
+          "line": 1659,
+          "text": "        maxFissionActionsPerTask, &actionEnumerationError, nullptr,"
+        },
+        {
+          "line": 1660,
+          "text": "        canonicalFissionActions);"
+        },
+        {
+          "line": 1661,
+          "text": "    if (!actionEnumerationError.empty()) {"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Every parent receives the same canonical fission action array.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "d288ed2a75fff71e9982d57dad8501eb8669f06a063dade234cb9692dbf0ce57",
+      "first_line": 3217,
+      "last_line": 3233,
+      "numbered_lines": [
+        {
+          "line": 3217,
+          "text": "    const int64_t previousElapsed = elapsedMilliseconds;"
+        },
+        {
+          "line": 3218,
+          "text": "    uint64_t actionsSinceCheckpoint = 0;"
+        },
+        {
+          "line": 3219,
+          "text": "    do {"
+        },
+        {
+          "line": 3220,
+          "text": "    while (round - phaseStartRound < maxRounds && scoredCount < phaseLimit) {"
+        },
+        {
+          "line": 3221,
+          "text": "      if (beam.empty()) { stopReason = \"no-new-legal-candidates\"; break; }"
+        },
+        {
+          "line": 3222,
+          "text": "      if (pending.empty()) {"
+        },
+        {
+          "line": 3223,
+          "text": "        generated.clear(); pendingCursor = 0;"
+        },
+        {
+          "line": 3224,
+          "text": "        std::string actionEnumerationError;"
+        },
+        {
+          "line": 3225,
+          "text": "        pending = enumerateBalancedPendingNeighbors("
+        },
+        {
+          "line": 3226,
+          "text": "            beam, functionName, stage, static_cast<unsigned>(round),"
+        },
+        {
+          "line": 3227,
+          "text": "            static_cast<unsigned>(maxPartitionFactor.getValue()),"
+        },
+        {
+          "line": 3228,
+          "text": "            preparedTaskflowSource.get(),"
+        },
+        {
+          "line": 3229,
+          "text": "            static_cast<uint64_t>(maxFissionActionsPerTask.getValue()),"
+        },
+        {
+          "line": 3230,
+          "text": "            canonicalFissionActions, familyFunnelByRound[round], shapeEnumerationOrder == \"descending\","
+        },
+        {
+          "line": 3231,
+          "text": "            [&](const SearchState &parent, NeighborhoodAction &action) {"
+        },
+        {
+          "line": 3232,
+          "text": "              if (parentProgress && parentProgressAttemptedEdges.count("
+        },
+        {
+          "line": 3233,
+          "text": "                      parentProgressEdgeKey(parent.key, action)))"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Refresh/round enumeration passes that unchanged precomputed array.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "d743f1d593e2efc1cbd03990bcaeca03b97660b123e3006d28af88f834ac893f",
+      "first_line": 3281,
+      "last_line": 3320,
+      "numbered_lines": [
+        {
+          "line": 3281,
+          "text": "        std::string reason, diagnostic, materializeError;"
+        },
+        {
+          "line": 3282,
+          "text": "        ++funnel.attempted;"
+        },
+        {
+          "line": 3283,
+          "text": "        bool materialized = false;"
+        },
+        {
+          "line": 3284,
+          "text": "        bool unique = false;"
+        },
+        {
+          "line": 3285,
+          "text": "        bool duplicate = false;"
+        },
+        {
+          "line": 3286,
+          "text": "        bool freshCostPrepared = false;"
+        },
+        {
+          "line": 3287,
+          "text": "        bool cacheReused = false;"
+        },
+        {
+          "line": 3288,
+          "text": "        bool freshCostScored = false;"
+        },
+        {
+          "line": 3289,
+          "text": "        bool schedulerCalled = false;"
+        },
+        {
+          "line": 3290,
+          "text": "        bool schedulerPassed = false;"
+        },
+        {
+          "line": 3291,
+          "text": "        bool schedulerRejected = false;"
+        },
+        {
+          "line": 3292,
+          "text": "        bool archived = false;"
+        },
+        {
+          "line": 3293,
+          "text": "        bool expandCandidate = false;"
+        },
+        {
+          "line": 3294,
+          "text": "        uint64_t costShapeCacheHits = 0;"
+        },
+        {
+          "line": 3295,
+          "text": "        uint64_t costShapeCacheMisses = 0;"
+        },
+        {
+          "line": 3296,
+          "text": "        std::string outcomeReason;"
+        },
+        {
+          "line": 3297,
+          "text": "        NeighborMaterialization materialization = materializeNeighbor("
+        },
+        {
+          "line": 3298,
+          "text": "            child, parent, canonical, functionName, outputDir,"
+        },
+        {
+          "line": 3299,
+          "text": "            neighbor.action, canonicalFactKey, nextSerial, reason, diagnostic,"
+        },
+        {
+          "line": 3300,
+          "text": "            materializeError);"
+        },
+        {
+          "line": 3301,
+          "text": "        if (materialization == NeighborMaterialization::Fatal) {"
+        },
+        {
+          "line": 3302,
+          "text": "          fatal(materializeError);"
+        },
+        {
+          "line": 3303,
+          "text": "          return;"
+        },
+        {
+          "line": 3304,
+          "text": "        }"
+        },
+        {
+          "line": 3305,
+          "text": "        if (materialization == NeighborMaterialization::Rejected) {"
+        },
+        {
+          "line": 3306,
+          "text": "          outcomeReason ="
+        },
+        {
+          "line": 3307,
+          "text": "              (reason.empty() ? \"unsupported_or_unknown_action\" : reason) +"
+        },
+        {
+          "line": 3308,
+          "text": "              \":\" + diagnostic;"
+        },
+        {
+          "line": 3309,
+          "text": "          ++funnel.reject;"
+        },
+        {
+          "line": 3310,
+          "text": "          ++funnel.rejectReasons[\"materialize:\" +"
+        },
+        {
+          "line": 3311,
+          "text": "                                 StringRef(outcomeReason)"
+        },
+        {
+          "line": 3312,
+          "text": "                                     .take_front(StringRef(outcomeReason).find(':'))"
+        },
+        {
+          "line": 3313,
+          "text": "                                     .str()];"
+        },
+        {
+          "line": 3314,
+          "text": "          ++rejectedCount; appendRejected(archive, child,"
+        },
+        {
+          "line": 3315,
+          "text": "                                           outcomeReason, round);"
+        },
+        {
+          "line": 3316,
+          "text": "          archived = true;"
+        },
+        {
+          "line": 3317,
+          "text": "        } else {"
+        },
+        {
+          "line": 3318,
+          "text": "          materialized = true;"
+        },
+        {
+          "line": 3319,
+          "text": "          ++funnel.materialized;"
+        },
+        {
+          "line": 3320,
+          "text": "          if (!child.key.empty() && child.rejectReason.empty() &&"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Failed materialization records an attempt/reject without reaching scoring.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "ef723ac158eb86c61489a6d948a5b97d5063ef4c3413a7d249409258b83e4fe0",
+      "first_line": 8913,
+      "last_line": 8924,
+      "numbered_lines": [
+        {
+          "line": 8913,
+          "text": "      metadata[\"fission_dimension\"] = json::Object{"
+        },
+        {
+          "line": 8914,
+          "text": "          {\"prepared_source_file\", preparedSourceFile.getValue()},"
+        },
+        {
+          "line": 8915,
+          "text": "          {\"max_actions_per_task\","
+        },
+        {
+          "line": 8916,
+          "text": "           maxFissionActionsPerTask.getValue()},"
+        },
+        {
+          "line": 8917,
+          "text": "          {\"complete_cut_action_count\","
+        },
+        {
+          "line": 8918,
+          "text": "           static_cast<int64_t>(canonicalFissionActions.size())},"
+        },
+        {
+          "line": 8919,
+          "text": "          {\"task_support\", std::move(support)},"
+        },
+        {
+          "line": 8920,
+          "text": "          {\"source_replay_verified\", true},"
+        },
+        {
+          "line": 8921,
+          "text": "          {\"split_counter_domains\", \"retained-per-operation-not-disjoint\"}};"
+        },
+        {
+          "line": 8922,
+          "text": "    }"
+        },
+        {
+          "line": 8923,
+          "text": "    if (bootstrapSupportedShapes) {"
+        },
+        {
+          "line": 8924,
+          "text": "      metadata[\"supported_shape_bootstrap_policy\"] ="
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Published fission catalogue/support metadata.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "8aa4250af99443c18e4ee764a15b4ba5d588ec5fcd12d6b5c037440a12c1fa14",
+      "first_line": 93,
+      "last_line": 113,
+      "numbered_lines": [
+        {
+          "line": 93,
+          "text": "inline bool provesDistinctTaskStorage(Value lhs, Value rhs) {"
+        },
+        {
+          "line": 94,
+          "text": "  lhs = canonicalTaskStorageRoot(lhs);"
+        },
+        {
+          "line": 95,
+          "text": "  rhs = canonicalTaskStorageRoot(rhs);"
+        },
+        {
+          "line": 96,
+          "text": "  if (!lhs || !rhs)"
+        },
+        {
+          "line": 97,
+          "text": "    return false;"
+        },
+        {
+          "line": 98,
+          "text": "  if (lhs == rhs)"
+        },
+        {
+          "line": 99,
+          "text": "    return false;"
+        },
+        {
+          "line": 100,
+          "text": "  Operation *lhsDefinition = lhs.getDefiningOp();"
+        },
+        {
+          "line": 101,
+          "text": "  Operation *rhsDefinition = rhs.getDefiningOp();"
+        },
+        {
+          "line": 102,
+          "text": "  bool lhsAllocation ="
+        },
+        {
+          "line": 103,
+          "text": "      lhsDefinition && isa<memref::AllocOp, memref::AllocaOp>(lhsDefinition);"
+        },
+        {
+          "line": 104,
+          "text": "  bool rhsAllocation ="
+        },
+        {
+          "line": 105,
+          "text": "      rhsDefinition && isa<memref::AllocOp, memref::AllocaOp>(rhsDefinition);"
+        },
+        {
+          "line": 106,
+          "text": "  if (lhsAllocation && (rhsAllocation || isTaskFunctionArgument(rhs)))"
+        },
+        {
+          "line": 107,
+          "text": "    return true;"
+        },
+        {
+          "line": 108,
+          "text": "  if (rhsAllocation && isTaskFunctionArgument(lhs))"
+        },
+        {
+          "line": 109,
+          "text": "    return true;"
+        },
+        {
+          "line": 110,
+          "text": "  return isNoAliasTaskFunctionArgument(lhs) &&"
+        },
+        {
+          "line": 111,
+          "text": "         isNoAliasTaskFunctionArgument(rhs);"
+        },
+        {
+          "line": 112,
+          "text": "}"
+        },
+        {
+          "line": 113,
+          "text": ""
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/include/Backend/Neura/Orchestration/JointScheduling/TaskGraphRewriteLegality.h",
+      "purpose": "Shared fusion alias proof and same-root rejection.",
+      "source_sha256": "0811290ce831678294d354e86eda9d5f09ae90d63aca9444701157a2143854d0"
+    }
+  ],
+  "schema": "orbit-frozen-source-excerpts-v1",
+  "source_commit": "76345481683a2e199c0cad155de2acb51149f350"
+}

@@ -1,0 +1,319 @@
+{
+  "additional_native_calls": 0,
+  "additional_numeric_calls": 0,
+  "additional_objective_calls": 0,
+  "additional_process_samples": 0,
+  "all_search_write_text_call_lines": [
+    177,
+    928,
+    2793,
+    2794,
+    3189,
+    7513,
+    7745,
+    8228,
+    8230,
+    8351,
+    8359,
+    8365,
+    8475,
+    8763,
+    8788,
+    8815,
+    9014,
+    9015,
+    9016
+  ],
+  "analysis": {
+    "attribution": "The recorded process-wide cumulative counters support prioritizing a history-rewrite candidate, but they do not identify which file produced the writes, quantify its CPU fraction, show I/O wait or measure an optimization.",
+    "growth": "For checkpoint j with historical event bytes H_j, history serialization/write work includes the sum of H_j across checkpoints, not just the final history size. Regular attempt-based intervals can therefore repeatedly process an increasing prefix; refresh/menu saves add more passes.",
+    "legality_cache_difference": "The existing PC-fusion negative-proof memo saves only repeated materializer-prefix work and expressly does not remove trace/checkpoint serialization. This observation is cumulative-tiling, whose level3 action filter excludes fusion primitives, so that fusion-only memo does not directly cover these attempts.",
+    "proved": "All cumulative event histories are serialized into each checkpoint and their diagnostic sidecars are fully replaced. The atomic helper writes the full text to a temporary file and renames it."
+  },
+  "checkpoint_call_sites": [
+    {
+      "current_cohort": true,
+      "line": 3137,
+      "trigger": "Fresh canonical/import initialization"
+    },
+    {
+      "current_cohort": true,
+      "line": 3249,
+      "trigger": "Empty pending queue: menus and directional round prepared"
+    },
+    {
+      "configured_interval": 4096,
+      "current_cohort": true,
+      "explicit_pause_supported_here": false,
+      "interval_counts": "attempts, not objective calls",
+      "line": 3496,
+      "trigger": "Single-worker committed attempts reach checkpoint-actions, or explicit pause"
+    },
+    {
+      "current_cohort": false,
+      "line": 3824,
+      "reason": "This cohort has one scoring worker.",
+      "trigger": "Parallel owner-commit batch reaches attempt interval, or explicit pause"
+    },
+    {
+      "current_cohort": true,
+      "line": 3888,
+      "trigger": "Refresh round boundary after frontier merge and queue reset"
+    },
+    {
+      "current_cohort": false,
+      "line": 3930,
+      "reason": "This cohort has refresh-frontier enabled.",
+      "trigger": "Ordinary nonrefresh new beam selection"
+    },
+    {
+      "current_cohort": true,
+      "line": 3987,
+      "trigger": "Final search snapshot before writeOutputs"
+    }
+  ],
+  "epoch": 1791742611.353524,
+  "input_pre_post_verified": true,
+  "input_sha256": {
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/prepared-v1/gcn-256-runner-binding.json": "483a6db30a66db622732d30ea9bab9e98cd04f2a36e9dc6ebf377d41be968f53",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/prepared-v1/pipeline-binding.json": "ac81a9ace3604dbffff851abff7acb48165c911448792de138005aab653b4898",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/supervisor-launch.json": "e357a7a76c453e6b002452cc7fa2e4a0224fecfdca9767e7dd4c7dba27772395",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-fusion-prefix-proof-cache-readonly-20261012/FINAL.json": "198845510f97026fa7ea003b3471d8fa29493fed6dda7c049851a3bff589b520",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-fusion-prefix-proof-cache-readonly-20261012/REPORT.json": "c519943a381641c26972245ec99f367995674104f9cd2d49a88b532de06c5721",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-tiling-single-process-io-readonly-20261012/FINAL.json": "d5577e6b4125b631573ae4368ec01f1567e4701c323620ef347bcbc8be555d27",
+    "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-tiling-single-process-io-readonly-20261012/REPORT.json": "7360ea7ac3f768873c99cb2b5a283b3a03a2f74b4c2a6b7fa3f14b3cc7e130d4",
+    "/home/shiran/project/orbit-repair-study/diagnosis_v38_gcn_checkpoint_trace_rewrite_readonly_20261012.py": "ec68bd8534ca7e3fc820e785c62564eff5ae8841a276acf411a6f79d5b319bc3",
+    "/home/shiran/project/orbit-repair-study/diagnosis_v38_gcn_process_io_once_20261012.py": "62f86dc1db1b1b17a1c8f077576f50991e15b1d464dc298a519f94f7a1e16e52",
+    "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCandidateCommon.cpp": "e34827c9b127e8ded6461a5115cef38b755ec598b5c0c77323fe1d9e2227c396",
+    "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+  },
+  "limitations": [
+    "One process-wide I/O point is cumulative and has no interval rate or per-file attribution.",
+    "No live checkpoint, funnel, direction, archive, model or cost-catalogue contents were read.",
+    "No CPU percentage, file-specific byte share, ETA or performance improvement is claimed.",
+    "Current Tiling native quality remains owned by its original pipeline; this report admits no new cycles."
+  ],
+  "observation": {
+    "final_sha256": "d5577e6b4125b631573ae4368ec01f1567e4701c323620ef347bcbc8be555d27",
+    "independently_reread_binary_or_proc": false,
+    "inherited_four_input_pre_post_verified": true,
+    "inherited_input_sha256": {
+      "/home/shiran/project/orbit-repair-study/binaries/mlir-amoeba-opt-9996d1b97787242c": "9996d1b97787242cea42d88511ce530bfa4cb523883705b0746a72a1ff17d7cc",
+      "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/supervisor-launch.json": "e357a7a76c453e6b002452cc7fa2e4a0224fecfdca9767e7dd4c7dba27772395",
+      "/home/shiran/project/orbit-repair-study/diagnosis_v38_gcn_process_io_once_20261012.py": "62f86dc1db1b1b17a1c8f077576f50991e15b1d464dc298a519f94f7a1e16e52",
+      "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    "receipt": {
+      "additional_native_calls": 0,
+      "additional_numeric_calls": 0,
+      "additional_objective_calls": 0,
+      "argv_sha256": "01289ca8f62c8b689c9071fe527cebf15dd15a6707fcde05b329e4940c589d14",
+      "cpu_ticks_per_second": 100,
+      "input_sha256": {
+        "/home/shiran/project/orbit-repair-study/binaries/mlir-amoeba-opt-9996d1b97787242c": "9996d1b97787242cea42d88511ce530bfa4cb523883705b0746a72a1ff17d7cc",
+        "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/critical-positive-compute-v38-tiling256-continuation1/supervisor-launch.json": "e357a7a76c453e6b002452cc7fa2e4a0224fecfdca9767e7dd4c7dba27772395",
+        "/home/shiran/project/orbit-repair-study/diagnosis_v38_gcn_process_io_once_20261012.py": "62f86dc1db1b1b17a1c8f077576f50991e15b1d464dc298a519f94f7a1e16e52",
+        "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+      },
+      "interpretation": "Raw kernel counters are not per-file attribution, a CPU profile, remaining runtime, a whole-pipeline total or a measured optimization speedup.",
+      "optimizer_sha256": "9996d1b97787242cea42d88511ce530bfa4cb523883705b0746a72a1ff17d7cc",
+      "pid": 1206451,
+      "process_start_ticks": "36616743",
+      "raw_process_io_counters": {
+        "cancelled_write_bytes": 229625856,
+        "rchar": 1162012,
+        "read_bytes": 12337152,
+        "syscr": 394,
+        "syscw": 120844,
+        "wchar": 23338523433,
+        "write_bytes": 23343243264
+      },
+      "resident_bytes_at_snapshot": 2086649856,
+      "schema": "orbit-v38-gcn-process-io-single-snapshot-v1",
+      "scope": "One live optimizer process observed once; no journal, checkpoint or model contents read. No suspension or experiment launch.",
+      "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+      "state": "R",
+      "status": "pass-readonly",
+      "system_cpu_ticks": 2252,
+      "timestamp_utc": "2026-10-11T18:10:49.294989+00:00",
+      "user_cpu_ticks": 112567
+    }
+  },
+  "other_write_paths_scope": "Candidate/prefix modules, immutable body/fact witnesses, score records, family-best witnesses and final outputs also use atomic writes. No per-file contribution is inferred from the single process I/O point.",
+  "paper_admission": false,
+  "schema": "orbit-v38-gcn-checkpoint-trace-rewrite-readonly-v1",
+  "single_factor_proposal": {
+    "approach": [
+      "Append each newly recorded historical event once to a separate immutable-order journal; checkpoint records exact file/source identity, committed byte prefix, event count and authentication hash.",
+      "Keep beam, generated states, pending cursor/actions, parent-progress queues, attempts, directional counters/feedback/window/round state and archive indexed amendments exact in checkpoint.",
+      "Separate family-funnel historical events from mutable round/path/current-pending snapshot records. Regenerate the latter as a current snapshot or reconstruct the exact legacy view when publishing/auditing; never append stale snapshot tails.",
+      "Do not advance committed prefix counters until append/close failures and checkpoint publication have been handled. A later uncommitted suffix is ignored/truncated only after validating every committed journal prefix.",
+      "Any alternate storage schema must be explicit/default off and update independent validators to replay the complete event stream with original ordering, typed identities, queue rotations/cursors and completeness checks."
+    ],
+    "event_histories": [
+      "familyFunnelEvents",
+      "parentProgressEvents",
+      "directionalEvents"
+    ],
+    "invariants": [
+      "Same action menus/order, candidate IDs, exact parent/action semantic attempts, materialization decisions, original zero/debit caps, refresh/beam and Top5 selection.",
+      "Same total objective calls, prediction/native inputs, original five native receipts and all five strict numeric outcomes; no free candidate, replacement, certificate or winner injection.",
+      "Same complete event history and reconstructed logical family-funnel view; final seals explicitly bind journal prefix/full final content, snapshot provenance and parser version.",
+      "Supported older checkpoint restore routes retain their exact continuation/failure behavior. Source38 remains fresh-only and still rejects resume; this proposal does not grant it resume support."
+    ],
+    "scope": "Opt-in storage-only event journals plus exact committed-prefix references in checkpoint; preserve the current logical controller and current snapshots.",
+    "status": "unimplemented; no new source or experiment",
+    "validation_before_adoption": [
+      "Controlled off/on small full-action trace replay under identical budget/model/domain/scheduler inputs, with complete semantic event/queue/frontier comparison and exact Top5 mapper input equality.",
+      "Storage/crash-boundary checks for truncated/extra/amended prefixes and atomic failure ordering, independently of unsupported Source38 resume.",
+      "One bounded same-cohort end-to-end comparison measuring wall/user/system CPU, peak RSS and process I/O, followed by original native5/numeric5 gates. Attribute per-file costs only if separately instrumented."
+    ]
+  },
+  "source_commit": "76345481683a2e199c0cad155de2acb51149f350",
+  "source_excerpts_artifact": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-checkpoint-trace-rewrite-readonly-20261012/SOURCE-EXCERPTS.json",
+  "source_or_bound_inputs_modified": false,
+  "standalone_sidecar_call_sites": [
+    {
+      "current_cohort": false,
+      "line": 2812,
+      "route": "After a supported restore"
+    },
+    {
+      "current_cohort": true,
+      "line": 8352,
+      "route": "Every saveCheckpoint"
+    }
+  ],
+  "status": "pass-sealed-readonly-performance-candidate",
+  "summary": {
+    "additional_native_calls": 0,
+    "additional_numeric_calls": 0,
+    "additional_objective_calls": 0,
+    "additional_process_samples": 0,
+    "archive_journal_already_appends": true,
+    "checkpoint_interval_counts_attempts": true,
+    "configured_checkpoint_actions": 4096,
+    "cpu_time_share_known": false,
+    "family_funnel_has_mutable_snapshot_tail": true,
+    "full_history_copied_into_checkpoint": true,
+    "full_history_sidecar_rewrite_paths": [
+      "diagnostics/family-funnel.jsonl",
+      "parent-progress.jsonl",
+      "directions.jsonl"
+    ],
+    "measured_speedup": false,
+    "observed_pid": 1206451,
+    "observed_start_ticks": "36616743",
+    "observed_timestamp_utc": "2026-10-11T18:10:49.294989+00:00",
+    "optimization_implemented": false,
+    "paper_admission": false,
+    "per_file_write_attribution_known": false,
+    "process_io_receipt": "/home/shiran/project/orbit-repair-study/diagnosis/search-regression-repair-20261010/v38-gcn-tiling-single-process-io-readonly-20261012/REPORT.json",
+    "raw_process_io_counters": {
+      "cancelled_write_bytes": 229625856,
+      "rchar": 1162012,
+      "read_bytes": 12337152,
+      "syscr": 394,
+      "syscw": 120844,
+      "wchar": 23338523433,
+      "write_bytes": 23343243264
+    },
+    "source_commit": "76345481683a2e199c0cad155de2acb51149f350"
+  },
+  "write_paths": [
+    {
+      "behavior": "Append only new indexed rows and dirty indexed amendments.",
+      "history_rewritten_at_every_checkpoint": false,
+      "path_role": "archive journal",
+      "source_lines": [
+        8269,
+        8279
+      ]
+    },
+    {
+      "behavior": "Serialize all familyFunnelEvents plus all parentProgressEvents/directionalEvents, full current queues/state, beam/pending and dictionaries; replace complete file.",
+      "history_rewritten_at_every_checkpoint": true,
+      "path_role": "checkpoint JSON",
+      "source_lines": [
+        8291,
+        8341,
+        8347,
+        8351
+      ]
+    },
+    {
+      "append_current_whole_file_is_not_equivalent": true,
+      "behavior": "All historical family events, then regenerated round-family/path-presence/current-unattempted frontier snapshot; replace complete file.",
+      "history_rewritten_at_every_checkpoint": true,
+      "path_role": "diagnostics/family-funnel.jsonl",
+      "source_lines": [
+        8132,
+        8134,
+        8151,
+        8160,
+        8228
+      ]
+    },
+    {
+      "behavior": "Recompute archive/beam/path ranks and round/current-pending summary, replace current summary.",
+      "full_snapshot_recomputed": true,
+      "history_rewritten_at_every_checkpoint": false,
+      "path_role": "diagnostics/family-funnel-summary.json",
+      "source_lines": [
+        7914,
+        7937,
+        8070,
+        8100,
+        8230
+      ]
+    },
+    {
+      "behavior": "Concatenate the entire parentProgressEvents vector and replace complete file.",
+      "history_rewritten_at_every_checkpoint": true,
+      "path_role": "parent-progress.jsonl",
+      "source_lines": [
+        8357,
+        8359
+      ]
+    },
+    {
+      "behavior": "Concatenate the entire directionalEvents vector and replace complete file.",
+      "history_rewritten_at_every_checkpoint": true,
+      "path_role": "directions.jsonl",
+      "source_lines": [
+        8364,
+        8365
+      ]
+    },
+    {
+      "behavior": "Append one refresh record.",
+      "history_rewritten_at_every_checkpoint": false,
+      "path_role": "frontier-refresh.jsonl",
+      "source_lines": [
+        3876
+      ]
+    },
+    {
+      "behavior": "Final writeOutputs publishes whole-run outputs; this is not the recurring checkpoint writer.",
+      "history_rewritten_at_every_checkpoint": false,
+      "path_role": "archive.jsonl / budget-trace.jsonl / top5 / controls / search-summary",
+      "source_lines": [
+        3989,
+        8788,
+        8815,
+        9014,
+        9015,
+        9016
+      ]
+    },
+    {
+      "behavior": "Only a proven uncommitted suffix is truncated via atomic replacement after validating the committed prefix.",
+      "current_cohort": false,
+      "history_rewritten_at_every_checkpoint": false,
+      "path_role": "archive journal on supported restore",
+      "source_lines": [
+        8475
+      ]
+    }
+  ]
+}

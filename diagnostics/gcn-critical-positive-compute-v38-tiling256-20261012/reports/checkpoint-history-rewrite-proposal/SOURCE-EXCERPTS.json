@@ -1,0 +1,2380 @@
+{
+  "excerpts": [
+    {
+      "excerpt_sha256": "b7f8f29551eeacf48dfaf59be4f8f9eea5c0d61c06eea82c6a14d762779b5683",
+      "first_line": 177,
+      "last_line": 187,
+      "numbered_lines": [
+        {
+          "line": 177,
+          "text": "static bool writeTextAtomically(StringRef path, StringRef text,"
+        },
+        {
+          "line": 178,
+          "text": "                                std::string &error) {"
+        },
+        {
+          "line": 179,
+          "text": "  return writeAtomically("
+        },
+        {
+          "line": 180,
+          "text": "      path,"
+        },
+        {
+          "line": 181,
+          "text": "      [&](llvm::raw_ostream &stream) {"
+        },
+        {
+          "line": 182,
+          "text": "        stream << text;"
+        },
+        {
+          "line": 183,
+          "text": "        return true;"
+        },
+        {
+          "line": 184,
+          "text": "      },"
+        },
+        {
+          "line": 185,
+          "text": "      error);"
+        },
+        {
+          "line": 186,
+          "text": "}"
+        },
+        {
+          "line": 187,
+          "text": ""
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Search helper passes the full supplied text to the atomic writer.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "3d005013ac80b240804db9bc7cdac4c6c77e2ed98dc3f85e168c81ea5c8f03db",
+      "first_line": 640,
+      "last_line": 684,
+      "numbered_lines": [
+        {
+          "line": 640,
+          "text": "bool writeAtomically(StringRef output,"
+        },
+        {
+          "line": 641,
+          "text": "                     llvm::function_ref<bool(llvm::raw_ostream &)> writeBody,"
+        },
+        {
+          "line": 642,
+          "text": "                     std::string &error) {"
+        },
+        {
+          "line": 643,
+          "text": "  if (output.empty()) {"
+        },
+        {
+          "line": 644,
+          "text": "    error = \"output path is required\";"
+        },
+        {
+          "line": 645,
+          "text": "    return false;"
+        },
+        {
+          "line": 646,
+          "text": "  }"
+        },
+        {
+          "line": 647,
+          "text": "  SmallString<256> pattern(output);"
+        },
+        {
+          "line": 648,
+          "text": "  pattern += \".tmp-%%%%%%\";"
+        },
+        {
+          "line": 649,
+          "text": "  SmallString<256> temporary;"
+        },
+        {
+          "line": 650,
+          "text": "  int descriptor = -1;"
+        },
+        {
+          "line": 651,
+          "text": "  std::error_code ec ="
+        },
+        {
+          "line": 652,
+          "text": "      llvm::sys::fs::createUniqueFile(pattern, descriptor, temporary);"
+        },
+        {
+          "line": 653,
+          "text": "  if (ec) {"
+        },
+        {
+          "line": 654,
+          "text": "    error = \"cannot create temporary output \" + temporary.str().str() + \": \" +"
+        },
+        {
+          "line": 655,
+          "text": "            ec.message();"
+        },
+        {
+          "line": 656,
+          "text": "    return false;"
+        },
+        {
+          "line": 657,
+          "text": "  }"
+        },
+        {
+          "line": 658,
+          "text": ""
+        },
+        {
+          "line": 659,
+          "text": "  bool ok = false;"
+        },
+        {
+          "line": 660,
+          "text": "  {"
+        },
+        {
+          "line": 661,
+          "text": "    llvm::raw_fd_ostream os(descriptor, /*shouldClose=*/true);"
+        },
+        {
+          "line": 662,
+          "text": "    ok = writeBody(os);"
+        },
+        {
+          "line": 663,
+          "text": "    // Check close errors as well as buffered writes.  Once handled, clear the"
+        },
+        {
+          "line": 664,
+          "text": "    // stream error so its destructor cannot terminate the compiler before the"
+        },
+        {
+          "line": 665,
+          "text": "    // caller records an incomplete result and removes the temporary file."
+        },
+        {
+          "line": 666,
+          "text": "    os.close();"
+        },
+        {
+          "line": 667,
+          "text": "    if (os.has_error()) {"
+        },
+        {
+          "line": 668,
+          "text": "      error = \"failed while writing \" + output.str() + \": \" +"
+        },
+        {
+          "line": 669,
+          "text": "              os.error().message();"
+        },
+        {
+          "line": 670,
+          "text": "      ok = false;"
+        },
+        {
+          "line": 671,
+          "text": "      os.clear_error();"
+        },
+        {
+          "line": 672,
+          "text": "    }"
+        },
+        {
+          "line": 673,
+          "text": "  }"
+        },
+        {
+          "line": 674,
+          "text": "  if (!ok) {"
+        },
+        {
+          "line": 675,
+          "text": "    llvm::sys::fs::remove(temporary);"
+        },
+        {
+          "line": 676,
+          "text": "    return false;"
+        },
+        {
+          "line": 677,
+          "text": "  }"
+        },
+        {
+          "line": 678,
+          "text": "  ec = llvm::sys::fs::rename(temporary, output);"
+        },
+        {
+          "line": 679,
+          "text": "  if (ec) {"
+        },
+        {
+          "line": 680,
+          "text": "    error = \"cannot publish \" + output.str() + \": \" + ec.message();"
+        },
+        {
+          "line": 681,
+          "text": "    llvm::sys::fs::remove(temporary);"
+        },
+        {
+          "line": 682,
+          "text": "    return false;"
+        },
+        {
+          "line": 683,
+          "text": "  }"
+        },
+        {
+          "line": 684,
+          "text": "  return true;"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/AnalyticalTaskCandidateCommon.cpp",
+      "purpose": "Write a new unique temporary file, close, then rename; not an incremental update.",
+      "source_sha256": "e34827c9b127e8ded6461a5115cef38b755ec598b5c0c77323fe1d9e2227c396"
+    },
+    {
+      "excerpt_sha256": "c4556634d158d7c62a684813ce872d18814c55b835bd1c8447478b4cf06ffcea",
+      "first_line": 2347,
+      "last_line": 2347,
+      "numbered_lines": [
+        {
+          "line": 2347,
+          "text": "  Option<int64_t> checkpointActions{*this, \"checkpoint-actions\", llvm::cl::init(128)};"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Compiler default checkpoint-actions is 128; actual prepared cohort uses 4096.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "3f1d6050fa0c707ad3541969e3cd3b8c067acb75602b27cf4f85de65404c76b2",
+      "first_line": 3133,
+      "last_line": 3140,
+      "numbered_lines": [
+        {
+          "line": 3133,
+          "text": "      roundScoredCount = 0;"
+        },
+        {
+          "line": 3134,
+          "text": "      roundScoreLimit = perRoundScoreQuota("
+        },
+        {
+          "line": 3135,
+          "text": "          scoredCount, phaseLimit,"
+        },
+        {
+          "line": 3136,
+          "text": "          maxRounds.getValue() - (round - phaseStartRound), roundQuotaScale.getValue());"
+        },
+        {
+          "line": 3137,
+          "text": "      if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,"
+        },
+        {
+          "line": 3138,
+          "text": "          canonicalFactKey, archive, beam, generated, pending, pendingCursor, \"\", error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3139,
+          "text": "    }"
+        },
+        {
+          "line": 3140,
+          "text": "    // Replay the recorded typed prefix, one generated action at a time. This"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Initialization checkpoint.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "51ddf32a7c90d1e15d3e7fe7ada66a421b357419b0a6a83087a4ef7e72492dc9",
+      "first_line": 3241,
+      "last_line": 3253,
+      "numbered_lines": [
+        {
+          "line": 3241,
+          "text": "          return;"
+        },
+        {
+          "line": 3242,
+          "text": "        }"
+        },
+        {
+          "line": 3243,
+          "text": "        if (parentProgress && !mergeParentProgressQueues("
+        },
+        {
+          "line": 3244,
+          "text": "                beam, round, pending, familyFunnelByRound[round], error)) {"
+        },
+        {
+          "line": 3245,
+          "text": "          fatal(error); return;"
+        },
+        {
+          "line": 3246,
+          "text": "        }"
+        },
+        {
+          "line": 3247,
+          "text": "        if (directionalSearch)"
+        },
+        {
+          "line": 3248,
+          "text": "          prepareDirectionalRound(beam, pending, round, scoredCount, phaseLimit);"
+        },
+        {
+          "line": 3249,
+          "text": "        if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,"
+        },
+        {
+          "line": 3250,
+          "text": "            canonicalFactKey, archive, beam, generated, pending, pendingCursor, \"\", error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3251,
+          "text": "      }"
+        },
+        {
+          "line": 3252,
+          "text": "      if (refreshFrontier && pending.empty()) { stopReason = \"frontier-exhausted\"; break; }"
+        },
+        {
+          "line": 3253,
+          "text": "      std::map<std::string, uint64_t> remainingPendingFamilies ="
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Checkpoint after new pending menu/directional round preparation.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "f4d8f76c3f74ad9adc825305cbf66aad4773eb23021b8fb63669d423fc79de84",
+      "first_line": 3491,
+      "last_line": 3504,
+      "numbered_lines": [
+        {
+          "line": 3491,
+          "text": "              outcomeReason == \"authenticated_configuration_duplicate\");"
+        },
+        {
+          "line": 3492,
+          "text": "        ++pendingCursor; ++actionsSinceCheckpoint;"
+        },
+        {
+          "line": 3493,
+          "text": "        consumePendingActionFamily(remainingPendingFamilies, actionFamily);"
+        },
+        {
+          "line": 3494,
+          "text": "        bool pause = pauseAfterCandidates > 0 && scoredCount >= static_cast<uint64_t>(pauseAfterCandidates);"
+        },
+        {
+          "line": 3495,
+          "text": "        if (actionsSinceCheckpoint >= static_cast<uint64_t>(checkpointActions) || pause) {"
+        },
+        {
+          "line": 3496,
+          "text": "          if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,"
+        },
+        {
+          "line": 3497,
+          "text": "              canonicalFactKey, archive, beam, generated, pending, pendingCursor,"
+        },
+        {
+          "line": 3498,
+          "text": "              pause ? \"explicit-pause\" : \"\", error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3499,
+          "text": "          actionsSinceCheckpoint = 0;"
+        },
+        {
+          "line": 3500,
+          "text": "        }"
+        },
+        {
+          "line": 3501,
+          "text": "        if (pause) { stopReason = \"explicit-pause\"; break; }"
+        },
+        {
+          "line": 3502,
+          "text": "      }"
+        },
+        {
+          "line": 3503,
+          "text": "      } else {"
+        },
+        {
+          "line": 3504,
+          "text": "        // The worker path below keeps all action application, graph-fact and"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Single-worker attempt-based interval.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "9e8e56e5af24705ec92fba5d333894a08e5a38efb74ade9e505b9d4d0f798d77",
+      "first_line": 3817,
+      "last_line": 3836,
+      "numbered_lines": [
+        {
+          "line": 3817,
+          "text": "          pendingCursor = cursor;"
+        },
+        {
+          "line": 3818,
+          "text": "          const bool pause ="
+        },
+        {
+          "line": 3819,
+          "text": "              pauseAfterCandidates > 0 &&"
+        },
+        {
+          "line": 3820,
+          "text": "              scoredCount >= static_cast<uint64_t>(pauseAfterCandidates);"
+        },
+        {
+          "line": 3821,
+          "text": "          if (actionsSinceCheckpoint >="
+        },
+        {
+          "line": 3822,
+          "text": "                  static_cast<uint64_t>(checkpointActions) ||"
+        },
+        {
+          "line": 3823,
+          "text": "              pause) {"
+        },
+        {
+          "line": 3824,
+          "text": "            if (!saveCheckpoint("
+        },
+        {
+          "line": 3825,
+          "text": "                    checkpointPath, round, nextSerial, scoredCount,"
+        },
+        {
+          "line": 3826,
+          "text": "                    rejectedCount, canonicalFactKey, archive, beam, generated,"
+        },
+        {
+          "line": 3827,
+          "text": "                    pending, pendingCursor, pause ? \"explicit-pause\" : \"\","
+        },
+        {
+          "line": 3828,
+          "text": "                    error)) {"
+        },
+        {
+          "line": 3829,
+          "text": "              fatal(error);"
+        },
+        {
+          "line": 3830,
+          "text": "              return;"
+        },
+        {
+          "line": 3831,
+          "text": "            }"
+        },
+        {
+          "line": 3832,
+          "text": "            actionsSinceCheckpoint = 0;"
+        },
+        {
+          "line": 3833,
+          "text": "          }"
+        },
+        {
+          "line": 3834,
+          "text": "          if (pause) {"
+        },
+        {
+          "line": 3835,
+          "text": "            stopReason = \"explicit-pause\";"
+        },
+        {
+          "line": 3836,
+          "text": "            break;"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Separate parallel-commit interval path, inactive for worker1.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "3c931c7f91fe7a6d6dbb22b22db046d8033cfe5dc51d676d8be1b559d8d02ec1",
+      "first_line": 3873,
+      "last_line": 3891,
+      "numbered_lines": [
+        {
+          "line": 3873,
+          "text": "            {\"id\", state.id}, {\"key\", state.key}, {\"cost\", state.score},"
+        },
+        {
+          "line": 3874,
+          "text": "            {\"depth\", static_cast<int64_t>(state.path.size())}});"
+        },
+        {
+          "line": 3875,
+          "text": "        std::error_code ec;"
+        },
+        {
+          "line": 3876,
+          "text": "        llvm::raw_fd_ostream journal(outputDir.getValue() + \"/frontier-refresh.jsonl\", ec,"
+        },
+        {
+          "line": 3877,
+          "text": "                                     llvm::sys::fs::OF_Append);"
+        },
+        {
+          "line": 3878,
+          "text": "        if (ec) { fatal(\"cannot write refresh journal\"); return; }"
+        },
+        {
+          "line": 3879,
+          "text": "        journal << json::Value(json::Object{{\"round\", round},"
+        },
+        {
+          "line": 3880,
+          "text": "            {\"evaluations\", static_cast<int64_t>(scoredCount)},"
+        },
+        {
+          "line": 3881,
+          "text": "            {\"old_parents\", std::move(oldParents)}, {\"beam\", std::move(newParents)},"
+        },
+        {
+          "line": 3882,
+          "text": "            {\"pending_before\", static_cast<int64_t>(remaining)}}) << \"\\n\";"
+        },
+        {
+          "line": 3883,
+          "text": "        pending.clear(); pendingCursor = 0; generated.clear();"
+        },
+        {
+          "line": 3884,
+          "text": "        successfulFamilyScores.clear();"
+        },
+        {
+          "line": 3885,
+          "text": "        roundScoredCount = 0;"
+        },
+        {
+          "line": 3886,
+          "text": "        roundScoreLimit = perRoundScoreQuota(scoredCount, phaseLimit,"
+        },
+        {
+          "line": 3887,
+          "text": "            maxRounds.getValue() - round, roundQuotaScale);"
+        },
+        {
+          "line": 3888,
+          "text": "        if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,"
+        },
+        {
+          "line": 3889,
+          "text": "            canonicalFactKey, archive, beam, generated, pending, pendingCursor, \"\", error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3890,
+          "text": "        // Stop only if the eligible frontier has no remaining actions, rather"
+        },
+        {
+          "line": 3891,
+          "text": "        // than mistaking a lack of newly scored children for domain exhaustion."
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Refresh append and recurring checkpoint.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "125e7bfdd7583ac2aad510e59639a611bdf6ed6586310bb04fc57fd067fd0f06",
+      "first_line": 3923,
+      "last_line": 3933,
+      "numbered_lines": [
+        {
+          "line": 3923,
+          "text": "      roundScoreLimit = perRoundScoreQuota("
+        },
+        {
+          "line": 3924,
+          "text": "          scoredCount, phaseLimit,"
+        },
+        {
+          "line": 3925,
+          "text": "          maxRounds.getValue() - (round - phaseStartRound), roundQuotaScale.getValue());"
+        },
+        {
+          "line": 3926,
+          "text": "      if (generated.empty()) { stopReason = \"no-new-legal-candidates\"; break; }"
+        },
+        {
+          "line": 3927,
+          "text": "      beam = selectBeam(std::move(generated), beamWidth, diversitySlots);"
+        },
+        {
+          "line": 3928,
+          "text": "      if (!retainCanonicalBeam(beam, archive, error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3929,
+          "text": "      generated.clear();"
+        },
+        {
+          "line": 3930,
+          "text": "      if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,"
+        },
+        {
+          "line": 3931,
+          "text": "          canonicalFactKey, archive, beam, generated, pending, pendingCursor, \"\", error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3932,
+          "text": "    }"
+        },
+        {
+          "line": 3933,
+          "text": "    if (decisionFlow == \"alternating\") {"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Nonrefresh new-beam checkpoint.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "d91ee2ffedcfe82884d177eacb7f24ffcf0a9d091580fe6ecc370b57f1ecb6c4",
+      "first_line": 3983,
+      "last_line": 4001,
+      "numbered_lines": [
+        {
+          "line": 3983,
+          "text": "          {\"guided_charged\", int64_t(directionalGuidedCharged)}});"
+        },
+        {
+          "line": 3984,
+          "text": "    }"
+        },
+        {
+          "line": 3985,
+          "text": "    elapsedMilliseconds = previousElapsed + std::chrono::duration_cast<std::chrono::milliseconds>("
+        },
+        {
+          "line": 3986,
+          "text": "        std::chrono::steady_clock::now() - began).count();"
+        },
+        {
+          "line": 3987,
+          "text": "    if (!saveCheckpoint(checkpointPath, round, nextSerial, scoredCount, rejectedCount,"
+        },
+        {
+          "line": 3988,
+          "text": "        canonicalFactKey, archive, beam, generated, pending, pendingCursor, stopReason, error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3989,
+          "text": "    if (!writeOutputs(outputDir, checkpointPath, functionName, stage,"
+        },
+        {
+          "line": 3990,
+          "text": "        sourceRepository, sourceCommit, architecturePath, protocolFile,"
+        },
+        {
+          "line": 3991,
+          "text": "        maxRounds, maxCandidates, beamWidth, diversitySlots, round,"
+        },
+        {
+          "line": 3992,
+          "text": "        scoredCount, rejectedCount, costCacheLoaded, !previousWinner.empty(),"
+        },
+        {
+          "line": 3993,
+          "text": "        !historicalNativeWinner.empty(),"
+        },
+        {
+          "line": 3994,
+          "text": "        archive, stopReason, error)) { fatal(error); return; }"
+        },
+        {
+          "line": 3995,
+          "text": "  }"
+        },
+        {
+          "line": 3996,
+          "text": ""
+        },
+        {
+          "line": 3997,
+          "text": "private:"
+        },
+        {
+          "line": 3998,
+          "text": "  // The opt-in finite declaration guarantees one deterministic source-owned"
+        },
+        {
+          "line": 3999,
+          "text": "  // graph rewrite followed only by shape assignment. Shape-return histories"
+        },
+        {
+          "line": 4000,
+          "text": "  // can carry different scheduling annotation bytes for the same graph/shape"
+        },
+        {
+          "line": 4001,
+          "text": "  // configuration; authenticate first, then deduplicate this declared quotient."
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Final checkpoint followed by final outputs.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "7012682c6b1e7bf57a95482f28f13f6c3e186a13ff3aebf906646a41fac0fd3a",
+      "first_line": 4106,
+      "last_line": 4127,
+      "numbered_lines": [
+        {
+          "line": 4106,
+          "text": "  std::string filterSearchAction(const SearchState &parent, NeighborhoodAction &action) const {"
+        },
+        {
+          "line": 4107,
+          "text": "    // Cumulative paper ablations share the full source-owned task protocol,"
+        },
+        {
+          "line": 4108,
+          "text": "    // critical-path scheduler and Joint refresh controller. Only the enabled"
+        },
+        {
+          "line": 4109,
+          "text": "    // dimensions change. Composites are accepted only when every primitive"
+        },
+        {
+          "line": 4110,
+          "text": "    // and their shape attachment are enabled by this stage."
+        },
+        {
+          "line": 4111,
+          "text": "    if (StringRef(featurePolicy.getValue()).starts_with(\"cumulative-\")) {"
+        },
+        {
+          "line": 4112,
+          "text": "      const unsigned level = featurePolicy == \"cumulative-fixed\" ? 0 :"
+        },
+        {
+          "line": 4113,
+          "text": "          featurePolicy == \"cumulative-shape\" ? 1 :"
+        },
+        {
+          "line": 4114,
+          "text": "          featurePolicy == \"cumulative-replica\" ? 2 :"
+        },
+        {
+          "line": 4115,
+          "text": "          featurePolicy == \"cumulative-tiling\" ? 3 : 4;"
+        },
+        {
+          "line": 4116,
+          "text": "      if (level == 0) return \"feature_policy_fixed_1x1\";"
+        },
+        {
+          "line": 4117,
+          "text": "      if (!parent.actionHistory.fissionActions.empty())"
+        },
+        {
+          "line": 4118,
+          "text": "        return \"feature_policy_cumulative_parent_fission\";"
+        },
+        {
+          "line": 4119,
+          "text": "      if (action.family == \"fission\") return \"feature_policy_cumulative_fission\";"
+        },
+        {
+          "line": 4120,
+          "text": "      for (const auto &primitive : action.primitives) {"
+        },
+        {
+          "line": 4121,
+          "text": "        const StringRef kind = primitive.kind;"
+        },
+        {
+          "line": 4122,
+          "text": "        const unsigned required ="
+        },
+        {
+          "line": 4123,
+          "text": "            (action.family == \"lineage-replacement\" && kind == \"lineage-reset\") ? 1 :"
+        },
+        {
+          "line": 4124,
+          "text": "            kind == \"replica\" ? 2 :"
+        },
+        {
+          "line": 4125,
+          "text": "            (kind == \"tile\" || kind == \"k-tile\") ? 3 :"
+        },
+        {
+          "line": 4126,
+          "text": "            (kind == \"fusion\" || kind == \"sibling-fusion\") ? 4 : 5;"
+        },
+        {
+          "line": 4127,
+          "text": "        if (required > level) return \"feature_policy_cumulative_primitive\";"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Cumulative-tiling level3 excludes fusion primitives.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "f540e92be3b401873d4fac748171e3d343bf3929c0051bad39cf5634c23092c6",
+      "first_line": 6259,
+      "last_line": 6263,
+      "numbered_lines": [
+        {
+          "line": 6259,
+          "text": "  void appendDirectionalEvent(json::Object event) {"
+        },
+        {
+          "line": 6260,
+          "text": "    event[\"schema\"] = kDirectionalSchema;"
+        },
+        {
+          "line": 6261,
+          "text": "    event[\"policy\"] = activeDirectionalPolicy();"
+        },
+        {
+          "line": 6262,
+          "text": "    directionalEvents.push_back(jsonText(json::Value(std::move(event))));"
+        },
+        {
+          "line": 6263,
+          "text": "  }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Directional events accumulate in an append-in-memory vector.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "df2b6b55a3ec62e440afac028b4a0f04a5c4ec2c7d481001c7688ca79eaa822e",
+      "first_line": 7790,
+      "last_line": 7804,
+      "numbered_lines": [
+        {
+          "line": 7790,
+          "text": "    json::Object event{"
+        },
+        {
+          "line": 7791,
+          "text": "        {\"record_type\", \"candidate_attempt\"},"
+        },
+        {
+          "line": 7792,
+          "text": "        {\"schema\", kFamilyFunnelSchema},"
+        },
+        {
+          "line": 7793,
+          "text": "        {\"round\", round},"
+        },
+        {
+          "line": 7794,
+          "text": "        {\"action_family\", family}, {\"phase\",activePhase},"
+        },
+        {
+          "line": 7795,
+          "text": "        {\"candidate_id\", candidateID},"
+        },
+        {
+          "line": 7796,
+          "text": "        {\"parent_id\", parentID},"
+        },
+        {
+          "line": 7797,
+          "text": "        {\"action\", typedActionObject(action)},"
+        },
+        {
+          "line": 7798,
+          "text": "        {\"typed_primitive_kinds\", std::move(primitiveKindArray)},"
+        },
+        {
+          "line": 7799,
+          "text": "        {\"typed_action_history\", std::move(typedHistory)},"
+        },
+        {
+          "line": 7800,
+          "text": "        {\"binding\", std::move(binding)},"
+        },
+        {
+          "line": 7801,
+          "text": "        {\"result\", std::move(result)}};"
+        },
+        {
+          "line": 7802,
+          "text": "    if (parentProgress) event[\"parent_progress\"] = std::move(progress);"
+        },
+        {
+          "line": 7803,
+          "text": "    familyFunnelEvents.push_back(jsonText(json::Value(std::move(event))));"
+        },
+        {
+          "line": 7804,
+          "text": "  }"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Every candidate-attempt event is retained in the in-memory family history.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "65d051f3fbfc6dca1dd371af3bf5f8a16a69fc94164e44e3f0f93072809b763e",
+      "first_line": 7914,
+      "last_line": 7960,
+      "numbered_lines": [
+        {
+          "line": 7914,
+          "text": "  bool writeFamilyFunnelSidecars("
+        },
+        {
+          "line": 7915,
+          "text": "      StringRef outputDirectory, StringRef checkpointPath,"
+        },
+        {
+          "line": 7916,
+          "text": "      int64_t currentRound,"
+        },
+        {
+          "line": 7917,
+          "text": "      ArrayRef<ArchiveRecord> archive, ArrayRef<SearchState> beam,"
+        },
+        {
+          "line": 7918,
+          "text": "      ArrayRef<PendingNeighbor> pending, uint64_t pendingCursor,"
+        },
+        {
+          "line": 7919,
+          "text": "      StringRef stopReason,"
+        },
+        {
+          "line": 7920,
+          "text": "      std::string &error) {"
+        },
+        {
+          "line": 7921,
+          "text": "    const std::string diagnosticsDirectory ="
+        },
+        {
+          "line": 7922,
+          "text": "        outputDirectory.str() + \"/diagnostics\";"
+        },
+        {
+          "line": 7923,
+          "text": "    if (!ensureDirectory(diagnosticsDirectory, error))"
+        },
+        {
+          "line": 7924,
+          "text": "      return false;"
+        },
+        {
+          "line": 7925,
+          "text": ""
+        },
+        {
+          "line": 7926,
+          "text": "    std::vector<const ArchiveRecord *> ranked;"
+        },
+        {
+          "line": 7927,
+          "text": "    for (const ArchiveRecord &record : archive)"
+        },
+        {
+          "line": 7928,
+          "text": "      if (record.valid)"
+        },
+        {
+          "line": 7929,
+          "text": "        ranked.push_back(&record);"
+        },
+        {
+          "line": 7930,
+          "text": "    std::stable_sort(ranked.begin(), ranked.end(),"
+        },
+        {
+          "line": 7931,
+          "text": "                     [](const ArchiveRecord *left,"
+        },
+        {
+          "line": 7932,
+          "text": "                        const ArchiveRecord *right) {"
+        },
+        {
+          "line": 7933,
+          "text": "      return archiveLess(*left, *right);"
+        },
+        {
+          "line": 7934,
+          "text": "    });"
+        },
+        {
+          "line": 7935,
+          "text": "    struct PathPresence {"
+        },
+        {
+          "line": 7936,
+          "text": "      std::set<std::string> archiveIDs;"
+        },
+        {
+          "line": 7937,
+          "text": "      std::set<std::string> scoredIDs;"
+        },
+        {
+          "line": 7938,
+          "text": "      std::set<std::string> passedIDs;"
+        },
+        {
+          "line": 7939,
+          "text": "      std::set<std::string> beamIDs;"
+        },
+        {
+          "line": 7940,
+          "text": "      std::map<uint64_t, const ArchiveRecord *> rankedRecords;"
+        },
+        {
+          "line": 7941,
+          "text": "    };"
+        },
+        {
+          "line": 7942,
+          "text": "    std::map<std::string, PathPresence> pathPresence;"
+        },
+        {
+          "line": 7943,
+          "text": "    auto recordFamilies = [](const ArchiveRecord &record) {"
+        },
+        {
+          "line": 7944,
+          "text": "      return typedHistoryFamilies(record.actionHistory);"
+        },
+        {
+          "line": 7945,
+          "text": "    };"
+        },
+        {
+          "line": 7946,
+          "text": "    for (const ArchiveRecord &record : archive) {"
+        },
+        {
+          "line": 7947,
+          "text": "      for (const std::string &family : recordFamilies(record))"
+        },
+        {
+          "line": 7948,
+          "text": "        pathPresence[family].archiveIDs.insert(record.id);"
+        },
+        {
+          "line": 7949,
+          "text": "      const bool schedulerWasCalled ="
+        },
+        {
+          "line": 7950,
+          "text": "          record.valid || StringRef(record.rejectReason).starts_with("
+        },
+        {
+          "line": 7951,
+          "text": "                              \"production_scheduler_rejected\");"
+        },
+        {
+          "line": 7952,
+          "text": "      if (schedulerWasCalled)"
+        },
+        {
+          "line": 7953,
+          "text": "        for (const std::string &family : recordFamilies(record))"
+        },
+        {
+          "line": 7954,
+          "text": "          pathPresence[family].scoredIDs.insert(record.id);"
+        },
+        {
+          "line": 7955,
+          "text": "    }"
+        },
+        {
+          "line": 7956,
+          "text": "    for (size_t index = 0; index < ranked.size(); ++index) {"
+        },
+        {
+          "line": 7957,
+          "text": "      const ArchiveRecord &record = *ranked[index];"
+        },
+        {
+          "line": 7958,
+          "text": "      const uint64_t rank = index + 1;"
+        },
+        {
+          "line": 7959,
+          "text": "      for (const std::string &family : recordFamilies(record)) {"
+        },
+        {
+          "line": 7960,
+          "text": "        PathPresence &presence = pathPresence[family];"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Sidecar generation traverses/ranks the archive and derives path presence.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "a8ca596e5226c1b5e774eed12e97628041b72b9711b9b30a51e7ae188c7817b7",
+      "first_line": 8099,
+      "last_line": 8189,
+      "numbered_lines": [
+        {
+          "line": 8099,
+          "text": ""
+        },
+        {
+          "line": 8100,
+          "text": "    std::map<int64_t, FamilyFunnelRound> roundSnapshots;"
+        },
+        {
+          "line": 8101,
+          "text": "    for (const auto &[round, families] : familyFunnelByRound)"
+        },
+        {
+          "line": 8102,
+          "text": "      roundSnapshots[round] = families;"
+        },
+        {
+          "line": 8103,
+          "text": "    FamilyFunnelRound &current = roundSnapshots[currentRound];"
+        },
+        {
+          "line": 8104,
+          "text": "    for (auto &[family, counters] : current) {"
+        },
+        {
+          "line": 8105,
+          "text": "      counters.pendingUnattempted = 0;"
+        },
+        {
+          "line": 8106,
+          "text": "      counters.pendingUnattemptedReasons.clear();"
+        },
+        {
+          "line": 8107,
+          "text": "      counters.pendingUnattemptedActionSignatures.clear();"
+        },
+        {
+          "line": 8108,
+          "text": "    }"
+        },
+        {
+          "line": 8109,
+          "text": "    for (size_t index = static_cast<size_t>(pendingCursor);"
+        },
+        {
+          "line": 8110,
+          "text": "         index < pending.size(); ++index) {"
+        },
+        {
+          "line": 8111,
+          "text": "      const PendingNeighbor &neighbor = pending[index];"
+        },
+        {
+          "line": 8112,
+          "text": "      if (neighbor.parent >= beam.size())"
+        },
+        {
+          "line": 8113,
+          "text": "        continue;"
+        },
+        {
+          "line": 8114,
+          "text": "      FamilyFunnelCounters &counters ="
+        },
+        {
+          "line": 8115,
+          "text": "          current[neighbor.action.family];"
+        },
+        {
+          "line": 8116,
+          "text": "      ++counters.pendingUnattempted;"
+        },
+        {
+          "line": 8117,
+          "text": "      const std::string pendingReason = stopReason.empty()"
+        },
+        {
+          "line": 8118,
+          "text": "                                            ? \"checkpoint_frontier_remaining\""
+        },
+        {
+          "line": 8119,
+          "text": "                                            : stopReason.str();"
+        },
+        {
+          "line": 8120,
+          "text": "      ++counters.pendingUnattemptedReasons[pendingReason];"
+        },
+        {
+          "line": 8121,
+          "text": "      counters.pendingUnattemptedActionSignatures.push_back("
+        },
+        {
+          "line": 8122,
+          "text": "          actionSignature(neighbor.action));"
+        },
+        {
+          "line": 8123,
+          "text": "      FamilyFunnelCounters &total = totals[neighbor.action.family];"
+        },
+        {
+          "line": 8124,
+          "text": "      ++total.pendingUnattempted;"
+        },
+        {
+          "line": 8125,
+          "text": "      ++total.pendingUnattemptedReasons[pendingReason];"
+        },
+        {
+          "line": 8126,
+          "text": "      total.pendingUnattemptedActionSignatures.push_back("
+        },
+        {
+          "line": 8127,
+          "text": "          actionSignature(neighbor.action));"
+        },
+        {
+          "line": 8128,
+          "text": "    }"
+        },
+        {
+          "line": 8129,
+          "text": ""
+        },
+        {
+          "line": 8130,
+          "text": "    std::string jsonl;"
+        },
+        {
+          "line": 8131,
+          "text": "    llvm::raw_string_ostream funnelStream(jsonl);"
+        },
+        {
+          "line": 8132,
+          "text": "    for (const std::string &event : familyFunnelEvents)"
+        },
+        {
+          "line": 8133,
+          "text": "      funnelStream << event << \"\\n\";"
+        },
+        {
+          "line": 8134,
+          "text": "    for (const auto &[round, families] : roundSnapshots)"
+        },
+        {
+          "line": 8135,
+          "text": "      for (const auto &[family, counters] : families) {"
+        },
+        {
+          "line": 8136,
+          "text": "        json::Object record = familyFunnelCountersObject(counters);"
+        },
+        {
+          "line": 8137,
+          "text": "        record[\"record_type\"] = \"round_family\";"
+        },
+        {
+          "line": 8138,
+          "text": "        record[\"schema\"] = kFamilyFunnelSchema;"
+        },
+        {
+          "line": 8139,
+          "text": "        record[\"round\"] = round;"
+        },
+        {
+          "line": 8140,
+          "text": "        record[\"action_family\"] = family;"
+        },
+        {
+          "line": 8141,
+          "text": "        record[\"current_edge_semantics\"] ="
+        },
+        {
+          "line": 8142,
+          "text": "            \"One count per current edge classified by its exact action family.\";"
+        },
+        {
+          "line": 8143,
+          "text": "        record[\"stage\"] = stage.getValue();"
+        },
+        {
+          "line": 8144,
+          "text": "        record[\"function\"] = functionName.getValue();"
+        },
+        {
+          "line": 8145,
+          "text": "        record[\"source_repository\"] = sourceRepository.getValue();"
+        },
+        {
+          "line": 8146,
+          "text": "        record[\"source_commit\"] = sourceCommit.getValue();"
+        },
+        {
+          "line": 8147,
+          "text": "        record[\"source_binding_witness\"] = bindingPath;"
+        },
+        {
+          "line": 8148,
+          "text": "        funnelStream << json::Value(std::move(record)) << \"\\n\";"
+        },
+        {
+          "line": 8149,
+          "text": "      }"
+        },
+        {
+          "line": 8150,
+          "text": "    for (const auto &[family, presenceValue] : pathPresenceRecords) {"
+        },
+        {
+          "line": 8151,
+          "text": "      funnelStream << json::Value(json::Object{"
+        },
+        {
+          "line": 8152,
+          "text": "          {\"record_type\", \"typed_path_presence\"},"
+        },
+        {
+          "line": 8153,
+          "text": "          {\"schema\", kFamilyFunnelSchema},"
+        },
+        {
+          "line": 8154,
+          "text": "          {\"through_round\", currentRound},"
+        },
+        {
+          "line": 8155,
+          "text": "          {\"stage\", stage.getValue()}, {\"function\", functionName.getValue()},"
+        },
+        {
+          "line": 8156,
+          "text": "          {\"action_family\", family.str()}, {\"presence\", presenceValue},"
+        },
+        {
+          "line": 8157,
+          "text": "          {\"source_binding_witness\", bindingPath}})"
+        },
+        {
+          "line": 8158,
+          "text": "                   << \"\\n\";"
+        },
+        {
+          "line": 8159,
+          "text": "    }"
+        },
+        {
+          "line": 8160,
+          "text": "    for (size_t index = static_cast<size_t>(pendingCursor);"
+        },
+        {
+          "line": 8161,
+          "text": "         index < pending.size(); ++index) {"
+        },
+        {
+          "line": 8162,
+          "text": "      const PendingNeighbor &neighbor = pending[index];"
+        },
+        {
+          "line": 8163,
+          "text": "      if (neighbor.parent >= beam.size())"
+        },
+        {
+          "line": 8164,
+          "text": "        continue;"
+        },
+        {
+          "line": 8165,
+          "text": "      const SearchState &parent = beam[neighbor.parent];"
+        },
+        {
+          "line": 8166,
+          "text": "      json::Array kinds;"
+        },
+        {
+          "line": 8167,
+          "text": "      std::set<std::string> primitiveKinds;"
+        },
+        {
+          "line": 8168,
+          "text": "      for (const NeighborhoodPrimitive &primitive :"
+        },
+        {
+          "line": 8169,
+          "text": "           neighbor.action.primitives)"
+        },
+        {
+          "line": 8170,
+          "text": "        primitiveKinds.insert(primitive.kind);"
+        },
+        {
+          "line": 8171,
+          "text": "      for (const std::string &kind : primitiveKinds)"
+        },
+        {
+          "line": 8172,
+          "text": "        kinds.push_back(kind);"
+        },
+        {
+          "line": 8173,
+          "text": "      json::Object history{"
+        },
+        {
+          "line": 8174,
+          "text": "          {\"known\", parent.actionHistory.known},"
+        },
+        {
+          "line": 8175,
+          "text": "          {\"fissionActions\","
+        },
+        {
+          "line": 8176,
+          "text": "           typedActionArray(parent.actionHistory.fissionActions)},"
+        },
+        {
+          "line": 8177,
+          "text": "          {\"actions\", typedActionArray(parent.actionHistory.actions)}};"
+        },
+        {
+          "line": 8178,
+          "text": "      funnelStream << json::Value(json::Object{"
+        },
+        {
+          "line": 8179,
+          "text": "          {\"record_type\", \"pending_unattempted\"},"
+        },
+        {
+          "line": 8180,
+          "text": "          {\"schema\", kFamilyFunnelSchema},"
+        },
+        {
+          "line": 8181,
+          "text": "          {\"round\", currentRound},"
+        },
+        {
+          "line": 8182,
+          "text": "          {\"action_family\", neighbor.action.family},"
+        },
+        {
+          "line": 8183,
+          "text": "          {\"candidate_id\", \"\"}, {\"parent_id\", parent.id},"
+        },
+        {
+          "line": 8184,
+          "text": "          {\"action\", typedActionObject(neighbor.action)},"
+        },
+        {
+          "line": 8185,
+          "text": "          {\"typed_primitive_kinds\", std::move(kinds)},"
+        },
+        {
+          "line": 8186,
+          "text": "          {\"typed_action_history\", std::move(history)},"
+        },
+        {
+          "line": 8187,
+          "text": "          {\"status\", \"not_attempted_at_checkpoint\"},"
+        },
+        {
+          "line": 8188,
+          "text": "          {\"pending_reason\", stopReason.empty()"
+        },
+        {
+          "line": 8189,
+          "text": "                                 ? \"checkpoint_frontier_remaining\""
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Regenerated current snapshot follows the complete historical family event stream.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "11e190c08f798f8215f4401b3dca47679468052f6494423a0e913539316e47df",
+      "first_line": 8222,
+      "last_line": 8236,
+      "numbered_lines": [
+        {
+          "line": 8222,
+          "text": "        {\"typed_path_presence_by_family\", std::move(pathPresenceRecords)}};"
+        },
+        {
+          "line": 8223,
+          "text": "    if (stageNumber(stage) == 6)"
+        },
+        {
+          "line": 8224,
+          "text": "      summary[\"fission_source_replay\"] ="
+        },
+        {
+          "line": 8225,
+          "text": "          \"orbit-taskflow-fission-source-replay-v2-ordinary-suffix-rebase\";"
+        },
+        {
+          "line": 8226,
+          "text": "    const std::string summaryText ="
+        },
+        {
+          "line": 8227,
+          "text": "        jsonText(json::Value(std::move(summary))) + \"\\n\";"
+        },
+        {
+          "line": 8228,
+          "text": "    if (!writeTextAtomically(diagnosticsDirectory + \"/family-funnel.jsonl\","
+        },
+        {
+          "line": 8229,
+          "text": "                             jsonl, error) ||"
+        },
+        {
+          "line": 8230,
+          "text": "        !writeTextAtomically("
+        },
+        {
+          "line": 8231,
+          "text": "            diagnosticsDirectory + \"/family-funnel-summary.json\","
+        },
+        {
+          "line": 8232,
+          "text": "            summaryText, error))"
+        },
+        {
+          "line": 8233,
+          "text": "      return false;"
+        },
+        {
+          "line": 8234,
+          "text": "    std::error_code cleanupError;"
+        },
+        {
+          "line": 8235,
+          "text": "    const std::string witnessPrefix = \"family-best-witness-\";"
+        },
+        {
+          "line": 8236,
+          "text": "    for (std::filesystem::directory_iterator iterator(diagnosticsDirectory,"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Both family diagnostics files are atomically replaced.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "08597463c3469f017ece4eacac1f9d3da0f581889356ce309fb1ef94c14488da",
+      "first_line": 8258,
+      "last_line": 8297,
+      "numbered_lines": [
+        {
+          "line": 8258,
+          "text": "  bool saveCheckpoint(StringRef path, int64_t round, uint64_t nextSerial,"
+        },
+        {
+          "line": 8259,
+          "text": "                      uint64_t scoredCount, uint64_t rejectedCount,"
+        },
+        {
+          "line": 8260,
+          "text": "                      StringRef canonicalFactKey, const std::vector<ArchiveRecord> &archive,"
+        },
+        {
+          "line": 8261,
+          "text": "                      ArrayRef<SearchState> beam, ArrayRef<SearchState> generated,"
+        },
+        {
+          "line": 8262,
+          "text": "                      ArrayRef<PendingNeighbor> pending, uint64_t pendingCursor,"
+        },
+        {
+          "line": 8263,
+          "text": "                      StringRef stopReason, std::string &error) {"
+        },
+        {
+          "line": 8264,
+          "text": "    if (!diskGuard(error)) return false;"
+        },
+        {
+          "line": 8265,
+          "text": "    // Archive is append-only with explicit indexed amendments. Checkpoints"
+        },
+        {
+          "line": 8266,
+          "text": "    // reference one committed journal prefix instead of rewriting 20k rows"
+        },
+        {
+          "line": 8267,
+          "text": "    // every 128 actions. A crash beyond that prefix is ignored on recovery."
+        },
+        {
+          "line": 8268,
+          "text": "    std::string additions;"
+        },
+        {
+          "line": 8269,
+          "text": "    llvm::raw_string_ostream stream(additions);"
+        },
+        {
+          "line": 8270,
+          "text": "    for (size_t index : dirtyJournalIndices)"
+        },
+        {
+          "line": 8271,
+          "text": "      if (index < journalArchiveCount)"
+        },
+        {
+          "line": 8272,
+          "text": "        stream << json::Value(json::Object{{\"index\", int64_t(index)},"
+        },
+        {
+          "line": 8273,
+          "text": "                {\"candidate\", archiveObject(archive[index])}}) << \"\\n\";"
+        },
+        {
+          "line": 8274,
+          "text": "    for (size_t index = journalArchiveCount; index < archive.size(); ++index)"
+        },
+        {
+          "line": 8275,
+          "text": "      stream << json::Value(json::Object{{\"index\", int64_t(index)},"
+        },
+        {
+          "line": 8276,
+          "text": "              {\"candidate\", archiveObject(archive[index])}}) << \"\\n\";"
+        },
+        {
+          "line": 8277,
+          "text": "    stream.flush();"
+        },
+        {
+          "line": 8278,
+          "text": "    if (!additions.empty()) {"
+        },
+        {
+          "line": 8279,
+          "text": "      std::ofstream journal(journalPath, std::ios::binary | std::ios::app);"
+        },
+        {
+          "line": 8280,
+          "text": "      if (!journal) { error = \"cannot open archive journal for append\"; return false; }"
+        },
+        {
+          "line": 8281,
+          "text": "      journal.write(additions.data(), additions.size()); journal.flush();"
+        },
+        {
+          "line": 8282,
+          "text": "      if (!journal) { error = \"archive journal write failure\"; return false; }"
+        },
+        {
+          "line": 8283,
+          "text": "      journal.close();"
+        },
+        {
+          "line": 8284,
+          "text": "      if (journal.fail()) { error = \"archive journal close/write failure\"; return false; }"
+        },
+        {
+          "line": 8285,
+          "text": "    }"
+        },
+        {
+          "line": 8286,
+          "text": "    const uint64_t newJournalBytes = journalBytes + additions.size();"
+        },
+        {
+          "line": 8287,
+          "text": "    json::Array beams, generatedStates, neighbors, graphCosts, witnesses,"
+        },
+        {
+          "line": 8288,
+          "text": "        funnelEvents;"
+        },
+        {
+          "line": 8289,
+          "text": "    for (const auto &state : beam) beams.push_back(stateObject(state));"
+        },
+        {
+          "line": 8290,
+          "text": "    for (const auto &state : generated) generatedStates.push_back(stateObject(state));"
+        },
+        {
+          "line": 8291,
+          "text": "    for (const std::string &event : familyFunnelEvents)"
+        },
+        {
+          "line": 8292,
+          "text": "      funnelEvents.push_back(event);"
+        },
+        {
+          "line": 8293,
+          "text": "    for (const auto &neighbor : pending)"
+        },
+        {
+          "line": 8294,
+          "text": "      neighbors.push_back(json::Object{{\"parent\", int64_t(neighbor.parent)},"
+        },
+        {
+          "line": 8295,
+          "text": "                                       {\"action\", actionObject(neighbor.action)}});"
+        },
+        {
+          "line": 8296,
+          "text": "    // Seen failed scoring keys survive restore too. Their canonical graph may"
+        },
+        {
+          "line": 8297,
+          "text": "    // lack a score, so reconstructing seen solely from valid rows is unsafe."
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Archive delta append, then complete family history copied into checkpoint array.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "b6599582ee230b45196e4ff80e4819e19c75f4522500a7eae12c11131070a3b1",
+      "first_line": 8324,
+      "last_line": 8373,
+      "numbered_lines": [
+        {
+          "line": 8324,
+          "text": "        {\"parallel_batch_score_job_sizes\", uint64Array(parallelBatchScoreJobSizes)},"
+        },
+        {
+          "line": 8325,
+          "text": "        {\"cost_cache_hits\", int64_t(costCacheHits)}, {\"cost_cache_misses\", int64_t(costCacheMisses)},"
+        },
+        {
+          "line": 8326,
+          "text": "        {\"elapsed_milliseconds\", elapsedMilliseconds},"
+        },
+        {
+          "line": 8327,
+          "text": "        {\"pending_action_cursor\", int64_t(pendingCursor)}, {\"pending_neighbors\", std::move(neighbors)},"
+        },
+        {
+          "line": 8328,
+          "text": "        {\"beam\", std::move(beams)}, {\"generated\", std::move(generatedStates)},"
+        },
+        {
+          "line": 8329,
+          "text": "        {\"witness_dictionary\", std::move(witnesses)}, {\"graph_cost_catalogues\", std::move(graphCosts)},"
+        },
+        {
+          "line": 8330,
+          "text": "        {\"archive_journal_path\", journalPath}, {\"archive_journal_bytes\", int64_t(newJournalBytes)},"
+        },
+        {
+          "line": 8331,
+          "text": "        {\"archive_count\", int64_t(archive.size())}, {\"stop_reason\", stopReason},"
+        },
+        {
+          "line": 8332,
+          "text": "        {\"family_funnel_rounds\", familyFunnelRoundsObject()},"
+        },
+        {
+          "line": 8333,
+          "text": "        {\"family_funnel_events\", std::move(funnelEvents)},"
+        },
+        {
+          "line": 8334,
+          "text": "        {\"search_scope\", kSearchScope}, {\"best_found\", true}, {\"exhaustive\", false}};"
+        },
+        {
+          "line": 8335,
+          "text": "    if (diagnosticIICeiling == 23)"
+        },
+        {
+          "line": 8336,
+          "text": "      root[\"diagnostic_ii_ceiling\"] = diagnosticIICeiling.getValue();"
+        },
+        {
+          "line": 8337,
+          "text": "    if (parentProgress) {"
+        },
+        {
+          "line": 8338,
+          "text": "      root[\"parent_progress\"] = true;"
+        },
+        {
+          "line": 8339,
+          "text": "      root[\"parent_progress_policy\"] = kParentProgressPolicy.str();"
+        },
+        {
+          "line": 8340,
+          "text": "      root[\"parent_progress_queues\"] = parentProgressQueuesObject();"
+        },
+        {
+          "line": 8341,
+          "text": "      root[\"parent_progress_events\"] = stringArray(parentProgressEvents);"
+        },
+        {
+          "line": 8342,
+          "text": "    }"
+        },
+        {
+          "line": 8343,
+          "text": "    if (directionalSearch) {"
+        },
+        {
+          "line": 8344,
+          "text": "      root[\"directional_search\"] = true;"
+        },
+        {
+          "line": 8345,
+          "text": "      root[\"directional_policy\"] = activeDirectionalPolicy().str();"
+        },
+        {
+          "line": 8346,
+          "text": "      root[\"directional_state\"] = directionalStateObject();"
+        },
+        {
+          "line": 8347,
+          "text": "      root[\"directional_events\"] = stringArray(directionalEvents);"
+        },
+        {
+          "line": 8348,
+          "text": "    }"
+        },
+        {
+          "line": 8349,
+          "text": "    if (retainedCommunicationWindow) root[\"retained_communication_window\"] = true;"
+        },
+        {
+          "line": 8350,
+          "text": "    if (criticalPositiveCompute) root[\"critical_positive_compute\"] = true;"
+        },
+        {
+          "line": 8351,
+          "text": "    if (!writeTextAtomically(path, jsonText(json::Value(std::move(root))) + \"\\n\", error)) return false;"
+        },
+        {
+          "line": 8352,
+          "text": "    if (!writeFamilyFunnelSidecars(outputDir, path, round, archive, beam,"
+        },
+        {
+          "line": 8353,
+          "text": "                                   pending, pendingCursor, stopReason, error))"
+        },
+        {
+          "line": 8354,
+          "text": "      return false;"
+        },
+        {
+          "line": 8355,
+          "text": "    if (parentProgress) {"
+        },
+        {
+          "line": 8356,
+          "text": "      std::string progressText;"
+        },
+        {
+          "line": 8357,
+          "text": "      for (const std::string &event : parentProgressEvents)"
+        },
+        {
+          "line": 8358,
+          "text": "        progressText += event + \"\\n\";"
+        },
+        {
+          "line": 8359,
+          "text": "      if (!writeTextAtomically(outputDir.getValue() + \"/parent-progress.jsonl\","
+        },
+        {
+          "line": 8360,
+          "text": "                               progressText, error)) return false;"
+        },
+        {
+          "line": 8361,
+          "text": "    }"
+        },
+        {
+          "line": 8362,
+          "text": "    if (directionalSearch) {"
+        },
+        {
+          "line": 8363,
+          "text": "      std::string text;"
+        },
+        {
+          "line": 8364,
+          "text": "      for (const std::string &event : directionalEvents) text += event + \"\\n\";"
+        },
+        {
+          "line": 8365,
+          "text": "      if (!writeTextAtomically(outputDir.getValue() + \"/directions.jsonl\", text, error))"
+        },
+        {
+          "line": 8366,
+          "text": "        return false;"
+        },
+        {
+          "line": 8367,
+          "text": "    }"
+        },
+        {
+          "line": 8368,
+          "text": "    journalBytes = newJournalBytes; journalArchiveCount = archive.size(); dirtyJournalIndices.clear();"
+        },
+        {
+          "line": 8369,
+          "text": "    // Snapshot deletion happens only after a checkpoint binds the amended"
+        },
+        {
+          "line": 8370,
+          "text": "    // archive. A failed checkpoint always leaves the previous replay inputs."
+        },
+        {
+          "line": 8371,
+          "text": "    for (const auto &obsolete : obsoleteCandidatePaths) {"
+        },
+        {
+          "line": 8372,
+          "text": "      std::error_code ec = llvm::sys::fs::remove(obsolete);"
+        },
+        {
+          "line": 8373,
+          "text": "      if (ec && ec != std::errc::no_such_file_or_directory) {"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Full checkpoint/history fields, sidecar rewrites and journal prefix commit state.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "e43987a30dabda8adeebbf102e1c68f5ef47f732661c2bae4c226100a847a7d1",
+      "first_line": 8394,
+      "last_line": 8411,
+      "numbered_lines": [
+        {
+          "line": 8394,
+          "text": "        error)) return false;"
+        },
+        {
+          "line": 8395,
+          "text": "    const auto *savedRetainedWindow = root->get(\"retained_communication_window\");"
+        },
+        {
+          "line": 8396,
+          "text": "    const auto *savedCriticalCompute = root->get(\"critical_positive_compute\");"
+        },
+        {
+          "line": 8397,
+          "text": "    if ((savedCriticalCompute && !savedCriticalCompute->getAsBoolean()) ||"
+        },
+        {
+          "line": 8398,
+          "text": "        criticalPositiveCompute || root->getBoolean(\"critical_positive_compute\") == true ||"
+        },
+        {
+          "line": 8399,
+          "text": "        root->getString(\"directional_policy\") == kCriticalPositiveComputePolicy) {"
+        },
+        {
+          "line": 8400,
+          "text": "      error = \"critical-positive-compute requires a fresh Joint run; checkpoint restore is unsupported\";"
+        },
+        {
+          "line": 8401,
+          "text": "      return false;"
+        },
+        {
+          "line": 8402,
+          "text": "    }"
+        },
+        {
+          "line": 8403,
+          "text": "    if ((savedRetainedWindow && !savedRetainedWindow->getAsBoolean()) ||"
+        },
+        {
+          "line": 8404,
+          "text": "        retainedCommunicationWindow || root->getBoolean(\"retained_communication_window\") == true ||"
+        },
+        {
+          "line": 8405,
+          "text": "        root->getString(\"directional_policy\") == kRetainedCommunicationPolicy) {"
+        },
+        {
+          "line": 8406,
+          "text": "      error = \"retained-communication-window requires a fresh Joint run; checkpoint restore is unsupported\";"
+        },
+        {
+          "line": 8407,
+          "text": "      return false;"
+        },
+        {
+          "line": 8408,
+          "text": "    }"
+        },
+        {
+          "line": 8409,
+          "text": "    if (!restoreFamilyFunnel(*root, error))"
+        },
+        {
+          "line": 8410,
+          "text": "      return false;"
+        },
+        {
+          "line": 8411,
+          "text": "    auto savedRound = root->getInteger(\"round\"), serial = root->getInteger(\"next_serial\"),"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Source38 critical/retained modes explicitly reject checkpoint restore.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "caa63af63ed295a7ef56f3b5d48e72039e07ee8b537906616b435423ea7c93d5",
+      "first_line": 8453,
+      "last_line": 8476,
+      "numbered_lines": [
+        {
+          "line": 8453,
+          "text": "      if (error.empty()) error = \"checkpoint committed archive journal prefix is truncated\";"
+        },
+        {
+          "line": 8454,
+          "text": "      return false;"
+        },
+        {
+          "line": 8455,
+          "text": "    }"
+        },
+        {
+          "line": 8456,
+          "text": "    const std::string committed = bytes.substr(0, *prefix);"
+        },
+        {
+          "line": 8457,
+          "text": "    auto journalBuffer = llvm::MemoryBuffer::getMemBuffer(committed);"
+        },
+        {
+          "line": 8458,
+          "text": "    for (llvm::line_iterator lines(*journalBuffer, true); !lines.is_at_end(); ++lines) {"
+        },
+        {
+          "line": 8459,
+          "text": "      auto entry = json::parse(*lines);"
+        },
+        {
+          "line": 8460,
+          "text": "      if (!entry) { llvm::consumeError(entry.takeError()); error = \"invalid committed archive journal JSON\"; return false; }"
+        },
+        {
+          "line": 8461,
+          "text": "      auto object = entry->getAsObject();"
+        },
+        {
+          "line": 8462,
+          "text": "      auto index = object ? object->getInteger(\"index\") : std::nullopt;"
+        },
+        {
+          "line": 8463,
+          "text": "      auto candidate = object ? object->getObject(\"candidate\") : nullptr;"
+        },
+        {
+          "line": 8464,
+          "text": "      if (!index || !candidate || *index < 0 || uint64_t(*index) > archive.size()) {"
+        },
+        {
+          "line": 8465,
+          "text": "        error = \"archive journal index is not an append or existing amendment\"; return false;"
+        },
+        {
+          "line": 8466,
+          "text": "      }"
+        },
+        {
+          "line": 8467,
+          "text": "      ArchiveRecord record;"
+        },
+        {
+          "line": 8468,
+          "text": "      if (!parseArchiveObject(*candidate, record, error)) return false;"
+        },
+        {
+          "line": 8469,
+          "text": "      if (uint64_t(*index) == archive.size()) archive.push_back(std::move(record));"
+        },
+        {
+          "line": 8470,
+          "text": "      else archive[*index] = std::move(record);"
+        },
+        {
+          "line": 8471,
+          "text": "    }"
+        },
+        {
+          "line": 8472,
+          "text": "    if (archive.size() != uint64_t(*archiveCount)) { error = \"committed archive row count mismatch\"; return false; }"
+        },
+        {
+          "line": 8473,
+          "text": "    // Discard only this search's uncommitted journal suffix, after exact byte"
+        },
+        {
+          "line": 8474,
+          "text": "    // binding and all committed rows have validated. No candidate traversal."
+        },
+        {
+          "line": 8475,
+          "text": "    if (bytes.size() != uint64_t(*prefix) && !writeTextAtomically(journalPath, committed, error)) return false;"
+        },
+        {
+          "line": 8476,
+          "text": "    auto states = [&](const json::Array &records, std::vector<SearchState> &out) {"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Supported legacy restore authenticates archive committed prefix and discards suffix.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    },
+    {
+      "excerpt_sha256": "a51e7db89e4d0fd746f5ba0228b9df4137105bf4a56dda2e862c509b5e6550fd",
+      "first_line": 8768,
+      "last_line": 8820,
+      "numbered_lines": [
+        {
+          "line": 8768,
+          "text": "    selection[\"shape_manifest_file\"] = shapePath;"
+        },
+        {
+          "line": 8769,
+          "text": "    selection[\"score_record\"] = scoreRecord(record, shapeId);"
+        },
+        {
+          "line": 8770,
+          "text": "    selection[\"certified\"] = false; selection[\"best_found\"] = true;"
+        },
+        {
+          "line": 8771,
+          "text": "    selection[\"source_binding_witness\"] = bindingPath;"
+        },
+        {
+          "line": 8772,
+          "text": "    selection[\"transformations\"] = json::Object{"
+        },
+        {
+          "line": 8773,
+          "text": "        {\"shape\", choiceRecords(record.choices)}, {\"action_path\", stringArray(record.path)},"
+        },
+        {
+          "line": 8774,
+          "text": "        {\"lineage_source\", record.candidatePath}};"
+        },
+        {
+          "line": 8775,
+          "text": "    return true;"
+        },
+        {
+          "line": 8776,
+          "text": "  }"
+        },
+        {
+          "line": 8777,
+          "text": ""
+        },
+        {
+          "line": 8778,
+          "text": "  bool writeOutputs("
+        },
+        {
+          "line": 8779,
+          "text": "      StringRef outputDirectory, StringRef checkpointPath, StringRef function,"
+        },
+        {
+          "line": 8780,
+          "text": "      StringRef stageName, StringRef repository, StringRef commit,"
+        },
+        {
+          "line": 8781,
+          "text": "      StringRef architecture, StringRef protocol, int64_t maxRoundsValue,"
+        },
+        {
+          "line": 8782,
+          "text": "      int64_t maxCandidatesValue, int64_t beamWidthValue,"
+        },
+        {
+          "line": 8783,
+          "text": "      int64_t diversityValue, int64_t round, uint64_t scoredCount,"
+        },
+        {
+          "line": 8784,
+          "text": "      uint64_t rejectedCount, bool costCacheLoaded,"
+        },
+        {
+          "line": 8785,
+          "text": "      bool previousWinnerRequested, bool historicalWinnerRequested,"
+        },
+        {
+          "line": 8786,
+          "text": "      ArrayRef<ArchiveRecord> archive,"
+        },
+        {
+          "line": 8787,
+          "text": "      StringRef stopReason, std::string &error) {"
+        },
+        {
+          "line": 8788,
+          "text": "    if (!writeTextAtomically(outputDirectory.str()+\"/budget-trace.jsonl\", objectiveTrace,error)) return false;"
+        },
+        {
+          "line": 8789,
+          "text": "    std::vector<const ArchiveRecord *> ranked;"
+        },
+        {
+          "line": 8790,
+          "text": "    json::Object reasons;"
+        },
+        {
+          "line": 8791,
+          "text": "    uint64_t validCount = 0;"
+        },
+        {
+          "line": 8792,
+          "text": "    for (const auto &record : archive) {"
+        },
+        {
+          "line": 8793,
+          "text": "      if (record.valid) {"
+        },
+        {
+          "line": 8794,
+          "text": "        ++validCount;"
+        },
+        {
+          "line": 8795,
+          "text": "        if (decisionFlow != \"sequential\" || activePhase != \"B\" ||"
+        },
+        {
+          "line": 8796,
+          "text": "            graphHistorySignature(record.actionHistory) == frozenGraphHistory)"
+        },
+        {
+          "line": 8797,
+          "text": "          ranked.push_back(&record);"
+        },
+        {
+          "line": 8798,
+          "text": "      }"
+        },
+        {
+          "line": 8799,
+          "text": "      else {"
+        },
+        {
+          "line": 8800,
+          "text": "        StringRef reason = record.rejectReason;"
+        },
+        {
+          "line": 8801,
+          "text": "        std::string category = reason.take_front(reason.find(':')).str();"
+        },
+        {
+          "line": 8802,
+          "text": "        if (category.empty()) category = \"unknown\";"
+        },
+        {
+          "line": 8803,
+          "text": "        reasons[category] = reasons.getInteger(category).value_or(0) + 1;"
+        },
+        {
+          "line": 8804,
+          "text": "      }"
+        },
+        {
+          "line": 8805,
+          "text": "    }"
+        },
+        {
+          "line": 8806,
+          "text": "    reasons[\"canonical_duplicate\"] = int64_t(duplicateCandidates);"
+        },
+        {
+          "line": 8807,
+          "text": "    std::stable_sort(ranked.begin(), ranked.end(), [](auto *left, auto *right) {"
+        },
+        {
+          "line": 8808,
+          "text": "      return archiveLess(*left, *right);"
+        },
+        {
+          "line": 8809,
+          "text": "    });"
+        },
+        {
+          "line": 8810,
+          "text": "    if (ranked.size() > 5) ranked.resize(5);"
+        },
+        {
+          "line": 8811,
+          "text": "    std::string archiveText;"
+        },
+        {
+          "line": 8812,
+          "text": "    llvm::raw_string_ostream archiveStream(archiveText);"
+        },
+        {
+          "line": 8813,
+          "text": "    for (const auto &record : archive) archiveStream << json::Value(archiveObject(record)) << \"\\n\";"
+        },
+        {
+          "line": 8814,
+          "text": "    archiveStream.flush();"
+        },
+        {
+          "line": 8815,
+          "text": "    if (!diskGuard(error) || !writeTextAtomically(outputDirectory.str() + \"/archive.jsonl\", archiveText, error)) return false;"
+        },
+        {
+          "line": 8816,
+          "text": "    auto identityShapeRecords = [&]() {"
+        },
+        {
+          "line": 8817,
+          "text": "      json::Array result;"
+        },
+        {
+          "line": 8818,
+          "text": "      for (const NeighborhoodShape &shape : canonicalIdentityShapes)"
+        },
+        {
+          "line": 8819,
+          "text": "        result.push_back(shapeObject(shape));"
+        },
+        {
+          "line": 8820,
+          "text": "      return result;"
+        }
+      ],
+      "path": "/home/shiran/project/orbit-repair-study/directional-critical-positive-compute-source/lib/Backend/Neura/Orchestration/JointScheduling/JointNeighborhoodSearchPass.cpp",
+      "purpose": "Final-only full budget/archive outputs.",
+      "source_sha256": "47be60517ee87d6bd3dd901f2d6ecc6377ae4852173e361e48a9acc09d68db25"
+    }
+  ],
+  "schema": "orbit-frozen-source-excerpts-v1",
+  "source_commit": "76345481683a2e199c0cad155de2acb51149f350"
+}
