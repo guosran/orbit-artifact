@@ -35,3 +35,10 @@ This read-only host viewer requires the preserved exact runtime bindings and evi
 Use `--historical-v19`, `--historical-v38`, `--historical-v57`, or `--historical-v58` with the viewer to inspect archived cohorts. Their recorded stage order and labels are retained.
 
 The separate [Joint versus Sequential](docs/SEQUENTIAL_COMPARISON.md) experiment compares simultaneous decisions with graph-then-resource decisions using one shared 4,096 production-scheduler-call allowance, identical fixed frontier quotas, private caches and identical real-mapper validation. Its preselected main split is 50/50; 25/75 and 75/25 are budget-allocation sensitivity runs. It does not reuse an S5 result as its Joint arm. The active batch uses [verified runtime acceleration and lossless compaction](docs/SEQUENTIAL_RUNTIME_ACCELERATION.md); `python3 scripts/show_sequential_comparison.py` queries it once and exports audited results when complete.
+
+
+## Common Taskflow and direct AIR/NPU experiments
+
+The compiler remains in [guosran/orbit](https://github.com/guosran/orbit). The new [taskflow/](taskflow/README.md) namespace contains its companion experiment scripts, runtime adapters, workload/reference generation, hardware audits and validation reports. This includes checked data-residency/tiling search and the version-bound M5/M128 FP32 FFN results. Existing input-0 snapshots and reproduction protocols above keep their original contents and identities.
+
+Local compiler builds and full raw outputs use `builds/taskflow/` and `results/taskflow/` (both ignored by Git). Historical host paths are documented in the Taskflow migration receipt, rather than rewriting frozen evidence. A clean clone reproduces into new output directories.
