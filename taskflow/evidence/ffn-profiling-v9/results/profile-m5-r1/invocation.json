@@ -1,0 +1,113 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "results/taskflow/ffn-profiling-v9/cases-m5-seed11.json",
+    "--output",
+    "results/taskflow/ffn-profiling-v9/profile-m5-r1",
+    "--iterations",
+    "2",
+    "--warmups",
+    "1"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-m5-seed11.json",
+  "cases_sha256": "cbdcd70924ca848897248624fb2ecb35f4bced22a919411fc0de9eda77aaab45",
+  "script_sha256": "72d02423021789abb57d15bf3aedcc48973160944e2145e4c0a17eec55504821",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "m5-gate": {
+      "elf_sha256": "85c4d58097f1afb6fe8beae75828ef6689e5d58cf82e781f2ed00e726c566a42",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/gate/hardware/abi.json",
+      "abi_sha256": "92dd518263d0c766688062483a1e5ba4ae936f2c15b2b66fba7b04e57e3da67c",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.28073946898803115,
+        "source_sha256": "e0356ec53cfa99ddad3894df6a3b3ea6cc8701d3a7390e4fb32f590fb2ca75fb",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/gate/hardware/program.elf",
+        "elf_sha256": "85c4d58097f1afb6fe8beae75828ef6689e5d58cf82e781f2ed00e726c566a42",
+        "kernel_name": "main:gate",
+        "argument_count": 3
+      }
+    },
+    "m5-up": {
+      "elf_sha256": "e6247ea900e7d49a5fb64ef89bc64a75233977394c48ae942f48856dd0d59de5",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/up/hardware/abi.json",
+      "abi_sha256": "da4f449d49e35d4efc580d0c1c755d1136e045b1e65e97429437ae1812401130",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.3017483903095126,
+        "source_sha256": "0b3dbed5ee1d12a6e5e618d2285534c2e59dc976e14fbafcd7d2526cd2be6eac",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/up/hardware/program.elf",
+        "elf_sha256": "e6247ea900e7d49a5fb64ef89bc64a75233977394c48ae942f48856dd0d59de5",
+        "kernel_name": "main:up",
+        "argument_count": 3
+      }
+    },
+    "m5-activation": {
+      "elf_sha256": "2b47ada3ae927b278cc0aa1d7ca5834c30b553e04ae65fc7fd70ff28f2e9aa46",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/activation/hardware/abi.json",
+      "abi_sha256": "9b96d8631fc1ecdebfc8e5400c461260b89e10912cad820ce44b124a2b8c26ad",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.3475297302938998,
+        "source_sha256": "c74e672b13733d70d2ec697f1e17387542b0f3a9bd059624b4b5aca69eb1f3d7",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/activation/hardware/program.elf",
+        "elf_sha256": "2b47ada3ae927b278cc0aa1d7ca5834c30b553e04ae65fc7fd70ff28f2e9aa46",
+        "kernel_name": "main:activation",
+        "argument_count": 3
+      }
+    },
+    "m5-down": {
+      "elf_sha256": "362495064ebc604728ad4db6e0550a947570d31cadf82d139af9dd90cc268620",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/down/hardware/abi.json",
+      "abi_sha256": "f5a0cf0bfa0725179c981080fecf61820bd7690b895217b0fe54625b45ac66e6",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.29697398794814944,
+        "source_sha256": "e6f016da4f08e69a3d2a98ed719f658817a6b5b0d4f1e24da19c0f856ebd6f26",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/down/hardware/program.elf",
+        "elf_sha256": "362495064ebc604728ad4db6e0550a947570d31cadf82d139af9dd90cc268620",
+        "kernel_name": "main:down",
+        "argument_count": 3
+      }
+    },
+    "m5-full": {
+      "elf_sha256": "45d8fa3ee52790d68ce2f4087657d3e7924a0bb7272f3095c00806ddc0749fec",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/full/hardware/abi.json",
+      "abi_sha256": "45cec24804a8046cf39cb9892e0ed0709938b5182f6ab8a6b7affa5f78e7585e",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.41395202092826366,
+        "source_sha256": "61a4c5f9fe8caa6ed5cdd74a5a8a66b162f8b6d5e8909a4c69c383b1b1d3c087",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m5/full/hardware/program.elf",
+        "elf_sha256": "45d8fa3ee52790d68ce2f4087657d3e7924a0bb7272f3095c00806ddc0749fec",
+        "kernel_name": "main:ffn",
+        "argument_count": 8
+      }
+    }
+  }
+}

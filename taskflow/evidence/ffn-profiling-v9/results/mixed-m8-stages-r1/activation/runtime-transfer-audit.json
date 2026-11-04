@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "scope": "Static final runtime BD lengths times task repeats, per ABI storage and transfer direction; per-stage checked transfer records when available, aggregate-only for older compact plans with only a global native summary; not measured traffic or proof of device progress.",
+  "source": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-m8-stages-r1/activation/hardware/air_project/npu.input.air.mlir",
+  "source_sha256": "a6fbeadc2ce8e1c0246cf10f5e486ee9da11b8422df8b5597ab869952ed8ff3b",
+  "plan_sha256": "042f09ca04ce64d788b5133f08f79c1fa5503b56fc9dd3bbda6b4999bca4f228",
+  "abi_sha256": "c6a8045de863fea2b1778e9649b62a744ea730ad0208996bc3b7c5534481342a",
+  "audit_source_sha256": "2f714262708f8e0d54a52fa190ffac520b37981eabac62ca97149e9f36c85985",
+  "stages": [
+    {
+      "stage": 0,
+      "device": "orbit_segment",
+      "tasks": [
+        {
+          "argument": 2,
+          "storage": "H",
+          "direction": "l1_to_host",
+          "channel": "air_channel_2",
+          "bd_elements": 88064,
+          "repetitions": 1,
+          "bytes": 352256
+        },
+        {
+          "argument": 0,
+          "storage": "G",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 88064,
+          "repetitions": 1,
+          "bytes": 352256
+        },
+        {
+          "argument": 1,
+          "storage": "U",
+          "direction": "host_to_l1",
+          "channel": "air_channel_1",
+          "bd_elements": 88064,
+          "repetitions": 1,
+          "bytes": 352256
+        }
+      ],
+      "comparisons": [
+        {
+          "storage": "G",
+          "direction": "host_to_l1",
+          "expected_bytes": 352256,
+          "actual_runtime_bytes": 352256,
+          "passed": true
+        },
+        {
+          "storage": "H",
+          "direction": "l1_to_host",
+          "expected_bytes": 352256,
+          "actual_runtime_bytes": 352256,
+          "passed": true
+        },
+        {
+          "storage": "U",
+          "direction": "host_to_l1",
+          "expected_bytes": 352256,
+          "actual_runtime_bytes": 352256,
+          "passed": true
+        }
+      ],
+      "expected_scope": "per-stage-native-transfers"
+    }
+  ],
+  "aggregate_comparisons": [],
+  "errors": []
+}

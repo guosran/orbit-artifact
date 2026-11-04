@@ -1,0 +1,3996 @@
+{
+  "actual_dma_bytes": 306176000,
+  "allocation_lifetime": "per-task device stage; storage pools reused across serial tiles",
+  "analysis_status": "supported",
+  "backend_internal_transport": "AIR compiler may add shim/L2 staging; final IR ledger required; not measured traffic",
+  "backend_tensor_padding_bytes": 0,
+  "body_fingerprint": "a54c082680b6b7f5605f978b00756bdab5fa6b377971877f544451638574c8f1",
+  "capacity_bytes": 24576,
+  "channel_allocations": [],
+  "channel_merge_policy": "single-logical-fifo-per-stage-storage-direction",
+  "codegen_status": "requires_backend_verification",
+  "cost_provenance": "unknown: direct AIR path not calibrated",
+  "cost_status": "uncalibrated",
+  "data_organization_scope": "phase-local input copies; source reduction/output retention remains required",
+  "discovered_mapping_opportunities": [
+    {
+      "data_organization": "retain-across-users",
+      "fact_proof": "immutable input; real affine SSA indices independent of reuse loop; every access to written storage projects both outer IVs onto disjoint slices",
+      "invariant_source_loop": 1,
+      "panel_source_loop": 0,
+      "proposal": "retain-across-users from actual reuse; readonly rectangular panel with source-independent outer-loop permutation; capacity/target feasibility checked after selection",
+      "realization": "readonly-panel",
+      "realization_scope": "one execution group; no retention across AIR stages",
+      "storage_index": 0,
+      "tasks": [
+        1,
+        3
+      ]
+    },
+    {
+      "data_organization": "retain-across-users",
+      "fact_proof": "immutable input; real affine SSA indices independent of reuse loop; every access to written storage projects both outer IVs onto disjoint slices",
+      "invariant_source_loop": 0,
+      "panel_source_loop": 1,
+      "proposal": "retain-across-users from actual reuse; readonly rectangular panel with source-independent outer-loop permutation; capacity/target feasibility checked after selection",
+      "realization": "readonly-panel",
+      "realization_scope": "one execution group; no retention across AIR stages",
+      "storage_index": 1,
+      "tasks": [
+        1
+      ]
+    },
+    {
+      "data_organization": "retain-across-users",
+      "fact_proof": "immutable input; real affine SSA indices independent of reuse loop; every access to written storage projects both outer IVs onto disjoint slices",
+      "invariant_source_loop": 0,
+      "panel_source_loop": 1,
+      "proposal": "retain-across-users from actual reuse; readonly rectangular panel with source-independent outer-loop permutation; capacity/target feasibility checked after selection",
+      "realization": "readonly-panel",
+      "realization_scope": "one execution group; no retention across AIR stages",
+      "storage_index": 2,
+      "tasks": [
+        3
+      ]
+    },
+    {
+      "data_organization": "retain-across-users",
+      "fact_proof": "immutable input; real affine SSA indices independent of reuse loop; every access to written storage projects both outer IVs onto disjoint slices",
+      "invariant_source_loop": 0,
+      "panel_source_loop": 1,
+      "proposal": "retain-across-users from actual reuse; readonly rectangular panel with source-independent outer-loop permutation; capacity/target feasibility checked after selection",
+      "realization": "readonly-panel",
+      "realization_scope": "one execution group; no retention across AIR stages",
+      "storage_index": 3,
+      "tasks": [
+        6
+      ]
+    }
+  ],
+  "estimated_ms": null,
+  "execution_groups": [
+    {
+      "begin_phase": 172,
+      "depends_on": [],
+      "end_phase_exclusive": 5676,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 5848,
+      "depends_on": [
+        0
+      ],
+      "end_phase_exclusive": 11352,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 11352,
+      "depends_on": [
+        1
+      ],
+      "end_phase_exclusive": 11524,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 11556,
+      "depends_on": [
+        2
+      ],
+      "end_phase_exclusive": 17060,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    }
+  ],
+  "expanded_phase_details_omitted": true,
+  "fused_initializer_tasks": [
+    0,
+    2,
+    5
+  ],
+  "hardware_stage_expansion_scope": "bounded host/codegen expansion; not a measured silicon or local memory resource limit",
+  "hardware_stages": [
+    {
+      "allocated_bytes": 20480,
+      "begin_phase": 172,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 172,
+          "dtype": "f32",
+          "end_phase_exclusive": 5676,
+          "flat_elements": 512,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "X",
+          "storage_index": 0,
+          "template_loop_extents": [
+            8,
+            64,
+            64
+          ],
+          "template_shape": [
+            8,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 16384,
+          "begin_phase": 172,
+          "dtype": "f32",
+          "end_phase_exclusive": 5676,
+          "flat_elements": 4096,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "W_gate",
+          "storage_index": 1,
+          "template_loop_extents": [
+            8,
+            64,
+            64
+          ],
+          "template_shape": [
+            64,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 172,
+          "dtype": "f32",
+          "end_phase_exclusive": 5676,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "G",
+          "storage_index": 5,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 5676,
+      "group_index": 0,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 11272192,
+          "count": 5504,
+          "direction": "host_to_l1",
+          "storage": "X",
+          "storage_index": 0
+        },
+        {
+          "bytes": 90177536,
+          "count": 5504,
+          "direction": "host_to_l1",
+          "storage": "W_gate",
+          "storage_index": 1
+        },
+        {
+          "bytes": 352256,
+          "count": 172,
+          "direction": "l1_to_host",
+          "storage": "G",
+          "storage_index": 5
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 20480,
+      "begin_phase": 5848,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 5848,
+          "dtype": "f32",
+          "end_phase_exclusive": 11352,
+          "flat_elements": 512,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "X",
+          "storage_index": 0,
+          "template_loop_extents": [
+            8,
+            64,
+            64
+          ],
+          "template_shape": [
+            8,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 16384,
+          "begin_phase": 5848,
+          "dtype": "f32",
+          "end_phase_exclusive": 11352,
+          "flat_elements": 4096,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "W_up",
+          "storage_index": 2,
+          "template_loop_extents": [
+            8,
+            64,
+            64
+          ],
+          "template_shape": [
+            64,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 5848,
+          "dtype": "f32",
+          "end_phase_exclusive": 11352,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "U",
+          "storage_index": 6,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 11352,
+      "group_index": 1,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 11272192,
+          "count": 5504,
+          "direction": "host_to_l1",
+          "storage": "X",
+          "storage_index": 0
+        },
+        {
+          "bytes": 90177536,
+          "count": 5504,
+          "direction": "host_to_l1",
+          "storage": "W_up",
+          "storage_index": 2
+        },
+        {
+          "bytes": 352256,
+          "count": 172,
+          "direction": "l1_to_host",
+          "storage": "U",
+          "storage_index": 6
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 6144,
+      "begin_phase": 11352,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 11352,
+          "dtype": "f32",
+          "end_phase_exclusive": 11524,
+          "flat_elements": 512,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "G",
+          "storage_index": 5,
+          "template_loop_extents": [
+            8,
+            64
+          ],
+          "template_shape": [
+            8,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 11352,
+          "dtype": "f32",
+          "end_phase_exclusive": 11524,
+          "flat_elements": 512,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "U",
+          "storage_index": 6,
+          "template_loop_extents": [
+            8,
+            64
+          ],
+          "template_shape": [
+            8,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 11352,
+          "dtype": "f32",
+          "end_phase_exclusive": 11524,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "H",
+          "storage_index": 7,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 11524,
+      "group_index": 2,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 352256,
+          "count": 172,
+          "direction": "host_to_l1",
+          "storage": "G",
+          "storage_index": 5
+        },
+        {
+          "bytes": 352256,
+          "count": 172,
+          "direction": "host_to_l1",
+          "storage": "U",
+          "storage_index": 6
+        },
+        {
+          "bytes": 352256,
+          "count": 172,
+          "direction": "l1_to_host",
+          "storage": "H",
+          "storage_index": 7
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 20480,
+      "begin_phase": 11556,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 16384,
+          "begin_phase": 11556,
+          "dtype": "f32",
+          "end_phase_exclusive": 17060,
+          "flat_elements": 4096,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "W_down",
+          "storage_index": 3,
+          "template_loop_extents": [
+            8,
+            64,
+            64
+          ],
+          "template_shape": [
+            64,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 11556,
+          "dtype": "f32",
+          "end_phase_exclusive": 17060,
+          "flat_elements": 512,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "H",
+          "storage_index": 7,
+          "template_loop_extents": [
+            8,
+            64,
+            64
+          ],
+          "template_shape": [
+            8,
+            64
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 11556,
+          "dtype": "f32",
+          "end_phase_exclusive": 17060,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 4,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 17060,
+      "group_index": 3,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 90177536,
+          "count": 5504,
+          "direction": "host_to_l1",
+          "storage": "W_down",
+          "storage_index": 3
+        },
+        {
+          "bytes": 65536,
+          "count": 32,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 4
+        },
+        {
+          "bytes": 11272192,
+          "count": 5504,
+          "direction": "host_to_l1",
+          "storage": "H",
+          "storage_index": 7
+        }
+      ]
+    }
+  ],
+  "host_buffers": [
+    {
+      "bytes": 65536,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        8,
+        2048
+      ],
+      "storage": "X",
+      "storage_index": 0
+    },
+    {
+      "bytes": 90177536,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        2048,
+        11008
+      ],
+      "storage": "W_gate",
+      "storage_index": 1
+    },
+    {
+      "bytes": 90177536,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        2048,
+        11008
+      ],
+      "storage": "W_up",
+      "storage_index": 2
+    },
+    {
+      "bytes": 90177536,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        11008,
+        2048
+      ],
+      "storage": "W_down",
+      "storage_index": 3
+    },
+    {
+      "bytes": 65536,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "output",
+      "shape": [
+        8,
+        2048
+      ],
+      "storage": "Y",
+      "storage_index": 4
+    },
+    {
+      "bytes": 352256,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "temporary",
+      "shape": [
+        8,
+        11008
+      ],
+      "storage": "G",
+      "storage_index": 5
+    },
+    {
+      "bytes": 352256,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "temporary",
+      "shape": [
+        8,
+        11008
+      ],
+      "storage": "U",
+      "storage_index": 6
+    },
+    {
+      "bytes": 352256,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "temporary",
+      "shape": [
+        8,
+        11008
+      ],
+      "storage": "H",
+      "storage_index": 7
+    }
+  ],
+  "host_plan_representation": "explicit phases; compact JSON domains and compact generated AIR for large schedules",
+  "local_allocation_lifetime": "per-task stage; reuse only after serial completion dependency",
+  "local_staging_copy_bytes": 0,
+  "logical_boundary_bytes": 270663680,
+  "logical_read_bytes": 6493487104,
+  "logical_scalar_reads": 1623371776,
+  "logical_scalar_writes": 541345792,
+  "logical_write_bytes": 2165383168,
+  "max_hardware_stage_expansion": 128,
+  "phase_count": 17060,
+  "phase_domains": [
+    {
+      "first_phase": 0,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 11008
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 172,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 0
+    },
+    {
+      "first_phase": 172,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 11008
+        },
+        {
+          "loop": 2,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 2048
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 5504,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 1
+    },
+    {
+      "first_phase": 5676,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 11008
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 172,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 2
+    },
+    {
+      "first_phase": 5848,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 11008
+        },
+        {
+          "loop": 2,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 2048
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 5504,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 3
+    },
+    {
+      "first_phase": 11352,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 11008
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 172,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 4
+    },
+    {
+      "first_phase": 11524,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 2048
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 32,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 5
+    },
+    {
+      "first_phase": 11556,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 2048
+        },
+        {
+          "loop": 2,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 11008
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 5504,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 6
+    }
+  ],
+  "phase_peak_live_bytes": 20480,
+  "phase_schedule_digest": "6213b03c33ee235cca6ebaaaa2709d16",
+  "phases": [],
+  "physical_execution": false,
+  "placement": "npu_single_core_serial",
+  "plan_id": "1674826793f3d3d94e9d1f3ac8ff98e7fe273da670537ff4807a8e2602414977",
+  "program_communication": {
+    "adapter": "native arbitrary-rank adapter of Static allocation/version/location-copy semantics",
+    "allocations": [
+      {
+        "begin_phase": 0,
+        "bytes": 65536,
+        "end_phase_exclusive": 17060,
+        "key": "host-0",
+        "memory": "system_memory_bo",
+        "storage": 0
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 90177536,
+        "end_phase_exclusive": 17060,
+        "key": "host-1",
+        "memory": "system_memory_bo",
+        "storage": 1
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 90177536,
+        "end_phase_exclusive": 17060,
+        "key": "host-2",
+        "memory": "system_memory_bo",
+        "storage": 2
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 90177536,
+        "end_phase_exclusive": 17060,
+        "key": "host-3",
+        "memory": "system_memory_bo",
+        "storage": 3
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 65536,
+        "end_phase_exclusive": 17060,
+        "key": "host-4",
+        "memory": "system_memory_bo",
+        "storage": 4
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 352256,
+        "end_phase_exclusive": 17060,
+        "key": "host-5",
+        "memory": "system_memory_bo",
+        "storage": 5
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 352256,
+        "end_phase_exclusive": 17060,
+        "key": "host-6",
+        "memory": "system_memory_bo",
+        "storage": 6
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 352256,
+        "end_phase_exclusive": 17060,
+        "key": "host-7",
+        "memory": "system_memory_bo",
+        "storage": 7
+      },
+      {
+        "begin_phase": 172,
+        "bytes": 2048,
+        "end_phase_exclusive": 5676,
+        "key": "storage-0.data.input.8.64.loops.8.64.64",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 172,
+        "bytes": 16384,
+        "end_phase_exclusive": 5676,
+        "key": "storage-1.data.input.64.64.loops.8.64.64",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 172,
+        "bytes": 2048,
+        "end_phase_exclusive": 5676,
+        "key": "storage-5.data",
+        "memory": "aie_l1",
+        "storage": 5
+      },
+      {
+        "begin_phase": 5848,
+        "bytes": 2048,
+        "end_phase_exclusive": 11352,
+        "key": "storage-0.data.input.8.64.loops.8.64.64",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 5848,
+        "bytes": 16384,
+        "end_phase_exclusive": 11352,
+        "key": "storage-2.data.input.64.64.loops.8.64.64",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 5848,
+        "bytes": 2048,
+        "end_phase_exclusive": 11352,
+        "key": "storage-6.data",
+        "memory": "aie_l1",
+        "storage": 6
+      },
+      {
+        "begin_phase": 11352,
+        "bytes": 2048,
+        "end_phase_exclusive": 11524,
+        "key": "storage-5.data.input.8.64.loops.8.64",
+        "memory": "aie_l1",
+        "storage": 5
+      },
+      {
+        "begin_phase": 11352,
+        "bytes": 2048,
+        "end_phase_exclusive": 11524,
+        "key": "storage-6.data.input.8.64.loops.8.64",
+        "memory": "aie_l1",
+        "storage": 6
+      },
+      {
+        "begin_phase": 11352,
+        "bytes": 2048,
+        "end_phase_exclusive": 11524,
+        "key": "storage-7.data",
+        "memory": "aie_l1",
+        "storage": 7
+      },
+      {
+        "begin_phase": 11556,
+        "bytes": 16384,
+        "end_phase_exclusive": 17060,
+        "key": "storage-3.data.input.64.64.loops.8.64.64",
+        "memory": "aie_l1",
+        "storage": 3
+      },
+      {
+        "begin_phase": 11556,
+        "bytes": 2048,
+        "end_phase_exclusive": 17060,
+        "key": "storage-7.data.input.8.64.loops.8.64.64",
+        "memory": "aie_l1",
+        "storage": 7
+      },
+      {
+        "begin_phase": 11556,
+        "bytes": 2048,
+        "end_phase_exclusive": 17060,
+        "key": "storage-4.data",
+        "memory": "aie_l1",
+        "storage": 4
+      }
+    ],
+    "body_fingerprint": "a54c082680b6b7f5605f978b00756bdab5fa6b377971877f544451638574c8f1",
+    "compute_estimates": [],
+    "copies": [],
+    "copy_count": 67520,
+    "data_edge_count": 49880,
+    "data_edges": [],
+    "data_organization": "phase-local",
+    "estimated_makespan_ms": null,
+    "event_count": 50976,
+    "events": [],
+    "expanded_details_omitted": true,
+    "links": [
+      {
+        "bandwidth_bytes_per_ms": 0,
+        "cost_status": "uncalibrated",
+        "id": "host_to_l1",
+        "latency_ms": 0,
+        "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+        "resource": "npu.dma",
+        "source": "system_memory_bo",
+        "target": "aie_l1"
+      },
+      {
+        "bandwidth_bytes_per_ms": 0,
+        "cost_status": "uncalibrated",
+        "id": "l1_to_host",
+        "latency_ms": 0,
+        "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+        "resource": "npu.dma",
+        "source": "aie_l1",
+        "target": "system_memory_bo"
+      }
+    ],
+    "logical_region_count": 17092,
+    "logical_regions": [],
+    "memories": [
+      {
+        "capacity_bytes": 9223372036854775807,
+        "id": "system_memory_bo"
+      },
+      {
+        "capacity_bytes": 24576,
+        "id": "aie_l1"
+      }
+    ],
+    "memory_lifetime_scope": "native physical pool phase intervals; copies have event validity",
+    "memory_peak_bytes": {},
+    "order_edge_count": 1,
+    "order_edges": [],
+    "resource_capacity_scope": "logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers",
+    "resources": [
+      {
+        "capacity": 1,
+        "device": "npu",
+        "id": "npu.compute",
+        "kind": "compute"
+      },
+      {
+        "capacity": 1,
+        "device": "npu",
+        "id": "npu.dma",
+        "kind": "transfer"
+      }
+    ],
+    "schedule": "phase barriers and copy producer/overwrite dependencies; ordinals are a topological witness, independent same-phase transfers may overlap",
+    "schema": "orbit.program.communication.v2",
+    "semantic_digest": "553bb7729b3fef2e6ee70256129012f0",
+    "system_capacity_scope": "allocation accounting limit, not measured available host RAM",
+    "task_placements": [],
+    "transfer_bytes": 306176000,
+    "version_count": 33604,
+    "versions": []
+  },
+  "program_mapping_choices": {
+    "data_organization": "phase-local",
+    "grouping": "task-shape-stages",
+    "panel_loop": -1,
+    "residency": "phase-local",
+    "reuse_loop": -1,
+    "storage": -1
+  },
+  "readonly_retentions": [],
+  "residency": [
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "X",
+      "task": 1
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 16384,
+      "storage": "W_gate",
+      "task": 1
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "G",
+      "task": 1
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "X",
+      "task": 3
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 16384,
+      "storage": "W_up",
+      "task": 3
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "U",
+      "task": 3
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "G",
+      "task": 4
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "U",
+      "task": 4
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "H",
+      "task": 4
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 16384,
+      "storage": "W_down",
+      "task": 6
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "Y",
+      "task": 6
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "H",
+      "task": 6
+    }
+  ],
+  "resident_bytes": 20480,
+  "retained_regions": [
+    {
+      "begin_phase": 172,
+      "end_phase_exclusive": 204,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 204,
+      "end_phase_exclusive": 236,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 236,
+      "end_phase_exclusive": 268,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 268,
+      "end_phase_exclusive": 300,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 300,
+      "end_phase_exclusive": 332,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 332,
+      "end_phase_exclusive": 364,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 364,
+      "end_phase_exclusive": 396,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 396,
+      "end_phase_exclusive": 428,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 428,
+      "end_phase_exclusive": 460,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 460,
+      "end_phase_exclusive": 492,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 492,
+      "end_phase_exclusive": 524,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 524,
+      "end_phase_exclusive": 556,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 556,
+      "end_phase_exclusive": 588,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 588,
+      "end_phase_exclusive": 620,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 620,
+      "end_phase_exclusive": 652,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 652,
+      "end_phase_exclusive": 684,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 684,
+      "end_phase_exclusive": 716,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 716,
+      "end_phase_exclusive": 748,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 748,
+      "end_phase_exclusive": 780,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 780,
+      "end_phase_exclusive": 812,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 812,
+      "end_phase_exclusive": 844,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 844,
+      "end_phase_exclusive": 876,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 876,
+      "end_phase_exclusive": 908,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 908,
+      "end_phase_exclusive": 940,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 940,
+      "end_phase_exclusive": 972,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 972,
+      "end_phase_exclusive": 1004,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1004,
+      "end_phase_exclusive": 1036,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1036,
+      "end_phase_exclusive": 1068,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1068,
+      "end_phase_exclusive": 1100,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1100,
+      "end_phase_exclusive": 1132,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1132,
+      "end_phase_exclusive": 1164,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1164,
+      "end_phase_exclusive": 1196,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1196,
+      "end_phase_exclusive": 1228,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1228,
+      "end_phase_exclusive": 1260,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1260,
+      "end_phase_exclusive": 1292,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1292,
+      "end_phase_exclusive": 1324,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1324,
+      "end_phase_exclusive": 1356,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1356,
+      "end_phase_exclusive": 1388,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1388,
+      "end_phase_exclusive": 1420,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1420,
+      "end_phase_exclusive": 1452,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1452,
+      "end_phase_exclusive": 1484,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1484,
+      "end_phase_exclusive": 1516,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1516,
+      "end_phase_exclusive": 1548,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1548,
+      "end_phase_exclusive": 1580,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1580,
+      "end_phase_exclusive": 1612,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1612,
+      "end_phase_exclusive": 1644,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1644,
+      "end_phase_exclusive": 1676,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1676,
+      "end_phase_exclusive": 1708,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1708,
+      "end_phase_exclusive": 1740,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1740,
+      "end_phase_exclusive": 1772,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1772,
+      "end_phase_exclusive": 1804,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1804,
+      "end_phase_exclusive": 1836,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1836,
+      "end_phase_exclusive": 1868,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1868,
+      "end_phase_exclusive": 1900,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1900,
+      "end_phase_exclusive": 1932,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1932,
+      "end_phase_exclusive": 1964,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1964,
+      "end_phase_exclusive": 1996,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 1996,
+      "end_phase_exclusive": 2028,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2028,
+      "end_phase_exclusive": 2060,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2060,
+      "end_phase_exclusive": 2092,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2092,
+      "end_phase_exclusive": 2124,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2124,
+      "end_phase_exclusive": 2156,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2156,
+      "end_phase_exclusive": 2188,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2188,
+      "end_phase_exclusive": 2220,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2220,
+      "end_phase_exclusive": 2252,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2252,
+      "end_phase_exclusive": 2284,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2284,
+      "end_phase_exclusive": 2316,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2316,
+      "end_phase_exclusive": 2348,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2348,
+      "end_phase_exclusive": 2380,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2380,
+      "end_phase_exclusive": 2412,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2412,
+      "end_phase_exclusive": 2444,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2444,
+      "end_phase_exclusive": 2476,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2476,
+      "end_phase_exclusive": 2508,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2508,
+      "end_phase_exclusive": 2540,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2540,
+      "end_phase_exclusive": 2572,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2572,
+      "end_phase_exclusive": 2604,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2604,
+      "end_phase_exclusive": 2636,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2636,
+      "end_phase_exclusive": 2668,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2668,
+      "end_phase_exclusive": 2700,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2700,
+      "end_phase_exclusive": 2732,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2732,
+      "end_phase_exclusive": 2764,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2764,
+      "end_phase_exclusive": 2796,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2796,
+      "end_phase_exclusive": 2828,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2828,
+      "end_phase_exclusive": 2860,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2860,
+      "end_phase_exclusive": 2892,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2892,
+      "end_phase_exclusive": 2924,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2924,
+      "end_phase_exclusive": 2956,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2956,
+      "end_phase_exclusive": 2988,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 2988,
+      "end_phase_exclusive": 3020,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3020,
+      "end_phase_exclusive": 3052,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3052,
+      "end_phase_exclusive": 3084,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3084,
+      "end_phase_exclusive": 3116,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3116,
+      "end_phase_exclusive": 3148,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3148,
+      "end_phase_exclusive": 3180,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3180,
+      "end_phase_exclusive": 3212,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3212,
+      "end_phase_exclusive": 3244,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3244,
+      "end_phase_exclusive": 3276,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3276,
+      "end_phase_exclusive": 3308,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3308,
+      "end_phase_exclusive": 3340,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3340,
+      "end_phase_exclusive": 3372,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3372,
+      "end_phase_exclusive": 3404,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3404,
+      "end_phase_exclusive": 3436,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3436,
+      "end_phase_exclusive": 3468,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3468,
+      "end_phase_exclusive": 3500,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3500,
+      "end_phase_exclusive": 3532,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3532,
+      "end_phase_exclusive": 3564,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3564,
+      "end_phase_exclusive": 3596,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3596,
+      "end_phase_exclusive": 3628,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3628,
+      "end_phase_exclusive": 3660,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3660,
+      "end_phase_exclusive": 3692,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3692,
+      "end_phase_exclusive": 3724,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3724,
+      "end_phase_exclusive": 3756,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3756,
+      "end_phase_exclusive": 3788,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3788,
+      "end_phase_exclusive": 3820,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3820,
+      "end_phase_exclusive": 3852,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3852,
+      "end_phase_exclusive": 3884,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3884,
+      "end_phase_exclusive": 3916,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3916,
+      "end_phase_exclusive": 3948,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3948,
+      "end_phase_exclusive": 3980,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 3980,
+      "end_phase_exclusive": 4012,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4012,
+      "end_phase_exclusive": 4044,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4044,
+      "end_phase_exclusive": 4076,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4076,
+      "end_phase_exclusive": 4108,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4108,
+      "end_phase_exclusive": 4140,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4140,
+      "end_phase_exclusive": 4172,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4172,
+      "end_phase_exclusive": 4204,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4204,
+      "end_phase_exclusive": 4236,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4236,
+      "end_phase_exclusive": 4268,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4268,
+      "end_phase_exclusive": 4300,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4300,
+      "end_phase_exclusive": 4332,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4332,
+      "end_phase_exclusive": 4364,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4364,
+      "end_phase_exclusive": 4396,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4396,
+      "end_phase_exclusive": 4428,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4428,
+      "end_phase_exclusive": 4460,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4460,
+      "end_phase_exclusive": 4492,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4492,
+      "end_phase_exclusive": 4524,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4524,
+      "end_phase_exclusive": 4556,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4556,
+      "end_phase_exclusive": 4588,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4588,
+      "end_phase_exclusive": 4620,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4620,
+      "end_phase_exclusive": 4652,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4652,
+      "end_phase_exclusive": 4684,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4684,
+      "end_phase_exclusive": 4716,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4716,
+      "end_phase_exclusive": 4748,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4748,
+      "end_phase_exclusive": 4780,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4780,
+      "end_phase_exclusive": 4812,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4812,
+      "end_phase_exclusive": 4844,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4844,
+      "end_phase_exclusive": 4876,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4876,
+      "end_phase_exclusive": 4908,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4908,
+      "end_phase_exclusive": 4940,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4940,
+      "end_phase_exclusive": 4972,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 4972,
+      "end_phase_exclusive": 5004,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5004,
+      "end_phase_exclusive": 5036,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5036,
+      "end_phase_exclusive": 5068,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5068,
+      "end_phase_exclusive": 5100,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5100,
+      "end_phase_exclusive": 5132,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5132,
+      "end_phase_exclusive": 5164,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5164,
+      "end_phase_exclusive": 5196,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5196,
+      "end_phase_exclusive": 5228,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5228,
+      "end_phase_exclusive": 5260,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5260,
+      "end_phase_exclusive": 5292,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5292,
+      "end_phase_exclusive": 5324,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5324,
+      "end_phase_exclusive": 5356,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5356,
+      "end_phase_exclusive": 5388,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5388,
+      "end_phase_exclusive": 5420,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5420,
+      "end_phase_exclusive": 5452,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5452,
+      "end_phase_exclusive": 5484,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5484,
+      "end_phase_exclusive": 5516,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5516,
+      "end_phase_exclusive": 5548,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5548,
+      "end_phase_exclusive": 5580,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5580,
+      "end_phase_exclusive": 5612,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5612,
+      "end_phase_exclusive": 5644,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5644,
+      "end_phase_exclusive": 5676,
+      "initializer_task": 0,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 5
+    },
+    {
+      "begin_phase": 5848,
+      "end_phase_exclusive": 5880,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 5880,
+      "end_phase_exclusive": 5912,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 5912,
+      "end_phase_exclusive": 5944,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 5944,
+      "end_phase_exclusive": 5976,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 5976,
+      "end_phase_exclusive": 6008,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6008,
+      "end_phase_exclusive": 6040,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6040,
+      "end_phase_exclusive": 6072,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6072,
+      "end_phase_exclusive": 6104,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6104,
+      "end_phase_exclusive": 6136,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6136,
+      "end_phase_exclusive": 6168,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6168,
+      "end_phase_exclusive": 6200,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6200,
+      "end_phase_exclusive": 6232,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6232,
+      "end_phase_exclusive": 6264,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6264,
+      "end_phase_exclusive": 6296,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6296,
+      "end_phase_exclusive": 6328,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6328,
+      "end_phase_exclusive": 6360,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6360,
+      "end_phase_exclusive": 6392,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6392,
+      "end_phase_exclusive": 6424,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6424,
+      "end_phase_exclusive": 6456,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6456,
+      "end_phase_exclusive": 6488,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6488,
+      "end_phase_exclusive": 6520,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6520,
+      "end_phase_exclusive": 6552,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6552,
+      "end_phase_exclusive": 6584,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6584,
+      "end_phase_exclusive": 6616,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6616,
+      "end_phase_exclusive": 6648,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6648,
+      "end_phase_exclusive": 6680,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6680,
+      "end_phase_exclusive": 6712,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6712,
+      "end_phase_exclusive": 6744,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6744,
+      "end_phase_exclusive": 6776,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6776,
+      "end_phase_exclusive": 6808,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6808,
+      "end_phase_exclusive": 6840,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6840,
+      "end_phase_exclusive": 6872,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6872,
+      "end_phase_exclusive": 6904,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6904,
+      "end_phase_exclusive": 6936,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6936,
+      "end_phase_exclusive": 6968,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 6968,
+      "end_phase_exclusive": 7000,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7000,
+      "end_phase_exclusive": 7032,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7032,
+      "end_phase_exclusive": 7064,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7064,
+      "end_phase_exclusive": 7096,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7096,
+      "end_phase_exclusive": 7128,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7128,
+      "end_phase_exclusive": 7160,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7160,
+      "end_phase_exclusive": 7192,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7192,
+      "end_phase_exclusive": 7224,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7224,
+      "end_phase_exclusive": 7256,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7256,
+      "end_phase_exclusive": 7288,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7288,
+      "end_phase_exclusive": 7320,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7320,
+      "end_phase_exclusive": 7352,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7352,
+      "end_phase_exclusive": 7384,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7384,
+      "end_phase_exclusive": 7416,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7416,
+      "end_phase_exclusive": 7448,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7448,
+      "end_phase_exclusive": 7480,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7480,
+      "end_phase_exclusive": 7512,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7512,
+      "end_phase_exclusive": 7544,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7544,
+      "end_phase_exclusive": 7576,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7576,
+      "end_phase_exclusive": 7608,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7608,
+      "end_phase_exclusive": 7640,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7640,
+      "end_phase_exclusive": 7672,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7672,
+      "end_phase_exclusive": 7704,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7704,
+      "end_phase_exclusive": 7736,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7736,
+      "end_phase_exclusive": 7768,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7768,
+      "end_phase_exclusive": 7800,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7800,
+      "end_phase_exclusive": 7832,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7832,
+      "end_phase_exclusive": 7864,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7864,
+      "end_phase_exclusive": 7896,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7896,
+      "end_phase_exclusive": 7928,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7928,
+      "end_phase_exclusive": 7960,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7960,
+      "end_phase_exclusive": 7992,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 7992,
+      "end_phase_exclusive": 8024,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8024,
+      "end_phase_exclusive": 8056,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8056,
+      "end_phase_exclusive": 8088,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8088,
+      "end_phase_exclusive": 8120,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8120,
+      "end_phase_exclusive": 8152,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8152,
+      "end_phase_exclusive": 8184,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8184,
+      "end_phase_exclusive": 8216,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8216,
+      "end_phase_exclusive": 8248,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8248,
+      "end_phase_exclusive": 8280,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8280,
+      "end_phase_exclusive": 8312,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8312,
+      "end_phase_exclusive": 8344,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8344,
+      "end_phase_exclusive": 8376,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8376,
+      "end_phase_exclusive": 8408,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8408,
+      "end_phase_exclusive": 8440,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8440,
+      "end_phase_exclusive": 8472,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8472,
+      "end_phase_exclusive": 8504,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8504,
+      "end_phase_exclusive": 8536,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8536,
+      "end_phase_exclusive": 8568,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8568,
+      "end_phase_exclusive": 8600,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8600,
+      "end_phase_exclusive": 8632,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8632,
+      "end_phase_exclusive": 8664,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8664,
+      "end_phase_exclusive": 8696,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8696,
+      "end_phase_exclusive": 8728,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8728,
+      "end_phase_exclusive": 8760,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8760,
+      "end_phase_exclusive": 8792,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8792,
+      "end_phase_exclusive": 8824,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8824,
+      "end_phase_exclusive": 8856,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8856,
+      "end_phase_exclusive": 8888,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8888,
+      "end_phase_exclusive": 8920,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8920,
+      "end_phase_exclusive": 8952,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8952,
+      "end_phase_exclusive": 8984,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 8984,
+      "end_phase_exclusive": 9016,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9016,
+      "end_phase_exclusive": 9048,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9048,
+      "end_phase_exclusive": 9080,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9080,
+      "end_phase_exclusive": 9112,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9112,
+      "end_phase_exclusive": 9144,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9144,
+      "end_phase_exclusive": 9176,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9176,
+      "end_phase_exclusive": 9208,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9208,
+      "end_phase_exclusive": 9240,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9240,
+      "end_phase_exclusive": 9272,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9272,
+      "end_phase_exclusive": 9304,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9304,
+      "end_phase_exclusive": 9336,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9336,
+      "end_phase_exclusive": 9368,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9368,
+      "end_phase_exclusive": 9400,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9400,
+      "end_phase_exclusive": 9432,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9432,
+      "end_phase_exclusive": 9464,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9464,
+      "end_phase_exclusive": 9496,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9496,
+      "end_phase_exclusive": 9528,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9528,
+      "end_phase_exclusive": 9560,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9560,
+      "end_phase_exclusive": 9592,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9592,
+      "end_phase_exclusive": 9624,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9624,
+      "end_phase_exclusive": 9656,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9656,
+      "end_phase_exclusive": 9688,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9688,
+      "end_phase_exclusive": 9720,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9720,
+      "end_phase_exclusive": 9752,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9752,
+      "end_phase_exclusive": 9784,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9784,
+      "end_phase_exclusive": 9816,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9816,
+      "end_phase_exclusive": 9848,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9848,
+      "end_phase_exclusive": 9880,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9880,
+      "end_phase_exclusive": 9912,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9912,
+      "end_phase_exclusive": 9944,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9944,
+      "end_phase_exclusive": 9976,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 9976,
+      "end_phase_exclusive": 10008,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10008,
+      "end_phase_exclusive": 10040,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10040,
+      "end_phase_exclusive": 10072,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10072,
+      "end_phase_exclusive": 10104,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10104,
+      "end_phase_exclusive": 10136,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10136,
+      "end_phase_exclusive": 10168,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10168,
+      "end_phase_exclusive": 10200,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10200,
+      "end_phase_exclusive": 10232,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10232,
+      "end_phase_exclusive": 10264,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10264,
+      "end_phase_exclusive": 10296,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10296,
+      "end_phase_exclusive": 10328,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10328,
+      "end_phase_exclusive": 10360,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10360,
+      "end_phase_exclusive": 10392,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10392,
+      "end_phase_exclusive": 10424,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10424,
+      "end_phase_exclusive": 10456,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10456,
+      "end_phase_exclusive": 10488,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10488,
+      "end_phase_exclusive": 10520,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10520,
+      "end_phase_exclusive": 10552,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10552,
+      "end_phase_exclusive": 10584,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10584,
+      "end_phase_exclusive": 10616,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10616,
+      "end_phase_exclusive": 10648,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10648,
+      "end_phase_exclusive": 10680,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10680,
+      "end_phase_exclusive": 10712,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10712,
+      "end_phase_exclusive": 10744,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10744,
+      "end_phase_exclusive": 10776,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10776,
+      "end_phase_exclusive": 10808,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10808,
+      "end_phase_exclusive": 10840,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10840,
+      "end_phase_exclusive": 10872,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10872,
+      "end_phase_exclusive": 10904,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10904,
+      "end_phase_exclusive": 10936,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10936,
+      "end_phase_exclusive": 10968,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 10968,
+      "end_phase_exclusive": 11000,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11000,
+      "end_phase_exclusive": 11032,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11032,
+      "end_phase_exclusive": 11064,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11064,
+      "end_phase_exclusive": 11096,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11096,
+      "end_phase_exclusive": 11128,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11128,
+      "end_phase_exclusive": 11160,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11160,
+      "end_phase_exclusive": 11192,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11192,
+      "end_phase_exclusive": 11224,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11224,
+      "end_phase_exclusive": 11256,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11256,
+      "end_phase_exclusive": 11288,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11288,
+      "end_phase_exclusive": 11320,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11320,
+      "end_phase_exclusive": 11352,
+      "initializer_task": 2,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 6
+    },
+    {
+      "begin_phase": 11556,
+      "end_phase_exclusive": 11728,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 11728,
+      "end_phase_exclusive": 11900,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 11900,
+      "end_phase_exclusive": 12072,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 12072,
+      "end_phase_exclusive": 12244,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 12244,
+      "end_phase_exclusive": 12416,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 12416,
+      "end_phase_exclusive": 12588,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 12588,
+      "end_phase_exclusive": 12760,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 12760,
+      "end_phase_exclusive": 12932,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 12932,
+      "end_phase_exclusive": 13104,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 13104,
+      "end_phase_exclusive": 13276,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 13276,
+      "end_phase_exclusive": 13448,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 13448,
+      "end_phase_exclusive": 13620,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 13620,
+      "end_phase_exclusive": 13792,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 13792,
+      "end_phase_exclusive": 13964,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 13964,
+      "end_phase_exclusive": 14136,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 14136,
+      "end_phase_exclusive": 14308,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 14308,
+      "end_phase_exclusive": 14480,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 14480,
+      "end_phase_exclusive": 14652,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 14652,
+      "end_phase_exclusive": 14824,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 14824,
+      "end_phase_exclusive": 14996,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 14996,
+      "end_phase_exclusive": 15168,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 15168,
+      "end_phase_exclusive": 15340,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 15340,
+      "end_phase_exclusive": 15512,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 15512,
+      "end_phase_exclusive": 15684,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 15684,
+      "end_phase_exclusive": 15856,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 15856,
+      "end_phase_exclusive": 16028,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 16028,
+      "end_phase_exclusive": 16200,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 16200,
+      "end_phase_exclusive": 16372,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 16372,
+      "end_phase_exclusive": 16544,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 16544,
+      "end_phase_exclusive": 16716,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 16716,
+      "end_phase_exclusive": 16888,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    },
+    {
+      "begin_phase": 16888,
+      "end_phase_exclusive": 17060,
+      "initializer_task": 5,
+      "lifetime": "on-chip across invariant region scope; import first, export last",
+      "storage_index": 4
+    }
+  ],
+  "schema": "orbit.generic.mapping.v1",
+  "strategy": "serial-tiled",
+  "system_memory_accounting_scope": "system-memory BO tensor payload; excludes runner host array mirrors, references, runtime and compiler allocations",
+  "system_memory_peak_bytes": 271720448,
+  "task_implementations": [
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 0
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 1
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 2
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 3
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 4
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 5
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 6
+    }
+  ],
+  "task_loop_orders": [
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 0
+    },
+    {
+      "loop_order": [
+        0,
+        1,
+        2
+      ],
+      "task": 1
+    },
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 2
+    },
+    {
+      "loop_order": [
+        0,
+        1,
+        2
+      ],
+      "task": 3
+    },
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 4
+    },
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 5
+    },
+    {
+      "loop_order": [
+        0,
+        1,
+        2
+      ],
+      "task": 6
+    }
+  ],
+  "tasks": [
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 0,
+      "task": "gate.initialize"
+    },
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 1,
+      "task": "gate"
+    },
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 2,
+      "task": "up.initialize"
+    },
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 3,
+      "task": "up"
+    },
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 4,
+      "task": "swiglu"
+    },
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 5,
+      "task": "down.initialize"
+    },
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 6,
+      "task": "down"
+    }
+  ],
+  "theoretical_coefficients": null,
+  "tile_dma_ports_per_direction": 2,
+  "tile_sizes": [
+    8,
+    64,
+    64
+  ],
+  "transfer_count": 33916,
+  "transfer_summary": [
+    {
+      "bytes": 22544384,
+      "count": 11008,
+      "direction": "host_to_l1",
+      "storage": "X",
+      "storage_index": 0
+    },
+    {
+      "bytes": 90177536,
+      "count": 5504,
+      "direction": "host_to_l1",
+      "storage": "W_gate",
+      "storage_index": 1
+    },
+    {
+      "bytes": 90177536,
+      "count": 5504,
+      "direction": "host_to_l1",
+      "storage": "W_up",
+      "storage_index": 2
+    },
+    {
+      "bytes": 90177536,
+      "count": 5504,
+      "direction": "host_to_l1",
+      "storage": "W_down",
+      "storage_index": 3
+    },
+    {
+      "bytes": 65536,
+      "count": 32,
+      "direction": "l1_to_host",
+      "storage": "Y",
+      "storage_index": 4
+    },
+    {
+      "bytes": 352256,
+      "count": 172,
+      "direction": "host_to_l1",
+      "storage": "G",
+      "storage_index": 5
+    },
+    {
+      "bytes": 352256,
+      "count": 172,
+      "direction": "l1_to_host",
+      "storage": "G",
+      "storage_index": 5
+    },
+    {
+      "bytes": 352256,
+      "count": 172,
+      "direction": "host_to_l1",
+      "storage": "U",
+      "storage_index": 6
+    },
+    {
+      "bytes": 352256,
+      "count": 172,
+      "direction": "l1_to_host",
+      "storage": "U",
+      "storage_index": 6
+    },
+    {
+      "bytes": 11272192,
+      "count": 5504,
+      "direction": "host_to_l1",
+      "storage": "H",
+      "storage_index": 7
+    },
+    {
+      "bytes": 352256,
+      "count": 172,
+      "direction": "l1_to_host",
+      "storage": "H",
+      "storage_index": 7
+    }
+  ],
+  "transfers": []
+}

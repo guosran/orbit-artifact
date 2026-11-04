@@ -1,0 +1,51 @@
+{
+  "candidate": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-m1-gate-lanes8-r3/hardware",
+  "program_elf_sha256": "17618dc75f9998aa3c9a41ad16f430e1919f5bd509a3ef5f7fd2d2bb8a7fd539",
+  "air_sha256": "b0ce640edfc0ea63f021f6ee0d62279b896af7967954f79fb8ca365dee4e26b0",
+  "helpers": [
+    {
+      "helper": "__mulsf3",
+      "bytes": 832,
+      "address": 912,
+      "baseline_addresses": [
+        896
+      ],
+      "exact_bytes": false,
+      "branch_relative_equal": true
+    },
+    {
+      "helper": "__muldi3",
+      "bytes": 96,
+      "address": 1744,
+      "baseline_addresses": [
+        1728
+      ],
+      "exact_bytes": true,
+      "branch_relative_equal": true
+    }
+  ],
+  "source_address_audit": "actual-m1-source-index-audit.json",
+  "k_order": {
+    "local_phi": "%21",
+    "start": 0,
+    "step": 1,
+    "end_exclusive": 64,
+    "accumulator_phi": "%22",
+    "accumulator_backedge": "%71",
+    "reduction_tile_phi": "%16",
+    "tile_start": 0,
+    "tile_step": 1,
+    "tile_end_exclusive": 32,
+    "source_k": "64 * reduction_tile + local_k",
+    "spatial_phi": "%17",
+    "spatial_step": 8,
+    "spatial_end_exclusive": 64
+  },
+  "decision": "Ready for small-scale numerical NPU diagnostic only; not accepted optimization.",
+  "limitations": [
+    "No hardware executed by this audit.",
+    "No speedup or cycle/traffic measurement inferred.",
+    "Helper absolute relocation is explained by identical branch-relative code; default automated status remains needs_review.",
+    "Target add configuration and FP exception/subnormal/rounding behavior require the original numerical contract to be tested."
+  ]
+}

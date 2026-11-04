@@ -1,0 +1,4071 @@
+{
+  "actual_dma_bytes": 32640,
+  "allocation_lifetime": "per-task device stage; storage pools reused across serial tiles",
+  "analysis_status": "supported",
+  "backend_internal_transport": "AIR compiler may add shim/L2 staging; final IR ledger required; not measured traffic",
+  "backend_tensor_padding_bytes": 0,
+  "body_fingerprint": "490f0d0b87f41eaf424fc3814b3253466553794affe10c59559e4244d3870432",
+  "capacity_bytes": 24576,
+  "channel_allocations": [],
+  "channel_merge_policy": "single-logical-fifo-per-stage-storage-direction",
+  "codegen_status": "requires_backend_verification",
+  "cost_provenance": "opt-in direct-AIR composite provider; calibration/domain and charge ownership explicit",
+  "cost_status": "uncalibrated",
+  "data_organization_scope": "phase-local input copies; source reduction/output retention remains required",
+  "direct_air_cost": {
+    "charge_scope": "composite prepared host arrays through returned output; includes transfer/runtime effects; never add separate DMA charges",
+    "evaluation_target": null,
+    "feature_digest": "8a0c8d7094f99ef59946b21f2bfb8c33d67906bd1452bf3e61488978cc9fb61d",
+    "features": {
+      "implementations": [
+        "scalar:1"
+      ],
+      "schema": "orbit.direct-air.features.v1",
+      "scope": "native source/checked plan facts; counts are not instruction counts or measured physical traffic",
+      "source_fingerprints": [
+        "490f0d0b87f41eaf424fc3814b3253466553794affe10c59559e4244d3870432"
+      ],
+      "source_operations": {
+        "arith.addf:f32": 2720
+      },
+      "values": {
+        "active_compute_events": 6,
+        "all_storage_f32": 1,
+        "capacity_bytes": 24576,
+        "command_count": 1,
+        "core_count_per_stage": 1,
+        "dma_bytes": 32640,
+        "dma_input_bytes": 21760,
+        "dma_output_bytes": 10880,
+        "dma_transfer_count": 24,
+        "execution_group_count": 6,
+        "hardware_stage_count": 6,
+        "local_initialize_events": 0,
+        "local_staging_copy_bytes": 0,
+        "max_tile_loop_0_iterations": 8,
+        "max_tile_loop_1_iterations": 64,
+        "max_tile_loop_2_iterations": 0,
+        "readonly_retention_scopes": 0,
+        "resident_payload_bytes": 12288,
+        "serial_tiled": 1,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0,
+        "source_phase_count": 6,
+        "source_scalar_f32_operations": 2720,
+        "source_scalar_reads": 5440,
+        "source_scalar_writes": 2720
+      }
+    },
+    "model": {
+      "kind": "features-only",
+      "schema": "orbit.direct-air.cost.v1"
+    },
+    "model_digest": "d3253bfcc79611f4c6f79ecbf0663bbd9f1ac1fc918d80e4635b663ad0a4b577",
+    "reason": "native feature collection only; no fitted coefficients",
+    "status": "uncalibrated",
+    "value_ms": null
+  },
+  "discovered_mapping_opportunities": [],
+  "estimated_ms": null,
+  "execution_groups": [
+    {
+      "begin_phase": 0,
+      "depends_on": [],
+      "end_phase_exclusive": 1,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 1,
+      "depends_on": [
+        0
+      ],
+      "end_phase_exclusive": 2,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 2,
+      "depends_on": [
+        1
+      ],
+      "end_phase_exclusive": 3,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 3,
+      "depends_on": [
+        2
+      ],
+      "end_phase_exclusive": 4,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 4,
+      "depends_on": [
+        3
+      ],
+      "end_phase_exclusive": 5,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    },
+    {
+      "begin_phase": 5,
+      "depends_on": [
+        4
+      ],
+      "end_phase_exclusive": 6,
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    }
+  ],
+  "expanded_phase_details_omitted": false,
+  "fused_initializer_tasks": [],
+  "hardware_stage_expansion_scope": "bounded host/codegen expansion; not a measured silicon or local memory resource limit",
+  "hardware_stages": [
+    {
+      "allocated_bytes": 12288,
+      "begin_phase": 0,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 4096,
+          "begin_phase": 0,
+          "dtype": "f32",
+          "end_phase_exclusive": 1,
+          "flat_elements": 1024,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "A",
+          "storage_index": 0,
+          "template_loop_extents": [
+            8,
+            64
+          ],
+          "template_shape": [
+            8,
+            64,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 4096,
+          "begin_phase": 0,
+          "dtype": "f32",
+          "end_phase_exclusive": 1,
+          "flat_elements": 1024,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "B",
+          "storage_index": 1,
+          "template_loop_extents": [
+            8,
+            64
+          ],
+          "template_shape": [
+            8,
+            64,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 0,
+          "dtype": "f32",
+          "end_phase_exclusive": 1,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 2,
+          "template_loop_extents": [],
+          "template_shape": []
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 0,
+          "dtype": "f32",
+          "end_phase_exclusive": 1,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Z",
+          "storage_index": 3,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 1,
+      "group_index": 0,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 4096,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "A",
+          "storage_index": 0
+        },
+        {
+          "bytes": 4096,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "B",
+          "storage_index": 1
+        },
+        {
+          "bytes": 2048,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 2
+        },
+        {
+          "bytes": 2048,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Z",
+          "storage_index": 3
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 3072,
+      "begin_phase": 1,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 1024,
+          "begin_phase": 1,
+          "dtype": "f32",
+          "end_phase_exclusive": 2,
+          "flat_elements": 256,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "A",
+          "storage_index": 0,
+          "template_loop_extents": [
+            8,
+            16
+          ],
+          "template_shape": [
+            8,
+            16,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 1024,
+          "begin_phase": 1,
+          "dtype": "f32",
+          "end_phase_exclusive": 2,
+          "flat_elements": 256,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "B",
+          "storage_index": 1,
+          "template_loop_extents": [
+            8,
+            16
+          ],
+          "template_shape": [
+            8,
+            16,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 512,
+          "begin_phase": 1,
+          "dtype": "f32",
+          "end_phase_exclusive": 2,
+          "flat_elements": 128,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 2,
+          "template_loop_extents": [],
+          "template_shape": []
+        },
+        {
+          "allocated_bytes": 512,
+          "begin_phase": 1,
+          "dtype": "f32",
+          "end_phase_exclusive": 2,
+          "flat_elements": 128,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Z",
+          "storage_index": 3,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 2,
+      "group_index": 1,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 1024,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "A",
+          "storage_index": 0
+        },
+        {
+          "bytes": 1024,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "B",
+          "storage_index": 1
+        },
+        {
+          "bytes": 512,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 2
+        },
+        {
+          "bytes": 512,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Z",
+          "storage_index": 3
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 12288,
+      "begin_phase": 2,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 4096,
+          "begin_phase": 2,
+          "dtype": "f32",
+          "end_phase_exclusive": 3,
+          "flat_elements": 1024,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "A",
+          "storage_index": 0,
+          "template_loop_extents": [
+            8,
+            64
+          ],
+          "template_shape": [
+            8,
+            64,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 4096,
+          "begin_phase": 2,
+          "dtype": "f32",
+          "end_phase_exclusive": 3,
+          "flat_elements": 1024,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "B",
+          "storage_index": 1,
+          "template_loop_extents": [
+            8,
+            64
+          ],
+          "template_shape": [
+            8,
+            64,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 2,
+          "dtype": "f32",
+          "end_phase_exclusive": 3,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 2,
+          "template_loop_extents": [],
+          "template_shape": []
+        },
+        {
+          "allocated_bytes": 2048,
+          "begin_phase": 2,
+          "dtype": "f32",
+          "end_phase_exclusive": 3,
+          "flat_elements": 512,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Z",
+          "storage_index": 3,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 3,
+      "group_index": 2,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 4096,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "A",
+          "storage_index": 0
+        },
+        {
+          "bytes": 4096,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "B",
+          "storage_index": 1
+        },
+        {
+          "bytes": 2048,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 2
+        },
+        {
+          "bytes": 2048,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Z",
+          "storage_index": 3
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 3072,
+      "begin_phase": 3,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 1024,
+          "begin_phase": 3,
+          "dtype": "f32",
+          "end_phase_exclusive": 4,
+          "flat_elements": 256,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "A",
+          "storage_index": 0,
+          "template_loop_extents": [
+            8,
+            16
+          ],
+          "template_shape": [
+            8,
+            16,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 1024,
+          "begin_phase": 3,
+          "dtype": "f32",
+          "end_phase_exclusive": 4,
+          "flat_elements": 256,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "B",
+          "storage_index": 1,
+          "template_loop_extents": [
+            8,
+            16
+          ],
+          "template_shape": [
+            8,
+            16,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 512,
+          "begin_phase": 3,
+          "dtype": "f32",
+          "end_phase_exclusive": 4,
+          "flat_elements": 128,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 2,
+          "template_loop_extents": [],
+          "template_shape": []
+        },
+        {
+          "allocated_bytes": 512,
+          "begin_phase": 3,
+          "dtype": "f32",
+          "end_phase_exclusive": 4,
+          "flat_elements": 128,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Z",
+          "storage_index": 3,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 4,
+      "group_index": 3,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 1024,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "A",
+          "storage_index": 0
+        },
+        {
+          "bytes": 1024,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "B",
+          "storage_index": 1
+        },
+        {
+          "bytes": 512,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 2
+        },
+        {
+          "bytes": 512,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Z",
+          "storage_index": 3
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 1536,
+      "begin_phase": 4,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 512,
+          "begin_phase": 4,
+          "dtype": "f32",
+          "end_phase_exclusive": 5,
+          "flat_elements": 128,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "A",
+          "storage_index": 0,
+          "template_loop_extents": [
+            1,
+            64
+          ],
+          "template_shape": [
+            1,
+            64,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 512,
+          "begin_phase": 4,
+          "dtype": "f32",
+          "end_phase_exclusive": 5,
+          "flat_elements": 128,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "B",
+          "storage_index": 1,
+          "template_loop_extents": [
+            1,
+            64
+          ],
+          "template_shape": [
+            1,
+            64,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 256,
+          "begin_phase": 4,
+          "dtype": "f32",
+          "end_phase_exclusive": 5,
+          "flat_elements": 64,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 2,
+          "template_loop_extents": [],
+          "template_shape": []
+        },
+        {
+          "allocated_bytes": 256,
+          "begin_phase": 4,
+          "dtype": "f32",
+          "end_phase_exclusive": 5,
+          "flat_elements": 64,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Z",
+          "storage_index": 3,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 5,
+      "group_index": 4,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 512,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "A",
+          "storage_index": 0
+        },
+        {
+          "bytes": 512,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "B",
+          "storage_index": 1
+        },
+        {
+          "bytes": 256,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 2
+        },
+        {
+          "bytes": 256,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Z",
+          "storage_index": 3
+        }
+      ]
+    },
+    {
+      "allocated_bytes": 384,
+      "begin_phase": 5,
+      "buffer_pools": [
+        {
+          "allocated_bytes": 128,
+          "begin_phase": 5,
+          "dtype": "f32",
+          "end_phase_exclusive": 6,
+          "flat_elements": 32,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "A",
+          "storage_index": 0,
+          "template_loop_extents": [
+            1,
+            16
+          ],
+          "template_shape": [
+            1,
+            16,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 128,
+          "begin_phase": 5,
+          "dtype": "f32",
+          "end_phase_exclusive": 6,
+          "flat_elements": 32,
+          "kind": "readonly_template",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "B",
+          "storage_index": 1,
+          "template_loop_extents": [
+            1,
+            16
+          ],
+          "template_shape": [
+            1,
+            16,
+            2
+          ]
+        },
+        {
+          "allocated_bytes": 64,
+          "begin_phase": 5,
+          "dtype": "f32",
+          "end_phase_exclusive": 6,
+          "flat_elements": 16,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Y",
+          "storage_index": 2,
+          "template_loop_extents": [],
+          "template_shape": []
+        },
+        {
+          "allocated_bytes": 64,
+          "begin_phase": 5,
+          "dtype": "f32",
+          "end_phase_exclusive": 6,
+          "flat_elements": 16,
+          "kind": "writable",
+          "lifetime": "whole hardware stage; reused after serial completion",
+          "memory": "aie_l1",
+          "storage": "Z",
+          "storage_index": 3,
+          "template_loop_extents": [],
+          "template_shape": []
+        }
+      ],
+      "end_phase_exclusive": 6,
+      "group_index": 5,
+      "legalize_channels": false,
+      "pool_key": "read-only: storage+region shape+loop extent signature; writable: storage",
+      "transfer_summary": [
+        {
+          "bytes": 128,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "A",
+          "storage_index": 0
+        },
+        {
+          "bytes": 128,
+          "count": 1,
+          "direction": "host_to_l1",
+          "storage": "B",
+          "storage_index": 1
+        },
+        {
+          "bytes": 64,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Y",
+          "storage_index": 2
+        },
+        {
+          "bytes": 64,
+          "count": 1,
+          "direction": "l1_to_host",
+          "storage": "Z",
+          "storage_index": 3
+        }
+      ]
+    }
+  ],
+  "host_buffers": [
+    {
+      "bytes": 10880,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        17,
+        80,
+        2
+      ],
+      "storage": "A",
+      "storage_index": 0
+    },
+    {
+      "bytes": 10880,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        17,
+        80,
+        2
+      ],
+      "storage": "B",
+      "storage_index": 1
+    },
+    {
+      "bytes": 5440,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "output",
+      "shape": [
+        17,
+        80
+      ],
+      "storage": "Y",
+      "storage_index": 2
+    },
+    {
+      "bytes": 5440,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "output",
+      "shape": [
+        17,
+        80
+      ],
+      "storage": "Z",
+      "storage_index": 3
+    }
+  ],
+  "host_plan_representation": "explicit phases; compact JSON domains and compact generated AIR for large schedules",
+  "local_allocation_lifetime": "per-task stage; reuse only after serial completion dependency",
+  "local_staging_copy_bytes": 0,
+  "logical_boundary_bytes": 32640,
+  "logical_read_bytes": 21760,
+  "logical_scalar_reads": 5440,
+  "logical_scalar_writes": 2720,
+  "logical_write_bytes": 10880,
+  "max_hardware_stage_expansion": 128,
+  "phase_count": 6,
+  "phase_domains": [
+    {
+      "first_phase": 0,
+      "loop_domains": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 8,
+          "upper": 17
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "step": 1,
+          "tile_iterations": 64,
+          "upper": 80
+        }
+      ],
+      "order": "Cartesian tile grid in task_loop_orders; each phase depends on its predecessor",
+      "phase_count": 6,
+      "region_derivation": "actual source affine accesses restricted to each tile domain",
+      "task": 0
+    }
+  ],
+  "phase_peak_live_bytes": 12288,
+  "phase_schedule_digest": "2214bf1127db1f8cd4366fde110c1b2b",
+  "phases": [
+    {
+      "dependencies": [],
+      "lifetime": "phase live region; backing pool allocated for task stage",
+      "loops": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "upper": 64
+        }
+      ],
+      "phase": 0,
+      "regions": [
+        {
+          "offsets": [
+            0,
+            0,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            64,
+            2
+          ],
+          "storage_index": 0,
+          "write": false
+        },
+        {
+          "offsets": [
+            0,
+            0,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            64,
+            2
+          ],
+          "storage_index": 1,
+          "write": false
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            64
+          ],
+          "storage_index": 2,
+          "write": true
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            64
+          ],
+          "storage_index": 3,
+          "write": true
+        }
+      ],
+      "task": 0
+    },
+    {
+      "dependencies": [
+        0
+      ],
+      "lifetime": "phase live region; backing pool allocated for task stage",
+      "loops": [
+        {
+          "loop": 0,
+          "lower": 0,
+          "upper": 8
+        },
+        {
+          "loop": 1,
+          "lower": 64,
+          "upper": 80
+        }
+      ],
+      "phase": 1,
+      "regions": [
+        {
+          "offsets": [
+            0,
+            64,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            16,
+            2
+          ],
+          "storage_index": 0,
+          "write": false
+        },
+        {
+          "offsets": [
+            0,
+            64,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            16,
+            2
+          ],
+          "storage_index": 1,
+          "write": false
+        },
+        {
+          "offsets": [
+            0,
+            64
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            16
+          ],
+          "storage_index": 2,
+          "write": true
+        },
+        {
+          "offsets": [
+            0,
+            64
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            16
+          ],
+          "storage_index": 3,
+          "write": true
+        }
+      ],
+      "task": 0
+    },
+    {
+      "dependencies": [
+        1
+      ],
+      "lifetime": "phase live region; backing pool allocated for task stage",
+      "loops": [
+        {
+          "loop": 0,
+          "lower": 8,
+          "upper": 16
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "upper": 64
+        }
+      ],
+      "phase": 2,
+      "regions": [
+        {
+          "offsets": [
+            8,
+            0,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            64,
+            2
+          ],
+          "storage_index": 0,
+          "write": false
+        },
+        {
+          "offsets": [
+            8,
+            0,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            64,
+            2
+          ],
+          "storage_index": 1,
+          "write": false
+        },
+        {
+          "offsets": [
+            8,
+            0
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            64
+          ],
+          "storage_index": 2,
+          "write": true
+        },
+        {
+          "offsets": [
+            8,
+            0
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            64
+          ],
+          "storage_index": 3,
+          "write": true
+        }
+      ],
+      "task": 0
+    },
+    {
+      "dependencies": [
+        2
+      ],
+      "lifetime": "phase live region; backing pool allocated for task stage",
+      "loops": [
+        {
+          "loop": 0,
+          "lower": 8,
+          "upper": 16
+        },
+        {
+          "loop": 1,
+          "lower": 64,
+          "upper": 80
+        }
+      ],
+      "phase": 3,
+      "regions": [
+        {
+          "offsets": [
+            8,
+            64,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            16,
+            2
+          ],
+          "storage_index": 0,
+          "write": false
+        },
+        {
+          "offsets": [
+            8,
+            64,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            8,
+            16,
+            2
+          ],
+          "storage_index": 1,
+          "write": false
+        },
+        {
+          "offsets": [
+            8,
+            64
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            16
+          ],
+          "storage_index": 2,
+          "write": true
+        },
+        {
+          "offsets": [
+            8,
+            64
+          ],
+          "read": false,
+          "sizes": [
+            8,
+            16
+          ],
+          "storage_index": 3,
+          "write": true
+        }
+      ],
+      "task": 0
+    },
+    {
+      "dependencies": [
+        3
+      ],
+      "lifetime": "phase live region; backing pool allocated for task stage",
+      "loops": [
+        {
+          "loop": 0,
+          "lower": 16,
+          "upper": 17
+        },
+        {
+          "loop": 1,
+          "lower": 0,
+          "upper": 64
+        }
+      ],
+      "phase": 4,
+      "regions": [
+        {
+          "offsets": [
+            16,
+            0,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            1,
+            64,
+            2
+          ],
+          "storage_index": 0,
+          "write": false
+        },
+        {
+          "offsets": [
+            16,
+            0,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            1,
+            64,
+            2
+          ],
+          "storage_index": 1,
+          "write": false
+        },
+        {
+          "offsets": [
+            16,
+            0
+          ],
+          "read": false,
+          "sizes": [
+            1,
+            64
+          ],
+          "storage_index": 2,
+          "write": true
+        },
+        {
+          "offsets": [
+            16,
+            0
+          ],
+          "read": false,
+          "sizes": [
+            1,
+            64
+          ],
+          "storage_index": 3,
+          "write": true
+        }
+      ],
+      "task": 0
+    },
+    {
+      "dependencies": [
+        4
+      ],
+      "lifetime": "phase live region; backing pool allocated for task stage",
+      "loops": [
+        {
+          "loop": 0,
+          "lower": 16,
+          "upper": 17
+        },
+        {
+          "loop": 1,
+          "lower": 64,
+          "upper": 80
+        }
+      ],
+      "phase": 5,
+      "regions": [
+        {
+          "offsets": [
+            16,
+            64,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            1,
+            16,
+            2
+          ],
+          "storage_index": 0,
+          "write": false
+        },
+        {
+          "offsets": [
+            16,
+            64,
+            0
+          ],
+          "read": true,
+          "sizes": [
+            1,
+            16,
+            2
+          ],
+          "storage_index": 1,
+          "write": false
+        },
+        {
+          "offsets": [
+            16,
+            64
+          ],
+          "read": false,
+          "sizes": [
+            1,
+            16
+          ],
+          "storage_index": 2,
+          "write": true
+        },
+        {
+          "offsets": [
+            16,
+            64
+          ],
+          "read": false,
+          "sizes": [
+            1,
+            16
+          ],
+          "storage_index": 3,
+          "write": true
+        }
+      ],
+      "task": 0
+    }
+  ],
+  "physical_execution": false,
+  "placement": "npu_single_core_serial",
+  "plan_id": "5aedd75e7323ad9e96ecead4724f1c803e32604674895c62d37fcaef47c62c66",
+  "program_communication": {
+    "adapter": "native arbitrary-rank adapter of Static allocation/version/location-copy semantics",
+    "allocations": [
+      {
+        "begin_phase": 0,
+        "bytes": 10880,
+        "end_phase_exclusive": 6,
+        "key": "host-0",
+        "memory": "system_memory_bo",
+        "storage": 0
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 10880,
+        "end_phase_exclusive": 6,
+        "key": "host-1",
+        "memory": "system_memory_bo",
+        "storage": 1
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 5440,
+        "end_phase_exclusive": 6,
+        "key": "host-2",
+        "memory": "system_memory_bo",
+        "storage": 2
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 5440,
+        "end_phase_exclusive": 6,
+        "key": "host-3",
+        "memory": "system_memory_bo",
+        "storage": 3
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 4096,
+        "end_phase_exclusive": 1,
+        "key": "storage-0.data.input.8.64.2.loops.8.64",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 4096,
+        "end_phase_exclusive": 1,
+        "key": "storage-1.data.input.8.64.2.loops.8.64",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 2048,
+        "end_phase_exclusive": 1,
+        "key": "storage-2.data",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 2048,
+        "end_phase_exclusive": 1,
+        "key": "storage-3.data",
+        "memory": "aie_l1",
+        "storage": 3
+      },
+      {
+        "begin_phase": 1,
+        "bytes": 1024,
+        "end_phase_exclusive": 2,
+        "key": "storage-0.data.input.8.16.2.loops.8.16",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 1,
+        "bytes": 1024,
+        "end_phase_exclusive": 2,
+        "key": "storage-1.data.input.8.16.2.loops.8.16",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 1,
+        "bytes": 512,
+        "end_phase_exclusive": 2,
+        "key": "storage-2.data",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 1,
+        "bytes": 512,
+        "end_phase_exclusive": 2,
+        "key": "storage-3.data",
+        "memory": "aie_l1",
+        "storage": 3
+      },
+      {
+        "begin_phase": 2,
+        "bytes": 4096,
+        "end_phase_exclusive": 3,
+        "key": "storage-0.data.input.8.64.2.loops.8.64",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 2,
+        "bytes": 4096,
+        "end_phase_exclusive": 3,
+        "key": "storage-1.data.input.8.64.2.loops.8.64",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 2,
+        "bytes": 2048,
+        "end_phase_exclusive": 3,
+        "key": "storage-2.data",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 2,
+        "bytes": 2048,
+        "end_phase_exclusive": 3,
+        "key": "storage-3.data",
+        "memory": "aie_l1",
+        "storage": 3
+      },
+      {
+        "begin_phase": 3,
+        "bytes": 1024,
+        "end_phase_exclusive": 4,
+        "key": "storage-0.data.input.8.16.2.loops.8.16",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 3,
+        "bytes": 1024,
+        "end_phase_exclusive": 4,
+        "key": "storage-1.data.input.8.16.2.loops.8.16",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 3,
+        "bytes": 512,
+        "end_phase_exclusive": 4,
+        "key": "storage-2.data",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 3,
+        "bytes": 512,
+        "end_phase_exclusive": 4,
+        "key": "storage-3.data",
+        "memory": "aie_l1",
+        "storage": 3
+      },
+      {
+        "begin_phase": 4,
+        "bytes": 512,
+        "end_phase_exclusive": 5,
+        "key": "storage-0.data.input.1.64.2.loops.1.64",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 4,
+        "bytes": 512,
+        "end_phase_exclusive": 5,
+        "key": "storage-1.data.input.1.64.2.loops.1.64",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 4,
+        "bytes": 256,
+        "end_phase_exclusive": 5,
+        "key": "storage-2.data",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 4,
+        "bytes": 256,
+        "end_phase_exclusive": 5,
+        "key": "storage-3.data",
+        "memory": "aie_l1",
+        "storage": 3
+      },
+      {
+        "begin_phase": 5,
+        "bytes": 128,
+        "end_phase_exclusive": 6,
+        "key": "storage-0.data.input.1.16.2.loops.1.16",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 5,
+        "bytes": 128,
+        "end_phase_exclusive": 6,
+        "key": "storage-1.data.input.1.16.2.loops.1.16",
+        "memory": "aie_l1",
+        "storage": 1
+      },
+      {
+        "begin_phase": 5,
+        "bytes": 64,
+        "end_phase_exclusive": 6,
+        "key": "storage-2.data",
+        "memory": "aie_l1",
+        "storage": 2
+      },
+      {
+        "begin_phase": 5,
+        "bytes": 64,
+        "end_phase_exclusive": 6,
+        "key": "storage-3.data",
+        "memory": "aie_l1",
+        "storage": 3
+      }
+    ],
+    "body_fingerprint": "490f0d0b87f41eaf424fc3814b3253466553794affe10c59559e4244d3870432",
+    "compute_estimates": [],
+    "copies": [
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          0
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          0
+        ],
+        "version": 0
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          5
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          5
+        ],
+        "version": 1
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          10
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          10
+        ],
+        "version": 2
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          15
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          15
+        ],
+        "version": 3
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          20
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          20
+        ],
+        "version": 4
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          25
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          25
+        ],
+        "version": 5
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          1
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          1
+        ],
+        "version": 6
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          6
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          6
+        ],
+        "version": 7
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          11
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          11
+        ],
+        "version": 8
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          16
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          16
+        ],
+        "version": 9
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          21
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          21
+        ],
+        "version": 10
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          26
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          26
+        ],
+        "version": 11
+      },
+      {
+        "allocation": 4,
+        "available_from": 0,
+        "consumer_edges": [
+          0
+        ],
+        "created_by": 0,
+        "last_users": [
+          2
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          2
+        ],
+        "version": 0
+      },
+      {
+        "allocation": 5,
+        "available_from": 1,
+        "consumer_edges": [
+          1
+        ],
+        "created_by": 1,
+        "last_users": [
+          2
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          2
+        ],
+        "version": 6
+      },
+      {
+        "allocation": 6,
+        "available_from": 2,
+        "consumer_edges": [],
+        "created_by": 2,
+        "last_users": [
+          3
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          3
+        ],
+        "version": 12
+      },
+      {
+        "allocation": 7,
+        "available_from": 2,
+        "consumer_edges": [],
+        "created_by": 2,
+        "last_users": [
+          4
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          4
+        ],
+        "version": 13
+      },
+      {
+        "allocation": 2,
+        "available_from": 3,
+        "consumer_edges": [],
+        "created_by": 3,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 12
+      },
+      {
+        "allocation": 3,
+        "available_from": 4,
+        "consumer_edges": [],
+        "created_by": 4,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 13
+      },
+      {
+        "allocation": 8,
+        "available_from": 5,
+        "consumer_edges": [
+          2
+        ],
+        "created_by": 5,
+        "last_users": [
+          7
+        ],
+        "layout": "row_major",
+        "released_after": 10,
+        "users": [
+          7
+        ],
+        "version": 1
+      },
+      {
+        "allocation": 9,
+        "available_from": 6,
+        "consumer_edges": [
+          3
+        ],
+        "created_by": 6,
+        "last_users": [
+          7
+        ],
+        "layout": "row_major",
+        "released_after": 10,
+        "users": [
+          7
+        ],
+        "version": 7
+      },
+      {
+        "allocation": 10,
+        "available_from": 7,
+        "consumer_edges": [],
+        "created_by": 7,
+        "last_users": [
+          8
+        ],
+        "layout": "row_major",
+        "released_after": 10,
+        "users": [
+          8
+        ],
+        "version": 14
+      },
+      {
+        "allocation": 11,
+        "available_from": 7,
+        "consumer_edges": [],
+        "created_by": 7,
+        "last_users": [
+          9
+        ],
+        "layout": "row_major",
+        "released_after": 10,
+        "users": [
+          9
+        ],
+        "version": 15
+      },
+      {
+        "allocation": 2,
+        "available_from": 8,
+        "consumer_edges": [],
+        "created_by": 8,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 14
+      },
+      {
+        "allocation": 3,
+        "available_from": 9,
+        "consumer_edges": [],
+        "created_by": 9,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 15
+      },
+      {
+        "allocation": 12,
+        "available_from": 10,
+        "consumer_edges": [
+          4
+        ],
+        "created_by": 10,
+        "last_users": [
+          12
+        ],
+        "layout": "row_major",
+        "released_after": 15,
+        "users": [
+          12
+        ],
+        "version": 2
+      },
+      {
+        "allocation": 13,
+        "available_from": 11,
+        "consumer_edges": [
+          5
+        ],
+        "created_by": 11,
+        "last_users": [
+          12
+        ],
+        "layout": "row_major",
+        "released_after": 15,
+        "users": [
+          12
+        ],
+        "version": 8
+      },
+      {
+        "allocation": 14,
+        "available_from": 12,
+        "consumer_edges": [],
+        "created_by": 12,
+        "last_users": [
+          13
+        ],
+        "layout": "row_major",
+        "released_after": 15,
+        "users": [
+          13
+        ],
+        "version": 16
+      },
+      {
+        "allocation": 15,
+        "available_from": 12,
+        "consumer_edges": [],
+        "created_by": 12,
+        "last_users": [
+          14
+        ],
+        "layout": "row_major",
+        "released_after": 15,
+        "users": [
+          14
+        ],
+        "version": 17
+      },
+      {
+        "allocation": 2,
+        "available_from": 13,
+        "consumer_edges": [],
+        "created_by": 13,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 16
+      },
+      {
+        "allocation": 3,
+        "available_from": 14,
+        "consumer_edges": [],
+        "created_by": 14,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 17
+      },
+      {
+        "allocation": 16,
+        "available_from": 15,
+        "consumer_edges": [
+          6
+        ],
+        "created_by": 15,
+        "last_users": [
+          17
+        ],
+        "layout": "row_major",
+        "released_after": 20,
+        "users": [
+          17
+        ],
+        "version": 3
+      },
+      {
+        "allocation": 17,
+        "available_from": 16,
+        "consumer_edges": [
+          7
+        ],
+        "created_by": 16,
+        "last_users": [
+          17
+        ],
+        "layout": "row_major",
+        "released_after": 20,
+        "users": [
+          17
+        ],
+        "version": 9
+      },
+      {
+        "allocation": 18,
+        "available_from": 17,
+        "consumer_edges": [],
+        "created_by": 17,
+        "last_users": [
+          18
+        ],
+        "layout": "row_major",
+        "released_after": 20,
+        "users": [
+          18
+        ],
+        "version": 18
+      },
+      {
+        "allocation": 19,
+        "available_from": 17,
+        "consumer_edges": [],
+        "created_by": 17,
+        "last_users": [
+          19
+        ],
+        "layout": "row_major",
+        "released_after": 20,
+        "users": [
+          19
+        ],
+        "version": 19
+      },
+      {
+        "allocation": 2,
+        "available_from": 18,
+        "consumer_edges": [],
+        "created_by": 18,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 18
+      },
+      {
+        "allocation": 3,
+        "available_from": 19,
+        "consumer_edges": [],
+        "created_by": 19,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 19
+      },
+      {
+        "allocation": 20,
+        "available_from": 20,
+        "consumer_edges": [
+          8
+        ],
+        "created_by": 20,
+        "last_users": [
+          22
+        ],
+        "layout": "row_major",
+        "released_after": 25,
+        "users": [
+          22
+        ],
+        "version": 4
+      },
+      {
+        "allocation": 21,
+        "available_from": 21,
+        "consumer_edges": [
+          9
+        ],
+        "created_by": 21,
+        "last_users": [
+          22
+        ],
+        "layout": "row_major",
+        "released_after": 25,
+        "users": [
+          22
+        ],
+        "version": 10
+      },
+      {
+        "allocation": 22,
+        "available_from": 22,
+        "consumer_edges": [],
+        "created_by": 22,
+        "last_users": [
+          23
+        ],
+        "layout": "row_major",
+        "released_after": 25,
+        "users": [
+          23
+        ],
+        "version": 20
+      },
+      {
+        "allocation": 23,
+        "available_from": 22,
+        "consumer_edges": [],
+        "created_by": 22,
+        "last_users": [
+          24
+        ],
+        "layout": "row_major",
+        "released_after": 25,
+        "users": [
+          24
+        ],
+        "version": 21
+      },
+      {
+        "allocation": 2,
+        "available_from": 23,
+        "consumer_edges": [],
+        "created_by": 23,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 20
+      },
+      {
+        "allocation": 3,
+        "available_from": 24,
+        "consumer_edges": [],
+        "created_by": 24,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 21
+      },
+      {
+        "allocation": 24,
+        "available_from": 25,
+        "consumer_edges": [
+          10
+        ],
+        "created_by": 25,
+        "last_users": [
+          27
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          27
+        ],
+        "version": 5
+      },
+      {
+        "allocation": 25,
+        "available_from": 26,
+        "consumer_edges": [
+          11
+        ],
+        "created_by": 26,
+        "last_users": [
+          27
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          27
+        ],
+        "version": 11
+      },
+      {
+        "allocation": 26,
+        "available_from": 27,
+        "consumer_edges": [],
+        "created_by": 27,
+        "last_users": [
+          28
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          28
+        ],
+        "version": 22
+      },
+      {
+        "allocation": 27,
+        "available_from": 27,
+        "consumer_edges": [],
+        "created_by": 27,
+        "last_users": [
+          29
+        ],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [
+          29
+        ],
+        "version": 23
+      },
+      {
+        "allocation": 2,
+        "available_from": 28,
+        "consumer_edges": [],
+        "created_by": 28,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 22
+      },
+      {
+        "allocation": 3,
+        "available_from": 29,
+        "consumer_edges": [],
+        "created_by": 29,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 30,
+        "users": [],
+        "version": 23
+      }
+    ],
+    "copy_count": 48,
+    "data_edge_count": 12,
+    "data_edges": [
+      {
+        "consumer": 2,
+        "copy": 12,
+        "producer": -1,
+        "region": 0,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 0
+      },
+      {
+        "consumer": 2,
+        "copy": 13,
+        "producer": -1,
+        "region": 6,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 6
+      },
+      {
+        "consumer": 7,
+        "copy": 18,
+        "producer": -1,
+        "region": 1,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 1
+      },
+      {
+        "consumer": 7,
+        "copy": 19,
+        "producer": -1,
+        "region": 7,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 7
+      },
+      {
+        "consumer": 12,
+        "copy": 24,
+        "producer": -1,
+        "region": 2,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 2
+      },
+      {
+        "consumer": 12,
+        "copy": 25,
+        "producer": -1,
+        "region": 8,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 8
+      },
+      {
+        "consumer": 17,
+        "copy": 30,
+        "producer": -1,
+        "region": 3,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 3
+      },
+      {
+        "consumer": 17,
+        "copy": 31,
+        "producer": -1,
+        "region": 9,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 9
+      },
+      {
+        "consumer": 22,
+        "copy": 36,
+        "producer": -1,
+        "region": 4,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 4
+      },
+      {
+        "consumer": 22,
+        "copy": 37,
+        "producer": -1,
+        "region": 10,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 10
+      },
+      {
+        "consumer": 27,
+        "copy": 42,
+        "producer": -1,
+        "region": 5,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 5
+      },
+      {
+        "consumer": 27,
+        "copy": 43,
+        "producer": -1,
+        "region": 11,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 11
+      }
+    ],
+    "data_organization": "phase-local",
+    "estimated_makespan_ms": null,
+    "event_count": 30,
+    "events": [
+      {
+        "data_edges": [],
+        "depends_on": [],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          0
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          12
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          6
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          13
+        ]
+      },
+      {
+        "data_edges": [
+          0,
+          1
+        ],
+        "depends_on": [
+          0,
+          1
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          12,
+          13
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          14,
+          15
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          2
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          14
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          16
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          2
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          15
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          17
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          3,
+          4
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 1,
+        "reads": [
+          1
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          18
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          3,
+          4
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 1,
+        "reads": [
+          7
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          19
+        ]
+      },
+      {
+        "data_edges": [
+          2,
+          3
+        ],
+        "depends_on": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 1,
+        "reads": [
+          18,
+          19
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          20,
+          21
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          3,
+          4,
+          7
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 1,
+        "reads": [
+          20
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          22
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          3,
+          4,
+          7
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 1,
+        "reads": [
+          21
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          23
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          8,
+          9
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          2
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          24
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          8,
+          9
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          8
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          25
+        ]
+      },
+      {
+        "data_edges": [
+          4,
+          5
+        ],
+        "depends_on": [
+          8,
+          9,
+          10,
+          11
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          24,
+          25
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          26,
+          27
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          8,
+          9,
+          12
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          26
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          28
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          8,
+          9,
+          12
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          27
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          29
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          13,
+          14
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 3,
+        "reads": [
+          3
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          30
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          13,
+          14
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 3,
+        "reads": [
+          9
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          31
+        ]
+      },
+      {
+        "data_edges": [
+          6,
+          7
+        ],
+        "depends_on": [
+          13,
+          14,
+          15,
+          16
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 3,
+        "reads": [
+          30,
+          31
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          32,
+          33
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          13,
+          14,
+          17
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 3,
+        "reads": [
+          32
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          34
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          13,
+          14,
+          17
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 3,
+        "reads": [
+          33
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          35
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          18,
+          19
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 4,
+        "reads": [
+          4
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          36
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          18,
+          19
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 4,
+        "reads": [
+          10
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          37
+        ]
+      },
+      {
+        "data_edges": [
+          8,
+          9
+        ],
+        "depends_on": [
+          18,
+          19,
+          20,
+          21
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 4,
+        "reads": [
+          36,
+          37
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          38,
+          39
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          18,
+          19,
+          22
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 4,
+        "reads": [
+          38
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          40
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          18,
+          19,
+          22
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 4,
+        "reads": [
+          39
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          41
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          23,
+          24
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 5,
+        "reads": [
+          5
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          42
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          23,
+          24
+        ],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 5,
+        "reads": [
+          11
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          43
+        ]
+      },
+      {
+        "data_edges": [
+          10,
+          11
+        ],
+        "depends_on": [
+          23,
+          24,
+          25,
+          26
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 5,
+        "reads": [
+          42,
+          43
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          44,
+          45
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          23,
+          24,
+          27
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 5,
+        "reads": [
+          44
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          46
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          23,
+          24,
+          27
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 5,
+        "reads": [
+          45
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          47
+        ]
+      }
+    ],
+    "expanded_details_omitted": false,
+    "links": [
+      {
+        "bandwidth_bytes_per_ms": 0,
+        "cost_status": "uncalibrated",
+        "id": "host_to_l1",
+        "latency_ms": 0,
+        "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+        "resource": "npu.dma",
+        "source": "system_memory_bo",
+        "target": "aie_l1"
+      },
+      {
+        "bandwidth_bytes_per_ms": 0,
+        "cost_status": "uncalibrated",
+        "id": "l1_to_host",
+        "latency_ms": 0,
+        "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+        "resource": "npu.dma",
+        "source": "aie_l1",
+        "target": "system_memory_bo"
+      }
+    ],
+    "logical_region_count": 24,
+    "logical_regions": [
+      {
+        "offsets": [
+          0,
+          0,
+          0
+        ],
+        "sizes": [
+          8,
+          64,
+          2
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          0,
+          64,
+          0
+        ],
+        "sizes": [
+          8,
+          16,
+          2
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          8,
+          0,
+          0
+        ],
+        "sizes": [
+          8,
+          64,
+          2
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          8,
+          64,
+          0
+        ],
+        "sizes": [
+          8,
+          16,
+          2
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          16,
+          0,
+          0
+        ],
+        "sizes": [
+          1,
+          64,
+          2
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          16,
+          64,
+          0
+        ],
+        "sizes": [
+          1,
+          16,
+          2
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          0,
+          0,
+          0
+        ],
+        "sizes": [
+          8,
+          64,
+          2
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          0,
+          64,
+          0
+        ],
+        "sizes": [
+          8,
+          16,
+          2
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          8,
+          0,
+          0
+        ],
+        "sizes": [
+          8,
+          64,
+          2
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          8,
+          64,
+          0
+        ],
+        "sizes": [
+          8,
+          16,
+          2
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          16,
+          0,
+          0
+        ],
+        "sizes": [
+          1,
+          64,
+          2
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          16,
+          64,
+          0
+        ],
+        "sizes": [
+          1,
+          16,
+          2
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          0,
+          0
+        ],
+        "sizes": [
+          8,
+          64
+        ],
+        "storage": 2
+      },
+      {
+        "offsets": [
+          0,
+          64
+        ],
+        "sizes": [
+          8,
+          16
+        ],
+        "storage": 2
+      },
+      {
+        "offsets": [
+          8,
+          0
+        ],
+        "sizes": [
+          8,
+          64
+        ],
+        "storage": 2
+      },
+      {
+        "offsets": [
+          8,
+          64
+        ],
+        "sizes": [
+          8,
+          16
+        ],
+        "storage": 2
+      },
+      {
+        "offsets": [
+          16,
+          0
+        ],
+        "sizes": [
+          1,
+          64
+        ],
+        "storage": 2
+      },
+      {
+        "offsets": [
+          16,
+          64
+        ],
+        "sizes": [
+          1,
+          16
+        ],
+        "storage": 2
+      },
+      {
+        "offsets": [
+          0,
+          0
+        ],
+        "sizes": [
+          8,
+          64
+        ],
+        "storage": 3
+      },
+      {
+        "offsets": [
+          0,
+          64
+        ],
+        "sizes": [
+          8,
+          16
+        ],
+        "storage": 3
+      },
+      {
+        "offsets": [
+          8,
+          0
+        ],
+        "sizes": [
+          8,
+          64
+        ],
+        "storage": 3
+      },
+      {
+        "offsets": [
+          8,
+          64
+        ],
+        "sizes": [
+          8,
+          16
+        ],
+        "storage": 3
+      },
+      {
+        "offsets": [
+          16,
+          0
+        ],
+        "sizes": [
+          1,
+          64
+        ],
+        "storage": 3
+      },
+      {
+        "offsets": [
+          16,
+          64
+        ],
+        "sizes": [
+          1,
+          16
+        ],
+        "storage": 3
+      }
+    ],
+    "memories": [
+      {
+        "capacity_bytes": 9223372036854775807,
+        "id": "system_memory_bo"
+      },
+      {
+        "capacity_bytes": 24576,
+        "id": "aie_l1"
+      }
+    ],
+    "memory_lifetime_scope": "native physical pool phase intervals; copies have event validity",
+    "memory_peak_bytes": {},
+    "order_edge_count": 0,
+    "order_edges": [],
+    "resource_capacity_scope": "logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers",
+    "resources": [
+      {
+        "capacity": 1,
+        "device": "npu",
+        "id": "npu.compute",
+        "kind": "compute"
+      },
+      {
+        "capacity": 1,
+        "device": "npu",
+        "id": "npu.dma",
+        "kind": "transfer"
+      }
+    ],
+    "schedule": "phase barriers and copy producer/overwrite dependencies; ordinals are a topological witness, independent same-phase transfers may overlap",
+    "schema": "orbit.program.communication.v2",
+    "semantic_digest": "23f643399d8bda66bb090ee705b5e0a0",
+    "system_capacity_scope": "allocation accounting limit, not measured available host RAM",
+    "task_placements": [],
+    "transfer_bytes": 32640,
+    "version_count": 24,
+    "versions": [
+      {
+        "producer": -1,
+        "region": 0
+      },
+      {
+        "producer": -1,
+        "region": 1
+      },
+      {
+        "producer": -1,
+        "region": 2
+      },
+      {
+        "producer": -1,
+        "region": 3
+      },
+      {
+        "producer": -1,
+        "region": 4
+      },
+      {
+        "producer": -1,
+        "region": 5
+      },
+      {
+        "producer": -1,
+        "region": 6
+      },
+      {
+        "producer": -1,
+        "region": 7
+      },
+      {
+        "producer": -1,
+        "region": 8
+      },
+      {
+        "producer": -1,
+        "region": 9
+      },
+      {
+        "producer": -1,
+        "region": 10
+      },
+      {
+        "producer": -1,
+        "region": 11
+      },
+      {
+        "producer": 2,
+        "region": 12
+      },
+      {
+        "producer": 2,
+        "region": 18
+      },
+      {
+        "producer": 7,
+        "region": 13
+      },
+      {
+        "producer": 7,
+        "region": 19
+      },
+      {
+        "producer": 12,
+        "region": 14
+      },
+      {
+        "producer": 12,
+        "region": 20
+      },
+      {
+        "producer": 17,
+        "region": 15
+      },
+      {
+        "producer": 17,
+        "region": 21
+      },
+      {
+        "producer": 22,
+        "region": 16
+      },
+      {
+        "producer": 22,
+        "region": 22
+      },
+      {
+        "producer": 27,
+        "region": 17
+      },
+      {
+        "producer": 27,
+        "region": 23
+      }
+    ]
+  },
+  "program_mapping_choices": {
+    "data_organization": "phase-local",
+    "grouping": "task-shape-stages",
+    "panel_loop": -1,
+    "residency": "phase-local",
+    "reuse_loop": -1,
+    "storage": -1
+  },
+  "readonly_retentions": [],
+  "residency": [
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 4096,
+      "storage": "A",
+      "task": 0
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 4096,
+      "storage": "B",
+      "task": 0
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "Y",
+      "task": 0
+    },
+    {
+      "import_staging_bytes": 0,
+      "lifetime": "task source region; actual shape-specific hardware pool totals listed in hardware_stages",
+      "memory": "aie_l1",
+      "source_region_and_staging_bytes": 2048,
+      "storage": "Z",
+      "task": 0
+    }
+  ],
+  "resident_bytes": 12288,
+  "retained_regions": [],
+  "schema": "orbit.generic.mapping.v1",
+  "strategy": "serial-tiled",
+  "system_memory_accounting_scope": "system-memory BO tensor payload; excludes runner host array mirrors, references, runtime and compiler allocations",
+  "system_memory_peak_bytes": 32640,
+  "task_implementations": [
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 0
+    }
+  ],
+  "task_loop_orders": [
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 0
+    }
+  ],
+  "tasks": [
+    {
+      "core": 0,
+      "device": "npu",
+      "herd": 0,
+      "index": 0,
+      "task": "both"
+    }
+  ],
+  "theoretical_coefficients": null,
+  "tile_dma_ports_per_direction": 2,
+  "tile_sizes": [
+    8,
+    64
+  ],
+  "transfer_count": 24,
+  "transfer_summary": [
+    {
+      "bytes": 10880,
+      "count": 6,
+      "direction": "host_to_l1",
+      "storage": "A",
+      "storage_index": 0
+    },
+    {
+      "bytes": 10880,
+      "count": 6,
+      "direction": "host_to_l1",
+      "storage": "B",
+      "storage_index": 1
+    },
+    {
+      "bytes": 5440,
+      "count": 6,
+      "direction": "l1_to_host",
+      "storage": "Y",
+      "storage_index": 2
+    },
+    {
+      "bytes": 5440,
+      "count": 6,
+      "direction": "l1_to_host",
+      "storage": "Z",
+      "storage_index": 3
+    }
+  ],
+  "transfers": [
+    {
+      "bytes": 4096,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        0,
+        0
+      ],
+      "phase": 0,
+      "sizes": [
+        8,
+        64,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "A",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 4096,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        0,
+        0
+      ],
+      "phase": 0,
+      "sizes": [
+        8,
+        64,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "B",
+      "storage_index": 1,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 2048,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        0
+      ],
+      "phase": 0,
+      "sizes": [
+        8,
+        64
+      ],
+      "source": "aie_l1",
+      "storage": "Y",
+      "storage_index": 2,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 2048,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        0
+      ],
+      "phase": 0,
+      "sizes": [
+        8,
+        64
+      ],
+      "source": "aie_l1",
+      "storage": "Z",
+      "storage_index": 3,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 1024,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        64,
+        0
+      ],
+      "phase": 1,
+      "sizes": [
+        8,
+        16,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "A",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 1024,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        64,
+        0
+      ],
+      "phase": 1,
+      "sizes": [
+        8,
+        16,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "B",
+      "storage_index": 1,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 512,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        64
+      ],
+      "phase": 1,
+      "sizes": [
+        8,
+        16
+      ],
+      "source": "aie_l1",
+      "storage": "Y",
+      "storage_index": 2,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 512,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        0,
+        64
+      ],
+      "phase": 1,
+      "sizes": [
+        8,
+        16
+      ],
+      "source": "aie_l1",
+      "storage": "Z",
+      "storage_index": 3,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 4096,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        0,
+        0
+      ],
+      "phase": 2,
+      "sizes": [
+        8,
+        64,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "A",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 4096,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        0,
+        0
+      ],
+      "phase": 2,
+      "sizes": [
+        8,
+        64,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "B",
+      "storage_index": 1,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 2048,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        0
+      ],
+      "phase": 2,
+      "sizes": [
+        8,
+        64
+      ],
+      "source": "aie_l1",
+      "storage": "Y",
+      "storage_index": 2,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 2048,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        0
+      ],
+      "phase": 2,
+      "sizes": [
+        8,
+        64
+      ],
+      "source": "aie_l1",
+      "storage": "Z",
+      "storage_index": 3,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 1024,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        64,
+        0
+      ],
+      "phase": 3,
+      "sizes": [
+        8,
+        16,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "A",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 1024,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        64,
+        0
+      ],
+      "phase": 3,
+      "sizes": [
+        8,
+        16,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "B",
+      "storage_index": 1,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 512,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        64
+      ],
+      "phase": 3,
+      "sizes": [
+        8,
+        16
+      ],
+      "source": "aie_l1",
+      "storage": "Y",
+      "storage_index": 2,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 512,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        8,
+        64
+      ],
+      "phase": 3,
+      "sizes": [
+        8,
+        16
+      ],
+      "source": "aie_l1",
+      "storage": "Z",
+      "storage_index": 3,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 512,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        0,
+        0
+      ],
+      "phase": 4,
+      "sizes": [
+        1,
+        64,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "A",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 512,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        0,
+        0
+      ],
+      "phase": 4,
+      "sizes": [
+        1,
+        64,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "B",
+      "storage_index": 1,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 256,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        0
+      ],
+      "phase": 4,
+      "sizes": [
+        1,
+        64
+      ],
+      "source": "aie_l1",
+      "storage": "Y",
+      "storage_index": 2,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 256,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        0
+      ],
+      "phase": 4,
+      "sizes": [
+        1,
+        64
+      ],
+      "source": "aie_l1",
+      "storage": "Z",
+      "storage_index": 3,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 128,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        64,
+        0
+      ],
+      "phase": 5,
+      "sizes": [
+        1,
+        16,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "A",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 128,
+      "direction": "host_to_l1",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        64,
+        0
+      ],
+      "phase": 5,
+      "sizes": [
+        1,
+        16,
+        2
+      ],
+      "source": "host_system_bo",
+      "storage": "B",
+      "storage_index": 1,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 64,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        64
+      ],
+      "phase": 5,
+      "sizes": [
+        1,
+        16
+      ],
+      "source": "aie_l1",
+      "storage": "Y",
+      "storage_index": 2,
+      "target": "host_system_bo"
+    },
+    {
+      "bytes": 64,
+      "direction": "l1_to_host",
+      "extent": "rectangular_tile",
+      "offsets": [
+        16,
+        64
+      ],
+      "phase": 5,
+      "sizes": [
+        1,
+        16
+      ],
+      "source": "aie_l1",
+      "storage": "Z",
+      "storage_index": 3,
+      "target": "host_system_bo"
+    }
+  ]
+}

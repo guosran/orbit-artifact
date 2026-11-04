@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "results/taskflow/ffn-profiling-v9/cases-mixed-m1-gate-r3.json",
+    "--iterations",
+    "2",
+    "--warmups",
+    "1",
+    "--observer",
+    "detailed",
+    "--output",
+    "results/taskflow/ffn-profiling-v9/profile-mixed-m1-gate-r3"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-mixed-m1-gate-r3.json",
+  "cases_sha256": "e910de88921df322d5d68a52510047caff728c58516814996c4fd6046d2bc3f2",
+  "script_sha256": "79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "m1-gate-scalar": {
+      "elf_sha256": "b3ee479173467fa21d061023d78850e606b65bd423bc32c5102559fea8531b61",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m1/gate/hardware/abi.json",
+      "abi_sha256": "01e6dc0a77558cc15daeda588c669c43550e303692748065599829c679d33bf7",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.311843051109463,
+        "source_sha256": "bd27af671aa6165d855ccc963a12c92affa2e689794497a8cef10f8b6eed8212",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m1/gate/hardware/program.elf",
+        "elf_sha256": "b3ee479173467fa21d061023d78850e606b65bd423bc32c5102559fea8531b61",
+        "kernel_name": "main:gate",
+        "argument_count": 3
+      }
+    },
+    "m1-gate-mixed8": {
+      "elf_sha256": "17618dc75f9998aa3c9a41ad16f430e1919f5bd509a3ef5f7fd2d2bb8a7fd539",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-m1-gate-lanes8-r3/hardware/abi.json",
+      "abi_sha256": "01e6dc0a77558cc15daeda588c669c43550e303692748065599829c679d33bf7",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.27839764673262835,
+        "source_sha256": "b0ce640edfc0ea63f021f6ee0d62279b896af7967954f79fb8ca365dee4e26b0",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-m1-gate-lanes8-r3/hardware/program.elf",
+        "elf_sha256": "17618dc75f9998aa3c9a41ad16f430e1919f5bd509a3ef5f7fd2d2bb8a7fd539",
+        "kernel_name": "main:gate",
+        "argument_count": 3
+      }
+    }
+  }
+}

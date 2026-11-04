@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_trace_v9.py", line 108, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+                                             ^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_trace_v9.py", line 41, in main
+    abi=json.loads(a.abi.read_text());last=len(abi['buffers'])-1
+                   ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'results/taskflow/ffn-profiling-v9/trace-source/abi.json'

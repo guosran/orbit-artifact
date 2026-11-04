@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-mixed-controls-r1.json",
+    "--iterations",
+    "3",
+    "--warmups",
+    "2",
+    "--observer",
+    "detailed",
+    "--output",
+    "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/profile-mixed-controls-r1"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-mixed-controls-r1.json",
+  "cases_sha256": "dd59371be0ded9a51ff8a7028df5b79e33c4c959539a4cdbe432ad65cdcecd22",
+  "script_sha256": "79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "k-tail": {
+      "elf_sha256": "c366476d6397dd2a90b8a785a6022d981ab7ab0a4ae2f0dab71a9c0a9805670c",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-control-compiled-r1/k-tail/abi.json",
+      "abi_sha256": "7c97608dc2eb4922c7f8d657ae994813be724ebb6eac4bd23e6fe08429ee0e53",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.44661449268460274,
+        "source_sha256": "6d007ae7666712bbf62868ea4f0c79bb3d37d565869f9096a191d95fe0c0bf8a",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-control-compiled-r1/k-tail/hardware/program.elf",
+        "elf_sha256": "c366476d6397dd2a90b8a785a6022d981ab7ab0a4ae2f0dab71a9c0a9805670c",
+        "kernel_name": "main:gemm",
+        "argument_count": 3
+      }
+    },
+    "add-scale": {
+      "elf_sha256": "a896008aa6cf63ee629bc6647df3e8ff2b711d2749419c425506553df640c5f5",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-control-compiled-r1/add-scale/abi.json",
+      "abi_sha256": "afe7eae53a9038dffb2267087044c4bc97728a0b0bf1d9e7b8cb75aecca84389",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.3184278067201376,
+        "source_sha256": "15e1edda56c26fb358d7d7c23e9f56b19259ed03b31c030cf326c1a03e2a8e1d",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-control-compiled-r1/add-scale/hardware/program.elf",
+        "elf_sha256": "a896008aa6cf63ee629bc6647df3e8ff2b711d2749419c425506553df640c5f5",
+        "kernel_name": "main:add_scale",
+        "argument_count": 4
+      }
+    }
+  }
+}

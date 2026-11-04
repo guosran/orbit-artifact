@@ -1,0 +1,59 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "results/taskflow/ffn-profiling-v9/cases-residency-3seed.json",
+    "--output",
+    "results/taskflow/ffn-profiling-v9/profile-residency-detailed-r1",
+    "--iterations",
+    "10",
+    "--warmups",
+    "2"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-residency-3seed.json",
+  "cases_sha256": "be12d4fd0affb1ee55f90bf4d7acdc6ca546908c07dd5571dc0891b66296c775",
+  "script_sha256": "241cec415605f0817c73371774ba60c0abb4a4bbbc2553837b79c7e32ce8d266",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "n16-phase-local": {
+      "elf_sha256": "2fc4f086c70c7633d07f043134af09f2569d74561bc27fad6a55437892477638",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/data-organization-v8/acceptance-r1/hardware-comparison/n16-phase-local/abi.json",
+      "abi_sha256": "3d1b844cf4ec4c24ca68598c5827dd3f5dd05dfb19da69ddd5c20e1ff1b892c6",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 1.1167778209783137,
+        "source_sha256": "35d9adf778ebd76e65b08d62d24e2a1c8e3ab0400333dedac094433e98f2b197",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-data-v8/build/data-organization-v8/acceptance-r1/hardware-comparison/n16-phase-local/program.elf",
+        "elf_sha256": "2fc4f086c70c7633d07f043134af09f2569d74561bc27fad6a55437892477638",
+        "kernel_name": "main:gemm_scale",
+        "argument_count": 4
+      }
+    },
+    "n16-retain-across-users": {
+      "elf_sha256": "bb94f6b79b9eff256f21debde1d2fb218f1990c7e0191b808521820767ebd919",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/data-organization-v8/acceptance-r1/hardware-comparison/n16-retain-across-users/abi.json",
+      "abi_sha256": "3d1b844cf4ec4c24ca68598c5827dd3f5dd05dfb19da69ddd5c20e1ff1b892c6",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 1.2883212151937187,
+        "source_sha256": "4406147a71f614d67d5a964afe8e8d380b9944d19b7311c8af5d62956c16b1a1",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-data-v8/build/data-organization-v8/acceptance-r1/hardware-comparison/n16-retain-across-users/program.elf",
+        "elf_sha256": "bb94f6b79b9eff256f21debde1d2fb218f1990c7e0191b808521820767ebd919",
+        "kernel_name": "main:gemm_scale",
+        "argument_count": 4
+      }
+    }
+  }
+}

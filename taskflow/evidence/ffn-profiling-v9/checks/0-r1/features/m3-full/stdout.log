@@ -1,0 +1,585 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "c351a4444288f0c553c58249204a79ff2fa25752456b40a56e34f0641422f077",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "X",
+      "role": "input",
+      "shape": [
+        3,
+        2048
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "W_gate",
+      "role": "input",
+      "shape": [
+        2048,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "W_up",
+      "role": "input",
+      "shape": [
+        2048,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "W_down",
+      "role": "input",
+      "shape": [
+        11008,
+        2048
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Y",
+      "role": "output",
+      "shape": [
+        3,
+        2048
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "G",
+      "role": "temporary",
+      "shape": [
+        3,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "U",
+      "role": "temporary",
+      "shape": [
+        3,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "H",
+      "role": "temporary",
+      "shape": [
+        3,
+        11008
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": true,
+          "write_version": "gate.initialize:write:0"
+        }
+      ],
+      "dependencies": [],
+      "id": "gate.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "W_gate:initial"
+          ],
+          "region": [
+            [
+              0,
+              2048
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "W_gate",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "gate.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": true,
+          "write_version": "gate:write:3"
+        }
+      ],
+      "dependencies": [
+        "gate.initialize"
+      ],
+      "id": "gate",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": true,
+          "write_version": "up.initialize:write:0"
+        }
+      ],
+      "dependencies": [],
+      "id": "up.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "W_up:initial"
+          ],
+          "region": [
+            [
+              0,
+              2048
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "W_up",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "up.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": true,
+          "write_version": "up:write:3"
+        }
+      ],
+      "dependencies": [
+        "up.initialize"
+      ],
+      "id": "up",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "gate.initialize:write:0",
+            "gate:write:3"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "up.initialize:write:0",
+            "up:write:3"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "H",
+          "write": true,
+          "write_version": "swiglu:write:2"
+        }
+      ],
+      "dependencies": [
+        "gate",
+        "up"
+      ],
+      "id": "swiglu",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "down.initialize:write:0"
+        }
+      ],
+      "dependencies": [
+        "swiglu"
+      ],
+      "id": "down.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "swiglu:write:2"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "H",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "W_down:initial"
+          ],
+          "region": [
+            [
+              0,
+              11008
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "W_down",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "down.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "Y",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "down:write:3"
+        }
+      ],
+      "dependencies": [
+        "swiglu",
+        "down.initialize"
+      ],
+      "id": "down",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 3
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    }
+  ]
+}

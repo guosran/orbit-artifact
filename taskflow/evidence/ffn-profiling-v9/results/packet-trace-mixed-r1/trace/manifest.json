@@ -1,0 +1,31 @@
+{
+  "capacity_bytes": 1048576,
+  "completeness": {
+    "reason": "finite trace windows; no hardware overflow counter; terminal active events may lack ends; no global complete-graph assertion",
+    "scope_markers": "ORBIT GEMM kernel does not emit INSTR_EVENT_0/1; configured event slots are not proof markers occurred",
+    "status": "partial"
+  },
+  "decoded_native_path": "trace.cycles.json",
+  "decoder": {
+    "api": "parse_trace",
+    "kwargs": {
+      "device_name": "orbit_segment"
+    },
+    "sha256": "eb5585169d807450f228c0cfa2a4443f811151a3969b0c7810353d7868ce0104"
+  },
+  "event_count": 156,
+  "expected_event_patterns": [
+    "INSTR_VECTOR",
+    "INSTR_LOCK_ACQUIRE_REQ",
+    "PORT_RUNNING"
+  ],
+  "native_timestamp_unit": "device_cycles",
+  "nonzero_words": 128,
+  "physical_mlir_path": "physical.mlir",
+  "raw_path": "trace.uint32.npy",
+  "schema": "orbit.hardware.trace-evidence.v1",
+  "viewer": {
+    "axis": "cycles, unit-display surrogate only; not calibrated time",
+    "path": "trace.perfetto.json"
+  }
+}

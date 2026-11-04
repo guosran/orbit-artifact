@@ -1,0 +1,115 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "5496f9ba1a8fe38eadebd16d72147359c4b0b92c4dc727e23658697b1b25bbb4",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "G",
+      "role": "input",
+      "shape": [
+        8,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "U",
+      "role": "input",
+      "shape": [
+        8,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "H",
+      "role": "output",
+      "shape": [
+        8,
+        11008
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "G:initial"
+          ],
+          "region": [
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "U:initial"
+          ],
+          "region": [
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "H",
+          "write": true,
+          "write_version": "swiglu:write:2"
+        }
+      ],
+      "dependencies": [],
+      "id": "swiglu",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 8
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    }
+  ]
+}

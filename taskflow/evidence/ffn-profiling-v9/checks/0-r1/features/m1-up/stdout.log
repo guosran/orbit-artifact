@@ -1,0 +1,178 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "e72afc7d2bc9f8c73d414daf9b322cc4cf374b5d156267f57a4dc154082c9dce",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "X",
+      "role": "input",
+      "shape": [
+        1,
+        2048
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "W_up",
+      "role": "input",
+      "shape": [
+        2048,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "U",
+      "role": "output",
+      "shape": [
+        1,
+        11008
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": true,
+          "write_version": "up.initialize:write:0"
+        }
+      ],
+      "dependencies": [],
+      "id": "up.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 1
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "W_up:initial"
+          ],
+          "region": [
+            [
+              0,
+              2048
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "W_up",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "up.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "U",
+          "write": true,
+          "write_version": "up:write:3"
+        }
+      ],
+      "dependencies": [
+        "up.initialize"
+      ],
+      "id": "up",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 1
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        }
+      ]
+    }
+  ]
+}

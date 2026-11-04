@@ -1,0 +1,661 @@
+{
+  "status": "passed-existing-independent-audit-reused",
+  "full_outputs_checked": 3,
+  "compiler": {
+    "path": "/home/shiran/project/orbit/build-air/tools/taskflow-opt/taskflow-opt",
+    "sha256": "3e041bf53ebb3747e347b251dfc431af1a9f7ea95c6cf9ec74dd613fba68945c",
+    "manifest_sha256": "55b5ba65ce51b58cead808ed83445c3faa1bf5a1974c5b4a48b322b021a91791",
+    "command": [
+      "build-air/tools/taskflow-opt/taskflow-opt",
+      "/home/shiran/project/aie-toy/results/orbit-direct-air-v7/fixtures/ffn-m128-long/source.mlir",
+      "--air-distribute-initialization",
+      "--tile-m=8",
+      "--tile-n=64",
+      "--tile-k=64",
+      "--program-partition=8",
+      "--air-approximate-exp",
+      "--lower-program-to-air=build/direct-air-v7/partition-m128-r1"
+    ]
+  },
+  "elf_sha256": "43cf768bb42cbe8fcec0166efbfc8b7f80640988a9f74a03694da369183dc71b",
+  "compile_seconds": 0.4431106550619006,
+  "seeds": [
+    {
+      "seed": "seed-0",
+      "load_ms": 145.161035,
+      "wall_ms": 581584.170433,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 3.827614000000001,
+        "actual_xrt_start": 0.348661,
+        "actual_xrt_wait": 581503.2910829999,
+        "actual_bo_sync_from_device": 0.3989289999999999
+      },
+      "non_api_residual_ms": 76.3041460000677,
+      "between_calls_residual_ms": 11.765413999906741,
+      "MACs": 8657043456,
+      "FLOPs": 17314086912,
+      "GFLOP_per_second": 0.029770560809984477
+    },
+    {
+      "seed": "seed-1",
+      "load_ms": 14.581812,
+      "wall_ms": 581617.078537,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 2.677422,
+        "actual_xrt_start": 0.33856099999999995,
+        "actual_xrt_wait": 581527.4499000001,
+        "actual_bo_sync_from_device": 0.41598099999999993
+      },
+      "non_api_residual_ms": 86.19667299988214,
+      "between_calls_residual_ms": 15.028810000047088,
+      "MACs": 8657043456,
+      "FLOPs": 17314086912,
+      "GFLOP_per_second": 0.029768876380920357
+    },
+    {
+      "seed": "seed-2",
+      "load_ms": 15.142697,
+      "wall_ms": 581599.10511,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 2.6967940000000006,
+        "actual_xrt_start": 0.34784699999999996,
+        "actual_xrt_wait": 581510.2889169999,
+        "actual_bo_sync_from_device": 0.393151
+      },
+      "non_api_residual_ms": 85.37840100005269,
+      "between_calls_residual_ms": 14.76776499999687,
+      "MACs": 8657043456,
+      "FLOPs": 17314086912,
+      "GFLOP_per_second": 0.02976979634231955
+    }
+  ],
+  "calls": [
+    {
+      "seed": "seed-0",
+      "index": 0,
+      "wall_ms": 36405.56734,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 3.6371390000000003,
+        "actual_xrt_start": 0.038609,
+        "actual_xrt_wait": 36344.176603,
+        "actual_bo_sync_from_device": 0.024289
+      },
+      "non_api_residual_ms": 57.6906999999992
+    },
+    {
+      "seed": "seed-0",
+      "index": 1,
+      "wall_ms": 36340.963413,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.014889,
+        "actual_xrt_start": 0.016339,
+        "actual_xrt_wait": 36340.474945,
+        "actual_bo_sync_from_device": 0.022119
+      },
+      "non_api_residual_ms": 0.4351209999949788
+    },
+    {
+      "seed": "seed-0",
+      "index": 2,
+      "wall_ms": 36341.986842,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00749,
+        "actual_xrt_start": 0.01634,
+        "actual_xrt_wait": 36341.542762,
+        "actual_bo_sync_from_device": 0.021779
+      },
+      "non_api_residual_ms": 0.398471000000427
+    },
+    {
+      "seed": "seed-0",
+      "index": 3,
+      "wall_ms": 36341.943998,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.009809,
+        "actual_xrt_start": 0.016269,
+        "actual_xrt_wait": 36341.512279,
+        "actual_bo_sync_from_device": 0.02357
+      },
+      "non_api_residual_ms": 0.3820709999999963
+    },
+    {
+      "seed": "seed-0",
+      "index": 4,
+      "wall_ms": 36345.657758,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00906,
+        "actual_xrt_start": 0.034589,
+        "actual_xrt_wait": 36345.121651,
+        "actual_bo_sync_from_device": 0.025799
+      },
+      "non_api_residual_ms": 0.4666589999978896
+    },
+    {
+      "seed": "seed-0",
+      "index": 5,
+      "wall_ms": 36345.909398,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00932,
+        "actual_xrt_start": 0.01779,
+        "actual_xrt_wait": 36345.42169,
+        "actual_bo_sync_from_device": 0.024319
+      },
+      "non_api_residual_ms": 0.4362790000013774
+    },
+    {
+      "seed": "seed-0",
+      "index": 6,
+      "wall_ms": 36344.816465,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01039,
+        "actual_xrt_start": 0.02149,
+        "actual_xrt_wait": 36344.344816,
+        "actual_bo_sync_from_device": 0.02469
+      },
+      "non_api_residual_ms": 0.41507900000578957
+    },
+    {
+      "seed": "seed-0",
+      "index": 7,
+      "wall_ms": 36344.532608,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.010499999999999999,
+        "actual_xrt_start": 0.019589,
+        "actual_xrt_wait": 36344.07584,
+        "actual_bo_sync_from_device": 0.02297
+      },
+      "non_api_residual_ms": 0.4037090000056196
+    },
+    {
+      "seed": "seed-0",
+      "index": 8,
+      "wall_ms": 36346.540221,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.034579,
+        "actual_xrt_start": 0.026719,
+        "actual_xrt_wait": 36345.739221,
+        "actual_bo_sync_from_device": 0.037659
+      },
+      "non_api_residual_ms": 0.7020429999975022
+    },
+    {
+      "seed": "seed-0",
+      "index": 9,
+      "wall_ms": 36344.180166,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00874,
+        "actual_xrt_start": 0.017739,
+        "actual_xrt_wait": 36343.690379,
+        "actual_bo_sync_from_device": 0.022989
+      },
+      "non_api_residual_ms": 0.44031900000118185
+    },
+    {
+      "seed": "seed-0",
+      "index": 10,
+      "wall_ms": 36345.076841,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00821,
+        "actual_xrt_start": 0.01711,
+        "actual_xrt_wait": 36344.627282,
+        "actual_bo_sync_from_device": 0.024429
+      },
+      "non_api_residual_ms": 0.399810000002617
+    },
+    {
+      "seed": "seed-0",
+      "index": 11,
+      "wall_ms": 36345.513896,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.012559999999999998,
+        "actual_xrt_start": 0.018619,
+        "actual_xrt_wait": 36345.012609,
+        "actual_bo_sync_from_device": 0.024989
+      },
+      "non_api_residual_ms": 0.44511899999633897
+    },
+    {
+      "seed": "seed-0",
+      "index": 12,
+      "wall_ms": 36345.212898,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.010239,
+        "actual_xrt_start": 0.01916,
+        "actual_xrt_wait": 36344.682821,
+        "actual_bo_sync_from_device": 0.027489
+      },
+      "non_api_residual_ms": 0.473188999996637
+    },
+    {
+      "seed": "seed-0",
+      "index": 13,
+      "wall_ms": 36342.005526,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00871,
+        "actual_xrt_start": 0.01972,
+        "actual_xrt_wait": 36341.523348,
+        "actual_bo_sync_from_device": 0.02334
+      },
+      "non_api_residual_ms": 0.43040800000017043
+    },
+    {
+      "seed": "seed-0",
+      "index": 14,
+      "wall_ms": 36345.786014,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.025289,
+        "actual_xrt_start": 0.029819,
+        "actual_xrt_wait": 36345.1406,
+        "actual_bo_sync_from_device": 0.02437
+      },
+      "non_api_residual_ms": 0.5659359999990556
+    },
+    {
+      "seed": "seed-0",
+      "index": 15,
+      "wall_ms": 36346.711635,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01069,
+        "actual_xrt_start": 0.01876,
+        "actual_xrt_wait": 36346.204237,
+        "actual_bo_sync_from_device": 0.024129
+      },
+      "non_api_residual_ms": 0.45381900000211317
+    },
+    {
+      "seed": "seed-1",
+      "index": 0,
+      "wall_ms": 36412.344536,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 2.495358,
+        "actual_xrt_start": 0.028,
+        "actual_xrt_wait": 36345.724196,
+        "actual_bo_sync_from_device": 0.023339
+      },
+      "non_api_residual_ms": 64.07364299999608
+    },
+    {
+      "seed": "seed-1",
+      "index": 1,
+      "wall_ms": 36344.721044,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.009309,
+        "actual_xrt_start": 0.016749,
+        "actual_xrt_wait": 36344.272655,
+        "actual_bo_sync_from_device": 0.02429
+      },
+      "non_api_residual_ms": 0.3980410000003758
+    },
+    {
+      "seed": "seed-1",
+      "index": 2,
+      "wall_ms": 36346.579528,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.0103,
+        "actual_xrt_start": 0.01963,
+        "actual_xrt_wait": 36346.010332,
+        "actual_bo_sync_from_device": 0.02322
+      },
+      "non_api_residual_ms": 0.5160460000042804
+    },
+    {
+      "seed": "seed-1",
+      "index": 3,
+      "wall_ms": 36347.339166,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.011749,
+        "actual_xrt_start": 0.018409,
+        "actual_xrt_wait": 36346.749122,
+        "actual_bo_sync_from_device": 0.041179
+      },
+      "non_api_residual_ms": 0.5187069999956293
+    },
+    {
+      "seed": "seed-1",
+      "index": 4,
+      "wall_ms": 36347.013128,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.009819999999999999,
+        "actual_xrt_start": 0.020739,
+        "actual_xrt_wait": 36346.450343,
+        "actual_bo_sync_from_device": 0.023939
+      },
+      "non_api_residual_ms": 0.5082870000042021
+    },
+    {
+      "seed": "seed-1",
+      "index": 5,
+      "wall_ms": 36347.371807,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.012919,
+        "actual_xrt_start": 0.01924,
+        "actual_xrt_wait": 36346.877209,
+        "actual_bo_sync_from_device": 0.025929
+      },
+      "non_api_residual_ms": 0.4365100000068196
+    },
+    {
+      "seed": "seed-1",
+      "index": 6,
+      "wall_ms": 36347.363596,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.010728999999999999,
+        "actual_xrt_start": 0.01838,
+        "actual_xrt_wait": 36346.832339,
+        "actual_bo_sync_from_device": 0.029579
+      },
+      "non_api_residual_ms": 0.47256900000502355
+    },
+    {
+      "seed": "seed-1",
+      "index": 7,
+      "wall_ms": 36346.332584,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.012299999999999998,
+        "actual_xrt_start": 0.026499,
+        "actual_xrt_wait": 36345.826268,
+        "actual_bo_sync_from_device": 0.025739
+      },
+      "non_api_residual_ms": 0.44177800000761636
+    },
+    {
+      "seed": "seed-1",
+      "index": 8,
+      "wall_ms": 36346.355718,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01167,
+        "actual_xrt_start": 0.019989,
+        "actual_xrt_wait": 36345.794912,
+        "actual_bo_sync_from_device": 0.029759
+      },
+      "non_api_residual_ms": 0.4993880000038189
+    },
+    {
+      "seed": "seed-1",
+      "index": 9,
+      "wall_ms": 36346.760972,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01439,
+        "actual_xrt_start": 0.02242,
+        "actual_xrt_wait": 36346.154218,
+        "actual_bo_sync_from_device": 0.02368
+      },
+      "non_api_residual_ms": 0.5462639999896055
+    },
+    {
+      "seed": "seed-1",
+      "index": 10,
+      "wall_ms": 36347.170747,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.011859,
+        "actual_xrt_start": 0.01973,
+        "actual_xrt_wait": 36346.679779,
+        "actual_bo_sync_from_device": 0.023549
+      },
+      "non_api_residual_ms": 0.435829999994894
+    },
+    {
+      "seed": "seed-1",
+      "index": 11,
+      "wall_ms": 36345.62681,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01181,
+        "actual_xrt_start": 0.020879,
+        "actual_xrt_wait": 36345.102613,
+        "actual_bo_sync_from_device": 0.02352
+      },
+      "non_api_residual_ms": 0.46798799999669427
+    },
+    {
+      "seed": "seed-1",
+      "index": 12,
+      "wall_ms": 36345.382589,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.02214,
+        "actual_xrt_start": 0.027039,
+        "actual_xrt_wait": 36344.787764,
+        "actual_bo_sync_from_device": 0.02525
+      },
+      "non_api_residual_ms": 0.5203959999998915
+    },
+    {
+      "seed": "seed-1",
+      "index": 13,
+      "wall_ms": 36342.421874,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00947,
+        "actual_xrt_start": 0.02069,
+        "actual_xrt_wait": 36341.958076,
+        "actual_bo_sync_from_device": 0.023299
+      },
+      "non_api_residual_ms": 0.4103389999945648
+    },
+    {
+      "seed": "seed-1",
+      "index": 14,
+      "wall_ms": 36344.129569,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01173,
+        "actual_xrt_start": 0.020099,
+        "actual_xrt_wait": 36343.564293,
+        "actual_bo_sync_from_device": 0.02558
+      },
+      "non_api_residual_ms": 0.5078669999929843
+    },
+    {
+      "seed": "seed-1",
+      "index": 15,
+      "wall_ms": 36345.136059,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.011869000000000001,
+        "actual_xrt_start": 0.020069,
+        "actual_xrt_wait": 36344.665781,
+        "actual_bo_sync_from_device": 0.02413
+      },
+      "non_api_residual_ms": 0.41420999999536434
+    },
+    {
+      "seed": "seed-2",
+      "index": 0,
+      "wall_ms": 36409.760104,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 2.5061180000000003,
+        "actual_xrt_start": 0.029379,
+        "actual_xrt_wait": 36343.632186,
+        "actual_bo_sync_from_device": 0.023749
+      },
+      "non_api_residual_ms": 63.56867200000124
+    },
+    {
+      "seed": "seed-2",
+      "index": 1,
+      "wall_ms": 36346.687467,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00933,
+        "actual_xrt_start": 0.01809,
+        "actual_xrt_wait": 36346.236588,
+        "actual_bo_sync_from_device": 0.02227
+      },
+      "non_api_residual_ms": 0.40118900000379654
+    },
+    {
+      "seed": "seed-2",
+      "index": 2,
+      "wall_ms": 36345.232342,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01244,
+        "actual_xrt_start": 0.018289,
+        "actual_xrt_wait": 36344.786733,
+        "actual_bo_sync_from_device": 0.02422
+      },
+      "non_api_residual_ms": 0.3906600000045728
+    },
+    {
+      "seed": "seed-2",
+      "index": 3,
+      "wall_ms": 36345.899794,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01048,
+        "actual_xrt_start": 0.02081,
+        "actual_xrt_wait": 36345.439355,
+        "actual_bo_sync_from_device": 0.02388
+      },
+      "non_api_residual_ms": 0.4052689999953145
+    },
+    {
+      "seed": "seed-2",
+      "index": 4,
+      "wall_ms": 36347.174801,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01223,
+        "actual_xrt_start": 0.02042,
+        "actual_xrt_wait": 36346.688982,
+        "actual_bo_sync_from_device": 0.023489
+      },
+      "non_api_residual_ms": 0.42968000000109896
+    },
+    {
+      "seed": "seed-2",
+      "index": 5,
+      "wall_ms": 36344.379274,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00992,
+        "actual_xrt_start": 0.02096,
+        "actual_xrt_wait": 36343.867405,
+        "actual_bo_sync_from_device": 0.025129
+      },
+      "non_api_residual_ms": 0.4558600000018487
+    },
+    {
+      "seed": "seed-2",
+      "index": 6,
+      "wall_ms": 36343.850863,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01264,
+        "actual_xrt_start": 0.01835,
+        "actual_xrt_wait": 36343.354975,
+        "actual_bo_sync_from_device": 0.024509
+      },
+      "non_api_residual_ms": 0.4403889999957755
+    },
+    {
+      "seed": "seed-2",
+      "index": 7,
+      "wall_ms": 36343.632498,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01259,
+        "actual_xrt_start": 0.02725,
+        "actual_xrt_wait": 36342.987164,
+        "actual_bo_sync_from_device": 0.0242
+      },
+      "non_api_residual_ms": 0.581294000003254
+    },
+    {
+      "seed": "seed-2",
+      "index": 8,
+      "wall_ms": 36346.742788,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.00779,
+        "actual_xrt_start": 0.01822,
+        "actual_xrt_wait": 36346.297659,
+        "actual_bo_sync_from_device": 0.023449
+      },
+      "non_api_residual_ms": 0.39566999999806285
+    },
+    {
+      "seed": "seed-2",
+      "index": 9,
+      "wall_ms": 36334.197038,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01004,
+        "actual_xrt_start": 0.01952,
+        "actual_xrt_wait": 36333.572493,
+        "actual_bo_sync_from_device": 0.03003
+      },
+      "non_api_residual_ms": 0.5649550000016461
+    },
+    {
+      "seed": "seed-2",
+      "index": 10,
+      "wall_ms": 36346.214266,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.019688999999999998,
+        "actual_xrt_start": 0.02137,
+        "actual_xrt_wait": 36345.637039,
+        "actual_bo_sync_from_device": 0.023839
+      },
+      "non_api_residual_ms": 0.5123290000046836
+    },
+    {
+      "seed": "seed-2",
+      "index": 11,
+      "wall_ms": 36343.361295,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01009,
+        "actual_xrt_start": 0.02001,
+        "actual_xrt_wait": 36342.781359,
+        "actual_bo_sync_from_device": 0.023999
+      },
+      "non_api_residual_ms": 0.5258370000010473
+    },
+    {
+      "seed": "seed-2",
+      "index": 12,
+      "wall_ms": 36346.752916,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.021239,
+        "actual_xrt_start": 0.02815,
+        "actual_xrt_wait": 36346.17244,
+        "actual_bo_sync_from_device": 0.02519
+      },
+      "non_api_residual_ms": 0.505896999995457
+    },
+    {
+      "seed": "seed-2",
+      "index": 13,
+      "wall_ms": 36347.241941,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.01005,
+        "actual_xrt_start": 0.020149,
+        "actual_xrt_wait": 36346.757373,
+        "actual_bo_sync_from_device": 0.025239
+      },
+      "non_api_residual_ms": 0.42912999999680324
+    },
+    {
+      "seed": "seed-2",
+      "index": 14,
+      "wall_ms": 36347.58709,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.021929,
+        "actual_xrt_start": 0.0274,
+        "actual_xrt_wait": 36346.942236,
+        "actual_bo_sync_from_device": 0.0248
+      },
+      "non_api_residual_ms": 0.5707249999977648
+    },
+    {
+      "seed": "seed-2",
+      "index": 15,
+      "wall_ms": 36345.622868,
+      "observed_spans_ms": {
+        "actual_bo_sync_to_device": 0.010218999999999999,
+        "actual_xrt_start": 0.01948,
+        "actual_xrt_wait": 36345.13493,
+        "actual_bo_sync_from_device": 0.025159
+      },
+      "non_api_residual_ms": 0.43307999999524327
+    }
+  ],
+  "m8_call_wall_ms": {
+    "n": 48,
+    "min": 36334.197038,
+    "q25": 36344.4942745,
+    "median": 36345.721886,
+    "mean": 36349.14150189583,
+    "q75": 36346.754929999996,
+    "max": 36412.344536,
+    "sample_std": 15.858521302921867
+  },
+  "boundary": "original full program wall includes16 calls+per-call checkpoint/parts writes; wait observer starts before its wait-in-progress checkpoint, so wait is not pure kernel time; no activation FLOPs counted"
+}

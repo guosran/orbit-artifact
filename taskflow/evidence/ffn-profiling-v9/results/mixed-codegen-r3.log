@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit/test/TaskflowAIR/mixed_f32_v9.py", line 170, in <module>
+    run('pointwise-add-scale', text=(root/'test/TaskflowAIR/fixtures/add-scale.mlir').read_text(), reduction=False)
+  File "/home/shiran/project/orbit/test/TaskflowAIR/mixed_f32_v9.py", line 102, in run
+    assert (r.returncode == 0) == expect, (name, r.stderr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('pointwise-add-scale', 'taskflow-opt: scalar-product-vector-add-f32 requires every spatial tile extent divisible by lanes\n')

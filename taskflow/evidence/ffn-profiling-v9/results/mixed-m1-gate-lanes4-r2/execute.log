@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_execute.py", line 204, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+                                             ^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_execute.py", line 165, in main
+    artifact=compile_air(a.air.resolve(), out, a.bf16_emulation, a.stack_size, a.omit_ping_pong_transform)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_execute.py", line 61, in compile_air
+    raise RuntimeError('AIR compilation failed; see ' + str(out / 'compile.log'))
+RuntimeError: AIR compilation failed; see /home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-m1-gate-lanes4-r2/hardware/compile.log

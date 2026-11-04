@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit/test/TaskflowAIR/mixed_f32_v9.py", line 96, in <module>
+    directory = run('mul-lanes'+str(lanes), lanes=lanes)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit/test/TaskflowAIR/mixed_f32_v9.py", line 38, in run
+    assert (r.returncode == 0) == expect, (name, r.stderr)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('mul-lanes4', 'loc("-":13:18): error: \'func.call\' op \'__mulsf3\' does not reference a valid function\ntaskflow-opt: direct AIR standard affine-to-scf lowering failed\n')

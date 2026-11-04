@@ -1,0 +1,137 @@
+{
+  "status": "completed-seeds-only summary",
+  "compile": {
+    "extent8": {
+      "aircc_subprocess_seconds": 0.4431106550619006,
+      "cache_state": "unknown; cache hits/misses not instrumented",
+      "source_sha256": "c6834f8414f4390df7c1be23246590d91689c9303e251748715b65ac0294be81",
+      "elf_sha256": "43cf768bb42cbe8fcec0166efbfc8b7f80640988a9f74a03694da369183dc71b"
+    }
+  },
+  "samples": [
+    {
+      "seed": "seed-0",
+      "repeat": 0,
+      "warmup": false,
+      "status": "passed",
+      "context_load_ms": 145.161035,
+      "complete_program_wall_ms": 581584.170433,
+      "observed_api_ms": {
+        "actual_bo_sync": 4.2265429999999995,
+        "actual_xrt_start": 0.348661,
+        "actual_xrt_wait": 581503.291083
+      },
+      "api_counts": {
+        "actual_bo_sync": 54,
+        "actual_xrt_start": 16,
+        "actual_xrt_wait": 16
+      },
+      "other_host_work_ms": 76.30414599995129,
+      "per_command_wall_ms": [
+        36405.56734,
+        36340.963413,
+        36341.986842,
+        36341.943998,
+        36345.657758,
+        36345.909398,
+        36344.816465,
+        36344.532608,
+        36346.540221,
+        36344.180166,
+        36345.076841,
+        36345.513896,
+        36345.212898,
+        36342.005526,
+        36345.786014,
+        36346.711635
+      ],
+      "bo_sync_to_device_ms": 3.827614,
+      "bo_sync_from_device_ms": 0.398929
+    },
+    {
+      "seed": "seed-1",
+      "repeat": 0,
+      "warmup": false,
+      "status": "passed",
+      "context_load_ms": 14.581812,
+      "complete_program_wall_ms": 581617.078537,
+      "observed_api_ms": {
+        "actual_bo_sync": 3.093403,
+        "actual_xrt_start": 0.338561,
+        "actual_xrt_wait": 581527.4499
+      },
+      "api_counts": {
+        "actual_bo_sync": 54,
+        "actual_xrt_start": 16,
+        "actual_xrt_wait": 16
+      },
+      "other_host_work_ms": 86.19667299999855,
+      "per_command_wall_ms": [
+        36412.344536,
+        36344.721044,
+        36346.579528,
+        36347.339166,
+        36347.013128,
+        36347.371807,
+        36347.363596,
+        36346.332584,
+        36346.355718,
+        36346.760972,
+        36347.170747,
+        36345.62681,
+        36345.382589,
+        36342.421874,
+        36344.129569,
+        36345.136059
+      ],
+      "bo_sync_to_device_ms": 2.677422,
+      "bo_sync_from_device_ms": 0.415981
+    },
+    {
+      "seed": "seed-2",
+      "repeat": 0,
+      "warmup": false,
+      "status": "passed",
+      "context_load_ms": 15.142697,
+      "complete_program_wall_ms": 581599.10511,
+      "observed_api_ms": {
+        "actual_bo_sync": 3.089945,
+        "actual_xrt_start": 0.347847,
+        "actual_xrt_wait": 581510.288917
+      },
+      "api_counts": {
+        "actual_bo_sync": 54,
+        "actual_xrt_start": 16,
+        "actual_xrt_wait": 16
+      },
+      "other_host_work_ms": 85.37840099993628,
+      "per_command_wall_ms": [
+        36409.760104,
+        36346.687467,
+        36345.232342,
+        36345.899794,
+        36347.174801,
+        36344.379274,
+        36343.850863,
+        36343.632498,
+        36346.742788,
+        36334.197038,
+        36346.214266,
+        36343.361295,
+        36346.752916,
+        36347.241941,
+        36347.58709,
+        36345.622868
+      ],
+      "bo_sync_to_device_ms": 2.696794,
+      "bo_sync_from_device_ms": 0.393151
+    }
+  ],
+  "interpretation": {
+    "wait": "Observed host span includes wait checkpoint serialization, XRT runtime scheduling/waiting/polling; not pure kernel time or calibrated hardware clock cycles.",
+    "sync": "Observed XRT BO synchronization API spans; not independently measured DDR traffic.",
+    "other_host_work": "Full wall less disjoint observed API spans: allocations/staging/slice copies/argument preparation/readback copies/output assembly/evidence IO and other host overhead; not a pure transfer measure.",
+    "load": "Per-seed template context creation/loading, excluded from complete program wall.",
+    "wall": "Includes all compiler-issued commands, host slice/staging/sync/copy/assembly and per-command evidence IO; excludes context loading, full input/reference loading, final numerical checking/full-output serialization."
+  }
+}

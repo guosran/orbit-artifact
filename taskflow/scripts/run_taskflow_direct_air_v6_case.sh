@@ -14,6 +14,7 @@ DIAGNOSTIC=0
 IMPLEMENTATION=
 VECTOR_LANES=
 RUNTIME_AUDIT=0
+COMPILE_ONLY=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --input) INPUT=$(realpath "$2"); shift 2;;
@@ -22,6 +23,7 @@ while [[ $# -gt 0 ]]; do
     --target-config) CONFIG=$(realpath "$2"); shift 2;;
     --approx-exp) APPROX=1; shift;;
     --diagnostic) DIAGNOSTIC=1; shift;;
+    --compile-only) COMPILE_ONLY=1; shift;;
     --runtime-transfer-audit) RUNTIME_AUDIT=1; shift;;
     --implementation) IMPLEMENTATION=$2; shift 2;;
     --vector-lanes) VECTOR_LANES=$2; shift 2;;
@@ -94,6 +96,7 @@ s=facts['storages'];s=[x for x in s if x['role']!='temporary']+([x for x in s if
 (out/'abi.json').write_text(json.dumps(dict(buffers=[dict(name=x['id'],shape=x['shape'],dtype=x['dtype'],role=x['role']) for x in s],outputs=[x['id'] for x in s if x['role']=='output']),indent=2)+'\n')
 PY
 ARGS=()
+[[ "$COMPILE_ONLY" == 0 ]] || ARGS+=(--compile-only)
 [[ "$RUNTIME_AUDIT" == 0 ]] || ARGS+=(--preflight-runtime-plan "$OUTPUT/plan.json")
 if [[ -f "$OUTPUT/channel-pipeline-hashes.json" ]]; then
   ARGS+=(--preflight-channel-plan "$OUTPUT/plan.json")
@@ -110,6 +113,7 @@ for SEED in "${SEEDS[@]}"; do ARGS+=(--inputs "$INPUT/inputs-$SEED.npz" --refere
 python scripts/taskflow_direct_air_execute.py --air "$AIR_INPUT" \
   --abi "$OUTPUT/abi.json" "${ARGS[@]}" --output-dir "$OUTPUT/hardware" "${MEASURE[@]}" \
   > "$OUTPUT/execute.log" 2>&1
+if [[ "$COMPILE_ONLY" == 1 ]]; then exit 0; fi
 if [[ "$DIAGNOSTIC" == 0 ]]; then
   python "$(taskflow_test_path test/TaskflowAIR/audit_hardware.py)" "$OUTPUT/hardware" --output "$OUTPUT/audit.json"
 else

@@ -1,0 +1,9 @@
+# Retained r2 candidate static review
+
+This package is not accepted: its genuine M1 Gate run timed out. The earlier `mixed-code-audit-r1` result remains unchanged.
+
+`__mulsf3` is 832 bytes (148 disassembled instruction bundles). Baseline load address is 896; candidate address is 1024. All branch-relative assembly is identical. Seventeen assembly lines differ solely in absolute branch targets, including the call to integer support `__muldi3`; both targets move by +128. `__muldi3` is separately checked below in summary.json. Different linked helper bytes remain a manual review item; the verifier does not convert relocation-normalized agreement into exact byte equality or floating-point equivalence.
+
+Final optimized LLVM uses memory accumulation, not a vector phi: `%33 = load <4 x i64>, ptr %32` feeds shuffle/bitcast into `%70 = call <64 x float> @llvm.aie2p.ACC2048.accfloat.add.conf(..., i32 60)`, then `%74` (first eight lanes after extraction) is stored to the same `%32`. The eight products are eight scalar `__mulsf3` calls. No LLVM fastmath, vector multiply, FMA or BF16 occurs in that inspected optimized artifact. The target intrinsic is retained as evidence, not treated as an ordinary fadd proof without its configuration semantics.
+
+The surrounding address recurrence is incorrect for the source axes: `%18` iterates 0..63 and enters A and C row address calculations even though source M is one. Backend pre-vectorization PostOrder versus analysis PreOrder bound/shift indexing is the identified source of this mismatch. Thus recognizing a repeated load/add/store on one pointer does not establish the intended source K accumulation order. Source-loop identity and exact local index checks are required for a fresh package; this r2 package must not be reused as correctness or performance evidence.

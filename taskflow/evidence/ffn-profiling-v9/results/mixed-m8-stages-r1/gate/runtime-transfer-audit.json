@@ -1,0 +1,124 @@
+{
+  "status": "passed",
+  "scope": "Static final runtime BD lengths times task repeats, per ABI storage and transfer direction; per-stage checked transfer records when available, aggregate-only for older compact plans with only a global native summary; not measured traffic or proof of device progress.",
+  "source": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-m8-stages-r1/gate/hardware/air_project/npu.input.air.mlir",
+  "source_sha256": "b80a2d189f3505c627a8d5bf7ab19daaa42f324813123bb5fda429e9b724fae2",
+  "plan_sha256": "8ff54c98996c1d58544e9ca84dac2fe53eb0e96643d85d5937496d52bba4f90a",
+  "abi_sha256": "3b7ec76fac281d82aa7973036d7739ba33716ada12cb9a6835eb57992aa3dda9",
+  "audit_source_sha256": "2f714262708f8e0d54a52fa190ffac520b37981eabac62ca97149e9f36c85985",
+  "stages": [
+    {
+      "stage": 0,
+      "device": "orbit_segment",
+      "tasks": [
+        {
+          "argument": 2,
+          "storage": "G",
+          "direction": "l1_to_host",
+          "channel": "air_channel_2",
+          "bd_elements": 88064,
+          "repetitions": 1,
+          "bytes": 352256
+        },
+        {
+          "argument": 0,
+          "storage": "X",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 16384,
+          "repetitions": 43,
+          "bytes": 2818048
+        },
+        {
+          "argument": 0,
+          "storage": "X",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 16384,
+          "repetitions": 43,
+          "bytes": 2818048
+        },
+        {
+          "argument": 0,
+          "storage": "X",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 16384,
+          "repetitions": 43,
+          "bytes": 2818048
+        },
+        {
+          "argument": 0,
+          "storage": "X",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 16384,
+          "repetitions": 43,
+          "bytes": 2818048
+        },
+        {
+          "argument": 1,
+          "storage": "W_gate",
+          "direction": "host_to_l1",
+          "channel": "air_channel_1",
+          "bd_elements": 131072,
+          "repetitions": 43,
+          "bytes": 22544384
+        },
+        {
+          "argument": 1,
+          "storage": "W_gate",
+          "direction": "host_to_l1",
+          "channel": "air_channel_1",
+          "bd_elements": 131072,
+          "repetitions": 43,
+          "bytes": 22544384
+        },
+        {
+          "argument": 1,
+          "storage": "W_gate",
+          "direction": "host_to_l1",
+          "channel": "air_channel_1",
+          "bd_elements": 131072,
+          "repetitions": 43,
+          "bytes": 22544384
+        },
+        {
+          "argument": 1,
+          "storage": "W_gate",
+          "direction": "host_to_l1",
+          "channel": "air_channel_1",
+          "bd_elements": 131072,
+          "repetitions": 43,
+          "bytes": 22544384
+        }
+      ],
+      "comparisons": [
+        {
+          "storage": "G",
+          "direction": "l1_to_host",
+          "expected_bytes": 352256,
+          "actual_runtime_bytes": 352256,
+          "passed": true
+        },
+        {
+          "storage": "W_gate",
+          "direction": "host_to_l1",
+          "expected_bytes": 90177536,
+          "actual_runtime_bytes": 90177536,
+          "passed": true
+        },
+        {
+          "storage": "X",
+          "direction": "host_to_l1",
+          "expected_bytes": 11272192,
+          "actual_runtime_bytes": 11272192,
+          "passed": true
+        }
+      ],
+      "expected_scope": "per-stage-native-transfers"
+    }
+  ],
+  "aggregate_comparisons": [],
+  "errors": []
+}

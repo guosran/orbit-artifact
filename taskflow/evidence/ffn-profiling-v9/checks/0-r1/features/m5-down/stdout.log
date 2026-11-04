@@ -1,0 +1,178 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "27a2182817b4674caca711fbe59e55995758f0ee701a1816e1a5e06302794dd5",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "H",
+      "role": "input",
+      "shape": [
+        5,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "W_down",
+      "role": "input",
+      "shape": [
+        11008,
+        2048
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Y",
+      "role": "output",
+      "shape": [
+        5,
+        2048
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "down.initialize:write:0"
+        }
+      ],
+      "dependencies": [],
+      "id": "down.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 5
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "H:initial"
+          ],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "H",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "W_down:initial"
+          ],
+          "region": [
+            [
+              0,
+              11008
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "W_down",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "down.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "Y",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "down:write:3"
+        }
+      ],
+      "dependencies": [
+        "down.initialize"
+      ],
+      "id": "down",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 5
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    }
+  ]
+}

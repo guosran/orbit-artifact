@@ -1,0 +1,1183 @@
+{
+  "status": "passed",
+  "load_ms": {
+    "m1-gate-scalar": 10.969302,
+    "m1-gate-mixed8": 0.40761
+  },
+  "samples": [
+    {
+      "wall_start_ns": 2409268411588682,
+      "wall_ms": 1559.951657,
+      "checks": {
+        "G": {
+          "passed": true,
+          "finite": true,
+          "shape": [
+            1,
+            11008
+          ],
+          "max_abs": 5.960464477539062e-07,
+          "normalized_l2": 8.230743102895685e-07,
+          "max_relative_reference_at_least_1e_minus6": 0.004793441427974967,
+          "near_zero_max_abs": null
+        }
+      },
+      "numeric_check_start_ns": 2409269971543579,
+      "numeric_check_ms": 13.543758,
+      "events": [
+        {
+          "kind": "host_prepare",
+          "start_ns": 1700,
+          "end_ns": 25000,
+          "status": "passed",
+          "observer_record_ns": 900
+        },
+        {
+          "kind": "bo_allocate",
+          "start_ns": 44699,
+          "end_ns": 95658,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 950
+        },
+        {
+          "kind": "bo_allocate",
+          "start_ns": 99568,
+          "end_ns": 15872812,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 4059
+        },
+        {
+          "kind": "bo_allocate",
+          "start_ns": 15888991,
+          "end_ns": 15928540,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 410
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 15941710,
+          "end_ns": 15946640,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 490
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 15965999,
+          "end_ns": 15978989,
+          "status": "passed",
+          "buffer_index": 0,
+          "bytes": 8192,
+          "observer_record_ns": 900
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 15998048,
+          "end_ns": 16001498,
+          "status": "passed",
+          "buffer_index": 0,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 950
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 16003808,
+          "end_ns": 16004418,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 400
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 16008348,
+          "end_ns": 21223231,
+          "status": "passed",
+          "buffer_index": 1,
+          "bytes": 90177536,
+          "observer_record_ns": 5549
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 21251160,
+          "end_ns": 22038741,
+          "status": "passed",
+          "buffer_index": 1,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 780
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 22045290,
+          "end_ns": 22046870,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 460
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 22058290,
+          "end_ns": 22063920,
+          "status": "passed",
+          "buffer_index": 2,
+          "bytes": 44032,
+          "observer_record_ns": 750
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 22067200,
+          "end_ns": 22067990,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 390
+        },
+        {
+          "kind": "xrt_run_create",
+          "start_ns": 22070280,
+          "end_ns": 22156748,
+          "status": "passed",
+          "observer_record_ns": 470
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 22161848,
+          "end_ns": 22167837,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 410
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 22169147,
+          "end_ns": 22170567,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 340
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 22171497,
+          "end_ns": 22172377,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 410
+        },
+        {
+          "kind": "xrt_start",
+          "start_ns": 22174387,
+          "end_ns": 22198047,
+          "status": "passed",
+          "observer_record_ns": 330
+        },
+        {
+          "kind": "xrt_wait",
+          "start_ns": 22199607,
+          "end_ns": 1559732263,
+          "status": "passed",
+          "observer_record_ns": 7869
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 1559790971,
+          "end_ns": 1559799421,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "observer_record_ns": 3990
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 1559811821,
+          "end_ns": 1559815101,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 1649
+        },
+        {
+          "kind": "runner_run",
+          "start_ns": 28460,
+          "end_ns": 1559920718,
+          "status": "passed",
+          "observer_record_ns": 1090
+        },
+        {
+          "kind": "host_output_copy",
+          "start_ns": 1559925448,
+          "end_ns": 1559950367,
+          "status": "passed",
+          "observer_record_ns": 830
+        }
+      ],
+      "observer_record_ms": 0.034376,
+      "host_breakdown": {
+        "milliseconds": {
+          "host_prepare": 0.0233,
+          "bo_allocate": 15.863752,
+          "bo_map": 0.0104,
+          "numpy_copyto_in_runner": 5.233503000000001,
+          "bo_sync_to_device": 0.7918209999999999,
+          "xrt_run_create": 0.086468,
+          "xrt_set_arg": 0.008289000000000001,
+          "xrt_start": 0.02366,
+          "xrt_wait": 1537.532656,
+          "bo_sync_from_device": 0.00845,
+          "runner_run": 1559.892258,
+          "host_output_copy": 0.024919,
+          "runner_unseparated_residual_ms": 0.3332589999999982
+        },
+        "scope": "runner_run nests API and staging spans; residual includes view/validation/scratch fill and observer/runner gaps; sum leaves only"
+      },
+      "candidate": "m1-gate-scalar",
+      "repeat": 0,
+      "warmup": true
+    },
+    {
+      "wall_start_ns": 2409269985779450,
+      "wall_ms": 1466.172743,
+      "checks": {
+        "G": {
+          "passed": true,
+          "finite": true,
+          "shape": [
+            1,
+            11008
+          ],
+          "max_abs": 5.960464477539062e-07,
+          "normalized_l2": 8.230743102895685e-07,
+          "max_relative_reference_at_least_1e_minus6": 0.004793441427974967,
+          "near_zero_max_abs": null
+        }
+      },
+      "numeric_check_start_ns": 2409271451955043,
+      "numeric_check_ms": 6.178979,
+      "events": [
+        {
+          "kind": "host_prepare",
+          "start_ns": 1080,
+          "end_ns": 12900,
+          "status": "passed",
+          "observer_record_ns": 680
+        },
+        {
+          "kind": "bo_allocate",
+          "start_ns": 29170,
+          "end_ns": 110948,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 760
+        },
+        {
+          "kind": "bo_allocate",
+          "start_ns": 114628,
+          "end_ns": 26592309,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 6130
+        },
+        {
+          "kind": "bo_allocate",
+          "start_ns": 26615139,
+          "end_ns": 26674717,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 540
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 26689007,
+          "end_ns": 26693757,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 770
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 26714196,
+          "end_ns": 26725186,
+          "status": "passed",
+          "buffer_index": 0,
+          "bytes": 8192,
+          "observer_record_ns": 1020
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 26744525,
+          "end_ns": 26747265,
+          "status": "passed",
+          "buffer_index": 0,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 610
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 26749295,
+          "end_ns": 26749905,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 420
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 26753765,
+          "end_ns": 37281447,
+          "status": "passed",
+          "buffer_index": 1,
+          "bytes": 90177536,
+          "observer_record_ns": 7000
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 37316896,
+          "end_ns": 38092448,
+          "status": "passed",
+          "buffer_index": 1,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 910
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 38100447,
+          "end_ns": 38101957,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 480
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 38114987,
+          "end_ns": 38122897,
+          "status": "passed",
+          "buffer_index": 2,
+          "bytes": 44032,
+          "observer_record_ns": 650
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 38126067,
+          "end_ns": 38127447,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 630
+        },
+        {
+          "kind": "xrt_run_create",
+          "start_ns": 38131197,
+          "end_ns": 41265650,
+          "status": "passed",
+          "observer_record_ns": 470
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 41271660,
+          "end_ns": 41279240,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 500
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 41280500,
+          "end_ns": 41282659,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 370
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 41283829,
+          "end_ns": 41285159,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 450
+        },
+        {
+          "kind": "xrt_start",
+          "start_ns": 41286869,
+          "end_ns": 41318229,
+          "status": "passed",
+          "observer_record_ns": 440
+        },
+        {
+          "kind": "xrt_wait",
+          "start_ns": 41319699,
+          "end_ns": 1465990538,
+          "status": "passed",
+          "observer_record_ns": 7009
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 1466046726,
+          "end_ns": 1466053056,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "observer_record_ns": 2420
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 1466060896,
+          "end_ns": 1466063286,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 760
+        },
+        {
+          "kind": "runner_run",
+          "start_ns": 16170,
+          "end_ns": 1466145584,
+          "status": "passed",
+          "observer_record_ns": 880
+        },
+        {
+          "kind": "host_output_copy",
+          "start_ns": 1466149634,
+          "end_ns": 1466172153,
+          "status": "passed",
+          "observer_record_ns": 350
+        }
+      ],
+      "observer_record_ms": 0.034249,
+      "host_breakdown": {
+        "milliseconds": {
+          "host_prepare": 0.01182,
+          "bo_allocate": 26.619037,
+          "bo_map": 0.009260000000000001,
+          "numpy_copyto_in_runner": 10.546582,
+          "bo_sync_to_device": 0.779672,
+          "xrt_run_create": 3.134453,
+          "xrt_set_arg": 0.011068999999999999,
+          "xrt_start": 0.03136,
+          "xrt_wait": 1424.670839,
+          "bo_sync_from_device": 0.00633,
+          "runner_run": 1466.129414,
+          "host_output_copy": 0.022519,
+          "runner_unseparated_residual_ms": 0.32081200000015997
+        },
+        "scope": "runner_run nests API and staging spans; residual includes view/validation/scratch fill and observer/runner gaps; sum leaves only"
+      },
+      "candidate": "m1-gate-mixed8",
+      "repeat": 0,
+      "warmup": true
+    },
+    {
+      "wall_start_ns": 2409271459178666,
+      "wall_ms": 1424.267668,
+      "checks": {
+        "G": {
+          "passed": true,
+          "finite": true,
+          "shape": [
+            1,
+            11008
+          ],
+          "max_abs": 5.960464477539062e-07,
+          "normalized_l2": 8.230743102895685e-07,
+          "max_relative_reference_at_least_1e_minus6": 0.004793441427974967,
+          "near_zero_max_abs": null
+        }
+      },
+      "numeric_check_start_ns": 2409272883449424,
+      "numeric_check_ms": 12.643731,
+      "events": [
+        {
+          "kind": "host_prepare",
+          "start_ns": 950,
+          "end_ns": 17320,
+          "status": "passed",
+          "observer_record_ns": 990
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 38319,
+          "end_ns": 47489,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 820
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 58909,
+          "end_ns": 65399,
+          "status": "passed",
+          "buffer_index": 0,
+          "bytes": 8192,
+          "observer_record_ns": 929
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 80338,
+          "end_ns": 85338,
+          "status": "passed",
+          "buffer_index": 0,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 560
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 88258,
+          "end_ns": 89228,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 530
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 92958,
+          "end_ns": 95638,
+          "status": "passed",
+          "buffer_index": 2,
+          "bytes": 44032,
+          "observer_record_ns": 550
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 99508,
+          "end_ns": 100848,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 450
+        },
+        {
+          "kind": "xrt_run_create",
+          "start_ns": 103238,
+          "end_ns": 169966,
+          "status": "passed",
+          "observer_record_ns": 660
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 174376,
+          "end_ns": 182626,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 500
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 343892,
+          "end_ns": 347722,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 740
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 349762,
+          "end_ns": 351632,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 430
+        },
+        {
+          "kind": "xrt_start",
+          "start_ns": 353742,
+          "end_ns": 379401,
+          "status": "passed",
+          "observer_record_ns": 480
+        },
+        {
+          "kind": "xrt_wait",
+          "start_ns": 380721,
+          "end_ns": 1424099633,
+          "status": "passed",
+          "observer_record_ns": 6799
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 1424151301,
+          "end_ns": 1424157791,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "observer_record_ns": 2680
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 1424166061,
+          "end_ns": 1424168811,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 1040
+        },
+        {
+          "kind": "runner_run",
+          "start_ns": 20970,
+          "end_ns": 1424242229,
+          "status": "passed",
+          "observer_record_ns": 810
+        },
+        {
+          "kind": "host_output_copy",
+          "start_ns": 1424246069,
+          "end_ns": 1424266648,
+          "status": "passed",
+          "observer_record_ns": 740
+        }
+      ],
+      "observer_record_ms": 0.019708,
+      "host_breakdown": {
+        "milliseconds": {
+          "host_prepare": 0.01637,
+          "bo_map": 0.012889999999999999,
+          "numpy_copyto_in_runner": 0.009170000000000001,
+          "bo_sync_to_device": 0.00634,
+          "xrt_run_create": 0.066728,
+          "xrt_set_arg": 0.01395,
+          "xrt_start": 0.025659,
+          "xrt_wait": 1423.718912,
+          "bo_sync_from_device": 0.00649,
+          "runner_run": 1424.221259,
+          "host_output_copy": 0.020579,
+          "runner_unseparated_residual_ms": 0.3611199999998007
+        },
+        "scope": "runner_run nests API and staging spans; residual includes view/validation/scratch fill and observer/runner gaps; sum leaves only"
+      },
+      "candidate": "m1-gate-mixed8",
+      "repeat": 1,
+      "warmup": false
+    },
+    {
+      "wall_start_ns": 2409272897496390,
+      "wall_ms": 1536.85943,
+      "checks": {
+        "G": {
+          "passed": true,
+          "finite": true,
+          "shape": [
+            1,
+            11008
+          ],
+          "max_abs": 5.960464477539062e-07,
+          "normalized_l2": 8.230743102895685e-07,
+          "max_relative_reference_at_least_1e_minus6": 0.004793441427974967,
+          "near_zero_max_abs": null
+        }
+      },
+      "numeric_check_start_ns": 2409274434358060,
+      "numeric_check_ms": 23.806507,
+      "events": [
+        {
+          "kind": "host_prepare",
+          "start_ns": 1140,
+          "end_ns": 13860,
+          "status": "passed",
+          "observer_record_ns": 890
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 32819,
+          "end_ns": 36639,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 720
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 45459,
+          "end_ns": 49689,
+          "status": "passed",
+          "buffer_index": 0,
+          "bytes": 8192,
+          "observer_record_ns": 750
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 61789,
+          "end_ns": 65229,
+          "status": "passed",
+          "buffer_index": 0,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 490
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 67289,
+          "end_ns": 67969,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 450
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 70899,
+          "end_ns": 73548,
+          "status": "passed",
+          "buffer_index": 2,
+          "bytes": 44032,
+          "observer_record_ns": 510
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 77108,
+          "end_ns": 78158,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 450
+        },
+        {
+          "kind": "xrt_run_create",
+          "start_ns": 80918,
+          "end_ns": 127587,
+          "status": "passed",
+          "observer_record_ns": 380
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 131497,
+          "end_ns": 138567,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 430
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 139757,
+          "end_ns": 141947,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 370
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 142827,
+          "end_ns": 144017,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 310
+        },
+        {
+          "kind": "xrt_start",
+          "start_ns": 145807,
+          "end_ns": 196445,
+          "status": "passed",
+          "observer_record_ns": 360
+        },
+        {
+          "kind": "xrt_wait",
+          "start_ns": 197485,
+          "end_ns": 1536675135,
+          "status": "passed",
+          "observer_record_ns": 7839
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 1536734003,
+          "end_ns": 1536740773,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "observer_record_ns": 2530
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 1536748703,
+          "end_ns": 1536751123,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 890
+        },
+        {
+          "kind": "runner_run",
+          "start_ns": 17580,
+          "end_ns": 1536833451,
+          "status": "passed",
+          "observer_record_ns": 580
+        },
+        {
+          "kind": "host_output_copy",
+          "start_ns": 1536836981,
+          "end_ns": 1536858520,
+          "status": "passed",
+          "observer_record_ns": 670
+        }
+      ],
+      "observer_record_ms": 0.018619,
+      "host_breakdown": {
+        "milliseconds": {
+          "host_prepare": 0.01272,
+          "bo_map": 0.006920000000000001,
+          "numpy_copyto_in_runner": 0.006879,
+          "bo_sync_to_device": 0.00449,
+          "xrt_run_create": 0.046669,
+          "xrt_set_arg": 0.010450000000000001,
+          "xrt_start": 0.050638,
+          "xrt_wait": 1536.47765,
+          "bo_sync_from_device": 0.00677,
+          "runner_run": 1536.815871,
+          "host_output_copy": 0.021539,
+          "runner_unseparated_residual_ms": 0.2054049999999279
+        },
+        "scope": "runner_run nests API and staging spans; residual includes view/validation/scratch fill and observer/runner gaps; sum leaves only"
+      },
+      "candidate": "m1-gate-scalar",
+      "repeat": 1,
+      "warmup": false
+    },
+    {
+      "wall_start_ns": 2409274459385257,
+      "wall_ms": 1537.115203,
+      "checks": {
+        "G": {
+          "passed": true,
+          "finite": true,
+          "shape": [
+            1,
+            11008
+          ],
+          "max_abs": 5.960464477539062e-07,
+          "normalized_l2": 8.230743102895685e-07,
+          "max_relative_reference_at_least_1e_minus6": 0.004793441427974967,
+          "near_zero_max_abs": null
+        }
+      },
+      "numeric_check_start_ns": 2409275996502450,
+      "numeric_check_ms": 34.653181,
+      "events": [
+        {
+          "kind": "host_prepare",
+          "start_ns": 1170,
+          "end_ns": 15990,
+          "status": "passed",
+          "observer_record_ns": 870
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 37529,
+          "end_ns": 50649,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 790
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 61419,
+          "end_ns": 66519,
+          "status": "passed",
+          "buffer_index": 0,
+          "bytes": 8192,
+          "observer_record_ns": 960
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 82508,
+          "end_ns": 87998,
+          "status": "passed",
+          "buffer_index": 0,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 540
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 90458,
+          "end_ns": 91118,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 580
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 94678,
+          "end_ns": 98768,
+          "status": "passed",
+          "buffer_index": 2,
+          "bytes": 44032,
+          "observer_record_ns": 590
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 102538,
+          "end_ns": 103598,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 540
+        },
+        {
+          "kind": "xrt_run_create",
+          "start_ns": 106548,
+          "end_ns": 175806,
+          "status": "passed",
+          "observer_record_ns": 500
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 180316,
+          "end_ns": 188336,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 640
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 189965,
+          "end_ns": 192265,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 440
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 193295,
+          "end_ns": 194675,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 390
+        },
+        {
+          "kind": "xrt_start",
+          "start_ns": 196395,
+          "end_ns": 220375,
+          "status": "passed",
+          "observer_record_ns": 380
+        },
+        {
+          "kind": "xrt_wait",
+          "start_ns": 221515,
+          "end_ns": 1536965587,
+          "status": "passed",
+          "observer_record_ns": 6579
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 1537010625,
+          "end_ns": 1537017225,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "observer_record_ns": 2290
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 1537024155,
+          "end_ns": 1537025945,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 720
+        },
+        {
+          "kind": "runner_run",
+          "start_ns": 19910,
+          "end_ns": 1537094533,
+          "status": "passed",
+          "observer_record_ns": 630
+        },
+        {
+          "kind": "host_output_copy",
+          "start_ns": 1537097403,
+          "end_ns": 1537114463,
+          "status": "passed",
+          "observer_record_ns": 510
+        }
+      ],
+      "observer_record_ms": 0.017949,
+      "host_breakdown": {
+        "milliseconds": {
+          "host_prepare": 0.01482,
+          "bo_map": 0.01557,
+          "numpy_copyto_in_runner": 0.00919,
+          "bo_sync_to_device": 0.00655,
+          "xrt_run_create": 0.069258,
+          "xrt_set_arg": 0.011699999999999999,
+          "xrt_start": 0.02398,
+          "xrt_wait": 1536.744072,
+          "bo_sync_from_device": 0.0066,
+          "runner_run": 1537.074623,
+          "host_output_copy": 0.01706,
+          "runner_unseparated_residual_ms": 0.1877030000000559
+        },
+        "scope": "runner_run nests API and staging spans; residual includes view/validation/scratch fill and observer/runner gaps; sum leaves only"
+      },
+      "candidate": "m1-gate-scalar",
+      "repeat": 2,
+      "warmup": false
+    },
+    {
+      "wall_start_ns": 2409276033114573,
+      "wall_ms": 1427.389,
+      "checks": {
+        "G": {
+          "passed": true,
+          "finite": true,
+          "shape": [
+            1,
+            11008
+          ],
+          "max_abs": 5.960464477539062e-07,
+          "normalized_l2": 8.230743102895685e-07,
+          "max_relative_reference_at_least_1e_minus6": 0.004793441427974967,
+          "near_zero_max_abs": null
+        }
+      },
+      "numeric_check_start_ns": 2409277460507352,
+      "numeric_check_ms": 24.626747,
+      "events": [
+        {
+          "kind": "host_prepare",
+          "start_ns": 1700,
+          "end_ns": 21440,
+          "status": "passed",
+          "observer_record_ns": 1680
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 51499,
+          "end_ns": 67979,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 1580
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 85508,
+          "end_ns": 91918,
+          "status": "passed",
+          "buffer_index": 0,
+          "bytes": 8192,
+          "observer_record_ns": 1580
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 114207,
+          "end_ns": 121137,
+          "status": "passed",
+          "buffer_index": 0,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 1000
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 125677,
+          "end_ns": 126947,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 960
+        },
+        {
+          "kind": "numpy_copyto_in_runner",
+          "start_ns": 134107,
+          "end_ns": 138197,
+          "status": "passed",
+          "buffer_index": 2,
+          "bytes": 44032,
+          "observer_record_ns": 970
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 144977,
+          "end_ns": 147247,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "observer_record_ns": 870
+        },
+        {
+          "kind": "xrt_run_create",
+          "start_ns": 151477,
+          "end_ns": 238564,
+          "status": "passed",
+          "observer_record_ns": 800
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 244644,
+          "end_ns": 255414,
+          "status": "passed",
+          "buffer_index": 0,
+          "observer_record_ns": 900
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 257994,
+          "end_ns": 261624,
+          "status": "passed",
+          "buffer_index": 1,
+          "observer_record_ns": 910
+        },
+        {
+          "kind": "xrt_set_arg",
+          "start_ns": 263804,
+          "end_ns": 266074,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 760
+        },
+        {
+          "kind": "xrt_start",
+          "start_ns": 268814,
+          "end_ns": 297963,
+          "status": "passed",
+          "observer_record_ns": 710
+        },
+        {
+          "kind": "xrt_wait",
+          "start_ns": 300183,
+          "end_ns": 1427167985,
+          "status": "passed",
+          "observer_record_ns": 8870
+        },
+        {
+          "kind": "bo_sync",
+          "start_ns": 1427232693,
+          "end_ns": 1427240643,
+          "status": "passed",
+          "buffer_index": 2,
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "observer_record_ns": 4350
+        },
+        {
+          "kind": "bo_map",
+          "start_ns": 1427253423,
+          "end_ns": 1427257163,
+          "status": "passed",
+          "buffer_index": 2,
+          "observer_record_ns": 1510
+        },
+        {
+          "kind": "runner_run",
+          "start_ns": 27330,
+          "end_ns": 1427355920,
+          "status": "passed",
+          "observer_record_ns": 1310
+        },
+        {
+          "kind": "host_output_copy",
+          "start_ns": 1427361450,
+          "end_ns": 1427387180,
+          "status": "passed",
+          "observer_record_ns": 1220
+        }
+      ],
+      "observer_record_ms": 0.02998,
+      "host_breakdown": {
+        "milliseconds": {
+          "host_prepare": 0.01974,
+          "bo_map": 0.021490000000000002,
+          "numpy_copyto_in_runner": 0.010499999999999999,
+          "bo_sync_to_device": 0.0092,
+          "xrt_run_create": 0.087087,
+          "xrt_set_arg": 0.01667,
+          "xrt_start": 0.029149,
+          "xrt_wait": 1426.867802,
+          "bo_sync_from_device": 0.00795,
+          "runner_run": 1427.32859,
+          "host_output_copy": 0.02573,
+          "runner_unseparated_residual_ms": 0.278742000000193
+        },
+        "scope": "runner_run nests API and staging spans; residual includes view/validation/scratch fill and observer/runner gaps; sum leaves only"
+      },
+      "candidate": "m1-gate-mixed8",
+      "repeat": 2,
+      "warmup": false
+    }
+  ],
+  "hot_median_ms": {
+    "m1-gate-scalar": 1536.9873165,
+    "m1-gate-mixed8": 1425.8283339999998
+  }
+}

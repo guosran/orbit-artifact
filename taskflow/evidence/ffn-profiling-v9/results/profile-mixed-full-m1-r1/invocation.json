@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-mixed-full-m1-r1.json",
+    "--iterations",
+    "1",
+    "--warmups",
+    "1",
+    "--observer",
+    "detailed",
+    "--output",
+    "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/profile-mixed-full-m1-r1"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-mixed-full-m1-r1.json",
+  "cases_sha256": "8b36e5bc0e8f4209d5ecd4f50a0d2a9902f6287c42f8f705cf73635b1fadcef3",
+  "script_sha256": "79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "m1-full-scalar": {
+      "elf_sha256": "b290438f9ee259ced953fdb030747d1ca22db1c0dbbbd9c99f0d821983073920",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m1/full/hardware/abi.json",
+      "abi_sha256": "3b9fc6ac585a63f9a5bd4f491501764f435b14cfd22fb778027e3ff2ec681471",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.3570279059931636,
+        "source_sha256": "9e01b41880c843529be9765a94e287723afa9d3d343961afda3fd35dcf06567a",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/baseline/m1/full/hardware/program.elf",
+        "elf_sha256": "b290438f9ee259ced953fdb030747d1ca22db1c0dbbbd9c99f0d821983073920",
+        "kernel_name": "main:ffn",
+        "argument_count": 8
+      }
+    },
+    "m1-full-mixed8": {
+      "elf_sha256": "74ce0a792640519527b3b0beb61903cb14f9d984a71fd5a22067d8f20a5b5eb3",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-full-r1/m1/hardware/abi.json",
+      "abi_sha256": "3b9fc6ac585a63f9a5bd4f491501764f435b14cfd22fb778027e3ff2ec681471",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.3974173623137176,
+        "source_sha256": "538ca16e0db4a25d474c97f3aae7cc9bb3d7d0331c4d1f3f6617247c05a8b8e1",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/mixed-full-r1/m1/hardware/program.elf",
+        "elf_sha256": "74ce0a792640519527b3b0beb61903cb14f9d984a71fd5a22067d8f20a5b5eb3",
+        "kernel_name": "main:ffn",
+        "argument_count": 8
+      }
+    }
+  }
+}

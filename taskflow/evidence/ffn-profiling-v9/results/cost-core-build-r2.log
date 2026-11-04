@@ -1,0 +1,265 @@
+[1/24] Building Taskflow.cpp.inc...
+[2/24] Building Taskflow.h.inc...
+[3/24] Building TaskflowDialect.cpp.inc...
+[4/24] Building TaskflowDialect.h.inc...
+[5/23] Building TaskflowTypes.cpp.inc...
+[6/23] Building TaskflowTypes.h.inc...
+[7/17] Building TaskflowPasses.h.inc...
+[8/17] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o
+FAILED: lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o 
+/home/shiran/bin/g++ -D_DEBUG -D_GLIBCXX_ASSERTIONS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/shiran/project/llvm-project/llvm/include -I/home/shiran/project/llvm-project/build/include -I/home/shiran/project/llvm-project/mlir/include -I/home/shiran/project/llvm-project/build/tools/mlir/include -I/home/shiran/project/orbit/include -I/home/shiran/project/orbit-artifact/builds/taskflow-v9/core/include -fPIC -fno-semantic-interposition -fvisibility-inlines-hidden -Werror=date-time -fno-lifetime-dse -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wno-missing-field-initializers -Wimplicit-fallthrough -Wno-nonnull -Wno-class-memaccess -Wno-redundant-move -Wno-pessimizing-move -Wno-noexcept-type -Wdelete-non-virtual-dtor -Wsuggest-override -Wno-comment -Wno-misleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -ffunction-sections -fdata-sections -O3 -DNDEBUG -std=gnu++17  -fno-exceptions -funwind-tables -g -UNDEBUG -MD -MT lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o -MF lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o.d -o lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o -c /home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp: In function 'bool orbit::taskflow::evaluateGenericDirectAIRCost(const GenericCostFeatures&, const llvm::json::Value&, const llvm::json::Value&, GenericDirectAIRCost&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:56: error: no matching function for call to 'llvm::json::Value::Value(const llvm::json::Object&)'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                        ^
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:56: note: there are 18 candidates
+In file included from /home/shiran/project/orbit/include/Taskflow/GenericAnalysis.h:5,
+                 from /home/shiran/project/orbit/include/Taskflow/GenericMapping.h:3,
+                 from /home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:310:3: note: candidate 1: 'llvm::json::Value::Value(llvm::json::Object&&)' (near match)
+  310 |   Value(json::Object &&Properties) : Type(T_Object) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:310:3: note: conversion of argument 1 would be ill-formed:
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:46: error: cannot bind rvalue reference of type 'llvm::json::Object&&' to lvalue of type 'const llvm::json::Object'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                              ^~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:370:3: note: candidate 2: 'template<class T, class, llvm::json::Value* <anonymous> > llvm::json::Value::Value(const T&)'
+  370 |   Value(const T &V) : Value(toJSON(V)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:370:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:368:54: error: no matching function for call to 'toJSON(const llvm::json::Object&)'
+  368 |                 std::is_same_v<Value, decltype(toJSON(*(const T *)nullptr))>>,
+      |                                                ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:368:54: note: there is 1 candidate
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:827:29: note: candidate 1: 'template<class T> llvm::json::Value llvm::json::toJSON(const std::optional<_Tp>&)'
+  827 | template <typename T> Value toJSON(const std::optional<T> &Opt) {
+      |                             ^~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:827:29: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:368:54: note:   'const llvm::json::Object' is not derived from 'const std::optional<_Tp>'
+  368 |                 std::is_same_v<Value, decltype(toJSON(*(const T *)nullptr))>>,
+      |                                                ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:362:3: note: candidate 3: 'template<class T, class, double* <anonymous> > llvm::json::Value::Value(T)'
+  362 |   Value(T D) : Type(T_Double) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:362:3: note: template argument deduction/substitution failed:
+In file included from /home/shiran/project/llvm-project/llvm/include/llvm/Support/type_traits.h:17,
+                 from /home/shiran/project/llvm-project/llvm/include/llvm/Support/Casting.h:18,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Support/LLVM.h:23,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/IR/MLIRContext.h:12,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/IR/AttributeSupport.h:16,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/IR/Attributes.h:12,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Bytecode/BytecodeImplementation.h:17,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Bytecode/BytecodeOpInterface.h:17,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Dialect/Func/IR/FuncOps.h:12,
+                 from /home/shiran/project/orbit/include/Taskflow/GenericAnalysis.h:3:
+/home/shiran/mamba-envs/verilator-cxx/lib/gcc/x86_64-conda-linux-gnu/15.2.0/include/c++/type_traits: In substitution of 'template<bool _Cond, class _Tp> using std::enable_if_t = typename std::enable_if::type [with bool _Cond = false; _Tp = void]':
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:360:13:   required from here
+  360 |             typename = std::enable_if_t<std::is_floating_point_v<T>>,
+      |             ^~~~~~~~
+/home/shiran/mamba-envs/verilator-cxx/lib/gcc/x86_64-conda-linux-gnu/15.2.0/include/c++/type_traits:2837:11: error: no type named 'type' in 'struct std::enable_if<false, void>'
+ 2837 |     using enable_if_t = typename enable_if<_Cond, _Tp>::type;
+      |           ^~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:355:3: note: candidate 4: 'template<class T, class, class, class> llvm::json::Value::Value(T)'
+  355 |   Value(T I) : Type(T_Integer) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:355:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:346:3: note: candidate 5: 'template<class T, class> llvm::json::Value::Value(T)'
+  346 |   Value(T V) : Type(T_UINT64) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:346:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:340:3: note: candidate 6: 'template<class T, class, bool <anonymous> > llvm::json::Value::Value(T)'
+  340 |   Value(T B) : Type(T_Boolean) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:340:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:314:3: note: candidate 7: 'template<class Elt> llvm::json::Value::Value(const std::map<std::__cxx11::basic_string<char>, Elt>&)'
+  314 |   Value(const std::map<std::string, Elt> &C) : Value(json::Object(C)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:314:3: note: template argument deduction/substitution failed:
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:56: note:   'const llvm::json::Object' is not derived from 'const std::map<std::__cxx11::basic_string<char>, Elt>'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                        ^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:309:3: note: candidate 8: 'template<class Elt> llvm::json::Value::Value(const std::vector<T>&)'
+  309 |   Value(const std::vector<Elt> &C) : Value(json::Array(C)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:309:3: note: template argument deduction/substitution failed:
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:56: note:   'const llvm::json::Object' is not derived from 'const std::vector<T>'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                        ^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:335:3: note: candidate 9: 'llvm::json::Value::Value(std::nullptr_t)'
+  335 |   Value(std::nullptr_t) : Type(T_Null) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:335:9: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'std::nullptr_t'
+  335 |   Value(std::nullptr_t) : Type(T_Null) {}
+      |         ^~~~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:334:3: note: candidate 10: 'llvm::json::Value::Value(const char*)'
+  334 |   Value(const char *V) : Value(StringRef(V)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:334:21: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const char*'
+  334 |   Value(const char *V) : Value(StringRef(V)) {}
+      |         ~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:327:3: note: candidate 11: 'llvm::json::Value::Value(llvm::StringRef)'
+  327 |   Value(StringRef V) : Type(T_StringRef) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:327:19: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'llvm::StringRef'
+  327 |   Value(StringRef V) : Type(T_StringRef) {
+      |         ~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:325:3: note: candidate 12: 'llvm::json::Value::Value(const llvm::formatv_object_base&)'
+  325 |   Value(const llvm::formatv_object_base &V) : Value(V.str()) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:325:42: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const llvm::formatv_object_base&'
+  325 |   Value(const llvm::formatv_object_base &V) : Value(V.str()) {}
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:323:3: note: candidate 13: 'llvm::json::Value::Value(const llvm::SmallVectorImpl<char>&)'
+  323 |   Value(const llvm::SmallVectorImpl<char> &V)
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:323:44: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const llvm::SmallVectorImpl<char>&'
+  323 |   Value(const llvm::SmallVectorImpl<char> &V)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:316:3: note: candidate 14: 'llvm::json::Value::Value(std::string)'
+  316 |   Value(std::string V) : Type(T_String) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:316:21: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'std::string' {aka 'std::__cxx11::basic_string<char>'}
+  316 |   Value(std::string V) : Type(T_String) {
+      |         ~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:305:3: note: candidate 15: 'llvm::json::Value::Value(llvm::json::Array&&)'
+  305 |   Value(json::Array &&Elements) : Type(T_Array) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:305:23: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'llvm::json::Array&&'
+  305 |   Value(json::Array &&Elements) : Type(T_Array) {
+      |         ~~~~~~~~~~~~~~^~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:304:3: note: candidate 16: 'llvm::json::Value::Value(std::initializer_list<llvm::json::Value>)'
+  304 |   Value(std::initializer_list<Value> Elements);
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:304:38: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'std::initializer_list<llvm::json::Value>'
+  304 |   Value(std::initializer_list<Value> Elements);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:303:3: note: candidate 17: 'llvm::json::Value::Value(llvm::json::Value&&)'
+  303 |   Value(Value &&M) { moveFrom(std::move(M)); }
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:303:17: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'llvm::json::Value&&'
+  303 |   Value(Value &&M) { moveFrom(std::move(M)); }
+      |         ~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:302:3: note: candidate 18: 'llvm::json::Value::Value(const llvm::json::Value&)'
+  302 |   Value(const Value &M) { copyFrom(M); }
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:302:22: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const llvm::json::Value&'
+  302 |   Value(const Value &M) { copyFrom(M); }
+      |         ~~~~~~~~~~~~~^
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:108: error: no matching function for call to 'llvm::json::Value::Value(const llvm::json::Object&)'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                                                                            ^
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:108: note: there are 18 candidates
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:310:3: note: candidate 1: 'llvm::json::Value::Value(llvm::json::Object&&)' (near match)
+  310 |   Value(json::Object &&Properties) : Type(T_Object) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:310:3: note: conversion of argument 1 would be ill-formed:
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:96: error: cannot bind rvalue reference of type 'llvm::json::Object&&' to lvalue of type 'const llvm::json::Object'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                                                                ^~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:370:3: note: candidate 2: 'template<class T, class, llvm::json::Value* <anonymous> > llvm::json::Value::Value(const T&)'
+  370 |   Value(const T &V) : Value(toJSON(V)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:370:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:368:54: error: no matching function for call to 'toJSON(const llvm::json::Object&)'
+  368 |                 std::is_same_v<Value, decltype(toJSON(*(const T *)nullptr))>>,
+      |                                                ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:368:54: note: there is 1 candidate
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:827:29: note: candidate 1: 'template<class T> llvm::json::Value llvm::json::toJSON(const std::optional<_Tp>&)'
+  827 | template <typename T> Value toJSON(const std::optional<T> &Opt) {
+      |                             ^~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:827:29: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:368:54: note:   'const llvm::json::Object' is not derived from 'const std::optional<_Tp>'
+  368 |                 std::is_same_v<Value, decltype(toJSON(*(const T *)nullptr))>>,
+      |                                                ~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:362:3: note: candidate 3: 'template<class T, class, double* <anonymous> > llvm::json::Value::Value(T)'
+  362 |   Value(T D) : Type(T_Double) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:362:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:355:3: note: candidate 4: 'template<class T, class, class, class> llvm::json::Value::Value(T)'
+  355 |   Value(T I) : Type(T_Integer) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:355:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:346:3: note: candidate 5: 'template<class T, class> llvm::json::Value::Value(T)'
+  346 |   Value(T V) : Type(T_UINT64) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:346:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:340:3: note: candidate 6: 'template<class T, class, bool <anonymous> > llvm::json::Value::Value(T)'
+  340 |   Value(T B) : Type(T_Boolean) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:340:3: note: template argument deduction/substitution failed:
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:314:3: note: candidate 7: 'template<class Elt> llvm::json::Value::Value(const std::map<std::__cxx11::basic_string<char>, Elt>&)'
+  314 |   Value(const std::map<std::string, Elt> &C) : Value(json::Object(C)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:314:3: note: template argument deduction/substitution failed:
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:108: note:   'const llvm::json::Object' is not derived from 'const std::map<std::__cxx11::basic_string<char>, Elt>'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                                                                            ^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:309:3: note: candidate 8: 'template<class Elt> llvm::json::Value::Value(const std::vector<T>&)'
+  309 |   Value(const std::vector<Elt> &C) : Value(json::Array(C)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:309:3: note: template argument deduction/substitution failed:
+/home/shiran/project/orbit/lib/Taskflow/GenericMapping.cpp:1901:108: note:   'const llvm::json::Object' is not derived from 'const std::vector<T>'
+ 1901 |          staticFingerprint(llvm::json::Value(*rowTarget))!=staticFingerprint(llvm::json::Value(*modelTarget)))
+      |                                                                                                            ^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:335:3: note: candidate 9: 'llvm::json::Value::Value(std::nullptr_t)'
+  335 |   Value(std::nullptr_t) : Type(T_Null) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:335:9: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'std::nullptr_t'
+  335 |   Value(std::nullptr_t) : Type(T_Null) {}
+      |         ^~~~~~~~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:334:3: note: candidate 10: 'llvm::json::Value::Value(const char*)'
+  334 |   Value(const char *V) : Value(StringRef(V)) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:334:21: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const char*'
+  334 |   Value(const char *V) : Value(StringRef(V)) {}
+      |         ~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:327:3: note: candidate 11: 'llvm::json::Value::Value(llvm::StringRef)'
+  327 |   Value(StringRef V) : Type(T_StringRef) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:327:19: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'llvm::StringRef'
+  327 |   Value(StringRef V) : Type(T_StringRef) {
+      |         ~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:325:3: note: candidate 12: 'llvm::json::Value::Value(const llvm::formatv_object_base&)'
+  325 |   Value(const llvm::formatv_object_base &V) : Value(V.str()) {}
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:325:42: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const llvm::formatv_object_base&'
+  325 |   Value(const llvm::formatv_object_base &V) : Value(V.str()) {}
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:323:3: note: candidate 13: 'llvm::json::Value::Value(const llvm::SmallVectorImpl<char>&)'
+  323 |   Value(const llvm::SmallVectorImpl<char> &V)
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:323:44: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const llvm::SmallVectorImpl<char>&'
+  323 |   Value(const llvm::SmallVectorImpl<char> &V)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:316:3: note: candidate 14: 'llvm::json::Value::Value(std::string)'
+  316 |   Value(std::string V) : Type(T_String) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:316:21: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'std::string' {aka 'std::__cxx11::basic_string<char>'}
+  316 |   Value(std::string V) : Type(T_String) {
+      |         ~~~~~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:305:3: note: candidate 15: 'llvm::json::Value::Value(llvm::json::Array&&)'
+  305 |   Value(json::Array &&Elements) : Type(T_Array) {
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:305:23: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'llvm::json::Array&&'
+  305 |   Value(json::Array &&Elements) : Type(T_Array) {
+      |         ~~~~~~~~~~~~~~^~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:304:3: note: candidate 16: 'llvm::json::Value::Value(std::initializer_list<llvm::json::Value>)'
+  304 |   Value(std::initializer_list<Value> Elements);
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:304:38: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'std::initializer_list<llvm::json::Value>'
+  304 |   Value(std::initializer_list<Value> Elements);
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:303:3: note: candidate 17: 'llvm::json::Value::Value(llvm::json::Value&&)'
+  303 |   Value(Value &&M) { moveFrom(std::move(M)); }
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:303:17: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'llvm::json::Value&&'
+  303 |   Value(Value &&M) { moveFrom(std::move(M)); }
+      |         ~~~~~~~~^
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:302:3: note: candidate 18: 'llvm::json::Value::Value(const llvm::json::Value&)'
+  302 |   Value(const Value &M) { copyFrom(M); }
+      |   ^~~~~
+/home/shiran/project/llvm-project/llvm/include/llvm/Support/JSON.h:302:22: note: no known conversion for argument 1 from 'const llvm::json::Object' to 'const llvm::json::Value&'
+  302 |   Value(const Value &M) { copyFrom(M); }
+      |         ~~~~~~~~~~~~~^
+[9/17] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/Search.cpp.o
+ninja: build stopped: subcommand failed.

@@ -1,0 +1,159 @@
+{
+  "checked_accesses": [
+    {
+      "task": "gemm-update",
+      "storage": "A",
+      "operation": "memref.load",
+      "indices": [
+        "%165",
+        "%166"
+      ],
+      "simplified": [
+        {
+          "%arg56": 1
+        },
+        {
+          "%arg58": 1
+        }
+      ],
+      "expected": [
+        {
+          "%arg56": 1
+        },
+        {
+          "%arg58": 1
+        }
+      ]
+    },
+    {
+      "task": "gemm-update",
+      "storage": "B",
+      "operation": "vector.transfer_read",
+      "indices": [
+        "%170",
+        "%171"
+      ],
+      "simplified": [
+        {
+          "%arg58": 1
+        },
+        {
+          "%arg57": 1
+        }
+      ],
+      "expected": [
+        {
+          "%arg58": 1
+        },
+        {
+          "%arg57": 1
+        }
+      ]
+    },
+    {
+      "task": "gemm-update",
+      "storage": "intermediate",
+      "operation": "vector.transfer_read",
+      "indices": [
+        "%174",
+        "%175"
+      ],
+      "simplified": [
+        {
+          "%arg56": 1
+        },
+        {
+          "%arg57": 1
+        }
+      ],
+      "expected": [
+        {
+          "%arg56": 1
+        },
+        {
+          "%arg57": 1
+        }
+      ]
+    },
+    {
+      "task": "gemm-update",
+      "storage": "intermediate",
+      "operation": "vector.transfer_write",
+      "indices": [
+        "%203",
+        "%204"
+      ],
+      "simplified": [
+        {
+          "%arg56": 1
+        },
+        {
+          "%arg57": 1
+        }
+      ],
+      "expected": [
+        {
+          "%arg56": 1
+        },
+        {
+          "%arg57": 1
+        }
+      ]
+    },
+    {
+      "task": "scale",
+      "storage": "intermediate",
+      "operation": "vector.transfer_read",
+      "simplified": [
+        {
+          "%arg28": 1
+        },
+        {
+          "%arg29": 1
+        }
+      ],
+      "expected": [
+        {
+          "%arg28": 1
+        },
+        {
+          "%arg29": 1
+        }
+      ]
+    },
+    {
+      "task": "scale",
+      "storage": "Y",
+      "operation": "vector.transfer_write",
+      "simplified": [
+        {
+          "%arg28": 1
+        },
+        {
+          "%arg29": 1
+        }
+      ],
+      "expected": [
+        {
+          "%arg28": 1
+        },
+        {
+          "%arg29": 1
+        }
+      ]
+    }
+  ],
+  "ordered_K_helper_groups": {
+    "%arg58": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "scope": "known actual GEMM\u2192scale fixture AIR index SSA and ordered scalar-product/vector-add structure; no device/installed-code proof"
+}

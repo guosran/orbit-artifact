@@ -1,0 +1,617 @@
+{
+  "active_terms": [
+    "command_count",
+    "source_f32_product_operations",
+    "source_math_exp_f32_operations",
+    "hardware_stage_count"
+  ],
+  "boundary": "prepared host input arrays through returned output; detailed observer wall_ms",
+  "feature_rank": 4,
+  "limitations": [
+    "empirical composite; coefficients are not independently measured physical components",
+    "polling quantization and tiny samples limit small-stage inference",
+    "source product counts do not count generated soft-float helper calls",
+    "DMA facts are retained in native plans but not separately charged",
+    "partition/controller/slice/assembly overhead remains unknown",
+    "holdout predictions are unvalidated until a separate post-freeze evaluation"
+  ],
+  "manifest_sha256": "54baa218916b5f1e3166983b44af635e1f057906f7d66658b66cdbaed29b8dd2",
+  "method": "column-scaled exhaustive active-set nonnegative least squares",
+  "objective": "relative-residual-floor-1ms",
+  "preselected_holdout_no_labels_read": [
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 67633152,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m3-gate",
+      "name": "m3-gate",
+      "plan_sha256": "23022f1a72c4f937cc76ab84d132296b9c2af890c60d39c6043efd8803625d19",
+      "unvalidated_prediction_ms": 4573.1431333469545,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 67633152,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m3-up",
+      "name": "m3-up",
+      "plan_sha256": "270345a486b19935e3073505c6ae5ad7608a25b98508e6fab07a690b19be09d8",
+      "unvalidated_prediction_ms": 4573.1431333469545,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 66048,
+        "source_math_exp_f32_operations": 33024
+      },
+      "group_id": "m3-activation",
+      "name": "m3-activation",
+      "plan_sha256": "790557415bddecad0e5c73a77370fd5685acecc90f871934ae854d56397e10aa",
+      "unvalidated_prediction_ms": 34.913124885351756,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 67633152,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m3-down",
+      "name": "m3-down",
+      "plan_sha256": "fc2f3bbbd29be96c220a2d271084d9ad4d1da7da6db0e0288bf00bce31e3505b",
+      "unvalidated_prediction_ms": 4573.1431333469545,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 4,
+        "source_f32_product_operations": 202965504,
+        "source_math_exp_f32_operations": 33024
+      },
+      "group_id": "m3-full",
+      "name": "m3-full",
+      "plan_sha256": "04adf2ce05fd654829383fbebc70e79520f1cc760d31a1efb72c6879c1176aa8",
+      "unvalidated_prediction_ms": 13753.116801828453,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 6,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "holdout-m17-n80-add-grouped",
+      "name": "holdout-m17-n80-add-grouped",
+      "plan_sha256": "f897367b908d8ad5ee51ad0850ae48b842b2f7447b8e53edf3ed45e9d73d7b12",
+      "unvalidated_prediction_ms": 0.46155861723825203,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 12,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "holdout-m17-n80-add-split",
+      "name": "holdout-m17-n80-add-split",
+      "plan_sha256": "a7cce655bdf02d8c06a9d753dc960bea7d459e88263cca701c43c511a5c1aedd",
+      "unvalidated_prediction_ms": 0.5145428685556095,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 6,
+        "source_f32_product_operations": 2720,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "holdout-m17-n80-mul-grouped",
+      "name": "holdout-m17-n80-mul-grouped",
+      "plan_sha256": "643b053526bd3c03d400de9938006b83b9113f2bd5b8f0335fc2ca806fcfb580",
+      "unvalidated_prediction_ms": 0.6454597605843606,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 12,
+        "source_f32_product_operations": 2720,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "holdout-m17-n80-mul-split",
+      "name": "holdout-m17-n80-mul-split",
+      "plan_sha256": "8deac2e6b19c320f8005da3bd1824b4c078389cd94bb1d9530f903eb04149be7",
+      "unvalidated_prediction_ms": 0.698444011901718,
+      "within_declared_feature_ranges": true
+    }
+  ],
+  "scaled_singular_values": [
+    1.3999613171192826,
+    1.02769885020146,
+    0.9657328625945557,
+    0.22650258711362847
+  ],
+  "schema": "orbit.direct-air.fit.v1",
+  "status": "frozen-training-fit",
+  "terms": [
+    "command_count",
+    "source_f32_product_operations",
+    "source_math_exp_f32_operations",
+    "hardware_stage_count"
+  ],
+  "training": [
+    {
+      "audit_sha256": "50c0ba5c870bb6552cdf173704f309b260fccf8571c849a972dddb51fa98211c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 22544384,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m1-gate",
+      "hot_count": 2,
+      "hot_max_ms": 1541.265141,
+      "hot_min_ms": 1540.0625,
+      "label_median_ms": 1540.6638205,
+      "name": "m1-gate",
+      "plan_sha256": "3cc24a0e865460e79323923281bdafb991e6da24d0e820232ad2c2ca35134255",
+      "predicted_ms": 1524.659314498634,
+      "profile_sha256": "58b0d4e7d50380cb886a03661be3290c50a580a94896692b1ece41bc97f28694",
+      "residual_ms": -16.004506001365826,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "50c0ba5c870bb6552cdf173704f309b260fccf8571c849a972dddb51fa98211c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 22544384,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m1-up",
+      "hot_count": 2,
+      "hot_max_ms": 1540.393492,
+      "hot_min_ms": 1538.530888,
+      "label_median_ms": 1539.46219,
+      "name": "m1-up",
+      "plan_sha256": "206651dcf6f06bf65b65fb60e898c76b1e1bf150e8ca1059fd9be8751c0ea00e",
+      "predicted_ms": 1524.659314498634,
+      "profile_sha256": "58b0d4e7d50380cb886a03661be3290c50a580a94896692b1ece41bc97f28694",
+      "residual_ms": -14.802875501365861,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "50c0ba5c870bb6552cdf173704f309b260fccf8571c849a972dddb51fa98211c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 22016,
+        "source_math_exp_f32_operations": 11008
+      },
+      "group_id": "m1-activation",
+      "hot_count": 2,
+      "hot_max_ms": 12.318966,
+      "hot_min_ms": 11.875837,
+      "label_median_ms": 12.0974015,
+      "name": "m1-activation",
+      "plan_sha256": "a8b9eda42e3b87f64c2bfcf52e701b1e0ec92e9c63133df90b0305cdf0897f2a",
+      "predicted_ms": 11.915978344766444,
+      "profile_sha256": "58b0d4e7d50380cb886a03661be3290c50a580a94896692b1ece41bc97f28694",
+      "residual_ms": -0.18142315523355634,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "50c0ba5c870bb6552cdf173704f309b260fccf8571c849a972dddb51fa98211c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 22544384,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m1-down",
+      "hot_count": 2,
+      "hot_max_ms": 1539.471374,
+      "hot_min_ms": 1538.996616,
+      "label_median_ms": 1539.233995,
+      "name": "m1-down",
+      "plan_sha256": "97536f29340dff42a5b721be1f58f462bdb35231d32fc48f4412f1aabe5e924a",
+      "predicted_ms": 1524.659314498634,
+      "profile_sha256": "58b0d4e7d50380cb886a03661be3290c50a580a94896692b1ece41bc97f28694",
+      "residual_ms": -14.574680501365947,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "50c0ba5c870bb6552cdf173704f309b260fccf8571c849a972dddb51fa98211c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 4,
+        "source_f32_product_operations": 67655168,
+        "source_math_exp_f32_operations": 11008
+      },
+      "group_id": "m1-full",
+      "hot_count": 2,
+      "hot_max_ms": 4628.948844,
+      "hot_min_ms": 4628.846478,
+      "label_median_ms": 4628.897661,
+      "name": "m1-full",
+      "plan_sha256": "60011335837a62474b11f4ccefd51ad80efcd4084fca954d38db8cbb2e882277",
+      "predicted_ms": 4584.6681987429065,
+      "profile_sha256": "58b0d4e7d50380cb886a03661be3290c50a580a94896692b1ece41bc97f28694",
+      "residual_ms": -44.22946225709347,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "4163c7984a01a28e41eb87a0225956c3b4a92a1dbb3cb96dbb24c77c68294c7e",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 112721920,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m5-gate",
+      "hot_count": 2,
+      "hot_max_ms": 7655.322802,
+      "hot_min_ms": 7654.988082,
+      "label_median_ms": 7655.155441999999,
+      "name": "m5-gate",
+      "plan_sha256": "3caecc3681c1e03d6d30100915e30d2da9884e35dd1ebffbbd94c3287090656c",
+      "predicted_ms": 7621.6269521952745,
+      "profile_sha256": "18075cb45c71a028abf8c109cd0e98a5ed890aa1000c4d31ae32e29abe7f2606",
+      "residual_ms": -33.52848980472481,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "4163c7984a01a28e41eb87a0225956c3b4a92a1dbb3cb96dbb24c77c68294c7e",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 112721920,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m5-up",
+      "hot_count": 2,
+      "hot_max_ms": 7655.003818,
+      "hot_min_ms": 7654.977794,
+      "label_median_ms": 7654.990806,
+      "name": "m5-up",
+      "plan_sha256": "88fd51c9263d03d9d1896251eb19ebecabe740faedec87aeb44552651af4a9e8",
+      "predicted_ms": 7621.6269521952745,
+      "profile_sha256": "18075cb45c71a028abf8c109cd0e98a5ed890aa1000c4d31ae32e29abe7f2606",
+      "residual_ms": -33.363853804725295,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "4163c7984a01a28e41eb87a0225956c3b4a92a1dbb3cb96dbb24c77c68294c7e",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 110080,
+        "source_math_exp_f32_operations": 55040
+      },
+      "group_id": "m5-activation",
+      "hot_count": 2,
+      "hot_max_ms": 56.932121,
+      "hot_min_ms": 56.792166,
+      "label_median_ms": 56.8621435,
+      "name": "m5-activation",
+      "plan_sha256": "4f3cdc9674b12dbd5097fc6cda08567c0c1a314c117822daa66a2bdd066553e5",
+      "predicted_ms": 57.91027142593706,
+      "profile_sha256": "18075cb45c71a028abf8c109cd0e98a5ed890aa1000c4d31ae32e29abe7f2606",
+      "residual_ms": 1.0481279259370595,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "4163c7984a01a28e41eb87a0225956c3b4a92a1dbb3cb96dbb24c77c68294c7e",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 112721920,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m5-down",
+      "hot_count": 2,
+      "hot_max_ms": 7654.489738,
+      "hot_min_ms": 7653.918921,
+      "label_median_ms": 7654.2043295,
+      "name": "m5-down",
+      "plan_sha256": "bba355385ad784f059837c17bf88b2981726bd0fe6590c2dc88174aece8ca7ff",
+      "predicted_ms": 7621.6269521952745,
+      "profile_sha256": "18075cb45c71a028abf8c109cd0e98a5ed890aa1000c4d31ae32e29abe7f2606",
+      "residual_ms": -32.577377304725815,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "4163c7984a01a28e41eb87a0225956c3b4a92a1dbb3cb96dbb24c77c68294c7e",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 4,
+        "source_f32_product_operations": 338275840,
+        "source_math_exp_f32_operations": 55040
+      },
+      "group_id": "m5-full",
+      "hot_count": 2,
+      "hot_max_ms": 23018.288633,
+      "hot_min_ms": 23017.045942,
+      "label_median_ms": 23017.6672875,
+      "name": "m5-full",
+      "plan_sha256": "6bfa22a2189ca63c2ad2fc0e58a3a837d3f4e9a87c5c52caca4effab5fa83038",
+      "predicted_ms": 22921.565404914,
+      "profile_sha256": "18075cb45c71a028abf8c109cd0e98a5ed890aa1000c4d31ae32e29abe7f2606",
+      "residual_ms": -96.10188258600101,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "2a239d42c1c81305821dc20348d709a73242184dac2cbfd39d45f640910fde1c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 180355072,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m8-gate",
+      "hot_count": 2,
+      "hot_max_ms": 12086.718627,
+      "hot_min_ms": 12086.352277,
+      "label_median_ms": 12086.535452,
+      "name": "m8-gate",
+      "plan_sha256": "c1f93f880238de70fc24ece2bead4de63158f7443bb971393ee2094b3f475f5b",
+      "predicted_ms": 12194.352680467757,
+      "profile_sha256": "e34d0a255351f0dbae3f80c5b879fc9b0f6242432cea09b1fd65b3b16049fd83",
+      "residual_ms": 107.81722846775665,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "2a239d42c1c81305821dc20348d709a73242184dac2cbfd39d45f640910fde1c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 180355072,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m8-up",
+      "hot_count": 2,
+      "hot_max_ms": 12085.764811,
+      "hot_min_ms": 12085.65895,
+      "label_median_ms": 12085.7118805,
+      "name": "m8-up",
+      "plan_sha256": "15042f9ce187c3270840e6aa7edb360029b53348f5d91bedc9e2fb6b856dc7d1",
+      "predicted_ms": 12194.352680467757,
+      "profile_sha256": "e34d0a255351f0dbae3f80c5b879fc9b0f6242432cea09b1fd65b3b16049fd83",
+      "residual_ms": 108.64079996775763,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "2a239d42c1c81305821dc20348d709a73242184dac2cbfd39d45f640910fde1c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 176128,
+        "source_math_exp_f32_operations": 88064
+      },
+      "group_id": "m8-activation",
+      "hot_count": 2,
+      "hot_max_ms": 94.55985,
+      "hot_min_ms": 91.070904,
+      "label_median_ms": 92.815377,
+      "name": "m8-activation",
+      "plan_sha256": "a55e88cd90427e66fed778a1262c156b63dbddf10f8788d432f84157dc50b35e",
+      "predicted_ms": 92.40599123681503,
+      "profile_sha256": "e34d0a255351f0dbae3f80c5b879fc9b0f6242432cea09b1fd65b3b16049fd83",
+      "residual_ms": -0.40938576318497155,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "2a239d42c1c81305821dc20348d709a73242184dac2cbfd39d45f640910fde1c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 180355072,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "m8-down",
+      "hot_count": 2,
+      "hot_max_ms": 12087.605664,
+      "hot_min_ms": 12085.168118,
+      "label_median_ms": 12086.386891,
+      "name": "m8-down",
+      "plan_sha256": "096496ef7da3159abd21c4d9491d8c2d95063aae1ba9190cb2b3fcb74785b190",
+      "predicted_ms": 12194.352680467757,
+      "profile_sha256": "e34d0a255351f0dbae3f80c5b879fc9b0f6242432cea09b1fd65b3b16049fd83",
+      "residual_ms": 107.96578946775662,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "2a239d42c1c81305821dc20348d709a73242184dac2cbfd39d45f640910fde1c",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 4,
+        "source_f32_product_operations": 541241344,
+        "source_math_exp_f32_operations": 88064
+      },
+      "group_id": "m8-full",
+      "hot_count": 2,
+      "hot_max_ms": 36346.342076,
+      "hot_min_ms": 36344.577674,
+      "label_median_ms": 36345.459875,
+      "name": "m8-full",
+      "plan_sha256": "11e8a79d368e9fd7fd6e415e073795956016563900617ea4f57d78a3bd2c4d3e",
+      "predicted_ms": 36674.23830954232,
+      "profile_sha256": "e34d0a255351f0dbae3f80c5b879fc9b0f6242432cea09b1fd65b3b16049fd83",
+      "residual_ms": 328.7784345423206,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m8-n64-add-grouped",
+      "hot_count": 30,
+      "hot_max_ms": 1.117412,
+      "hot_min_ms": 0.357681,
+      "label_median_ms": 0.37890999999999997,
+      "name": "train-m8-n64-add-grouped",
+      "plan_sha256": "6378d6cfa78814846aeb6f4f4c7b1d5bf5324b408421cdab455e3cea5606378a",
+      "predicted_ms": 0.41740507447378755,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": 0.03849507447378758,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m8-n64-add-split",
+      "hot_count": 30,
+      "hot_max_ms": 0.961716,
+      "hot_min_ms": 0.358371,
+      "label_median_ms": 0.3896755,
+      "name": "train-m8-n64-add-split",
+      "plan_sha256": "6cd1b8fbf98a1a49d576682a36c10cfd06e53a283af28361c2407e2b668eb478",
+      "predicted_ms": 0.4262357830266804,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": 0.03656028302668041,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 1024,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m8-n64-mul-grouped",
+      "hot_count": 30,
+      "hot_max_ms": 1.118172,
+      "hot_min_ms": 0.367011,
+      "label_median_ms": 0.6191450000000001,
+      "name": "train-m8-n64-mul-grouped",
+      "plan_sha256": "aa791be3283981186ecf476633cc0b0dd1a72e3c946afa162277014ca9e47dfc",
+      "predicted_ms": 0.48663844608644014,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": -0.13250655391355992,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "source_f32_product_operations": 1024,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m8-n64-mul-split",
+      "hot_count": 30,
+      "hot_max_ms": 0.894078,
+      "hot_min_ms": 0.572896,
+      "label_median_ms": 0.6316945,
+      "name": "train-m8-n64-mul-split",
+      "plan_sha256": "15e134e0c4ccb67f9fad02efce0695260d376b8c403a1ac2a6700f9be0145b65",
+      "predicted_ms": 0.49546915463933305,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": -0.136225345360667,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m32-n64-add-grouped",
+      "hot_count": 30,
+      "hot_max_ms": 0.854559,
+      "hot_min_ms": 0.363821,
+      "label_median_ms": 0.387585,
+      "name": "train-m32-n64-add-grouped",
+      "plan_sha256": "cc7d6420c17cf99a842ed7ac606902e97482560f7c44fde3125b0e69f6e7f830",
+      "predicted_ms": 0.41740507447378755,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": 0.02982007447378754,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "source_f32_product_operations": 0,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m32-n64-add-split",
+      "hot_count": 30,
+      "hot_max_ms": 0.651594,
+      "hot_min_ms": 0.360971,
+      "label_median_ms": 0.39903500000000003,
+      "name": "train-m32-n64-add-split",
+      "plan_sha256": "bdd193c71104aa084507570fa2b9854e1012c2fd53cf1a66097c3e8491b6985b",
+      "predicted_ms": 0.4262357830266804,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": 0.027200783026680386,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 1,
+        "source_f32_product_operations": 4096,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m32-n64-mul-grouped",
+      "hot_count": 30,
+      "hot_max_ms": 0.891498,
+      "hot_min_ms": 0.600485,
+      "label_median_ms": 0.6291694999999999,
+      "name": "train-m32-n64-mul-grouped",
+      "plan_sha256": "806cd8ef5cbbd1ebd6f69e31dc6832082a68c8f22fa9e01ec19e9452e8465c74",
+      "predicted_ms": 0.694338560924398,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": 0.06516906092439811,
+      "within_declared_feature_ranges": true
+    },
+    {
+      "audit_sha256": "5f0cef492a49fe878043bfe2d22d425fe3fc64ed5fa029c3eaaca3333d7b44c9",
+      "features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "source_f32_product_operations": 4096,
+        "source_math_exp_f32_operations": 0
+      },
+      "group_id": "train-m32-n64-mul-split",
+      "hot_count": 30,
+      "hot_max_ms": 1.670638,
+      "hot_min_ms": 0.607804,
+      "label_median_ms": 0.630699,
+      "name": "train-m32-n64-mul-split",
+      "plan_sha256": "8f5a5d858421eaf6e1b00c2ff6bd71a9f328f2682aad94b93919f6ab827e73bd",
+      "predicted_ms": 0.7031692694772909,
+      "profile_sha256": "d467d6c185d748185d341d8bb915137c2f4f2f7c9b2331cac34a67fa21098db8",
+      "residual_ms": 0.07247026947729085,
+      "within_declared_feature_ranges": true
+    }
+  ],
+  "weighted_squared_loss": 0.05142311034565966
+}

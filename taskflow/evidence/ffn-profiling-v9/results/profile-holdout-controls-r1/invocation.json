@@ -1,0 +1,95 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "results/taskflow/ffn-profiling-v9/cases-controls-r3-holdout.json",
+    "--output",
+    "results/taskflow/ffn-profiling-v9/profile-holdout-controls-r1",
+    "--iterations",
+    "10",
+    "--warmups",
+    "2"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-controls-r3-holdout.json",
+  "cases_sha256": "97be800ed98bea49016b3b423f0aec64cba4cd97a12457a331172acb012a95fc",
+  "script_sha256": "241cec415605f0817c73371774ba60c0abb4a4bbbc2553837b79c7e32ce8d266",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "holdout-m17-n80-add-grouped": {
+      "elf_sha256": "12cf195123343d44f3076416fe708c44101eadcb856d0bc4d448fe59dde67c54",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-add-grouped/hardware/abi.json",
+      "abi_sha256": "2e1fb6b75787fa9fb3c8d817a0f3a65b2b7939e3fd6caab1fb21d03eebfeb2e5",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.4344310709275305,
+        "source_sha256": "bd59114266fbedc56c7afb536d2014dab78937433c3bfe0f96e711eaf00e15cb",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-add-grouped/hardware/program.elf",
+        "elf_sha256": "12cf195123343d44f3076416fe708c44101eadcb856d0bc4d448fe59dde67c54",
+        "kernel_name": "main:control_add",
+        "argument_count": 4
+      }
+    },
+    "holdout-m17-n80-add-split": {
+      "elf_sha256": "11f771113e63623967bf1b68c882b8acf32882ab1267ef05a1e65651a02e1664",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-add-split/hardware/abi.json",
+      "abi_sha256": "2e1fb6b75787fa9fb3c8d817a0f3a65b2b7939e3fd6caab1fb21d03eebfeb2e5",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.5452393707819283,
+        "source_sha256": "763277de6d959d684a58b291fbcf3e8c7e0f39be69476fd244bd53cd704433ed",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-add-split/hardware/program.elf",
+        "elf_sha256": "11f771113e63623967bf1b68c882b8acf32882ab1267ef05a1e65651a02e1664",
+        "kernel_name": "main:control_add",
+        "argument_count": 4
+      }
+    },
+    "holdout-m17-n80-mul-grouped": {
+      "elf_sha256": "3596f8e19ca90af2854c195040894dcff89b7df6179feec8750f2b893a63abed",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-mul-grouped/hardware/abi.json",
+      "abi_sha256": "2e1fb6b75787fa9fb3c8d817a0f3a65b2b7939e3fd6caab1fb21d03eebfeb2e5",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.45259677013382316,
+        "source_sha256": "ffca09017b237841570686317688af7af36a4299e3ffd1819074cc9421a8a323",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-mul-grouped/hardware/program.elf",
+        "elf_sha256": "3596f8e19ca90af2854c195040894dcff89b7df6179feec8750f2b893a63abed",
+        "kernel_name": "main:control_mul",
+        "argument_count": 4
+      }
+    },
+    "holdout-m17-n80-mul-split": {
+      "elf_sha256": "a099f951d1b344505c3b7253992ff9ff9261336e4a4af25593991c945e2db440",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-mul-split/hardware/abi.json",
+      "abi_sha256": "2e1fb6b75787fa9fb3c8d817a0f3a65b2b7939e3fd6caab1fb21d03eebfeb2e5",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.5404245513491333,
+        "source_sha256": "254353b9442c624be0c75a21a024454100c098631746dafd9489fd0a34106bd5",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/controls-compiled-r3/holdout-m17-n80-mul-split/hardware/program.elf",
+        "elf_sha256": "a099f951d1b344505c3b7253992ff9ff9261336e4a4af25593991c945e2db440",
+        "kernel_name": "main:control_mul",
+        "argument_count": 4
+      }
+    }
+  }
+}

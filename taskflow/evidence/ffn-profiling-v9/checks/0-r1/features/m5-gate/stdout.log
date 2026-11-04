@@ -1,0 +1,178 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "f309bb8707df678b9f9d2f707fc2acdfda5a56aac01c2c589b471a300ddff16c",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "X",
+      "role": "input",
+      "shape": [
+        5,
+        2048
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "W_gate",
+      "role": "input",
+      "shape": [
+        2048,
+        11008
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "G",
+      "role": "output",
+      "shape": [
+        5,
+        11008
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": true,
+          "write_version": "gate.initialize:write:0"
+        }
+      ],
+      "dependencies": [],
+      "id": "gate.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 5
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              2048
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "W_gate:initial"
+          ],
+          "region": [
+            [
+              0,
+              2048
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "W_gate",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "gate.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              11008
+            ]
+          ],
+          "storage": "G",
+          "write": true,
+          "write_version": "gate:write:3"
+        }
+      ],
+      "dependencies": [
+        "gate.initialize"
+      ],
+      "id": "gate",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 5
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11008
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 2048
+        }
+      ]
+    }
+  ]
+}

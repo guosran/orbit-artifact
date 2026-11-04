@@ -1,0 +1,27 @@
+{"seed": 0, "candidate": "m1-gate-scalar", "repeat": 0, "wall_ms": 1562.892954, "passed": true}
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_ffn_profile.py", line 374, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_ffn_profile.py", line 322, in main
+    outputs,sample=measure(runner,multilaunch,case,inputs_by_case[case['name']],references_by_case[case['name']],recorder,a.observer=='detailed')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_ffn_profile.py", line 207, in measure
+    values=recorder.call('runner_run',runner.run,arrays,bo_key='profile',
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_ffn_profile.py", line 40, in call
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/triton/backends/amd_triton_npu/multilaunch.py", line 506, in run
+    _wait(run)
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_ffn_profile.py", line 118, in wait
+    return recorder.call('xrt_wait', original_wait,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_ffn_profile.py", line 40, in call
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/triton/backends/amd_triton_npu/multilaunch.py", line 82, in _wait
+    _wait_nogil(run)
+  File "/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/triton/backends/amd_triton_npu/multilaunch.py", line 67, in _wait_polling
+    raise RuntimeError(f"NPU run ended in state {state}")
+RuntimeError: NPU run ended in state ert_cmd_state.ERT_CMD_STATE_TIMEOUT

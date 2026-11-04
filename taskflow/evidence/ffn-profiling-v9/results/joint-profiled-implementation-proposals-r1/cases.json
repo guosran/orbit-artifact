@@ -1,0 +1,129 @@
+[
+  {
+    "action": "implementation_scalar-product-vector-add-f32_8",
+    "action_chain": [
+      "implementation_scalar-product-vector-add-f32_8"
+    ],
+    "body_fingerprint": "ed4aa1161ac94d0400f98772a1e792c6a4d22d1d95d6afe17b4dad5786d90f2c",
+    "candidate_id": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602",
+    "config": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-profiled-implementation-proposals-r1/features-config.json",
+    "config_sha256": "ef0fe2d20f3982e5f20e8c6d58cd3f419a07b28ec6556e77bbbc3082524a5c25",
+    "execution_fingerprint": "b04e3972831384a2642eb837b028bae05562eca2c491d2a8b2fdf394f89ccd64",
+    "experiment_coordinate": "phase-local",
+    "features_plan": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-profiled-implementation-proposals-r1/search/candidates/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/features-plan.json",
+    "features_plan_sha256": "cec4c7ff8b64eb812229c54114f1a3c01b43bb1fbf10c428424fe98bb7270392",
+    "hardware_executed": false,
+    "name": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602",
+    "parent": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02",
+    "plan_id": "f3407e593c914de91966c717eda95fbddab6d5c16fb2596c783b252742fb4c53",
+    "properties": {
+      "dma_bytes": 188416,
+      "hardware_stage_count": 2,
+      "implementations": [
+        {
+          "kind": "scalar",
+          "lanes": 1,
+          "parallel_loop": -1,
+          "task": 0
+        },
+        {
+          "kind": "scalar-product-vector-add-f32",
+          "lanes": 8,
+          "parallel_loop": 1,
+          "task": 1
+        },
+        {
+          "kind": "scalar-product-vector-add-f32",
+          "lanes": 8,
+          "parallel_loop": 1,
+          "task": 2
+        }
+      ],
+      "mapping": {
+        "data_organization": "phase-local",
+        "grouping": "task-shape-stages",
+        "panel_loop": -1,
+        "residency": "phase-local",
+        "reuse_loop": -1,
+        "storage": -1
+      },
+      "payload_bytes": 6144,
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "proposal_only_uncalibrated_score": 0.6451776,
+    "round": 1,
+    "scalar_control_candidate_id": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02",
+    "scalar_control_execution_fingerprint": "d7cf4810411cc257bcce7d5f205603acf2fde639cb0f8447b5e95ea82410229c",
+    "score_boundary": "uncalibrated source-operation/DMA sensitivity for proposal enumeration only",
+    "source": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-profiled-implementation-proposals-r1/search/candidates/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/taskflow.mlir",
+    "source_sha256": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602"
+  },
+  {
+    "action": "implementation_scalar-product-vector-add-f32_8",
+    "action_chain": [
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "implementation_scalar-product-vector-add-f32_8"
+    ],
+    "body_fingerprint": "ed4aa1161ac94d0400f98772a1e792c6a4d22d1d95d6afe17b4dad5786d90f2c",
+    "candidate_id": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3",
+    "config": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-profiled-implementation-proposals-r1/features-config.json",
+    "config_sha256": "ef0fe2d20f3982e5f20e8c6d58cd3f419a07b28ec6556e77bbbc3082524a5c25",
+    "execution_fingerprint": "46d755d3bc56297ab727e34713fc0ffde974dcf4375067da83b2c7712554bdc8",
+    "experiment_coordinate": "storage1-panel",
+    "features_plan": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-profiled-implementation-proposals-r1/search/candidates/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/features-plan.json",
+    "features_plan_sha256": "b8cd20be315e8800fdc3e446e6ebc62d4e89c4ba6978ad3abfce8fd36cb0fe3a",
+    "hardware_executed": false,
+    "name": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3",
+    "parent": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81",
+    "plan_id": "a74808412f7f1080043fdf5cce5c8d4915a6f7250469f50fd65256bed4ea54f4",
+    "properties": {
+      "dma_bytes": 90112,
+      "hardware_stage_count": 3,
+      "implementations": [
+        {
+          "kind": "scalar",
+          "lanes": 1,
+          "parallel_loop": -1,
+          "task": 0
+        },
+        {
+          "kind": "scalar-product-vector-add-f32",
+          "lanes": 8,
+          "parallel_loop": 1,
+          "task": 1
+        },
+        {
+          "kind": "scalar-product-vector-add-f32",
+          "lanes": 8,
+          "parallel_loop": 1,
+          "task": 2
+        }
+      ],
+      "mapping": {
+        "data_organization": "retain-across-users",
+        "grouping": "readonly-panel-scope",
+        "panel_loop": 1,
+        "residency": "readonly-panel",
+        "reuse_loop": 0,
+        "storage": 1
+      },
+      "payload_bytes": 18432,
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "proposal_only_uncalibrated_score": 0.6353472,
+    "round": 2,
+    "scalar_control_candidate_id": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81",
+    "scalar_control_execution_fingerprint": "51af7c77262cdedef2bbdfc0222b1e859a6e2fe0538003173c2e2bde0bde0913",
+    "score_boundary": "uncalibrated source-operation/DMA sensitivity for proposal enumeration only",
+    "source": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-profiled-implementation-proposals-r1/search/candidates/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/taskflow.mlir",
+    "source_sha256": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3"
+  }
+]

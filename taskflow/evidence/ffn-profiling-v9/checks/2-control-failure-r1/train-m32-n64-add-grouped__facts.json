@@ -1,0 +1,200 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "4bf9b4307fd8b68ecec317b33f785fcfb8a2ed9cb6d9f2d8d0110111e8bc38fd",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "A",
+      "role": "input",
+      "shape": [
+        32,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "B",
+      "role": "input",
+      "shape": [
+        32,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "D",
+      "role": "input",
+      "shape": [
+        32,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "E",
+      "role": "input",
+      "shape": [
+        32,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Y",
+      "role": "output",
+      "shape": [
+        32,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Z",
+      "role": "output",
+      "shape": [
+        32,
+        64
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "A:initial"
+          ],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "A",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "B:initial"
+          ],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "B",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "both:write:2"
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "D:initial"
+          ],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "D",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "E:initial"
+          ],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "E",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "Z",
+          "write": true,
+          "write_version": "both:write:5"
+        }
+      ],
+      "dependencies": [],
+      "id": "both",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 32
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    }
+  ]
+}

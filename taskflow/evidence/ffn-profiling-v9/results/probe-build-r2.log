@@ -1,0 +1,37 @@
+[0/1] Re-running CMake...
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/shiran/project/orbit-artifact/builds/taskflow-v9-probe/air
+[1/22] Building Taskflow.h.inc...
+[2/22] Building Taskflow.cpp.inc...
+[3/22] Building TaskflowDialect.cpp.inc...
+[4/22] Building TaskflowDialect.h.inc...
+[5/20] Building TaskflowTypes.cpp.inc...
+[6/20] Building TaskflowTypes.h.inc...
+[7/13] Building TaskflowPasses.h.inc...
+[8/13] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/AIRBackend.cpp.o
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp: In lambda function:
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:564:25: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long unsigned int, std::allocator<long unsigned int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  564 |             deps.size() != t->dependencies.size())
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:625:25: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long int, std::allocator<long int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  625 |           offset.size() != storage->shape.size() ||
+      |           ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:627:26: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long int, std::allocator<long int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  627 |           strides.size() != storage->shape.size()) {
+      |           ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp: In function 'bool orbit::taskflow::checkGenericAIRMapping(const GenericAnalysis&, const GenericMappingPlan&, mlir::ModuleOp, std::string&)':
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:652:58: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+  652 |     if (!seg || seg.size() != 3 || seg[0] != 0 || seg[1] != dims ||
+      |                                                   ~~~~~~~^~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:653:16: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+  653 |         seg[2] != sourceFunction.getNumArguments() || op->getNumRegions() != 1 ||
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[9/13] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o
+[10/13] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[11/13] Linking CXX static library lib/TaskflowAIR/libMLIRTaskflowAIR.a
+[12/13] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-opt.dir/taskflow-opt.cpp.o
+[13/13] Linking CXX executable tools/taskflow-opt/taskflow-opt
