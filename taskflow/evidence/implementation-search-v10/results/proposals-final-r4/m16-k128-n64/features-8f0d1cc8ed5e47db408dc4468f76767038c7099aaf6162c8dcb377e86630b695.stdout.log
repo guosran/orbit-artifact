@@ -1,0 +1,246 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "60fbbfc305db9d3a0222fda474d495f9bcd30577ace8a68d554bcd4f73a110a9",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "A",
+      "role": "input",
+      "shape": [
+        16,
+        128
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "B",
+      "role": "input",
+      "shape": [
+        128,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Y",
+      "role": "output",
+      "shape": [
+        16,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "intermediate",
+      "role": "temporary",
+      "shape": [
+        16,
+        64
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "intermediate",
+          "write": true,
+          "write_version": "gemm.initialize:write:0"
+        }
+      ],
+      "dependencies": [],
+      "id": "gemm.initialize",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 16
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "A:initial"
+          ],
+          "region": [
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              128
+            ]
+          ],
+          "storage": "A",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "B:initial"
+          ],
+          "region": [
+            [
+              0,
+              128
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "B",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "gemm.initialize:write:0"
+          ],
+          "region": [
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "intermediate",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "intermediate",
+          "write": true,
+          "write_version": "gemm:write:3"
+        }
+      ],
+      "dependencies": [
+        "gemm.initialize"
+      ],
+      "id": "gemm",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 16
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 128
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "gemm.initialize:write:0",
+            "gemm:write:3"
+          ],
+          "region": [
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "intermediate",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              16
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "scale:write:1"
+        }
+      ],
+      "dependencies": [
+        "gemm"
+      ],
+      "id": "scale",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 16
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    }
+  ]
+}

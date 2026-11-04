@@ -1,0 +1,33 @@
+{
+  "target_version": "automatic-native-v10-test",
+  "generic_air": {
+    "capacity_bytes": 24576,
+    "capabilities": {
+      "tile_alignment": [
+        1,
+        8,
+        1
+      ],
+      "implementations": [
+        {
+          "kind": "scalar",
+          "lanes": 1
+        },
+        {
+          "kind": "scalar-product-vector-add-f32",
+          "lanes": 8
+        }
+      ]
+    },
+    "theoretical": {
+      "launch_ms": 0.1,
+      "per_scalar_operation_ms": 1e-06,
+      "per_transfer_byte_ms": 1e-07
+    }
+  },
+  "search_diversity_slots": 2,
+  "native_auto_candidates": {
+    "mode": "joint",
+    "max_tile_proposals": 12
+  }
+}

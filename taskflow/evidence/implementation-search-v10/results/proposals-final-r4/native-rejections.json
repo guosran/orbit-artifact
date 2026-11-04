@@ -1,0 +1,1004 @@
+[
+  {
+    "program": "m16-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "c2ed23eff69de2c3c946ce168adf869f5d9f92bfb917c58ba4f11504f575c8a3",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "c2ed23eff69de2c3c946ce168adf869f5d9f92bfb917c58ba4f11504f575c8a3",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "afd1bce2d1597118e891d8fc097d2e2b731fad87cbf1a379fa348bf461bd3d5c",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/c2ed23eff69de2c3c946ce168adf869f5d9f92bfb917c58ba4f11504f575c8a3/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "afd1bce2d1597118e891d8fc097d2e2b731fad87cbf1a379fa348bf461bd3d5c",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<16x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<16x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<16x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] {orbit.distributed_initialization} : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<16x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<16x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<16x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<16x64xf32>) will_writes(%arg2 : memref<16x64xf32>) [original_read_memrefs(%done_writes_0 : memref<16x64xf32>), original_write_memrefs(%arg2 : memref<16x64xf32>)] : (memref<16x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x64xf32>, %arg4: memref<16x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 16 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<16x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<16x64xf32>)\n    }\n    memref.dealloc %alloc : memref<16x64xf32>\n    return\n  }\n}\n",
+      "parent": "f25cd508d8925d061a2c67c57c057effbcf753eeec8fb985eaeeaf3570c6a7da",
+      "program": null,
+      "round": 2,
+      "score": null,
+      "search_key": "c2ed23eff69de2c3c946ce168adf869f5d9f92bfb917c58ba4f11504f575c8a3",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m16-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_4_16_32",
+        "auto_tiles_4_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "bd9917d599580396274f11a86314775961c74172b859cd4ed1169a06374c9f66",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "bd9917d599580396274f11a86314775961c74172b859cd4ed1169a06374c9f66",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "a792fefb354069da2ffb864d85050ce3dc3b74020577708f1b35972134ccf6db",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/bd9917d599580396274f11a86314775961c74172b859cd4ed1169a06374c9f66/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "a792fefb354069da2ffb864d85050ce3dc3b74020577708f1b35972134ccf6db",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 4, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<16x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<16x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<16x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] {orbit.distributed_initialization} : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<16x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<16x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<16x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<16x64xf32>) will_writes(%arg2 : memref<16x64xf32>) [original_read_memrefs(%done_writes_0 : memref<16x64xf32>), original_write_memrefs(%arg2 : memref<16x64xf32>)] : (memref<16x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x64xf32>, %arg4: memref<16x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 16 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<16x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<16x64xf32>)\n    }\n    memref.dealloc %alloc : memref<16x64xf32>\n    return\n  }\n}\n",
+      "parent": "0cce9cc6c3d7a367a1a1f3bbe13e8db9c5411abd4af701911fe77751b042762c",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "bd9917d599580396274f11a86314775961c74172b859cd4ed1169a06374c9f66",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m16-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_16_16_32",
+        "auto_tiles_16_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "d10dfb0e031710e5e81216bf731c290db6b9fe75247031d1418c098da6492a81",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "d10dfb0e031710e5e81216bf731c290db6b9fe75247031d1418c098da6492a81",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "5d392b88c164e338796c8c5034aee507d4ae59c168b8442b3bd94fa971b4be53",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/d10dfb0e031710e5e81216bf731c290db6b9fe75247031d1418c098da6492a81/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "5d392b88c164e338796c8c5034aee507d4ae59c168b8442b3bd94fa971b4be53",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 16, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<16x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<16x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<16x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] {orbit.distributed_initialization} : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<16x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<16x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<16x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<16x64xf32>) will_writes(%arg2 : memref<16x64xf32>) [original_read_memrefs(%done_writes_0 : memref<16x64xf32>), original_write_memrefs(%arg2 : memref<16x64xf32>)] : (memref<16x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x64xf32>, %arg4: memref<16x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 16 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<16x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<16x64xf32>)\n    }\n    memref.dealloc %alloc : memref<16x64xf32>\n    return\n  }\n}\n",
+      "parent": "17bf72bc581f24f300bb7af65003a8e2c356b99e20653c82873b0ab701949522",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "d10dfb0e031710e5e81216bf731c290db6b9fe75247031d1418c098da6492a81",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m16-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_4_16_32",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_4_16_16",
+        "auto_tiles_4_64_16",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "5770b96d82a5a3d7451615c75dd5b166dfda412f9c44262a75f5d7b16028d941",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "5770b96d82a5a3d7451615c75dd5b166dfda412f9c44262a75f5d7b16028d941",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "dee3744321d9265a4284e808b8f2608d116a1953677e6fc9f5048264eea39b18",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/5770b96d82a5a3d7451615c75dd5b166dfda412f9c44262a75f5d7b16028d941/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "dee3744321d9265a4284e808b8f2608d116a1953677e6fc9f5048264eea39b18",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 4, 64, 16>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<16x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<16x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<16x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] {orbit.distributed_initialization} : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<16x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<16x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<16x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<16x64xf32>) will_writes(%arg2 : memref<16x64xf32>) [original_read_memrefs(%done_writes_0 : memref<16x64xf32>), original_write_memrefs(%arg2 : memref<16x64xf32>)] : (memref<16x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x64xf32>, %arg4: memref<16x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 16 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<16x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<16x64xf32>)\n    }\n    memref.dealloc %alloc : memref<16x64xf32>\n    return\n  }\n}\n",
+      "parent": "2d1f5d6469bda2df4354f33cc476e77ff2f00f7c56f48fed38d0aca738136e40",
+      "program": null,
+      "round": 5,
+      "score": null,
+      "search_key": "5770b96d82a5a3d7451615c75dd5b166dfda412f9c44262a75f5d7b16028d941",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m16-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_4_16_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_4_16_64",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_4_64_64",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "d7963f604bde6b82d9c894269bdba0b0b747c13249611af85cf5d9685a5b0b65",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "d7963f604bde6b82d9c894269bdba0b0b747c13249611af85cf5d9685a5b0b65",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "da7cdcfe797aa0c423414c60bb50eb4d091eee3351bb0d34777ffd1b16fb5541",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/d7963f604bde6b82d9c894269bdba0b0b747c13249611af85cf5d9685a5b0b65/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "da7cdcfe797aa0c423414c60bb50eb4d091eee3351bb0d34777ffd1b16fb5541",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 4, 64, 64>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<16x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<16x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<16x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] {orbit.distributed_initialization} : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<16x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<16x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<16x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<16x64xf32>) will_writes(%arg2 : memref<16x64xf32>) [original_read_memrefs(%done_writes_0 : memref<16x64xf32>), original_write_memrefs(%arg2 : memref<16x64xf32>)] : (memref<16x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x64xf32>, %arg4: memref<16x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 16 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<16x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<16x64xf32>)\n    }\n    memref.dealloc %alloc : memref<16x64xf32>\n    return\n  }\n}\n",
+      "parent": "27d67411bf31c997f3228b6085f050d670510f910476ef2bfa298e002f5d8196",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "d7963f604bde6b82d9c894269bdba0b0b747c13249611af85cf5d9685a5b0b65",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m16-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_8_32",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_8_8_64",
+        "auto_tiles_8_64_64",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "a570d7ebd6c9769bef22982fb815906a05c4a8109426a0bda96b7ab88ae5ef0d",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "a570d7ebd6c9769bef22982fb815906a05c4a8109426a0bda96b7ab88ae5ef0d",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "6b87c07345dfd7a8f36813b8501fd7d79d5a09b6f414e80d52b93fd9a6135537",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/a570d7ebd6c9769bef22982fb815906a05c4a8109426a0bda96b7ab88ae5ef0d/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "6b87c07345dfd7a8f36813b8501fd7d79d5a09b6f414e80d52b93fd9a6135537",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 64>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<16x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<16x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<16x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<16x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<16x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<16x64xf32>)] {orbit.distributed_initialization} : (memref<16x128xf32>, memref<128x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<16x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 16 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<16x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<16x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<16x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<16x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<16x64xf32>) will_writes(%arg2 : memref<16x64xf32>) [original_read_memrefs(%done_writes_0 : memref<16x64xf32>), original_write_memrefs(%arg2 : memref<16x64xf32>)] : (memref<16x64xf32>, memref<16x64xf32>) -> (memref<16x64xf32>) {\n    ^bb0(%arg3: memref<16x64xf32>, %arg4: memref<16x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 16 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<16x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<16x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<16x64xf32>)\n    }\n    memref.dealloc %alloc : memref<16x64xf32>\n    return\n  }\n}\n",
+      "parent": "3426a072365f3c4c8b943c80baedebc13e2cd6a3af7757df8bb45446faceb26e",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "a570d7ebd6c9769bef22982fb815906a05c4a8109426a0bda96b7ab88ae5ef0d",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "45c86cd95940e31b3eba857eb741ba528f5ae6518bf0a96f5ee92ac321d1119f",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "45c86cd95940e31b3eba857eb741ba528f5ae6518bf0a96f5ee92ac321d1119f",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "3e1770b0c32d8622dbd46d09c0cb6021995c87fe060b71a9775cf4af23108c2d",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/45c86cd95940e31b3eba857eb741ba528f5ae6518bf0a96f5ee92ac321d1119f/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "3e1770b0c32d8622dbd46d09c0cb6021995c87fe060b71a9775cf4af23108c2d",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "0b83a6b3281c1a94188a74a14a57f9cb57407c87456e85f203e5220485dfb8c8",
+      "program": null,
+      "round": 2,
+      "score": null,
+      "search_key": "45c86cd95940e31b3eba857eb741ba528f5ae6518bf0a96f5ee92ac321d1119f",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "06f41563cd08473548cb30e3f70ab469079d0a6ffc240a88a8b624750889baca",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "06f41563cd08473548cb30e3f70ab469079d0a6ffc240a88a8b624750889baca",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "c143fcd6c78d8b723aa7f3a27adf9fef26b66df5622c41903401c94d38c256a5",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/06f41563cd08473548cb30e3f70ab469079d0a6ffc240a88a8b624750889baca/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "c143fcd6c78d8b723aa7f3a27adf9fef26b66df5622c41903401c94d38c256a5",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 32>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "2be6a587cc163d869fdccb8910514876c84a6387f69b9a445566e4f72d04ed66",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "06f41563cd08473548cb30e3f70ab469079d0a6ffc240a88a8b624750889baca",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_tiles_4_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "81469b46f49f1a191e9c92cae98094c4a50954f1a0ae96d50e5833e90b5f0f7e",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "81469b46f49f1a191e9c92cae98094c4a50954f1a0ae96d50e5833e90b5f0f7e",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "7995307d5f7961ffb34c8973bf788a19956b5976b3f7c79a1abcd772bd93686b",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/81469b46f49f1a191e9c92cae98094c4a50954f1a0ae96d50e5833e90b5f0f7e/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "7995307d5f7961ffb34c8973bf788a19956b5976b3f7c79a1abcd772bd93686b",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 4, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "2ea446e448287f8eebf8d92471d4f7a2b51cf4b4c28286969c7ffe4b6b1cb913",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "81469b46f49f1a191e9c92cae98094c4a50954f1a0ae96d50e5833e90b5f0f7e",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_tiles_32_64_32",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0"
+      ],
+      "candidate_id": "815eb75d3650a38e28dbd957b635e02b267422bfb72b62eb4cfafc265aa810fc",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "815eb75d3650a38e28dbd957b635e02b267422bfb72b62eb4cfafc265aa810fc",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "907af71e1598da7818c15744eb1d29435817c1b48503b54cdb9dd285197aaffe",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/815eb75d3650a38e28dbd957b635e02b267422bfb72b62eb4cfafc265aa810fc/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "907af71e1598da7818c15744eb1d29435817c1b48503b54cdb9dd285197aaffe",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 32, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 0 : i64, residency = \"readonly-panel\", reuse_loop = 1 : i64, storage = 0 : i64}} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "36d8bd23cd3400b0531238ba70e54723d4f1f01356d46488122e5c4084e69882",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "815eb75d3650a38e28dbd957b635e02b267422bfb72b62eb4cfafc265aa810fc",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_tiles_32_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "568a86a9de81cc557d3368a6d40a083f892530ac91fe6e16dd2031bfa7173e19",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "568a86a9de81cc557d3368a6d40a083f892530ac91fe6e16dd2031bfa7173e19",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "a93c5aa80a29d875aae981ba1d0e4907c176bf85cce80e00b7b864371324d71e",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/568a86a9de81cc557d3368a6d40a083f892530ac91fe6e16dd2031bfa7173e19/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "a93c5aa80a29d875aae981ba1d0e4907c176bf85cce80e00b7b864371324d71e",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 32, 64, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "36d8bd23cd3400b0531238ba70e54723d4f1f01356d46488122e5c4084e69882",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "568a86a9de81cc557d3368a6d40a083f892530ac91fe6e16dd2031bfa7173e19",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_16_16_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_16_64_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "99c196642e67e4520b7c669a36d2c9144a3fa5cab1745181d74338f7107891b7",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "99c196642e67e4520b7c669a36d2c9144a3fa5cab1745181d74338f7107891b7",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "6107625db3684a58ae6f64b992f12ee207db0d646afd7ea68511a2d148a75371",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/99c196642e67e4520b7c669a36d2c9144a3fa5cab1745181d74338f7107891b7/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "6107625db3684a58ae6f64b992f12ee207db0d646afd7ea68511a2d148a75371",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 16, 64, 32>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "0ed5829ad028456b609e7602aa28bced2eaf1fcefb9feacd82e25f9bb347ea97",
+      "program": null,
+      "round": 4,
+      "score": null,
+      "search_key": "99c196642e67e4520b7c669a36d2c9144a3fa5cab1745181d74338f7107891b7",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_8_64_64",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "24c61481e8bd9a03dc80a232ed21e694ea7e6eb4647eca3ebcdcc36f4eb0e7ce",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "24c61481e8bd9a03dc80a232ed21e694ea7e6eb4647eca3ebcdcc36f4eb0e7ce",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "c8fdc14b3b36a20bdcd32b345ec0d948a116b6afcc4d130918813f71e00372fc",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/24c61481e8bd9a03dc80a232ed21e694ea7e6eb4647eca3ebcdcc36f4eb0e7ce/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "c8fdc14b3b36a20bdcd32b345ec0d948a116b6afcc4d130918813f71e00372fc",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 64>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "01e7b263dfb941051b3c377b2afaf470c51608904b5b98b3bd27d08eb5c413e1",
+      "program": null,
+      "round": 5,
+      "score": null,
+      "search_key": "24c61481e8bd9a03dc80a232ed21e694ea7e6eb4647eca3ebcdcc36f4eb0e7ce",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_8_64_16",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "c484d0eb162a6a0f1195d7b4cc2833e8c86dc273be6ab9b16b8d19e05572e13b",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "c484d0eb162a6a0f1195d7b4cc2833e8c86dc273be6ab9b16b8d19e05572e13b",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "5aa6a32c10d0fa6d70b311fab1998d0dcc87dc8728023e81f832d8a37377b44f",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/c484d0eb162a6a0f1195d7b4cc2833e8c86dc273be6ab9b16b8d19e05572e13b/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "5aa6a32c10d0fa6d70b311fab1998d0dcc87dc8728023e81f832d8a37377b44f",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 16>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "3cafe918e32d39b033843c18d3320ea7b9e562b1e91ceb45d568088b2da0a775",
+      "program": null,
+      "round": 5,
+      "score": null,
+      "search_key": "c484d0eb162a6a0f1195d7b4cc2833e8c86dc273be6ab9b16b8d19e05572e13b",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_64_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_8_64_64",
+        "auto_implementation_scalar_1",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "306b8623affa3c9963bf9a54699adb1d864d58ef81cbe58cfb10f2e5afeaa29f",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "306b8623affa3c9963bf9a54699adb1d864d58ef81cbe58cfb10f2e5afeaa29f",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "788ca152a9b3f30710ea02019a570c4ff7eb6aaccbd996c49949649b1bd24be3",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/306b8623affa3c9963bf9a54699adb1d864d58ef81cbe58cfb10f2e5afeaa29f/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "788ca152a9b3f30710ea02019a570c4ff7eb6aaccbd996c49949649b1bd24be3",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 64, 64>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "34890d7bcdf850ca9bc0cf545bfebedb241ac7c6574270298d0a4d5497776f26",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "306b8623affa3c9963bf9a54699adb1d864d58ef81cbe58cfb10f2e5afeaa29f",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+      "action_chain": [
+        "auto_tiles_32_16_32",
+        "auto_tiles_32_8_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_32_8_16",
+        "auto_tiles_32_64_16",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0"
+      ],
+      "candidate_id": "ec4121481e35a3eeee5a587ded25e84dbb0d989ee08334bec0d4747c1aa6139c",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "ec4121481e35a3eeee5a587ded25e84dbb0d989ee08334bec0d4747c1aa6139c",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "de1de3dffc693e75d26689090494a7ace3f69a0563aeba1c8b685629f750f6aa",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/ec4121481e35a3eeee5a587ded25e84dbb0d989ee08334bec0d4747c1aa6139c/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "de1de3dffc693e75d26689090494a7ace3f69a0563aeba1c8b685629f750f6aa",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 32, 64, 16>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 0 : i64, residency = \"readonly-panel\", reuse_loop = 1 : i64, storage = 0 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "3a998aacc213309837b71940527f50db82d06afe378060831974fecf522e6f52",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "ec4121481e35a3eeee5a587ded25e84dbb0d989ee08334bec0d4747c1aa6139c",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m32-k128-n64",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_32_16_32",
+        "auto_tiles_32_8_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_32_8_16",
+        "auto_tiles_32_64_16",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "9aa637c7cd6eab62d3eb89b90d004f2f6f5c3b5d77a20b1478a443d98ecb503f",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "9aa637c7cd6eab62d3eb89b90d004f2f6f5c3b5d77a20b1478a443d98ecb503f",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "d981d0e3784a01d7940547d322237ce04e72c6c51d964ea9933fdf234f57beb6",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/9aa637c7cd6eab62d3eb89b90d004f2f6f5c3b5d77a20b1478a443d98ecb503f/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "d981d0e3784a01d7940547d322237ce04e72c6c51d964ea9933fdf234f57beb6",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 32, 64, 16>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<32x128xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<128x64xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<32x64xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<32x64xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%alloc : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>) will_writes(%done_writes : memref<32x64xf32>) [original_read_memrefs(%arg0, %arg1 : memref<32x128xf32>, memref<128x64xf32>), original_write_memrefs(%alloc : memref<32x64xf32>)] {orbit.distributed_initialization} : (memref<32x128xf32>, memref<128x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x128xf32>, %arg4: memref<128x64xf32>, %arg5: memref<32x64xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 32 {\n        affine.for %arg7 = 0 to 64 {\n          affine.for %arg8 = 0 to 128 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<32x128xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<128x64xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<32x64xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<32x64xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<32x64xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<32x64xf32>) will_writes(%arg2 : memref<32x64xf32>) [original_read_memrefs(%done_writes_0 : memref<32x64xf32>), original_write_memrefs(%arg2 : memref<32x64xf32>)] : (memref<32x64xf32>, memref<32x64xf32>) -> (memref<32x64xf32>) {\n    ^bb0(%arg3: memref<32x64xf32>, %arg4: memref<32x64xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 32 {\n        affine.for %arg6 = 0 to 64 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<32x64xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<32x64xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<32x64xf32>)\n    }\n    memref.dealloc %alloc : memref<32x64xf32>\n    return\n  }\n}\n",
+      "parent": "3a998aacc213309837b71940527f50db82d06afe378060831974fecf522e6f52",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "9aa637c7cd6eab62d3eb89b90d004f2f6f5c3b5d77a20b1478a443d98ecb503f",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_80_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "3dc3d4f050735854b87eb17b5295d4fa445507b3f8fc73ef60adbd786a0a2b75",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "3dc3d4f050735854b87eb17b5295d4fa445507b3f8fc73ef60adbd786a0a2b75",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "ffe64707e2268032e9647c3031f9c6acb8d735833da0f2c2ddd968ba1e88c14c",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/3dc3d4f050735854b87eb17b5295d4fa445507b3f8fc73ef60adbd786a0a2b75/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "ffe64707e2268032e9647c3031f9c6acb8d735833da0f2c2ddd968ba1e88c14c",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 80, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "c428ca24414082de60e667131091d3bde3460e24182813efc102faac9000d5f2",
+      "program": null,
+      "round": 2,
+      "score": null,
+      "search_key": "3dc3d4f050735854b87eb17b5295d4fa445507b3f8fc73ef60adbd786a0a2b75",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+      "action_chain": [
+        "auto_tiles_17_16_32",
+        "auto_tiles_17_80_32",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0"
+      ],
+      "candidate_id": "26dc8d98b9cc396e660e1e66f0836c6520112b02e8c223d7b9bb4e71d1ab7a9a",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "26dc8d98b9cc396e660e1e66f0836c6520112b02e8c223d7b9bb4e71d1ab7a9a",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "2d6bb459118741988837a202e926f056874edc23352cfa3f05b7009b3b836e7f",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/26dc8d98b9cc396e660e1e66f0836c6520112b02e8c223d7b9bb4e71d1ab7a9a/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "2d6bb459118741988837a202e926f056874edc23352cfa3f05b7009b3b836e7f",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 17, 80, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 0 : i64, residency = \"readonly-panel\", reuse_loop = 1 : i64, storage = 0 : i64}} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "0a3e5c3649a3026fa5e69b491799d09f68f7033b3dbb1d02d719b91e6beab32b",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "26dc8d98b9cc396e660e1e66f0836c6520112b02e8c223d7b9bb4e71d1ab7a9a",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_17_16_32",
+        "auto_tiles_17_80_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "49c4223525d46735a9f0f737f38f5d5c2a09e19743776817a0cc48d7980a01bd",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "49c4223525d46735a9f0f737f38f5d5c2a09e19743776817a0cc48d7980a01bd",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "627cfd3c576e27efe2a31867a4538e59338f7a9aabcebab693786cade649b6ab",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/49c4223525d46735a9f0f737f38f5d5c2a09e19743776817a0cc48d7980a01bd/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "627cfd3c576e27efe2a31867a4538e59338f7a9aabcebab693786cade649b6ab",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 17, 80, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "0a3e5c3649a3026fa5e69b491799d09f68f7033b3dbb1d02d719b91e6beab32b",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "49c4223525d46735a9f0f737f38f5d5c2a09e19743776817a0cc48d7980a01bd",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_4_16_32",
+        "auto_tiles_4_80_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "04e33d8da6df5d8212ca507e8a70076628efc540418505ca4fd32713d48df95e",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "04e33d8da6df5d8212ca507e8a70076628efc540418505ca4fd32713d48df95e",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "f63a3c9b614e6321c5ca43d2d7f5798db783b9e6c5bcbd88d284b95fbdade8d7",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/04e33d8da6df5d8212ca507e8a70076628efc540418505ca4fd32713d48df95e/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "f63a3c9b614e6321c5ca43d2d7f5798db783b9e6c5bcbd88d284b95fbdade8d7",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 4, 80, 32>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "10c793f136525e09422117f6bf19c8b79f96b0d5b7de679a37385b9df4d3d9bf",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "04e33d8da6df5d8212ca507e8a70076628efc540418505ca4fd32713d48df95e",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_8_80_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "d611f757c8d7e9e90caccb35d003cab131d80e3c1fb3a27f6827b90d0e7eabf2",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "d611f757c8d7e9e90caccb35d003cab131d80e3c1fb3a27f6827b90d0e7eabf2",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "a3dd18d31f7bfe68498343ae433be948c65ace53b84f4194edd9863041bf10b8",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/d611f757c8d7e9e90caccb35d003cab131d80e3c1fb3a27f6827b90d0e7eabf2/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "a3dd18d31f7bfe68498343ae433be948c65ace53b84f4194edd9863041bf10b8",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 80, 32>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "3b7aeb2e0aeca8a4e13c2dd6263eb20bb029b2f1809034b6565f7675449e921d",
+      "program": null,
+      "round": 3,
+      "score": null,
+      "search_key": "d611f757c8d7e9e90caccb35d003cab131d80e3c1fb3a27f6827b90d0e7eabf2",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_8_80_32",
+        "auto_tiles_8_80_16",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "e32573a2112641935e041026c16761589578f176ec3da4ca3f2e5053fd8a52c1",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "e32573a2112641935e041026c16761589578f176ec3da4ca3f2e5053fd8a52c1",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "1b803dc41a4875e60d5647bbabeaf2cd1a88b3945c411733eadd6d5724df6700",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/e32573a2112641935e041026c16761589578f176ec3da4ca3f2e5053fd8a52c1/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "1b803dc41a4875e60d5647bbabeaf2cd1a88b3945c411733eadd6d5724df6700",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 80, 16>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "3a9f10fd125b76746c5628a0a027a92c3730871827e71d8182c87d9e597d06bb",
+      "program": null,
+      "round": 4,
+      "score": null,
+      "search_key": "e32573a2112641935e041026c16761589578f176ec3da4ca3f2e5053fd8a52c1",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_16_16_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_16_80_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "02fdc61981a5679d278d158a58d928176802852b34ee4386f23d1dda58aa2736",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "02fdc61981a5679d278d158a58d928176802852b34ee4386f23d1dda58aa2736",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "e78811a03a32f2c299dbb48cc4dd1d132e366ca8a0bc05693ff41a089c104146",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/02fdc61981a5679d278d158a58d928176802852b34ee4386f23d1dda58aa2736/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "e78811a03a32f2c299dbb48cc4dd1d132e366ca8a0bc05693ff41a089c104146",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 16, 80, 32>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "116ea23d7a60104b3efc197a0fb130051f1786b2438e95b06f75859f9b28ffe3",
+      "program": null,
+      "round": 5,
+      "score": null,
+      "search_key": "02fdc61981a5679d278d158a58d928176802852b34ee4386f23d1dda58aa2736",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_8_32_32",
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_8_32_16",
+        "auto_tiles_8_80_16",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "22ebcd6a374046eba7dc681cd7e49a56d693e6e9a94d71e974e97a16a95fe0a4",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "22ebcd6a374046eba7dc681cd7e49a56d693e6e9a94d71e974e97a16a95fe0a4",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "5260cf0efa4e8f71e4768dbfb557fcc0fa9fbdad7293a4c9916e0a16e61bffa8",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/22ebcd6a374046eba7dc681cd7e49a56d693e6e9a94d71e974e97a16a95fe0a4/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "5260cf0efa4e8f71e4768dbfb557fcc0fa9fbdad7293a4c9916e0a16e61bffa8",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 8, 80, 16>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "32d885047a82ca98a5dbc3ff3353215020fae08e2ce72bd50a4a6c3ea8dae56a",
+      "program": null,
+      "round": 5,
+      "score": null,
+      "search_key": "22ebcd6a374046eba7dc681cd7e49a56d693e6e9a94d71e974e97a16a95fe0a4",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "mapping_retain-across-users_storage_0_reuse_1_panel_0",
+        "auto_tiles_16_16_32",
+        "auto_implementation_scalar-product-vector-add-f32_8",
+        "auto_tiles_16_80_32",
+        "auto_tiles_16_40_32",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "df6143ed9cfbba4d578d099c3d4d7e2fa97703114d5552e836519f8777256479",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "df6143ed9cfbba4d578d099c3d4d7e2fa97703114d5552e836519f8777256479",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "ff51ff7567e74ba1dddd061872b07febd5091e51987e44157eded19481341b20",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/df6143ed9cfbba4d578d099c3d4d7e2fa97703114d5552e836519f8777256479/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "ff51ff7567e74ba1dddd061872b07febd5091e51987e44157eded19481341b20",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 16, 40, 32>, orbit.implementation = \"scalar-product-vector-add-f32\", orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}, orbit.vector_lanes = 8 : i64} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "0b48fd1b605f403ec217ecd7df50e7a6900d546cadf91337319b1c9174b1a966",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "df6143ed9cfbba4d578d099c3d4d7e2fa97703114d5552e836519f8777256479",
+      "status": "unsupported"
+    }
+  },
+  {
+    "program": "m17-k129-n80",
+    "record": {
+      "action": "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "action_chain": [
+        "auto_tiles_4_16_32",
+        "auto_tiles_4_80_32",
+        "auto_tiles_4_40_32",
+        "auto_tiles_4_40_64",
+        "auto_tiles_17_40_64",
+        "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+      ],
+      "candidate_id": "a785f932649e6cd595a74c77edeb8bc71df45317b034c38f990950af6280aed6",
+      "evaluation": {
+        "backend": "air",
+        "candidate_id": "a785f932649e6cd595a74c77edeb8bc71df45317b034c38f990950af6280aed6",
+        "diagnostics": {
+          "reason": "physical per-stage storage pools exceed local capacity",
+          "status": "unsupported"
+        },
+        "evaluation_identity": "4550078bc1894461b065835009d6b5cf95d5ec517c1b4c08ad5688bca8af2e07",
+        "evaluation_kind": "static_estimate",
+        "evaluator_kind": "native_cpp",
+        "evidence_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/a785f932649e6cd595a74c77edeb8bc71df45317b034c38f990950af6280aed6/mapping-result.json",
+        "executed": false,
+        "schema": "orbit.search.feedback.v1",
+        "source_id": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+        "status": "unsupported"
+      },
+      "evaluation_identity": "4550078bc1894461b065835009d6b5cf95d5ec517c1b4c08ad5688bca8af2e07",
+      "native_mlir": "module attributes {orbit.air_tile_sizes = array<i64: 17, 40, 64>, orbit.mapping = {data_organization = \"retain-across-users\", grouping = \"readonly-panel-scope\", panel_loop = 1 : i64, residency = \"readonly-panel\", reuse_loop = 0 : i64, storage = 1 : i64}} {\n  func.func @gemm_scale(%arg0: memref<17x129xf32> {orbit.name = \"A\", orbit.role = \"input\"}, %arg1: memref<129x80xf32> {orbit.name = \"B\", orbit.role = \"input\"}, %arg2: memref<17x80xf32> {orbit.name = \"Y\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n    %alloc = memref.alloc() {orbit.name = \"intermediate\"} : memref<17x80xf32>\n    %done_writes = taskflow.task @gemm.initialize will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%alloc : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.store %cst, %arg5[%arg6, %arg7] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_0 = taskflow.task @gemm will_reads(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>) will_writes(%done_writes : memref<17x80xf32>) [original_read_memrefs(%arg0, %arg1 : memref<17x129xf32>, memref<129x80xf32>), original_write_memrefs(%alloc : memref<17x80xf32>)] {orbit.distributed_initialization} : (memref<17x129xf32>, memref<129x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x129xf32>, %arg4: memref<129x80xf32>, %arg5: memref<17x80xf32>):\n      %cst = arith.constant 0.000000e+00 : f32\n      affine.for %arg6 = 0 to 17 {\n        affine.for %arg7 = 0 to 80 {\n          affine.for %arg8 = 0 to 129 {\n            %0 = affine.load %arg3[%arg6, %arg8] : memref<17x129xf32>\n            %1 = affine.load %arg4[%arg8, %arg7] : memref<129x80xf32>\n            %2 = affine.load %arg5[%arg6, %arg7] : memref<17x80xf32>\n            %3 = arith.mulf %0, %1 : f32\n            %4 = arith.addf %2, %3 : f32\n            affine.store %4, %arg5[%arg6, %arg7] : memref<17x80xf32>\n          }\n        }\n      }\n      taskflow.yield done_writes(%arg5 : memref<17x80xf32>)\n    }\n    %done_writes_1 = taskflow.task @scale will_reads(%done_writes_0 : memref<17x80xf32>) will_writes(%arg2 : memref<17x80xf32>) [original_read_memrefs(%done_writes_0 : memref<17x80xf32>), original_write_memrefs(%arg2 : memref<17x80xf32>)] : (memref<17x80xf32>, memref<17x80xf32>) -> (memref<17x80xf32>) {\n    ^bb0(%arg3: memref<17x80xf32>, %arg4: memref<17x80xf32>):\n      %cst = arith.constant 5.000000e-01 : f32\n      affine.for %arg5 = 0 to 17 {\n        affine.for %arg6 = 0 to 80 {\n          %0 = affine.load %arg3[%arg5, %arg6] : memref<17x80xf32>\n          %1 = arith.mulf %0, %cst : f32\n          affine.store %1, %arg4[%arg5, %arg6] : memref<17x80xf32>\n        }\n      }\n      taskflow.yield done_writes(%arg4 : memref<17x80xf32>)\n    }\n    memref.dealloc %alloc : memref<17x80xf32>\n    return\n  }\n}\n",
+      "parent": "30e2299e968945c9d03748854b1a5d0b666e1e9051823be64aa2a9cc63d880c1",
+      "program": null,
+      "round": 6,
+      "score": null,
+      "search_key": "a785f932649e6cd595a74c77edeb8bc71df45317b034c38f990950af6280aed6",
+      "status": "unsupported"
+    }
+  }
+]

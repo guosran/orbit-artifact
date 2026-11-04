@@ -1,0 +1,77 @@
+<unknown>:0: error: 'scf.parallel' op has no init_val
+<unknown>:0: note: see current operation: 
+"scf.parallel"(%3, %3, %2, %2, %2, %2) <{operandSegmentSizes = array<i32: 2, 2, 2, 0>}> ({
+^bb0(%arg36: index, %arg37: index):
+  %63 = "air.wait_all"() : () -> !air.async.token
+  %64 = "scf.for"(%3, %0, %2, %63) ({
+  ^bb0(%arg38: index, %arg39: !air.async.token):
+    %65 = "arith.muli"(%arg38, %1) <{overflowFlags = #arith.overflow<none>}> : (index, index) -> index
+    %66 = "air.wait_all"() : () -> !air.async.token
+    %67 = "air.channel.put"(%arg39, %arg36, %arg37, %arg7, %65) <{chan_name = @channel_45, operandSegmentSizes = array<i32: 1, 2, 1, 1, 0, 0, 0>, static_src_offsets = array<i64: 0, -9223372036854775808>, static_src_sizes = array<i64: 8, 32>, static_src_strides = array<i64: 80, 1>}> {"loop-carried-dep" = "internalGetPut"} : (!air.async.token, index, index, memref<17x80xf32>, index) -> !air.async.token
+    %68 = "air.wait_all"() : () -> !air.async.token
+    %69 = "air.wait_all"() : () -> !air.async.token
+    %70 = "air.wait_all"() : () -> !air.async.token
+    %71 = "air.wait_all"() : () -> !air.async.token
+    %72 = "air.wait_all"(%67) {hoist = "dep"} : (!air.async.token) -> !air.async.token
+    "scf.yield"(%72) : (!air.async.token) -> ()
+  }) {"loop-carried-dep" = "hoistedLoop"} : (index, index, index, !air.async.token) -> !air.async.token
+  "scf.reduce"() : () -> ()
+}) {"loop-carried-dep" = "hoistedLoop"} : (index, index, index, index, index, index) -> ()
+<unknown>:0: error: 'scf.parallel' op number of reduce operands is not one
+<unknown>:0: note: see current operation: 
+"scf.parallel"(%3, %3, %2, %2, %2, %2) <{operandSegmentSizes = array<i32: 2, 2, 2, 0>}> ({
+^bb0(%arg36: index, %arg37: index):
+  %63 = "air.wait_all"() : () -> !air.async.token
+  %64 = "scf.for"(%3, %0, %2, %63) ({
+  ^bb0(%arg38: index, %arg39: !air.async.token):
+    %65 = "arith.muli"(%arg38, %1) <{overflowFlags = #arith.overflow<none>}> : (index, index) -> index
+    %66 = "air.wait_all"() : () -> !air.async.token
+    %67 = "air.channel.put"(%arg39, %arg36, %arg37, %arg7, %65) <{chan_name = @channel_45, operandSegmentSizes = array<i32: 1, 2, 1, 1, 0, 0, 0>, static_src_offsets = array<i64: 0, -9223372036854775808>, static_src_sizes = array<i64: 8, 32>, static_src_strides = array<i64: 80, 1>}> {"loop-carried-dep" = "internalGetPut"} : (!air.async.token, index, index, memref<17x80xf32>, index) -> !air.async.token
+    %68 = "air.wait_all"() : () -> !air.async.token
+    %69 = "air.wait_all"() : () -> !air.async.token
+    %70 = "air.wait_all"() : () -> !air.async.token
+    %71 = "air.wait_all"() : () -> !air.async.token
+    %72 = "air.wait_all"(%67) {hoist = "dep"} : (!air.async.token) -> !air.async.token
+    "scf.yield"(%72) : (!air.async.token) -> ()
+  }) {"loop-carried-dep" = "hoistedLoop"} : (index, index, index, !air.async.token) -> !air.async.token
+  "scf.reduce"() : () -> ()
+}) {"loop-carried-dep" = "hoistedLoop"} : (index, index, index, index, index, index) -> ()
+air-opt: /home/runner/work/mlir-air/mlir-air/mlir_no_rtti/include/llvm/ADT/ArrayRef.h:439: T &llvm::MutableArrayRef<mlir::OpOperand>::operator[](size_t) const [T = mlir::OpOperand]: Assertion `Index < this->size() && "Invalid index!"' failed.
+PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace and instructions to reproduce the bug.
+Stack dump:
+0.	Program arguments: /home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/mlir_air/bin/air-opt /home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/compiled-final-r1/holdout-m17-k129-n80-t8x32x32-scalar-phase/canonical.air.mlir --air-dma-to-channel --canonicalize --mlir-print-op-generic -o /home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/compiled-final-r1/holdout-m17-k129-n80-t8x32x32-scalar-phase/channelized.generic.air.mlir
+ #0 0x0000000008ded04a llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/mlir_air/bin/air-opt+0x8ded04a)
+ #1 0x0000000008de9df4 SignalHandler(int, siginfo_t*, void*) Signals.cpp:0:0
+ #2 0x00007eeda6845330 (/lib/x86_64-linux-gnu/libc.so.6+0x45330)
+ #3 0x00007eeda689ec0c __pthread_kill_implementation ./nptl/pthread_kill.c:44:76
+ #4 0x00007eeda689ec0c __pthread_kill_internal ./nptl/pthread_kill.c:78:10
+ #5 0x00007eeda689ec0c pthread_kill ./nptl/pthread_kill.c:89:10
+ #6 0x00007eeda684527e raise ./signal/../sysdeps/posix/raise.c:27:6
+ #7 0x00007eeda68288ff abort ./stdlib/abort.c:81:7
+ #8 0x00007eeda682881b _nl_load_domain ./intl/loadmsgcat.c:1177:9
+ #9 0x00007eeda683b517 (/lib/x86_64-linux-gnu/libc.so.6+0x3b517)
+#10 0x0000000002c3aee2 xilinx::air::dependencyTracer::reconnectLoopCarriedDependencyFromOp(mlir::Operation*) Dependency.cpp:0:0
+#11 0x0000000002c3ac3b xilinx::air::dependencyTracer::reconnectLoopCarriedDependencyFromOp(mlir::Operation*) Dependency.cpp:0:0
+#12 0x000000000320029c xilinx::air::DmaToChannelPass::updateDependencyOnFunction(mlir::func::FuncOp)::'lambda'(xilinx::air::MemcpyInterface)::operator()(xilinx::air::MemcpyInterface) const AIRDmaToChannel.cpp:0:0
+#13 0x00000000024aba4a mlir::WalkResult mlir::detail::walk<mlir::ForwardDominanceIterator<false>>(mlir::Operation*, llvm::function_ref<mlir::WalkResult (mlir::Operation*)>, mlir::WalkOrder) AIRDialect.cpp:0:0
+#14 0x00000000024ab94b mlir::WalkResult mlir::detail::walk<mlir::ForwardDominanceIterator<false>>(mlir::Operation*, llvm::function_ref<mlir::WalkResult (mlir::Operation*)>, mlir::WalkOrder) AIRDialect.cpp:0:0
+#15 0x00000000024ab94b mlir::WalkResult mlir::detail::walk<mlir::ForwardDominanceIterator<false>>(mlir::Operation*, llvm::function_ref<mlir::WalkResult (mlir::Operation*)>, mlir::WalkOrder) AIRDialect.cpp:0:0
+#16 0x00000000024ab94b mlir::WalkResult mlir::detail::walk<mlir::ForwardDominanceIterator<false>>(mlir::Operation*, llvm::function_ref<mlir::WalkResult (mlir::Operation*)>, mlir::WalkOrder) AIRDialect.cpp:0:0
+#17 0x00000000024ab94b mlir::WalkResult mlir::detail::walk<mlir::ForwardDominanceIterator<false>>(mlir::Operation*, llvm::function_ref<mlir::WalkResult (mlir::Operation*)>, mlir::WalkOrder) AIRDialect.cpp:0:0
+#18 0x00000000031f4672 xilinx::air::DmaToChannelPass::runOnOperation() AIRDmaToChannel.cpp:0:0
+#19 0x0000000003748751 mlir::detail::OpToOpPassAdaptor::run(mlir::Pass*, mlir::Operation*, mlir::AnalysisManager, bool, unsigned int) Pass.cpp:0:0
+#20 0x0000000003748b2e mlir::detail::OpToOpPassAdaptor::runPipeline(mlir::OpPassManager&, mlir::Operation*, mlir::AnalysisManager, bool, unsigned int, mlir::PassInstrumentor*, mlir::PassInstrumentation::PipelineParentInfo const*) Pass.cpp:0:0
+#21 0x0000000003749618 mlir::PassManager::runPasses(mlir::Operation*, mlir::AnalysisManager) Pass.cpp:0:0
+#22 0x000000000374ac52 mlir::PassManager::run(mlir::Operation*) Pass.cpp:0:0
+#23 0x00000000036fc834 performActions(llvm::raw_ostream&, std::shared_ptr<llvm::SourceMgr> const&, mlir::MLIRContext*, mlir::MlirOptMainConfig const&) MlirOptMain.cpp:0:0
+#24 0x00000000036fd686 processBuffer(llvm::raw_ostream&, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, llvm::MemoryBufferRef, mlir::MlirOptMainConfig const&, mlir::DialectRegistry&, mlir::SourceMgrDiagnosticVerifierHandler*, llvm::ThreadPoolInterface*) MlirOptMain.cpp:0:0
+#25 0x00000000036fd8b7 llvm::LogicalResult llvm::function_ref<llvm::LogicalResult (std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, llvm::MemoryBufferRef const&, llvm::raw_ostream&)>::callback_fn<mlir::MlirOptMain(llvm::raw_ostream&, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, mlir::DialectRegistry&, mlir::MlirOptMainConfig const&)::'lambda'(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, llvm::MemoryBufferRef, llvm::raw_ostream&)>(long, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, llvm::MemoryBufferRef const&, llvm::raw_ostream&) MlirOptMain.cpp:0:0
+#26 0x0000000005ca003b mlir::splitAndProcessBuffer(std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, llvm::function_ref<llvm::LogicalResult (std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, llvm::MemoryBufferRef const&, llvm::raw_ostream&)>, llvm::raw_ostream&, llvm::StringRef, llvm::StringRef) ToolUtilities.cpp:0:0
+#27 0x00000000036f8fd3 mlir::MlirOptMain(llvm::raw_ostream&, std::unique_ptr<llvm::MemoryBuffer, std::default_delete<llvm::MemoryBuffer>>, mlir::DialectRegistry&, mlir::MlirOptMainConfig const&) (.part.0) MlirOptMain.cpp:0:0
+#28 0x00000000036fddb9 mlir::MlirOptMain(int, char**, llvm::StringRef, llvm::StringRef, mlir::DialectRegistry&) MlirOptMain.cpp:0:0
+#29 0x00000000036fe00d mlir::MlirOptMain(int, char**, llvm::StringRef, mlir::DialectRegistry&) MlirOptMain.cpp:0:0
+#30 0x000000000241bc1d main air-opt.cpp:0:0
+#31 0x00007eeda682a1ca __libc_start_call_main ./csu/../sysdeps/nptl/libc_start_call_main.h:74:3
+#32 0x00007eeda682a28b call_init ./csu/../csu/libc-start.c:128:20
+#33 0x00007eeda682a28b __libc_start_main ./csu/../csu/libc-start.c:347:5
+#34 0x000000000241b8a5 _start (/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/mlir_air/bin/air-opt+0x241b8a5)

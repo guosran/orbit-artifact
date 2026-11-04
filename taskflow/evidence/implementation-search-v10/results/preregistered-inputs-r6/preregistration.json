@@ -1,0 +1,79 @@
+{
+  "amendment": {
+    "prior_failed_attempts_preserved": [
+      "proposal-coverage-probe-r1",
+      "proposals-final-r1",
+      "proposals-final-r2"
+    ],
+    "prior_registration": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/preregistered-inputs-r5/preregistration.json",
+    "prior_sha256": "d6f8f49371f3baea21bb41f3bb18d3eb5ab36955f1015156c93d3c32defa534d",
+    "reason": "before any v10 timing labels: canonical final-r2 automatic search covered all 12 train cells and both tail holdouts but finite beam did not reach four requested M32 tile4/32/64 cells; original native archive independently contains exactly one legal candidate per replacement tile4/16/64 implementation/residency coordinate. Replace only these four configuration holdouts on static finite-beam reachability, never measured timing. This is an unseen M/K tile combination, not an unseen source family.",
+    "timing_labels_read": false
+  },
+  "cgra": {
+    "model_sha256": {
+      "baseline.json": "4ff7de9e0e51ea9b66691d8323afdf59ca4e8581ea5520ce6aa2d1c89df55f87",
+      "ensemble.json": "ef38a5d356dd5d7029a7eef719f3b4952cf932ee52d932e30f714bdbe7e692bd",
+      "large-operation.json": "8ae4d2c532277b63d47ee1ce1104831ab0f25656fc057a01de41c2568e4ae3ec",
+      "ranking.json": "7878b54af2aa440ae954be470def190f04508070e564189903e78583137a04ed"
+    },
+    "models": "/home/shiran/project/orbit-artifact/reference/input0-neighborhood/models",
+    "provenance_path": "/home/shiran/project/orbit-artifact/taskflow/test/TaskflowMapping/fixtures/compute-contract-baseline-v8.provenance.json",
+    "provenance_sha256": "a4ae9382c8b3f935a47833ed50232f2a3a48129606956e2ca58484b6b5f0dca1",
+    "scope": "existing model-file identity only; scorer regression is a separate CPU gate"
+  },
+  "core_fixture": {
+    "path": "/home/shiran/project/orbit/test/TaskflowAIR/fixtures/gemm-scale.mlir",
+    "sha256": "4decad4d0564217cd026e072fb6a3953a363671fdacac6dd899b709901f873e0"
+  },
+  "device_submissions": 0,
+  "generator_sha256": "8612255e2754524a81dfcfbd90d7d112b0ed6ff85bb4ac2a1ccebb6ff145845f",
+  "heldout_policy": "no holdout measurement or labels until model and predictions are frozen",
+  "matrix_sha256": "f36cb273a8e0e8506dbf2e063ff84323b844ce4b144fea405796e4a17a1bbf94",
+  "planning": "none; original C++ archive must generate every declared candidate",
+  "preparer_sha256": "c48828c7635d390fe469df7af2c30c0ef7d2ebe371c53c8ad81209d3261b6af1",
+  "programs": [
+    {
+      "files": {
+        "inputs/m16-k128-n64/fixture.json": "cd23e354b138afa5b3bd71e1d391c75f7413a72a5a24f28b046d82901846c743",
+        "inputs/m16-k128-n64/inputs-11.npz": "c9ea5bedbfd6ee6638b680bcc788eb3b06b7b41989605352f42b27fbdee00f78",
+        "inputs/m16-k128-n64/inputs-23.npz": "a5fb70a963e08d4219555d4ef3e064187b7dcfc27a6b939fefb9e15b25c7416a",
+        "inputs/m16-k128-n64/inputs-47.npz": "d331350f469766e093fac2423a4d9e628659e32c717aba3408a4ce9930b11003",
+        "inputs/m16-k128-n64/reference-11.npz": "92efa3200473ceb8c92b5825c639bab6da0608f537dc3323272dfe03587af6d7",
+        "inputs/m16-k128-n64/reference-23.npz": "d97d03bc97cc50271613678dd2a111e82e7df4ea5f3f94836869cc04ea222f57",
+        "inputs/m16-k128-n64/reference-47.npz": "a468431c2a8bd14a06c988d6772e30c292fe20505b23401240972c07403ff1f1",
+        "inputs/m16-k128-n64/source.mlir": "a0bbcfa21fc46544b3686b937a080a5e0f3cfa04c6f5de096f4f20c67e6a152b"
+      },
+      "program": "m16-k128-n64"
+    },
+    {
+      "files": {
+        "inputs/m32-k128-n64/fixture.json": "c2dbd5a1e9f4869acf4793899b1e13cdf27356f8480fde729ce3f80fd112468d",
+        "inputs/m32-k128-n64/inputs-11.npz": "63806901a72987ce08514003de05d5042a560248dd8870e8faded13d7d10703f",
+        "inputs/m32-k128-n64/inputs-23.npz": "e503bc4d11f2baf81d65a983b8d7fc3dbc937d170ab63dd5f7bdafb8eb3766cc",
+        "inputs/m32-k128-n64/inputs-47.npz": "087c7adaf323f529083c31710656717a69007929deb8cd9796343dd2cdb28609",
+        "inputs/m32-k128-n64/reference-11.npz": "aa792d46a3e868374fd7e9c2dc5ae6171273c77917cbacea79e09fe2bdf05cde",
+        "inputs/m32-k128-n64/reference-23.npz": "f37720415ebafb389877f2b61135131d9991578638982c68b8c17c73a2740ff4",
+        "inputs/m32-k128-n64/reference-47.npz": "178969a10d76068d750ebc3b601c4d616d22024098bbfc651e8aa1b9862077be",
+        "inputs/m32-k128-n64/source.mlir": "8aa2c0aab6f4d09c487b085e765b3897d90ad10824368e6326fcba98df1aaf95"
+      },
+      "program": "m32-k128-n64"
+    },
+    {
+      "files": {
+        "inputs/m17-k129-n80/fixture.json": "25fda34a85cb1c42b007c53c61f460ac1f1a565f2915b71f7422c1a93d2f2e66",
+        "inputs/m17-k129-n80/inputs-11.npz": "d3c1bfcc10d8b3601a8dea880799ac779949a832cd452f1c2ff56f7c4d5b09e8",
+        "inputs/m17-k129-n80/inputs-23.npz": "9805659ce408c21d8edfa6aff1aa3aa1689afa0ca474d761ccec42535ce1399c",
+        "inputs/m17-k129-n80/inputs-47.npz": "947bb2a3f3bc2290c54442784b80949aa50600e18f496f5e0e7f43c4ef1b5797",
+        "inputs/m17-k129-n80/reference-11.npz": "3130ba64bd0091725515c20415a0fe61a3d012da3af9f83c76582cec880c2999",
+        "inputs/m17-k129-n80/reference-23.npz": "bef0296f5ffb2eaeba3f4669844ba85d875a8d825fb4acbf305439b0083a06ea",
+        "inputs/m17-k129-n80/reference-47.npz": "651cbc5ce9e4cc1785bc048881605d8afadc59b17dd4aa727a6207b2113affa7",
+        "inputs/m17-k129-n80/source.mlir": "74c169b85bad8b1ec41a86dbe24f4cbb41d1f0352cda91fafa243d887ab82719"
+      },
+      "program": "m17-k129-n80"
+    }
+  ],
+  "schema": "orbit.implementation-search.preregistration.v10",
+  "status": "prepared-before-timing",
+  "timing_labels_read": false
+}

@@ -1,0 +1,492 @@
+{
+  "schema": "orbit.novelty-exclusions.review.v10",
+  "scope": "Four actual v9 measured GEMM-scale executions; excludes repeated semantic configurations across version/price hashes, not equivalent machine-code assertion",
+  "case_manifest": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/cases-joint-implementation-r1.json",
+    "sha256": "2790d377a9e5f8e2733d3749366decea1e503de33ea1f11dee3695efdbfa40f4"
+  },
+  "observed_table": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-measured-r2/observed-model.json",
+    "sha256": "23c4aaade2ee494f25febbc2cc0e8f747da2b888ffb440c592956f9e5bfb4960"
+  },
+  "raw_manifest": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-measured-r2/observed-raw-manifest.json",
+    "sha256": "a61079725a26419a4a7370ae2f2624856466bf0a8c73319f20e9c449461e2657"
+  },
+  "projection_fields": [
+    "body_fingerprint",
+    "tile_sizes",
+    "task_implementations",
+    "program_mapping_choices",
+    "task_loop_orders",
+    "execution_groups"
+  ],
+  "excluded": [
+    {
+      "candidate_id": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602",
+      "source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/source.mlir",
+        "sha256": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602"
+      },
+      "plan": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/plan.json",
+        "sha256": "cec4c7ff8b64eb812229c54114f1a3c01b43bb1fbf10c428424fe98bb7270392"
+      },
+      "transformed_source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/transformed-taskflow.mlir",
+        "sha256": "acd64f261cc49bf40c64884bcb7dfdd3568080b828a9148d17b73ebb732a5fdc"
+      },
+      "execution_fingerprint": "b04e3972831384a2642eb837b028bae05562eca2c491d2a8b2fdf394f89ccd64",
+      "semantic_configuration": {
+        "body_fingerprint": "ed4aa1161ac94d0400f98772a1e792c6a4d22d1d95d6afe17b4dad5786d90f2c",
+        "tile_sizes": [
+          8,
+          32,
+          32
+        ],
+        "task_implementations": [
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 0
+          },
+          {
+            "kind": "scalar-product-vector-add-f32",
+            "lanes": 8,
+            "parallel_loop": 1,
+            "task": 1
+          },
+          {
+            "kind": "scalar-product-vector-add-f32",
+            "lanes": 8,
+            "parallel_loop": 1,
+            "task": 2
+          }
+        ],
+        "program_mapping_choices": {
+          "data_organization": "phase-local",
+          "grouping": "task-shape-stages",
+          "panel_loop": -1,
+          "residency": "phase-local",
+          "reuse_loop": -1,
+          "storage": -1
+        },
+        "task_loop_orders": [
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 0
+          },
+          {
+            "loop_order": [
+              0,
+              1,
+              2
+            ],
+            "task": 1
+          },
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 2
+          }
+        ],
+        "execution_groups": [
+          {
+            "begin_phase": 8,
+            "depends_on": [],
+            "end_phase_exclusive": 40,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          },
+          {
+            "begin_phase": 40,
+            "depends_on": [
+              0
+            ],
+            "end_phase_exclusive": 48,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          }
+        ]
+      },
+      "source_memref_types": [
+        "memref<128x64xf32>",
+        "memref<32x128xf32>",
+        "memref<32x64xf32>"
+      ],
+      "source_contract": "M32 K128 N64; zero initialize C; ordered K left-fold C += A(i,k)*B(k,j); Y(i,j)=C(i,j)*0.5f32",
+      "observed_row": {
+        "boundary": "prepared-command-host-to-host",
+        "execution_fingerprint": "b04e3972831384a2642eb837b028bae05562eca2c491d2a8b2fdf394f89ccd64",
+        "median_ms": 17.2885385,
+        "raw_manifest_sha256": "a61079725a26419a4a7370ae2f2624856466bf0a8c73319f20e9c449461e2657",
+        "sample_count": 30,
+        "target": {
+          "id": "recorded-aircc-device:npu2;context:5e2c3ee7d2b3c86132e5e33ee7177d90c35385779b7435d596ef76a44660fc9c",
+          "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:f18580b2a4998579d79b114400fb4fa45014debcd5d5787414ade8064886fa32",
+          "toolchain": "{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"orbit-native-lowering-sha256\":\"e475c96f83e2e4f97b4ba2eb921283d22ee4cd8e9d27c6a3829b8ba107f7fbaf\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}"
+        }
+      }
+    },
+    {
+      "candidate_id": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3",
+      "source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/source.mlir",
+        "sha256": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3"
+      },
+      "plan": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/plan.json",
+        "sha256": "b8cd20be315e8800fdc3e446e6ebc62d4e89c4ba6978ad3abfce8fd36cb0fe3a"
+      },
+      "transformed_source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/transformed-taskflow.mlir",
+        "sha256": "d185714e2871e4aaa1e8e071343d09098305b60d4e3696b965c5a3a36693d9e6"
+      },
+      "execution_fingerprint": "46d755d3bc56297ab727e34713fc0ffde974dcf4375067da83b2c7712554bdc8",
+      "semantic_configuration": {
+        "body_fingerprint": "ed4aa1161ac94d0400f98772a1e792c6a4d22d1d95d6afe17b4dad5786d90f2c",
+        "tile_sizes": [
+          8,
+          32,
+          32
+        ],
+        "task_implementations": [
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 0
+          },
+          {
+            "kind": "scalar-product-vector-add-f32",
+            "lanes": 8,
+            "parallel_loop": 1,
+            "task": 1
+          },
+          {
+            "kind": "scalar-product-vector-add-f32",
+            "lanes": 8,
+            "parallel_loop": 1,
+            "task": 2
+          }
+        ],
+        "program_mapping_choices": {
+          "data_organization": "retain-across-users",
+          "grouping": "readonly-panel-scope",
+          "panel_loop": 1,
+          "residency": "readonly-panel",
+          "reuse_loop": 0,
+          "storage": 1
+        },
+        "task_loop_orders": [
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 0
+          },
+          {
+            "loop_order": [
+              1,
+              0,
+              2
+            ],
+            "task": 1
+          },
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 2
+          }
+        ],
+        "execution_groups": [
+          {
+            "begin_phase": 8,
+            "depends_on": [],
+            "end_phase_exclusive": 24,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          },
+          {
+            "begin_phase": 24,
+            "depends_on": [
+              0
+            ],
+            "end_phase_exclusive": 40,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          },
+          {
+            "begin_phase": 40,
+            "depends_on": [
+              1
+            ],
+            "end_phase_exclusive": 48,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          }
+        ]
+      },
+      "source_memref_types": [
+        "memref<128x64xf32>",
+        "memref<32x128xf32>",
+        "memref<32x64xf32>"
+      ],
+      "source_contract": "M32 K128 N64; zero initialize C; ordered K left-fold C += A(i,k)*B(k,j); Y(i,j)=C(i,j)*0.5f32",
+      "observed_row": {
+        "boundary": "prepared-command-host-to-host",
+        "execution_fingerprint": "46d755d3bc56297ab727e34713fc0ffde974dcf4375067da83b2c7712554bdc8",
+        "median_ms": 17.1367475,
+        "raw_manifest_sha256": "a61079725a26419a4a7370ae2f2624856466bf0a8c73319f20e9c449461e2657",
+        "sample_count": 30,
+        "target": {
+          "id": "recorded-aircc-device:npu2;context:5e2c3ee7d2b3c86132e5e33ee7177d90c35385779b7435d596ef76a44660fc9c",
+          "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:f18580b2a4998579d79b114400fb4fa45014debcd5d5787414ade8064886fa32",
+          "toolchain": "{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"orbit-native-lowering-sha256\":\"e475c96f83e2e4f97b4ba2eb921283d22ee4cd8e9d27c6a3829b8ba107f7fbaf\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}"
+        }
+      }
+    },
+    {
+      "candidate_id": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02",
+      "source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02/source.mlir",
+        "sha256": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02"
+      },
+      "plan": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02/plan.json",
+        "sha256": "02e56e01944720750cddf6cd3823dcac29f87c325231b42b395766488f69b886"
+      },
+      "transformed_source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02/transformed-taskflow.mlir",
+        "sha256": "2bc681d5b986e345f23e521330ae8d98b943659745f7e9a1b177543cdffda99c"
+      },
+      "execution_fingerprint": "d7cf4810411cc257bcce7d5f205603acf2fde639cb0f8447b5e95ea82410229c",
+      "semantic_configuration": {
+        "body_fingerprint": "ed4aa1161ac94d0400f98772a1e792c6a4d22d1d95d6afe17b4dad5786d90f2c",
+        "tile_sizes": [
+          8,
+          32,
+          32
+        ],
+        "task_implementations": [
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 0
+          },
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 1
+          },
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 2
+          }
+        ],
+        "program_mapping_choices": {
+          "data_organization": "phase-local",
+          "grouping": "task-shape-stages",
+          "panel_loop": -1,
+          "residency": "phase-local",
+          "reuse_loop": -1,
+          "storage": -1
+        },
+        "task_loop_orders": [
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 0
+          },
+          {
+            "loop_order": [
+              0,
+              1,
+              2
+            ],
+            "task": 1
+          },
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 2
+          }
+        ],
+        "execution_groups": [
+          {
+            "begin_phase": 8,
+            "depends_on": [],
+            "end_phase_exclusive": 40,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          },
+          {
+            "begin_phase": 40,
+            "depends_on": [
+              0
+            ],
+            "end_phase_exclusive": 48,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          }
+        ]
+      },
+      "source_memref_types": [
+        "memref<128x64xf32>",
+        "memref<32x128xf32>",
+        "memref<32x64xf32>"
+      ],
+      "source_contract": "M32 K128 N64; zero initialize C; ordered K left-fold C += A(i,k)*B(k,j); Y(i,j)=C(i,j)*0.5f32",
+      "observed_row": {
+        "boundary": "prepared-command-host-to-host",
+        "execution_fingerprint": "d7cf4810411cc257bcce7d5f205603acf2fde639cb0f8447b5e95ea82410229c",
+        "median_ms": 18.722773500000002,
+        "raw_manifest_sha256": "a61079725a26419a4a7370ae2f2624856466bf0a8c73319f20e9c449461e2657",
+        "sample_count": 30,
+        "target": {
+          "id": "recorded-aircc-device:npu2;context:5e2c3ee7d2b3c86132e5e33ee7177d90c35385779b7435d596ef76a44660fc9c",
+          "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:f18580b2a4998579d79b114400fb4fa45014debcd5d5787414ade8064886fa32",
+          "toolchain": "{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"orbit-native-lowering-sha256\":\"e475c96f83e2e4f97b4ba2eb921283d22ee4cd8e9d27c6a3829b8ba107f7fbaf\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}"
+        }
+      }
+    },
+    {
+      "candidate_id": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81",
+      "source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81/source.mlir",
+        "sha256": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81"
+      },
+      "plan": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81/plan.json",
+        "sha256": "842bbe01103cdc10787714e8e403d62b56cb5e55dbb06721c2f6d86baf145277"
+      },
+      "transformed_source": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/ffn-profiling-v9/joint-implementation-compiled-r1/12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81/transformed-taskflow.mlir",
+        "sha256": "6cc7eb19c979ea3e7718bee0cb4afdbdb25b919c9f5122eba6d377c0d0b5cda2"
+      },
+      "execution_fingerprint": "51af7c77262cdedef2bbdfc0222b1e859a6e2fe0538003173c2e2bde0bde0913",
+      "semantic_configuration": {
+        "body_fingerprint": "ed4aa1161ac94d0400f98772a1e792c6a4d22d1d95d6afe17b4dad5786d90f2c",
+        "tile_sizes": [
+          8,
+          32,
+          32
+        ],
+        "task_implementations": [
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 0
+          },
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 1
+          },
+          {
+            "kind": "scalar",
+            "lanes": 1,
+            "parallel_loop": -1,
+            "task": 2
+          }
+        ],
+        "program_mapping_choices": {
+          "data_organization": "retain-across-users",
+          "grouping": "readonly-panel-scope",
+          "panel_loop": 1,
+          "residency": "readonly-panel",
+          "reuse_loop": 0,
+          "storage": 1
+        },
+        "task_loop_orders": [
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 0
+          },
+          {
+            "loop_order": [
+              1,
+              0,
+              2
+            ],
+            "task": 1
+          },
+          {
+            "loop_order": [
+              0,
+              1
+            ],
+            "task": 2
+          }
+        ],
+        "execution_groups": [
+          {
+            "begin_phase": 8,
+            "depends_on": [],
+            "end_phase_exclusive": 24,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          },
+          {
+            "begin_phase": 24,
+            "depends_on": [
+              0
+            ],
+            "end_phase_exclusive": 40,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          },
+          {
+            "begin_phase": 40,
+            "depends_on": [
+              1
+            ],
+            "end_phase_exclusive": 48,
+            "memory": "aie_l1",
+            "resource": "npu.compute"
+          }
+        ]
+      },
+      "source_memref_types": [
+        "memref<128x64xf32>",
+        "memref<32x128xf32>",
+        "memref<32x64xf32>"
+      ],
+      "source_contract": "M32 K128 N64; zero initialize C; ordered K left-fold C += A(i,k)*B(k,j); Y(i,j)=C(i,j)*0.5f32",
+      "observed_row": {
+        "boundary": "prepared-command-host-to-host",
+        "execution_fingerprint": "51af7c77262cdedef2bbdfc0222b1e859a6e2fe0538003173c2e2bde0bde0913",
+        "median_ms": 18.65087,
+        "raw_manifest_sha256": "a61079725a26419a4a7370ae2f2624856466bf0a8c73319f20e9c449461e2657",
+        "sample_count": 30,
+        "target": {
+          "id": "recorded-aircc-device:npu2;context:5e2c3ee7d2b3c86132e5e33ee7177d90c35385779b7435d596ef76a44660fc9c",
+          "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:f18580b2a4998579d79b114400fb4fa45014debcd5d5787414ade8064886fa32",
+          "toolchain": "{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"orbit-native-lowering-sha256\":\"e475c96f83e2e4f97b4ba2eb921283d22ee4cd8e9d27c6a3829b8ba107f7fbaf\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}"
+        }
+      }
+    }
+  ]
+}

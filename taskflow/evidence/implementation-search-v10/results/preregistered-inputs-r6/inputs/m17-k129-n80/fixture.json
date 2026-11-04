@@ -1,0 +1,14 @@
+{
+  "case": "gemm-scale",
+  "m": 17,
+  "k": 129,
+  "n": 80,
+  "seeds": [
+    11,
+    23,
+    47
+  ],
+  "source_sha256": "74c169b85bad8b1ec41a86dbe24f4cbb41d1f0352cda91fafa243d887ab82719",
+  "reference": "independent float64 GEMM followed by exact scale .5, cast final output to f32",
+  "source_decisions": "calculation, storage ABI and task dependency only; no mapping directives"
+}

@@ -1,0 +1,151 @@
+{
+  "prior": {
+    "prior_registration": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/preregistered-inputs-r5/preregistration.json",
+    "prior_sha256": "d6f8f49371f3baea21bb41f3bb18d3eb5ab36955f1015156c93d3c32defa534d",
+    "reason": "before any v10 timing labels: canonical final-r2 automatic search covered all 12 train cells and both tail holdouts but finite beam did not reach four requested M32 tile4/32/64 cells; original native archive independently contains exactly one legal candidate per replacement tile4/16/64 implementation/residency coordinate. Replace only these four configuration holdouts on static finite-beam reachability, never measured timing. This is an unseen M/K tile combination, not an unseen source family.",
+    "prior_failed_attempts_preserved": [
+      "proposal-coverage-probe-r1",
+      "proposals-final-r1",
+      "proposals-final-r2"
+    ],
+    "timing_labels_read": false
+  },
+  "changed_cells": [
+    {
+      "before": {
+        "name": "holdout-m32-k128-n64-t4x32x64-scalar-phase",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          32,
+          64
+        ],
+        "implementation": "scalar:1",
+        "data_organization": "phase-local"
+      },
+      "after": {
+        "name": "holdout-m32-k128-n64-t4x16x64-scalar-phase",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          16,
+          64
+        ],
+        "implementation": "scalar:1",
+        "data_organization": "phase-local"
+      }
+    },
+    {
+      "before": {
+        "name": "holdout-m32-k128-n64-t4x32x64-scalar-panel",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          32,
+          64
+        ],
+        "implementation": "scalar:1",
+        "data_organization": "storage1-panel"
+      },
+      "after": {
+        "name": "holdout-m32-k128-n64-t4x16x64-scalar-panel",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          16,
+          64
+        ],
+        "implementation": "scalar:1",
+        "data_organization": "storage1-panel"
+      }
+    },
+    {
+      "before": {
+        "name": "holdout-m32-k128-n64-t4x32x64-mixed8-phase",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          32,
+          64
+        ],
+        "implementation": "scalar-product-vector-add-f32:8",
+        "data_organization": "phase-local"
+      },
+      "after": {
+        "name": "holdout-m32-k128-n64-t4x16x64-mixed8-phase",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          16,
+          64
+        ],
+        "implementation": "scalar-product-vector-add-f32:8",
+        "data_organization": "phase-local"
+      }
+    },
+    {
+      "before": {
+        "name": "holdout-m32-k128-n64-t4x32x64-mixed8-panel",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          32,
+          64
+        ],
+        "implementation": "scalar-product-vector-add-f32:8",
+        "data_organization": "storage1-panel"
+      },
+      "after": {
+        "name": "holdout-m32-k128-n64-t4x16x64-mixed8-panel",
+        "program": "m32-k128-n64",
+        "split": "holdout",
+        "tile_sizes": [
+          4,
+          16,
+          64
+        ],
+        "implementation": "scalar-product-vector-add-f32:8",
+        "data_organization": "storage1-panel"
+      }
+    }
+  ],
+  "unchanged_cell_count": 15,
+  "preserved_input_source_reference_files": {
+    "inputs/m16-k128-n64/inputs-11.npz": true,
+    "inputs/m16-k128-n64/reference-11.npz": true,
+    "inputs/m16-k128-n64/reference-23.npz": true,
+    "inputs/m16-k128-n64/reference-47.npz": true,
+    "inputs/m16-k128-n64/inputs-23.npz": true,
+    "inputs/m16-k128-n64/inputs-47.npz": true,
+    "inputs/m16-k128-n64/fixture.json": true,
+    "inputs/m16-k128-n64/source.mlir": true,
+    "inputs/m17-k129-n80/inputs-11.npz": true,
+    "inputs/m17-k129-n80/reference-11.npz": true,
+    "inputs/m17-k129-n80/reference-23.npz": true,
+    "inputs/m17-k129-n80/reference-47.npz": true,
+    "inputs/m17-k129-n80/inputs-23.npz": true,
+    "inputs/m17-k129-n80/inputs-47.npz": true,
+    "inputs/m17-k129-n80/fixture.json": true,
+    "inputs/m17-k129-n80/source.mlir": true,
+    "inputs/m32-k128-n64/inputs-11.npz": true,
+    "inputs/m32-k128-n64/reference-11.npz": true,
+    "inputs/m32-k128-n64/reference-23.npz": true,
+    "inputs/m32-k128-n64/reference-47.npz": true,
+    "inputs/m32-k128-n64/inputs-23.npz": true,
+    "inputs/m32-k128-n64/inputs-47.npz": true,
+    "inputs/m32-k128-n64/fixture.json": true,
+    "inputs/m32-k128-n64/source.mlir": true
+  },
+  "search_budget_unchanged": true,
+  "model_protocol_unchanged": true,
+  "timing_labels_read": false,
+  "device_submissions": 0,
+  "archive_reuse_scope": "root will run complete original helper with same final binary into new proposals directory to bind amended registration; no hand-edited IR or tile candidate list"
+}

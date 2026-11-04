@@ -1,0 +1,75 @@
+
+MEMORY
+{
+   program (RX) : ORIGIN = 0, LENGTH = 0x4000
+   data (!RX) : ORIGIN = MAX(MAX(MAX(0x74040, (SIZEOF(.aie.bank1) != 0 ? MIN(0x80000, (ADDR(.aie.bank1) + SIZEOF(.aie.bank1))) : 0)), (SIZEOF(.aie.bank2) != 0 ? MIN(0x80000, (ADDR(.aie.bank2) + SIZEOF(.aie.bank2))) : 0)), (SIZEOF(.aie.bank3) != 0 ? MIN(0x80000, (ADDR(.aie.bank3) + SIZEOF(.aie.bank3))) : 0)), LENGTH = 0x80000 - MAX(MAX(MAX(0x74040, (SIZEOF(.aie.bank1) != 0 ? MIN(0x80000, (ADDR(.aie.bank1) + SIZEOF(.aie.bank1))) : 0)), (SIZEOF(.aie.bank2) != 0 ? MIN(0x80000, (ADDR(.aie.bank2) + SIZEOF(.aie.bank2))) : 0)), (SIZEOF(.aie.bank3) != 0 ? MIN(0x80000, (ADDR(.aie.bank3) + SIZEOF(.aie.bank3))) : 0))
+   bank0 (!RX) : ORIGIN = 0x71040, LENGTH = 0x2FC0
+   bank1 (!RX) : ORIGIN = 0x74040, LENGTH = 0x3FC0
+   bank2 (!RX) : ORIGIN = 0x78000, LENGTH = 0x4000
+   bank3 (!RX) : ORIGIN = 0x7C000, LENGTH = 0x4000
+}
+ENTRY(__start)
+SECTIONS
+{
+  . = 0x0;
+  .text : {
+     /* the __start symbol has to come at address zero. */
+     *crt0.o(.text*)
+     _ctors_start = .;
+     _init_array_start = .;
+     KEEP(SORT(*.init_array))
+     _ctors_end = .;
+     _init_array_end = .;
+     _dtors_start = .;
+     _dtors_end = .;
+     *(.text*)
+  } > program
+  .aie.bank0 : { *(.aie.bank0 .aie.bank0.*) *(*.DM_bankA*) } > bank0
+  .aie.bank1 : { *(.aie.bank1 .aie.bank1.*) *(*.DM_bankB*) } > bank1
+  .aie.bank2 : { *(.aie.bank2 .aie.bank2.*) *(*.DM_bankC*) } > bank2
+  .aie.bank3 : { *(.aie.bank3 .aie.bank3.*) *(*.DM_bankD*) } > bank3
+  .data : {
+     *(.data*)
+     *(.rodata*)
+  } > data
+  .comment : {
+     *(.comment*)
+  }
+  .symtab : {
+     *(.symtab)
+  }
+  .shstrtab : {
+     *(.shstrtab)
+  }
+  .strtab : {
+     *(.strtab)
+  }
+  .stack_sizes : {
+     *(.stack_sizes)
+  }
+  /* Bitcode an object carries for aiecc's own analysis. It describes the core
+     rather than running on it, and --orphan-handling=error rejects any section
+     with no home, so name it here to drop it. */
+  /DISCARD/ : {
+     *(.llvmbc)
+     *(.llvmcmd)
+  }
+
+. = 0x70000;
+_sp_start_value_DM_stack = .;
+. += 0x1000; /* stack */
+/* No tile with memory exists to the south. */
+. = 0x40000;
+. += 0x10000;
+/* No tile with memory exists to the west. */
+. = 0x50000;
+. += 0x10000;
+. = 0x71000;
+buf56 = .;
+. += 0x40;
+. = 0x74000;
+buf55 = .;
+. += 0x40;
+  .bss : { *(.bss*) } > data
+}
+PROVIDE(main = core_0_2);

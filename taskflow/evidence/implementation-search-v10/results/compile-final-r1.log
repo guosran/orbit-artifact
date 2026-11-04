@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_implementation_search_v10.py", line 262, in <module>
+    main()
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_implementation_search_v10.py", line 257, in main
+    else:result=compile_cases(args.proposals.resolve(),args.output.resolve(),args.jobs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_implementation_search_v10.py", line 243, in compile_cases
+    records=list(pool.map(compile_one,selected))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_implementation_search_v10.py", line 225, in compile_one
+    run(output,'compile-'+name,['bash',ROOT/'scripts/run_taskflow_direct_air_v6_case.sh','--compile-only','--diagnostic',
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_implementation_search_v10.py", line 62, in run
+    raise ValueError('command failed: '+name)
+ValueError: command failed: compile-holdout-m17-k129-n80-t8x32x32-scalar-phase

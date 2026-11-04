@@ -1,0 +1,22 @@
+{
+  "mode": "cpu",
+  "cpu_regression": true,
+  "mixed_compiler_gate": true,
+  "holdout_execution": false,
+  "model_fit": false,
+  "native_feature_collection": false,
+  "independent_holdout_audit": false,
+  "search": false,
+  "optimization": false,
+  "planned_pipeline": [
+    "prepare/compile fresh stage mains and packed controls",
+    "training and independent audit",
+    "native features",
+    "existing fitter using training labels only",
+    "freeze",
+    "heldout execution",
+    "independent heldout audit/score"
+  ],
+  "execution_scope": "booleans describe completed work in this output directory; inherited package/freeze paths are in workflow-state.json",
+  "latest_completed_phase": "cpu-validated"
+}

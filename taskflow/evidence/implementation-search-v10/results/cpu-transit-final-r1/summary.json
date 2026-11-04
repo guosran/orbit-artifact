@@ -1,0 +1,73 @@
+{
+  "status": "passed",
+  "build_exit_code": 0,
+  "cpu_regression_groups": 19,
+  "checker_counts": {
+    "taskflow-data-organization-test": 58,
+    "taskflow-generic-mapping-test": 25,
+    "taskflow-tiled-mapping-test": 48,
+    "taskflow-program-mapping-test": 40,
+    "taskflow-program-partition-test": 56,
+    "taskflow-direct-air-cost-test": 67,
+    "memory-architecture": 18
+  },
+  "live_core": {
+    "path": "/home/shiran/project/orbit-artifact/builds/taskflow-v10/core/tools/taskflow-opt/taskflow-opt",
+    "sha256": "940ce6ad49b479df84630259c996f8f3ef26e66e7cd2a32485d4824f9032b37e"
+  },
+  "frozen_npu_tool_unchanged": true,
+  "live_core_changed_from_prebuild": false,
+  "source_files": [
+    {
+      "path": "/home/shiran/project/orbit/lib/Taskflow/ProgramDataOrganization.cpp",
+      "sha256": "a421661d2681a3367e5bf2ee3f89a65ba5f6b05529fa0bd2df61900df7c81cd8"
+    },
+    {
+      "path": "/home/shiran/project/orbit/test/TaskflowGeneric/data-organization.cpp",
+      "sha256": "b1d2cebfffdac90b0f6b718d00b7cac64c653fb8eb3701c6b03c341bc87be111"
+    },
+    {
+      "path": "/home/shiran/project/orbit/docs/taskflow-direct-air-cost-v10.md",
+      "sha256": "e53f51fa0602029a8ba9a8bcb0eeaf4bae94f74606ba91abd3921b45622a245b"
+    }
+  ],
+  "build_command": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/cpu-transit-final-r1/build.command.json",
+    "sha256": "46c25fa8151377e0715c45c21206ef02c356b16c6a508412f8da72834f9f779d"
+  },
+  "regression_command": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/cpu-transit-final-r1/regression.command.json",
+    "sha256": "aa207885ce02f7371bfbc2159074721943922841cfb6327914d998a980189735"
+  },
+  "full_regression_result": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/cpu-transit-final-r1/core-regressions/result.json",
+    "sha256": "2704c4d1ed9e3cdd980d2eadd317b83073439c149b892a7adf9aa2a8b2794a45"
+  },
+  "transit_same_target": {
+    "retain_transfer_bytes": 192,
+    "phase_local_transfer_bytes": 256
+  },
+  "scope": "CPU-only whole-task copy policy/checker validation and Core compiler regressions; not a new NPU execution version or hardware model result",
+  "device_submissions": 0,
+  "air_build": false,
+  "amoeba_build": false,
+  "holdout_labels_read": false,
+  "proposal_final_r3_embedded_air_r2": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r3/frozen-tools/taskflow-opt",
+    "sha256": "d89fa2e3f47d7da22bf53ab30b713e4afc36ef1028c3d09cd7b712f143684749"
+  },
+  "frozen_core_r3": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/frozen-tools-r3/taskflow-opt-core",
+    "sha256": "940ce6ad49b479df84630259c996f8f3ef26e66e7cd2a32485d4824f9032b37e"
+  },
+  "frozen_air_r3": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/frozen-tools-r3/taskflow-opt-air",
+    "sha256": "98d5da45a76df0852d6e63bff3843229a6a19d77d72c83afffefa706ecedae07"
+  },
+  "live_core_equal_frozen_core_r3": true,
+  "data_organization_test_executable": {
+    "path": "/home/shiran/project/orbit-artifact/builds/taskflow-v10/core/tools/taskflow-opt/taskflow-data-organization-test",
+    "sha256": "6bf48fd4d997e1cb572e7aaaef613e71f304be27b73d840338602c2a12ef02da"
+  },
+  "correction": "The earlier frozen_npu_r3 label referred to proposals-final-r3/frozen-tools/taskflow-opt, actually the r2 AIR compiler d89fa2..., not the current frozen-tools-r3 Core/AIR binaries. Current frozen r3 Core equals live Core; data-organization test executable separately binds the CPU fix."
+}

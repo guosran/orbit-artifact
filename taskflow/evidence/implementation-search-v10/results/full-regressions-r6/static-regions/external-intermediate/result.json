@@ -1,0 +1,1117 @@
+{
+  "alternatives": [
+    {
+      "assignment": {
+        "first:0": "single-first",
+        "first:1": "single-first",
+        "second:0": "single-second",
+        "second:1": "single-second"
+      },
+      "plan": {
+        "allocations": [
+          {
+            "buffer": "X",
+            "bytes": 64,
+            "created_by": null,
+            "dtype": "f32",
+            "end_ms": 4,
+            "id": "region-buffer:X",
+            "initial": true,
+            "last_users": [
+              "region:first:0:single-first"
+            ],
+            "layout": "row_major",
+            "lifetime": "graph",
+            "memory": "host",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "start_ms": 0
+          },
+          {
+            "buffer": "W1",
+            "bytes": 128,
+            "created_by": null,
+            "dtype": "f32",
+            "end_ms": 4,
+            "id": "region-buffer:W1",
+            "initial": true,
+            "last_users": [
+              "region:first:0:single-first"
+            ],
+            "layout": "row_major",
+            "lifetime": "graph",
+            "memory": "host",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                8
+              ]
+            ],
+            "start_ms": 0
+          },
+          {
+            "buffer": "H",
+            "bytes": 128,
+            "created_by": "region:first:0:single-first",
+            "dtype": "f32",
+            "end_ms": 4,
+            "id": "region-buffer:H",
+            "last_users": [
+              "region:first:0:single-first",
+              "region:second:0:single-second"
+            ],
+            "layout": "row_major",
+            "lifetime": "graph",
+            "memory": "host",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                8
+              ]
+            ],
+            "start_ms": 0
+          },
+          {
+            "buffer": "W2",
+            "bytes": 128,
+            "created_by": null,
+            "dtype": "f32",
+            "end_ms": 4,
+            "id": "region-buffer:W2",
+            "initial": true,
+            "last_users": [
+              "region:second:0:single-second"
+            ],
+            "layout": "row_major",
+            "lifetime": "graph",
+            "memory": "host",
+            "region": [
+              [
+                0,
+                8
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "start_ms": 0
+          },
+          {
+            "buffer": "Y",
+            "bytes": 64,
+            "created_by": "region:second:0:single-second",
+            "dtype": "f32",
+            "end_ms": 4,
+            "id": "region-buffer:Y",
+            "last_users": [
+              "region:second:0:single-second"
+            ],
+            "layout": "row_major",
+            "lifetime": "graph",
+            "memory": "host",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "start_ms": 0
+          },
+          {
+            "buffer": null,
+            "bytes": 128,
+            "created_by": "region:first:0:single-first",
+            "dtype": "u8",
+            "end_ms": 2,
+            "id": "workspace:region:first:0:single-first:host",
+            "last_users": [
+              "region:first:0:single-first"
+            ],
+            "layout": "opaque_workspace",
+            "lifetime": "event",
+            "memory": "host",
+            "region": null,
+            "start_ms": 0
+          },
+          {
+            "buffer": null,
+            "bytes": 256,
+            "created_by": "region:first:0:single-first",
+            "dtype": "u8",
+            "end_ms": 2,
+            "id": "workspace:region:first:0:single-first:shared",
+            "last_users": [
+              "region:first:0:single-first"
+            ],
+            "layout": "opaque_workspace",
+            "lifetime": "event",
+            "memory": "shared",
+            "region": null,
+            "start_ms": 0
+          },
+          {
+            "buffer": null,
+            "bytes": 128,
+            "created_by": "region:second:0:single-second",
+            "dtype": "u8",
+            "end_ms": 4,
+            "id": "workspace:region:second:0:single-second:host",
+            "last_users": [
+              "region:second:0:single-second"
+            ],
+            "layout": "opaque_workspace",
+            "lifetime": "event",
+            "memory": "host",
+            "region": null,
+            "start_ms": 2
+          },
+          {
+            "buffer": null,
+            "bytes": 256,
+            "created_by": "region:second:0:single-second",
+            "dtype": "u8",
+            "end_ms": 4,
+            "id": "workspace:region:second:0:single-second:shared",
+            "last_users": [
+              "region:second:0:single-second"
+            ],
+            "layout": "opaque_workspace",
+            "lifetime": "event",
+            "memory": "shared",
+            "region": null,
+            "start_ms": 2
+          }
+        ],
+        "assignment": {
+          "first:0": "single-first",
+          "first:1": "single-first",
+          "second:0": "single-second",
+          "second:1": "single-second"
+        },
+        "candidate_id": "a15f463da19683a762dff5cec46bff4a07245ca5587ba04053b74e023948022a",
+        "configuration_id": "f7fd58c336a4b6131f90cb55ff80ba1689fef940d2c8588e03fafc7b0fb3dcda",
+        "cost_boundary": "opaque_warm_host_to_host: activation conversion, staging, synchronization, submissions, intermediate handling and final conversion included; no duplicate internal communication",
+        "events": [
+          {
+            "bytes": 0,
+            "cost_boundary": "opaque_warm_host_to_host",
+            "covered_steps": [
+              "first:0",
+              "first:1"
+            ],
+            "depends_on": [],
+            "device": "npu",
+            "duration_ms": 2,
+            "end_ms": 2,
+            "id": "region:first:0:single-first",
+            "implementation_id": "single-first",
+            "kind": "region",
+            "model_id": "synthetic-oracle",
+            "prepared_state": "warm_contexts_weights",
+            "provenance": {
+              "kind": "synthetic",
+              "source": "independent exact-cover fixture; not measured"
+            },
+            "reads": [
+              {
+                "allocation": "region-buffer:W1",
+                "buffer": "W1",
+                "region": [
+                  [
+                    0,
+                    4
+                  ],
+                  [
+                    0,
+                    8
+                  ]
+                ],
+                "version": "initial:W1"
+              },
+              {
+                "allocation": "region-buffer:X",
+                "buffer": "X",
+                "region": [
+                  [
+                    0,
+                    4
+                  ],
+                  [
+                    0,
+                    4
+                  ]
+                ],
+                "version": "initial:X"
+              }
+            ],
+            "region_mode": "independent",
+            "region_pattern": "matmul_single",
+            "region_shape": {
+              "h": 8,
+              "k": 4,
+              "m": 4,
+              "n": 8
+            },
+            "resource_demands": {
+              "cpu": 1,
+              "dma": 1,
+              "npu": 1
+            },
+            "start_ms": 0,
+            "writes": [
+              {
+                "allocation": "region-buffer:H",
+                "buffer": "H",
+                "region": [
+                  [
+                    0,
+                    4
+                  ],
+                  [
+                    0,
+                    8
+                  ]
+                ],
+                "version": "first:1"
+              }
+            ]
+          },
+          {
+            "bytes": 0,
+            "cost_boundary": "opaque_warm_host_to_host",
+            "covered_steps": [
+              "second:0",
+              "second:1"
+            ],
+            "depends_on": [
+              "region:first:0:single-first"
+            ],
+            "device": "npu",
+            "duration_ms": 2,
+            "end_ms": 4,
+            "id": "region:second:0:single-second",
+            "implementation_id": "single-second",
+            "kind": "region",
+            "model_id": "synthetic-oracle",
+            "prepared_state": "warm_contexts_weights",
+            "provenance": {
+              "kind": "synthetic",
+              "source": "independent exact-cover fixture; not measured"
+            },
+            "reads": [
+              {
+                "allocation": "region-buffer:H",
+                "buffer": "H",
+                "region": [
+                  [
+                    0,
+                    4
+                  ],
+                  [
+                    0,
+                    8
+                  ]
+                ],
+                "version": "first:1"
+              },
+              {
+                "allocation": "region-buffer:W2",
+                "buffer": "W2",
+                "region": [
+                  [
+                    0,
+                    8
+                  ],
+                  [
+                    0,
+                    4
+                  ]
+                ],
+                "version": "initial:W2"
+              }
+            ],
+            "region_mode": "independent",
+            "region_pattern": "matmul_single",
+            "region_shape": {
+              "h": 8,
+              "k": 8,
+              "m": 4,
+              "n": 4
+            },
+            "resource_demands": {
+              "cpu": 1,
+              "dma": 1,
+              "npu": 1
+            },
+            "start_ms": 2,
+            "writes": [
+              {
+                "allocation": "region-buffer:Y",
+                "buffer": "Y",
+                "region": [
+                  [
+                    0,
+                    4
+                  ],
+                  [
+                    0,
+                    4
+                  ]
+                ],
+                "version": "second:1"
+              }
+            ]
+          }
+        ],
+        "execution_status": "not_executed",
+        "identity_scheme": "llvm-json-sorted-17g-sha256",
+        "initial_state": "warm_contexts_weights",
+        "makespan_ms": 4,
+        "output_consumers": {
+          "H": "cpu",
+          "Y": "cpu"
+        },
+        "output_dependencies": [
+          "region:first:0:single-first",
+          "region:second:0:single-second"
+        ],
+        "outputs": [
+          {
+            "allocation": "region-buffer:Y",
+            "buffer": "Y",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "version": "second:1"
+          },
+          {
+            "allocation": "region-buffer:H",
+            "buffer": "H",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                8
+              ]
+            ],
+            "version": "first:1"
+          }
+        ],
+        "plan_id": "3ce4920e312d3bcf81e5af24e8c8d27c1527a7d6c4ca0296da8902bda74e734a",
+        "prediction_kind": "static_estimate",
+        "program_id": "557b1a17999eb8b607a56acdfd555c4826029215c9fc437f10fdc46f707374a9",
+        "region_cell_count": 5,
+        "schedule_policy": "deterministic_topological_list",
+        "schema": "orbit.static.plan.v1",
+        "steps": [
+          {
+            "depends_on": [],
+            "id": "first:0",
+            "operation": {
+              "inputs": [],
+              "kind": "fill",
+              "m": [
+                0,
+                4
+              ],
+              "n": [
+                0,
+                8
+              ],
+              "output": "H"
+            },
+            "operation_index": 0,
+            "task_id": "first"
+          },
+          {
+            "depends_on": [
+              "first:0"
+            ],
+            "id": "first:1",
+            "operation": {
+              "accumulate": true,
+              "inputs": [
+                "X",
+                "W1"
+              ],
+              "k": [
+                0,
+                4
+              ],
+              "kind": "matmul",
+              "m": [
+                0,
+                4
+              ],
+              "n": [
+                0,
+                8
+              ],
+              "output": "H"
+            },
+            "operation_index": 1,
+            "task_id": "first"
+          },
+          {
+            "depends_on": [
+              "first:1"
+            ],
+            "id": "second:0",
+            "operation": {
+              "inputs": [],
+              "kind": "fill",
+              "m": [
+                0,
+                4
+              ],
+              "n": [
+                0,
+                4
+              ],
+              "output": "Y"
+            },
+            "operation_index": 0,
+            "task_id": "second"
+          },
+          {
+            "depends_on": [
+              "second:0"
+            ],
+            "id": "second:1",
+            "operation": {
+              "accumulate": true,
+              "inputs": [
+                "H",
+                "W2"
+              ],
+              "k": [
+                0,
+                8
+              ],
+              "kind": "matmul",
+              "m": [
+                0,
+                4
+              ],
+              "n": [
+                0,
+                4
+              ],
+              "output": "Y"
+            },
+            "operation_index": 1,
+            "task_id": "second"
+          }
+        ],
+        "storage_policy": "whole_buffer_per_location_layout_retained_for_single_graph",
+        "totals": {
+          "compute_ms": 0,
+          "convert_ms": 0,
+          "copy_ms": 0,
+          "makespan_ms": 4,
+          "peak_memory_bytes": {
+            "host": 640,
+            "shared": 256
+          },
+          "region_wall_ms": 4,
+          "sync_ms": 0,
+          "transfer_bytes": 0
+        }
+      },
+      "score": 4,
+      "score_unit": "ms",
+      "status": "passed"
+    }
+  ],
+  "best_plan": {
+    "allocations": [
+      {
+        "buffer": "X",
+        "bytes": 64,
+        "created_by": null,
+        "dtype": "f32",
+        "end_ms": 4,
+        "id": "region-buffer:X",
+        "initial": true,
+        "last_users": [
+          "region:first:0:single-first"
+        ],
+        "layout": "row_major",
+        "lifetime": "graph",
+        "memory": "host",
+        "region": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ],
+        "start_ms": 0
+      },
+      {
+        "buffer": "W1",
+        "bytes": 128,
+        "created_by": null,
+        "dtype": "f32",
+        "end_ms": 4,
+        "id": "region-buffer:W1",
+        "initial": true,
+        "last_users": [
+          "region:first:0:single-first"
+        ],
+        "layout": "row_major",
+        "lifetime": "graph",
+        "memory": "host",
+        "region": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            8
+          ]
+        ],
+        "start_ms": 0
+      },
+      {
+        "buffer": "H",
+        "bytes": 128,
+        "created_by": "region:first:0:single-first",
+        "dtype": "f32",
+        "end_ms": 4,
+        "id": "region-buffer:H",
+        "last_users": [
+          "region:first:0:single-first",
+          "region:second:0:single-second"
+        ],
+        "layout": "row_major",
+        "lifetime": "graph",
+        "memory": "host",
+        "region": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            8
+          ]
+        ],
+        "start_ms": 0
+      },
+      {
+        "buffer": "W2",
+        "bytes": 128,
+        "created_by": null,
+        "dtype": "f32",
+        "end_ms": 4,
+        "id": "region-buffer:W2",
+        "initial": true,
+        "last_users": [
+          "region:second:0:single-second"
+        ],
+        "layout": "row_major",
+        "lifetime": "graph",
+        "memory": "host",
+        "region": [
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            4
+          ]
+        ],
+        "start_ms": 0
+      },
+      {
+        "buffer": "Y",
+        "bytes": 64,
+        "created_by": "region:second:0:single-second",
+        "dtype": "f32",
+        "end_ms": 4,
+        "id": "region-buffer:Y",
+        "last_users": [
+          "region:second:0:single-second"
+        ],
+        "layout": "row_major",
+        "lifetime": "graph",
+        "memory": "host",
+        "region": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ],
+        "start_ms": 0
+      },
+      {
+        "buffer": null,
+        "bytes": 128,
+        "created_by": "region:first:0:single-first",
+        "dtype": "u8",
+        "end_ms": 2,
+        "id": "workspace:region:first:0:single-first:host",
+        "last_users": [
+          "region:first:0:single-first"
+        ],
+        "layout": "opaque_workspace",
+        "lifetime": "event",
+        "memory": "host",
+        "region": null,
+        "start_ms": 0
+      },
+      {
+        "buffer": null,
+        "bytes": 256,
+        "created_by": "region:first:0:single-first",
+        "dtype": "u8",
+        "end_ms": 2,
+        "id": "workspace:region:first:0:single-first:shared",
+        "last_users": [
+          "region:first:0:single-first"
+        ],
+        "layout": "opaque_workspace",
+        "lifetime": "event",
+        "memory": "shared",
+        "region": null,
+        "start_ms": 0
+      },
+      {
+        "buffer": null,
+        "bytes": 128,
+        "created_by": "region:second:0:single-second",
+        "dtype": "u8",
+        "end_ms": 4,
+        "id": "workspace:region:second:0:single-second:host",
+        "last_users": [
+          "region:second:0:single-second"
+        ],
+        "layout": "opaque_workspace",
+        "lifetime": "event",
+        "memory": "host",
+        "region": null,
+        "start_ms": 2
+      },
+      {
+        "buffer": null,
+        "bytes": 256,
+        "created_by": "region:second:0:single-second",
+        "dtype": "u8",
+        "end_ms": 4,
+        "id": "workspace:region:second:0:single-second:shared",
+        "last_users": [
+          "region:second:0:single-second"
+        ],
+        "layout": "opaque_workspace",
+        "lifetime": "event",
+        "memory": "shared",
+        "region": null,
+        "start_ms": 2
+      }
+    ],
+    "assignment": {
+      "first:0": "single-first",
+      "first:1": "single-first",
+      "second:0": "single-second",
+      "second:1": "single-second"
+    },
+    "candidate_id": "a15f463da19683a762dff5cec46bff4a07245ca5587ba04053b74e023948022a",
+    "configuration_id": "f7fd58c336a4b6131f90cb55ff80ba1689fef940d2c8588e03fafc7b0fb3dcda",
+    "cost_boundary": "opaque_warm_host_to_host: activation conversion, staging, synchronization, submissions, intermediate handling and final conversion included; no duplicate internal communication",
+    "events": [
+      {
+        "bytes": 0,
+        "cost_boundary": "opaque_warm_host_to_host",
+        "covered_steps": [
+          "first:0",
+          "first:1"
+        ],
+        "depends_on": [],
+        "device": "npu",
+        "duration_ms": 2,
+        "end_ms": 2,
+        "id": "region:first:0:single-first",
+        "implementation_id": "single-first",
+        "kind": "region",
+        "model_id": "synthetic-oracle",
+        "prepared_state": "warm_contexts_weights",
+        "provenance": {
+          "kind": "synthetic",
+          "source": "independent exact-cover fixture; not measured"
+        },
+        "reads": [
+          {
+            "allocation": "region-buffer:W1",
+            "buffer": "W1",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                8
+              ]
+            ],
+            "version": "initial:W1"
+          },
+          {
+            "allocation": "region-buffer:X",
+            "buffer": "X",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "version": "initial:X"
+          }
+        ],
+        "region_mode": "independent",
+        "region_pattern": "matmul_single",
+        "region_shape": {
+          "h": 8,
+          "k": 4,
+          "m": 4,
+          "n": 8
+        },
+        "resource_demands": {
+          "cpu": 1,
+          "dma": 1,
+          "npu": 1
+        },
+        "start_ms": 0,
+        "writes": [
+          {
+            "allocation": "region-buffer:H",
+            "buffer": "H",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                8
+              ]
+            ],
+            "version": "first:1"
+          }
+        ]
+      },
+      {
+        "bytes": 0,
+        "cost_boundary": "opaque_warm_host_to_host",
+        "covered_steps": [
+          "second:0",
+          "second:1"
+        ],
+        "depends_on": [
+          "region:first:0:single-first"
+        ],
+        "device": "npu",
+        "duration_ms": 2,
+        "end_ms": 4,
+        "id": "region:second:0:single-second",
+        "implementation_id": "single-second",
+        "kind": "region",
+        "model_id": "synthetic-oracle",
+        "prepared_state": "warm_contexts_weights",
+        "provenance": {
+          "kind": "synthetic",
+          "source": "independent exact-cover fixture; not measured"
+        },
+        "reads": [
+          {
+            "allocation": "region-buffer:H",
+            "buffer": "H",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                8
+              ]
+            ],
+            "version": "first:1"
+          },
+          {
+            "allocation": "region-buffer:W2",
+            "buffer": "W2",
+            "region": [
+              [
+                0,
+                8
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "version": "initial:W2"
+          }
+        ],
+        "region_mode": "independent",
+        "region_pattern": "matmul_single",
+        "region_shape": {
+          "h": 8,
+          "k": 8,
+          "m": 4,
+          "n": 4
+        },
+        "resource_demands": {
+          "cpu": 1,
+          "dma": 1,
+          "npu": 1
+        },
+        "start_ms": 2,
+        "writes": [
+          {
+            "allocation": "region-buffer:Y",
+            "buffer": "Y",
+            "region": [
+              [
+                0,
+                4
+              ],
+              [
+                0,
+                4
+              ]
+            ],
+            "version": "second:1"
+          }
+        ]
+      }
+    ],
+    "execution_status": "not_executed",
+    "identity_scheme": "llvm-json-sorted-17g-sha256",
+    "initial_state": "warm_contexts_weights",
+    "makespan_ms": 4,
+    "output_consumers": {
+      "H": "cpu",
+      "Y": "cpu"
+    },
+    "output_dependencies": [
+      "region:first:0:single-first",
+      "region:second:0:single-second"
+    ],
+    "outputs": [
+      {
+        "allocation": "region-buffer:Y",
+        "buffer": "Y",
+        "region": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            4
+          ]
+        ],
+        "version": "second:1"
+      },
+      {
+        "allocation": "region-buffer:H",
+        "buffer": "H",
+        "region": [
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            8
+          ]
+        ],
+        "version": "first:1"
+      }
+    ],
+    "plan_id": "3ce4920e312d3bcf81e5af24e8c8d27c1527a7d6c4ca0296da8902bda74e734a",
+    "prediction_kind": "static_estimate",
+    "program_id": "557b1a17999eb8b607a56acdfd555c4826029215c9fc437f10fdc46f707374a9",
+    "region_cell_count": 5,
+    "schedule_policy": "deterministic_topological_list",
+    "schema": "orbit.static.plan.v1",
+    "steps": [
+      {
+        "depends_on": [],
+        "id": "first:0",
+        "operation": {
+          "inputs": [],
+          "kind": "fill",
+          "m": [
+            0,
+            4
+          ],
+          "n": [
+            0,
+            8
+          ],
+          "output": "H"
+        },
+        "operation_index": 0,
+        "task_id": "first"
+      },
+      {
+        "depends_on": [
+          "first:0"
+        ],
+        "id": "first:1",
+        "operation": {
+          "accumulate": true,
+          "inputs": [
+            "X",
+            "W1"
+          ],
+          "k": [
+            0,
+            4
+          ],
+          "kind": "matmul",
+          "m": [
+            0,
+            4
+          ],
+          "n": [
+            0,
+            8
+          ],
+          "output": "H"
+        },
+        "operation_index": 1,
+        "task_id": "first"
+      },
+      {
+        "depends_on": [
+          "first:1"
+        ],
+        "id": "second:0",
+        "operation": {
+          "inputs": [],
+          "kind": "fill",
+          "m": [
+            0,
+            4
+          ],
+          "n": [
+            0,
+            4
+          ],
+          "output": "Y"
+        },
+        "operation_index": 0,
+        "task_id": "second"
+      },
+      {
+        "depends_on": [
+          "second:0"
+        ],
+        "id": "second:1",
+        "operation": {
+          "accumulate": true,
+          "inputs": [
+            "H",
+            "W2"
+          ],
+          "k": [
+            0,
+            8
+          ],
+          "kind": "matmul",
+          "m": [
+            0,
+            4
+          ],
+          "n": [
+            0,
+            4
+          ],
+          "output": "Y"
+        },
+        "operation_index": 1,
+        "task_id": "second"
+      }
+    ],
+    "storage_policy": "whole_buffer_per_location_layout_retained_for_single_graph",
+    "totals": {
+      "compute_ms": 0,
+      "convert_ms": 0,
+      "copy_ms": 0,
+      "makespan_ms": 4,
+      "peak_memory_bytes": {
+        "host": 640,
+        "shared": 256
+      },
+      "region_wall_ms": 4,
+      "sync_ms": 0,
+      "transfer_bytes": 0
+    }
+  },
+  "identity_scheme": "llvm-json-sorted-17g-sha256",
+  "reasons": [
+    "pair-chain: intermediate has external consumer/writer/public output",
+    "pair-independent: intermediate has external consumer/writer/public output",
+    "single-first: out-of-domain shape or illegal physical multiple",
+    "single-second: out-of-domain shape or illegal physical multiple"
+  ],
+  "schema": "orbit.static.mapping-result.v1",
+  "search": {
+    "algorithm": "bounded_region_exact_cover_search",
+    "budget": 100,
+    "evaluated_assignments": 1,
+    "evaluated_cover_count_is_lower_bound": false,
+    "exhaustive_assignments": true,
+    "possible_assignments": 1,
+    "selection_reason": "lowest independently checked complete makespan; no global schedule optimality claim"
+  },
+  "status": "passed"
+}

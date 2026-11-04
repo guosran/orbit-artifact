@@ -1,0 +1,589 @@
+[
+  {
+    "action_chain": [],
+    "candidate_id": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar:1",
+      "name": "train-m16-k128-n64-t8x16x32-scalar-phase",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed/features-plan.json",
+      "sha256": "ee68dfc063de4cd51404585e65ee7c2f0d78bbe5953ab8fad60a59479657b409"
+    },
+    "program": "m16-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed/taskflow.mlir",
+      "sha256": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed"
+    }
+  },
+  {
+    "action_chain": [
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+    ],
+    "candidate_id": "a20ed24ec48b389b4e81f920169d3ccdd84e6ac9dff196e864ccb7043c4fdabf",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar:1",
+      "name": "train-m16-k128-n64-t8x16x32-scalar-panel",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/a20ed24ec48b389b4e81f920169d3ccdd84e6ac9dff196e864ccb7043c4fdabf/features-plan.json",
+      "sha256": "7ac526f429ecbf4f53f9a8ffc224fd015445cecf5ca3f3c21e2661e457ef51ec"
+    },
+    "program": "m16-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/a20ed24ec48b389b4e81f920169d3ccdd84e6ac9dff196e864ccb7043c4fdabf/taskflow.mlir",
+      "sha256": "a20ed24ec48b389b4e81f920169d3ccdd84e6ac9dff196e864ccb7043c4fdabf"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_implementation_scalar-product-vector-add-f32_8"
+    ],
+    "candidate_id": "f38dca47ffa68c968ec278945b89c07877dc657e302672c3571704271d7940b7",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "train-m16-k128-n64-t8x16x32-mixed8-phase",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "9bb6420a6547814446841603da4abb3f261051829a6b61ad2a7d19680f8b11ed",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/f38dca47ffa68c968ec278945b89c07877dc657e302672c3571704271d7940b7/features-plan.json",
+      "sha256": "d5fba7bad210ff572eedd6716fbf3eee79c61aa9c7a5f847a094c015c556540d"
+    },
+    "program": "m16-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/f38dca47ffa68c968ec278945b89c07877dc657e302672c3571704271d7940b7/taskflow.mlir",
+      "sha256": "f38dca47ffa68c968ec278945b89c07877dc657e302672c3571704271d7940b7"
+    }
+  },
+  {
+    "action_chain": [
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "auto_implementation_scalar-product-vector-add-f32_8"
+    ],
+    "candidate_id": "1f2bbe21a4d37b5a1ef62921348e9994f5513fb7d7cdb975da1f48a8d53688dc",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "train-m16-k128-n64-t8x16x32-mixed8-panel",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "a20ed24ec48b389b4e81f920169d3ccdd84e6ac9dff196e864ccb7043c4fdabf",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/1f2bbe21a4d37b5a1ef62921348e9994f5513fb7d7cdb975da1f48a8d53688dc/features-plan.json",
+      "sha256": "1385aca0342c762170d76b745cf42104f42957ce6e1276468e0a93203a8c3d3d"
+    },
+    "program": "m16-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m16-k128-n64/search/candidates/1f2bbe21a4d37b5a1ef62921348e9994f5513fb7d7cdb975da1f48a8d53688dc/taskflow.mlir",
+      "sha256": "1f2bbe21a4d37b5a1ef62921348e9994f5513fb7d7cdb975da1f48a8d53688dc"
+    }
+  },
+  {
+    "action_chain": [],
+    "candidate_id": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar:1",
+      "name": "train-m32-k128-n64-t8x16x32-scalar-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9/features-plan.json",
+      "sha256": "59a158a520a5d492ec899d3ebb02a3adbecb29aaf6963617df9e363c7c5389f1"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9/taskflow.mlir",
+      "sha256": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9"
+    }
+  },
+  {
+    "action_chain": [
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+    ],
+    "candidate_id": "b62184f48e268816d2e98e41a56d5e8aae355e5725c9b7ce39474fcafed0ba5a",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar:1",
+      "name": "train-m32-k128-n64-t8x16x32-scalar-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/b62184f48e268816d2e98e41a56d5e8aae355e5725c9b7ce39474fcafed0ba5a/features-plan.json",
+      "sha256": "4735f7c02e1a122d84355321c74c622a54d462326c261a527d462f0c9436d6d4"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/b62184f48e268816d2e98e41a56d5e8aae355e5725c9b7ce39474fcafed0ba5a/taskflow.mlir",
+      "sha256": "b62184f48e268816d2e98e41a56d5e8aae355e5725c9b7ce39474fcafed0ba5a"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_implementation_scalar-product-vector-add-f32_8"
+    ],
+    "candidate_id": "e49dd20aaa77858ab5edef398f611ede18afb164621539fd37cb18da4f6835ab",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "train-m32-k128-n64-t8x16x32-mixed8-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/e49dd20aaa77858ab5edef398f611ede18afb164621539fd37cb18da4f6835ab/features-plan.json",
+      "sha256": "9f52c496e8bdd428e2c8256ae4477a639a7ebe7991856b4044910ebc2da1cacc"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/e49dd20aaa77858ab5edef398f611ede18afb164621539fd37cb18da4f6835ab/taskflow.mlir",
+      "sha256": "e49dd20aaa77858ab5edef398f611ede18afb164621539fd37cb18da4f6835ab"
+    }
+  },
+  {
+    "action_chain": [
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "auto_implementation_scalar-product-vector-add-f32_8"
+    ],
+    "candidate_id": "f8f925cb6a4162d01eabb62c360fe8d84a8ea16a5b718a15a9f94323ab5e2caf",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "train-m32-k128-n64-t8x16x32-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "b62184f48e268816d2e98e41a56d5e8aae355e5725c9b7ce39474fcafed0ba5a",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/f8f925cb6a4162d01eabb62c360fe8d84a8ea16a5b718a15a9f94323ab5e2caf/features-plan.json",
+      "sha256": "791c4218ba884b133d885ca408ffec2c82ffb3705ae4ad471f4e96e3c18dbb3c"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/f8f925cb6a4162d01eabb62c360fe8d84a8ea16a5b718a15a9f94323ab5e2caf/taskflow.mlir",
+      "sha256": "f8f925cb6a4162d01eabb62c360fe8d84a8ea16a5b718a15a9f94323ab5e2caf"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_32_32"
+    ],
+    "candidate_id": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar:1",
+      "name": "train-m32-k128-n64-t8x32x32-scalar-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "31ae56c82f1032a0ba66945f916eaa946be6a93e9c9adf6a204b6bad4f37f0d9",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02/features-plan.json",
+      "sha256": "cd4b1112a5798cce4c8cf5e4e62239c04036538467f014a3e0d43d4b5f2bad8c"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02/taskflow.mlir",
+      "sha256": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_32_32",
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1"
+    ],
+    "candidate_id": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar:1",
+      "name": "train-m32-k128-n64-t8x32x32-scalar-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81/features-plan.json",
+      "sha256": "d8e0623e0da3182b6439045b5353d0d50c4d82d75bd526feb0d6d37d9e1e6340"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81/taskflow.mlir",
+      "sha256": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_32_32",
+      "auto_implementation_scalar-product-vector-add-f32_8"
+    ],
+    "candidate_id": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "train-m32-k128-n64-t8x32x32-mixed8-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "61b3be686117fa0b89426fdfc11e0749adf42b9633a341753b7c207f629c9f02",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/features-plan.json",
+      "sha256": "b5987b55659758d97c9e83da7642cdd3bd1c8676147743509b1057901565a3d9"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602/taskflow.mlir",
+      "sha256": "63eeed3df03b23432614681f191726c382c6524c2ef9dfaaa424428744a41602"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_32_32",
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "auto_implementation_scalar-product-vector-add-f32_8"
+    ],
+    "candidate_id": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "train-m32-k128-n64-t8x32x32-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "12163856b23213910b74fac0f35569e081f53133b3684c1326a153061367ce81",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/features-plan.json",
+      "sha256": "c224743d8372e13fea933171a194f98755e5ab5c16e81269baeadb366f08fa12"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3/taskflow.mlir",
+      "sha256": "dd10985066b8d3f50e96858a811fdb71cc5f72b16dcf15f1676f98e1af6ea0d3"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_16_64",
+      "auto_tiles_4_16_64"
+    ],
+    "candidate_id": "b08b489c72ab4569aceddbefa5ee16b68c2a28119205a231cb3dc431083bc8ea",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar:1",
+      "name": "holdout-m32-k128-n64-t4x16x64-scalar-phase",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "519af40023a221e212cc461b8025dc2bcd91a28c90090e8272699d28a2d5c916",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/b08b489c72ab4569aceddbefa5ee16b68c2a28119205a231cb3dc431083bc8ea/features-plan.json",
+      "sha256": "340d7ae466fc072ec3494aeabd7715d0868a5332244cc8620c88dfd2b945cc0c"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/b08b489c72ab4569aceddbefa5ee16b68c2a28119205a231cb3dc431083bc8ea/taskflow.mlir",
+      "sha256": "b08b489c72ab4569aceddbefa5ee16b68c2a28119205a231cb3dc431083bc8ea"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_16_64",
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "auto_tiles_4_16_64"
+    ],
+    "candidate_id": "b2858bc4e2eac5b11aca255fe9b4b0e1a4b2c0ac66990ea1e20b64747072ce0e",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar:1",
+      "name": "holdout-m32-k128-n64-t4x16x64-scalar-panel",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "3d1790dface3981dc240fa196b7837fcda0dae65a1583bb9e8690de0b5519987",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/b2858bc4e2eac5b11aca255fe9b4b0e1a4b2c0ac66990ea1e20b64747072ce0e/features-plan.json",
+      "sha256": "71d2313923c58fbf94e6006297f295071dc97de594e5a8439dd7acb57533d9e4"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/b2858bc4e2eac5b11aca255fe9b4b0e1a4b2c0ac66990ea1e20b64747072ce0e/taskflow.mlir",
+      "sha256": "b2858bc4e2eac5b11aca255fe9b4b0e1a4b2c0ac66990ea1e20b64747072ce0e"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_32_32"
+    ],
+    "candidate_id": "9fe242f0704a42969480ccb6400ed3c7b7ff0352fc75cde6bda4431322fe2158",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar:1",
+      "name": "holdout-m17-k129-n80-t8x32x32-scalar-phase",
+      "program": "m17-k129-n80",
+      "split": "holdout",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "5448e2bb76096280fd9337b405554222e18ff33b24bbed9affc48982643e4faf",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/9fe242f0704a42969480ccb6400ed3c7b7ff0352fc75cde6bda4431322fe2158/features-plan.json",
+      "sha256": "a7bf5e51467acca7227182cccf1df1065e9dd7e3aa0f16133245991c9737e8ec"
+    },
+    "program": "m17-k129-n80",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/9fe242f0704a42969480ccb6400ed3c7b7ff0352fc75cde6bda4431322fe2158/taskflow.mlir",
+      "sha256": "9fe242f0704a42969480ccb6400ed3c7b7ff0352fc75cde6bda4431322fe2158"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_implementation_scalar-product-vector-add-f32_8",
+      "auto_tiles_4_16_32",
+      "auto_tiles_4_16_64"
+    ],
+    "candidate_id": "c4cd36c1fe885be5cbe95d55705534dfe0b863782c0eb5eb9f78f8ae76da21e2",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "holdout-m32-k128-n64-t4x16x64-mixed8-phase",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "24e1887662e8f798ab51532f0012071ae8b7b26cbe6500260a3e29946ea79e54",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/c4cd36c1fe885be5cbe95d55705534dfe0b863782c0eb5eb9f78f8ae76da21e2/features-plan.json",
+      "sha256": "a5f9d4fc4a61a7240897975f47ab7abd04d23e6415744277d05aa4921627fe1a"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/c4cd36c1fe885be5cbe95d55705534dfe0b863782c0eb5eb9f78f8ae76da21e2/taskflow.mlir",
+      "sha256": "c4cd36c1fe885be5cbe95d55705534dfe0b863782c0eb5eb9f78f8ae76da21e2"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_tiles_8_16_64",
+      "mapping_retain-across-users_storage_1_reuse_0_panel_1",
+      "auto_implementation_scalar-product-vector-add-f32_8",
+      "auto_tiles_4_16_64"
+    ],
+    "candidate_id": "efbcd6786ecdcb42e09cdb739ea5326932f72743abc2880df367e3ca07150f47",
+    "cell": {
+      "data_organization": "storage1-panel",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "holdout-m32-k128-n64-t4x16x64-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "19ada3fcf30555306772f6e27e92f42372ab3408140dca5d0e7b530b41e7c8a0",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/efbcd6786ecdcb42e09cdb739ea5326932f72743abc2880df367e3ca07150f47/features-plan.json",
+      "sha256": "a30ffadccd7bbdd8170c82bacdac43f9f54603862084b30be407ded52b8d6956"
+    },
+    "program": "m32-k128-n64",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m32-k128-n64/search/candidates/efbcd6786ecdcb42e09cdb739ea5326932f72743abc2880df367e3ca07150f47/taskflow.mlir",
+      "sha256": "efbcd6786ecdcb42e09cdb739ea5326932f72743abc2880df367e3ca07150f47"
+    }
+  },
+  {
+    "action_chain": [
+      "auto_implementation_scalar-product-vector-add-f32_8",
+      "auto_tiles_8_32_32"
+    ],
+    "candidate_id": "c3a2d87ea35dc74e48e72c8b4ad9e0adb25cba8384dff8a32ba32c1c82fa6820",
+    "cell": {
+      "data_organization": "phase-local",
+      "implementation": "scalar-product-vector-add-f32:8",
+      "name": "holdout-m17-k129-n80-t8x32x32-mixed8-phase",
+      "program": "m17-k129-n80",
+      "split": "holdout",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ]
+    },
+    "config": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/search-config.json",
+      "sha256": "4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228"
+    },
+    "parent": "0c37d143d802fff0bd92d442b0e92d66dbe6e5b5894e2408a03b03fab1dadecd",
+    "plan": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/c3a2d87ea35dc74e48e72c8b4ad9e0adb25cba8384dff8a32ba32c1c82fa6820/features-plan.json",
+      "sha256": "7125c50d7efa8fa47d1bf9bbe1fc98b74e31e55809f39f45beb0b632b56effe1"
+    },
+    "program": "m17-k129-n80",
+    "source": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/m17-k129-n80/search/candidates/c3a2d87ea35dc74e48e72c8b4ad9e0adb25cba8384dff8a32ba32c1c82fa6820/taskflow.mlir",
+      "sha256": "c3a2d87ea35dc74e48e72c8b4ad9e0adb25cba8384dff8a32ba32c1c82fa6820"
+    }
+  }
+]

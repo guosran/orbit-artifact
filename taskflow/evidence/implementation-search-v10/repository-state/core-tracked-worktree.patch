@@ -1,0 +1,1841 @@
+diff --git a/agent.md b/agent.md
+index 14a16e6..046d428 100644
+--- a/agent.md
++++ b/agent.md
+@@ -49,3 +49,14 @@ Queued next: evidence-first full FP32 FFN profiling. Decompose the original M128
+ 已修复vector lowering前后循环遍历轴不一致，保留r2 timeout/错误AIR；lane4目标支持不足明确拒绝。独立SSA/K/lane检查、非整除K及超容量generic add→scale真实执行通过。另保留四input多phase后端stream次序失败并用窄目标能力守卫拒绝；未声称通用四stream修复。Core/Amoeba/搜索/AIR31组、C++成本47项、真实CGRA模型8合约及相关checkpoint/fitter/编排检查通过，独立Core不链接AIR/AIE/XRT/Neura。
+ 
+ 报告与复现位于伴随仓库 [FFN profiling v9](https://github.com/guosran/orbit-artifact/blob/main/taskflow/docs/taskflow-ffn-profiling-v9.md)。源码仍以整个program的结构、资源、调度和数据组织候选为中心；此次NPU实现/驻留实验为公共搜索提供可执行策略、适用域和完整command成本反馈。没有全FFN设备trace、硬件DDR计数或任意多core预测；single-core trace仅用于其有界窗口。复现入口支持新目录的CPU、训练/冻结/留出及优化分阶段；原始大产物继续保存在伴随仓库的本机ignored results/builds，reviewable证据单独发布。
++
++## Latest stage: target-driven predictive search v10
++
++The completed v10 stage is recorded in English in [agents.md](agents.md) and
++[the validation record](docs/taskflow-implementation-search-v10-validation.md).
++It adds target-provided memory architecture and implementation-aware prediction
++to original whole-program search, and validates an automatically selected new
++execution with 474 total independent device output checks. The frozen model's
++six-holdout MAPE is 1.6304%; full M5 configuration transfer is correct but shows
++no speedup. Historical M128 results retain their earlier identities. Core and
++experiment artifacts remain in their separate repositories.
+diff --git a/agents.md b/agents.md
+index 44f40ff..a864535 100644
+--- a/agents.md
++++ b/agents.md
+@@ -237,3 +237,68 @@ on entire program candidates and their interacting structure/resource/schedule/
+ data decisions; backend-specific code experiments validate those choices and
+ their cost feedback. Full FFN device trace, physical DDR counts, arbitrary
+ cross-stage sharing and calibrated multicore/mixed predictors remain open.
++
++## Latest completed stage: target memory architecture and predictive search v10
++
++ORBIT remains a whole-program joint search framework. A candidate combines its
++Taskflow computation/dependencies with structure, implementation, resources,
++schedule and data organization. Amoeba/NPU consume these decisions and provide
++capabilities, constraints, cost feedback and code generation. Common memory
++architecture now reuses static resource/memory/link types, with ownership
++domains, precise accessors and directed paths. Copy lifetime/capacity checks
++work without calibrated link costs. Synthetic shared/local SRAM tests distinguish
++phase-local transit imports from retained read-only copies. No physical Amoeba
++capacities or NPU memtile budget are invented.
++
++The direct AIR binding names host BO/local tensor pools, compute/DMA/submission
++resources and links. Its 24,576 B tensor-payload policy and separate 4,096 B stack
++are unchanged; the pool does not mean a single physical SRAM bank. Public
++execution regions share one actual submission across their input dependencies.
++AIR realizes these choices, including explicitly checked whole-module async
++legalization for the installed tail DMA-to-channel conversion.
++
++Original C++ search generates finite tile options from analyzed dimensions,
++alignment and capacity, implementation choices from target capabilities, and
++retention from access reuse. It rebuilds plans after transformations and retains
++identities, actions, legal/failed requests, null-cost exploration and checkpoints.
++Scalar spelling is canonical. The implementation-aware four-term prepared-call
++NPU provider leaves CGRA ML and earlier providers intact. Composite labels
++already include communication/runtime; no separate DMA or per-input launch is
++added. Calibration is limited to its source family, target and feature envelope.
++
++Before timing, 12 train / 6 holdout / 1 capacity-negative cells were registered.
++Train design rank is four, scaled condition10.0643. Three-seed calibration and
++post-freeze holdouts pass 252 and126 output checks. Frozen native predictions
++have1.6304% MAPE /5.4624% maximum error, versus2.6846%/8.6393% for the three-term
++ablation and96.4006%/96.6354% for the old uncalibrated theoretical coefficients.
++Tail15-stage behavior is a narrow tested extrapolation, not broad model coverage.
++
++The frozen model drives original search (224 evaluations,30 calibrated ranks).
++An automatically generated new4/32/64 mixed8 candidate is selected by native
++rank outside training and the four old measured executions, then compiled and
++run with two restricted-search winners and one unpriced exploration. All84
++outputs pass. Equal search ceilings are512 evaluations/six rounds/beam16; actual
++control evaluations are56 and6. Joint/implementation-control predictions tie,
++and paired timing does not establish a joint-search gain. Unknown exploration
++keeps a null prediction after measurement.
++
++A full M5/D2048/I11008 FFN comparison passes12 outputs (max abs2.42144e-8).
++Lifting the new tile choice reduces local payload but doubles planned DMA and
++stages:21.418708s versus21.214368s baseline, no observed speedup. FFN remains
++outside this small arithmetic model. Historical M128 results retain v7/v9
++versions; no new M128 timing is claimed. All474 new device outputs preserve the
++FP32/K-order/1e-5 contract. No DDR counter or new full-device trace is claimed.
++
++Clean-shell CPU reproduction,35 Core/Amoeba/search/AIR groups, existing CGRA
++contracts and new protocol/selection/parser tests pass. Final rebuilt AIR binary
++equals the executed frozen binary; all24 packages regenerate byte-identical
++Taskflow/facts/plans/AIR. Independent Core remains free of AIR/AIE/XRT linkage.
++Original failures, amendments, raw samples and compiler snapshots are preserved.
++
++See `docs/taskflow-implementation-search-v10-validation.md`, the memory/cost/
++automatic-search v10 contracts, and companion `taskflow/docs/implementation-search-v10.md`.
++The fresh-directory entry is `../orbit-artifact/taskflow/scripts/run_taskflow_implementation_search_v10.sh cpu|all NEW_DIRECTORY`.
++The all entry includes selected-candidate hardware and full-M5 validation; this
++delivery ran phases separately and validates the clean-shell CPU entry. Future
++work includes broader calibration, meaningful multicore placement, other
++residency locations, and full-FFN cost coverage driven by measured error.
+diff --git a/include/Taskflow/GenericMapping.h b/include/Taskflow/GenericMapping.h
+index d3a8b09..5175a6f 100644
+--- a/include/Taskflow/GenericMapping.h
++++ b/include/Taskflow/GenericMapping.h
+@@ -77,6 +77,8 @@ struct GenericAIRChannelAllocation {
+ struct GenericCostFeatures {
+   // Hash of the complete checked execution plan with all price metadata removed.
+   std::string executionFingerprint;
++  // Source SSA/access family with static extents/names erased, not a price key.
++  std::string regionFamilyFingerprint, architectureFingerprint;
+   std::map<std::string,int64_t> values, operations;
+   std::vector<std::string> sourceFingerprints, implementations;
+ };
+@@ -87,7 +89,34 @@ struct GenericDirectAIRCost {
+   std::string status = "disabled", reason, modelDigest, featureDigest;
+   std::optional<double> valueMs;
+ };
++// AIR-specific realization of a common target-owned architecture. Direction
++// strings in GenericTransfer remain backend channel roles, never locations.
++struct GenericMemoryBinding {
++  GenericMemoryBinding();
++  StaticConfig architecture;
++  std::string hostMemory = "system_memory_bo", localMemory = "aie_l1";
++  std::string computeResource = "npu.compute", dmaResource = "npu.dma";
++  std::string inputLink = "host_to_l1", outputLink = "l1_to_host";
++  std::string submissionResource = "host-submission";
++};
++struct GenericTargetCapabilities {
++  int64_t capacityBytes = 24576;
++  std::vector<int64_t> tileAlignment{1,8,1};
++  std::vector<GenericTaskImplementation> implementations{{0,"scalar",-1,1},{0,"scalar-product-vector-add-f32",-1,8}};
++  std::string identity;
++};
++bool configureGenericMemory(const llvm::json::Value &, int64_t capacity,
++                            GenericMemoryBinding &, std::string &error);
++bool checkGenericMemory(const GenericMemoryBinding &, int64_t capacity,
++                        std::string &error);
++bool getGenericTargetCapabilities(const llvm::json::Value &,
++    GenericTargetCapabilities &, std::string &error);
++llvm::json::Value serializeGenericMemory(const GenericMemoryBinding &);
++llvm::json::Value serializeGenericCapabilities(const GenericTargetCapabilities &);
++bool checkGenericCapabilities(const GenericMemoryBinding &, const GenericTargetCapabilities &, std::string &error);
+ struct GenericMappingPlan {
++  GenericMemoryBinding memoryBinding;
++  GenericTargetCapabilities targetCapabilities;
+   std::string strategy = "single-herd-resident", bodyFingerprint, planId;
+   int64_t capacityBytes = 24576, residentBytes = 0;
+   std::vector<size_t> orderedTasks;
+@@ -96,6 +125,7 @@ struct GenericMappingPlan {
+   std::vector<GenericTileRetention> retainedRegions;
+   std::vector<size_t> fusedInitializerTasks;
+   std::vector<GenericHardwareStage> hardwareStages;
++  bool moduleWideChannelConversion = false;
+   std::vector<GenericAIRChannelAllocation> channelAllocations;
+   ProgramMappingChoice choices;
+   std::vector<std::vector<size_t>> taskLoopOrders;
+diff --git a/include/Taskflow/ProgramMapping.h b/include/Taskflow/ProgramMapping.h
+index 37d039b..7245074 100644
+--- a/include/Taskflow/ProgramMapping.h
++++ b/include/Taskflow/ProgramMapping.h
+@@ -67,9 +67,19 @@ struct ProgramDataOrganizationChoice {
+   std::vector<MappingComputeEstimate> computeEstimates;
+   std::optional<double> clockMHz;
+ };
++// A call boundary is shared by all region inputs. Device stages and data
++// transfers remain distinct events; submission cost belongs to this boundary.
++struct MappingExecutionRegion {
++  std::string id, placement, submissionResource;
++  size_t beginEvent = 0, endEvent = 0; // half-open event coverage
++  std::vector<size_t> deviceStages;
++  int64_t submissionCount = 1;
++};
+ struct ProgramCommunicationPlan {
++  std::vector<MappingExecutionRegion> executionRegions;
+   // Capacities/topology are target facts. Copy placement/lifetimes and event
+   // order are checked choices. No uncalibrated wall-clock schedule is invented.
++  std::vector<StaticResourceDomain> domains;
+   std::vector<StaticMemory> memories;
+   std::vector<StaticResource> resources;
+   std::vector<StaticTransfer> links;
+diff --git a/include/Taskflow/Search.h b/include/Taskflow/Search.h
+index 19eaa51..ca43ec2 100644
+--- a/include/Taskflow/Search.h
++++ b/include/Taskflow/Search.h
+@@ -3,6 +3,7 @@
+ #include "Taskflow/StructuredProgram.h"
+ #include "Taskflow/GenericMapping.h"
+ #include <algorithm>
++#include <array>
+ #include <optional>
+ #include <set>
+ namespace orbit::taskflow {
+@@ -48,6 +49,11 @@ struct SearchAction {
+ };
+ // Target recommendations affect proposals only, never semantic legality.
+ struct SearchPreferences { int64_t m=1, n=1, k=1; };
++// Finite target-aligned neighbors, not legality or a predictive cost model.
++// The search re-analyzes materialized children and uses the public planner.
++std::vector<SearchAction> generateNativeTileActions(const GenericAnalysis &,
++    const std::array<int64_t,3> &current, const GenericTargetCapabilities &,
++    const SearchPreferences &, size_t limit);
+ std::vector<SearchAction> generateSearchActions(const Program &, const SearchPreferences & = {});
+ std::string canonicalSearchIdentity(const Program &);
+ bool runStructuredSearch(const Program &, const SearchOptions &, std::string &error);
+diff --git a/include/Taskflow/StaticMapping.h b/include/Taskflow/StaticMapping.h
+index e949a1c..9db5257 100644
+--- a/include/Taskflow/StaticMapping.h
++++ b/include/Taskflow/StaticMapping.h
+@@ -31,14 +31,22 @@ struct StaticAnalysis {
+ struct StaticProvenance {
+   std::string kind, source;
+ };
++// Ownership is independent of accessibility and transfer connectivity.
++struct StaticResourceDomain {
++  std::string id, parent, kind;
++};
+ struct StaticResource {
+   std::string id, kind, device;
+   int64_t capacity = 0;
++  std::string domain;
+ };
+ struct StaticMemory {
+   std::string id;
+   int64_t capacityBytes = 0;
+   std::vector<std::string> accessibleDevices;
++  std::string domain, kind;
++  // When present, this is the precise allow-list; device access is legacy.
++  std::vector<std::string> accessibleResources;
+ };
+ struct StaticTransfer {
+   std::string id, source, target, resource, memory, sourceLayout, targetLayout;
+@@ -46,6 +54,7 @@ struct StaticTransfer {
+   double latencyMs = 0, bandwidthBytesPerMs = 0;
+   int64_t minBytes = 0, maxBytes = INT64_MAX, temporaryBytes = 0;
+   StaticProvenance provenance;
++  std::string domain;
+ };
+ struct StaticCost {
+   std::string kind, scope;
+@@ -88,6 +97,7 @@ struct StaticAssumptions {
+           maxRegionCells = 100000;
+ };
+ struct StaticConfig {
++  std::vector<StaticResourceDomain> domains;
+   std::vector<StaticResource> resources;
+   std::vector<StaticMemory> memories;
+   std::vector<StaticTransfer> links, conversions, synchronizations;
+@@ -162,6 +172,16 @@ struct StaticMappingResult {
+   bool exhaustiveAssignments = false, regionExactCover = false;
+   uint64_t possibleAssignments = 0, evaluatedAssignments = 0, budget = 0;
+ };
++// These functions validate topology/capacity without requiring calibrated costs.
++bool validateMemoryArchitecture(const StaticConfig &, std::string &error);
++bool memoryAccessible(const StaticConfig &, llvm::StringRef memory,
++                      llvm::StringRef computeResource);
++bool findMemoryPath(const StaticConfig &, llvm::StringRef source,
++                    llvm::StringRef target, std::vector<std::string> &links,
++                    std::string &error);
++bool parseMemoryArchitecture(const llvm::json::Value &, StaticConfig &,
++                             std::string &error);
++llvm::json::Value serializeMemoryArchitecture(const StaticConfig &);
+ bool analyzeStaticProgram(mlir::ModuleOp, StaticAnalysis &, std::string &error);
+ bool parseStaticConfig(const llvm::json::Value &, StaticConfig &,
+                        std::string &error);
+diff --git a/lib/Taskflow/CMakeLists.txt b/lib/Taskflow/CMakeLists.txt
+index f00fae6..2ce2164 100644
+--- a/lib/Taskflow/CMakeLists.txt
++++ b/lib/Taskflow/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ add_mlir_library(MLIRTaskflowStructured StructuredProgram.cpp Search.cpp
+-  StaticAnalysis.cpp StaticContract.cpp StaticCommunication.cpp
++  MemoryArchitecture.cpp StaticAnalysis.cpp StaticContract.cpp StaticCommunication.cpp
+   StaticMapper.cpp StaticChecker.cpp StaticEvaluation.cpp StaticRegion.cpp
+   StaticRegionChecker.cpp GenericAnalysis.cpp GenericMapping.cpp GenericCommunication.cpp ProgramDataOrganization.cpp ProgramPartition.cpp NativeTransforms.cpp PARTIAL_SOURCES_INTENDED
+   LINK_LIBS PUBLIC MLIRTaskflow LLVMSupport MLIRAffineDialect MLIRArithDialect
+diff --git a/lib/Taskflow/GenericCommunication.cpp b/lib/Taskflow/GenericCommunication.cpp
+index 7f0d761..640e475 100644
+--- a/lib/Taskflow/GenericCommunication.cpp
++++ b/lib/Taskflow/GenericCommunication.cpp
+@@ -157,7 +157,7 @@ struct State {
+         ? poolKey(p, phases[phase], phase, *demand) : "storage-"+std::to_string(storage)+".data";
+     for (size_t i = 0; i < c.allocations.size(); ++i) {
+       const auto &al = c.allocations[i];
+-      if (al.storage == storage && al.memory == "aie_l1" && al.key == key &&
++      if (al.storage == storage && al.memory == p.memoryBinding.localMemory && al.key == key &&
+           al.beginPhase <= phase && phase < al.endPhase) return i;
+     }
+     return -1;
+@@ -168,7 +168,7 @@ struct State {
+     available.resize(c.allocations.size()); latest.assign(c.regions.size(),-1);
+     host.assign(a.storages.size(),SIZE_MAX);
+     for (size_t i = 0; i < c.allocations.size(); ++i)
+-      if (c.allocations[i].memory == "system_memory_bo") host[c.allocations[i].storage] = i;
++      if (c.allocations[i].memory == p.memoryBinding.hostMemory) host[c.allocations[i].storage] = i;
+     for (size_t cell = 0; cell < c.regions.size(); ++cell) {
+       size_t storage = c.regions[cell].storage;
+       if (a.storages[storage].role != "input") continue;
+@@ -193,8 +193,8 @@ struct State {
+       phaseBegin = events.size();
+     }
+     MappingEvent event; event.kind = std::move(kind); event.phase = phase;
+-    event.task = task; event.memory = event.kind == "transfer" ? "" : "aie_l1"; event.link = std::move(link);
+-    event.resource = event.kind == "transfer" ? "npu.dma" : "npu.compute";
++    event.task = task; event.memory = event.kind == "transfer" ? "" : p.memoryBinding.localMemory; event.link = std::move(link);
++    event.resource = event.kind == "transfer" ? p.memoryBinding.dmaResource : p.memoryBinding.computeResource;
+     event.dependencies = phaseBarrier;
+     events.push_back(std::move(event)); return events.size()-1;
+   }
+@@ -218,7 +218,7 @@ struct State {
+     copy.lastUsers = {event}; copy.users.push_back(event); return true;
+   }
+   void clearLocal(size_t event, size_t al) {
+-    if (p.communication.allocations[al].memory == "system_memory_bo") return;
++    if (p.communication.allocations[al].memory == p.memoryBinding.hostMemory) return;
+     for (auto item : available[al]) {
+       beforeOverwrite(event,item.second);
+       p.communication.copies[item.second].releasedAfter = event;
+@@ -249,7 +249,7 @@ struct State {
+     int64_t external = allocation(t.storage,phase,true);
+     if (local < 0 || external < 0) return fail(error,"DMA allocation binding missing");
+     size_t source = input ? external : local, target = input ? local : external;
+-    size_t event = start("transfer",phase,sourcePhase.task,input ? "host_to_l1" : "l1_to_host");
++    size_t event = start("transfer",phase,sourcePhase.task,input ? p.memoryBinding.inputLink : p.memoryBinding.outputLink);
+     auto cells = partition.cells(region(t,a));
+     for (size_t cell : cells) if (!read(event,source,cell,error)) return false;
+     clearLocal(event,target);
+@@ -364,16 +364,16 @@ bool orbit::taskflow::buildProgramCommunication(const GenericAnalysis &a,
+   auto &c = p.communication;
+   c.bodyFingerprint = a.bodyFingerprint;
+   if (!parseProgramDataPolicy(p.choices.dataOrganization,c.dataPolicy,error)) return false;
+-  c.memories = {{"system_memory_bo",INT64_MAX,{"host","npu"}},
+-                {"aie_l1",p.capacityBytes,{"npu"}}};
+-  c.resources = {{"npu.compute","compute","npu",1}, {"npu.dma","transfer","npu",1}};
+-  for (auto direction : {"host_to_l1","l1_to_host"}) {
+-    StaticTransfer link;
+-    link.id = direction; link.source = direction == std::string("host_to_l1") ? "system_memory_bo" : "aie_l1";
+-    link.target = direction == std::string("host_to_l1") ? "aie_l1" : "system_memory_bo";
+-    link.resource = "npu.dma";
+-    link.provenance = {"target_contract","serial explicit DMA; latency/bandwidth uncalibrated"};
+-    c.links.push_back(std::move(link));
++  if(!checkGenericMemory(p.memoryBinding,p.capacityBytes,error)) return false;
++  c.domains=p.memoryBinding.architecture.domains;
++  c.memories=p.memoryBinding.architecture.memories;
++  c.resources=p.memoryBinding.architecture.resources;
++  c.links=p.memoryBinding.architecture.links;
++  for(const auto &t:p.transfers){
++    const auto &b=p.memoryBinding;auto id=t.direction=="host_to_l1"?b.inputLink:b.outputLink;
++    auto l=std::find_if(c.links.begin(),c.links.end(),[&](const auto &link){return link.id==id;});
++    if(l==c.links.end() || t.bytes<l->minBytes || t.bytes>l->maxBytes)
++      return fail(error,"transfer exceeds target link byte limits");
+   }
+   collectGenericAllocations(a,p,c.allocations);
+   State state(p,a,*phases);
+@@ -410,7 +410,7 @@ bool orbit::taskflow::buildProgramCommunication(const GenericAnalysis &a,
+   for (auto &copy : c.copies) {
+     if (copy.releasedAfter == SIZE_MAX) copy.releasedAfter = c.events.size();
+     const auto &allocation = c.allocations[copy.allocation];
+-    if (allocation.memory != "system_memory_bo") {
++    if (allocation.memory != p.memoryBinding.hostMemory) {
+       auto end = std::lower_bound(c.events.begin(),c.events.end(),allocation.endPhase,
+           [](const auto &event, size_t phase) { return event.phase < phase; });
+       copy.releasedAfter = std::min(copy.releasedAfter,size_t(end-c.events.begin()));
+@@ -426,12 +426,22 @@ bool orbit::taskflow::buildProgramCommunication(const GenericAnalysis &a,
+     if(transfer.bytes<0 || c.transferBytes>INT64_MAX-transfer.bytes) return fail(error,"transfer total overflow");
+     c.transferBytes+=transfer.bytes;
+   }
++  MappingExecutionRegion call;call.id="program-call";
++  call.placement="npu";call.submissionResource=p.memoryBinding.submissionResource;call.endEvent=c.events.size();
++  for(size_t stage=0;stage<std::max<size_t>(1,p.hardwareStages.size());++stage)call.deviceStages.push_back(stage);
++  c.executionRegions.push_back(std::move(call));
+   return true;
+ }
+ 
+ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+     const GenericMappingPlan &p, std::string &error) {
+   const auto &c = p.communication;
++  if(c.executionRegions.size()!=1)return fail(error,"one checked AIR program-call region required");
++  const auto &call=c.executionRegions.front();std::vector<size_t> stages;
++  for(size_t i=0;i<std::max<size_t>(1,p.hardwareStages.size());++i)stages.push_back(i);
++  if(call.id!="program-call" || call.placement!="npu" || call.submissionResource!=p.memoryBinding.submissionResource ||
++     call.beginEvent!=0 || call.endEvent!=c.events.size() || call.submissionCount!=1 || call.deviceStages!=stages)
++    return fail(error,"program-call coverage/submission/stage contract mismatch");
+   ProgramDataPolicy policy;
+   if (!parseProgramDataPolicy(p.choices.dataOrganization,policy,error) || c.dataPolicy!=policy || !c.placements.empty())
+     return fail(error,"data policy differs from checked mapping choice");
+@@ -453,32 +463,12 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+         x.bytes != y.bytes || x.beginPhase != y.beginPhase || x.endPhase != y.endPhase)
+       return fail(error,"allocation placement, size or lifetime mismatch");
+   }
+-  if (c.memories.size() != 2 || c.resources.size() != 2 || c.links.size() != 2 ||
+-      c.memories[0].id != "system_memory_bo" || c.memories[0].capacityBytes != INT64_MAX ||
+-      c.memories[1].id != "aie_l1" || c.memories[1].capacityBytes != p.capacityBytes ||
+-      c.resources[0].id != "npu.compute" || c.resources[0].capacity != 1 ||
+-      c.resources[0].kind != "compute" || c.resources[0].device != "npu" ||
+-      c.resources[1].id != "npu.dma" || c.resources[1].capacity != 1 ||
+-      c.resources[1].kind != "transfer" || c.resources[1].device != "npu" ||
+-      c.memories[0].accessibleDevices != std::vector<std::string>{"host","npu"} ||
+-      c.memories[1].accessibleDevices != std::vector<std::string>{"npu"})
+-    return fail(error,"unsupported memory/resource contract");
+-  for (size_t i = 0; i < c.links.size(); ++i) {
+-    bool input = i == 0;
+-    const auto &link = c.links[i];
+-    if (link.id != (input ? "host_to_l1" : "l1_to_host") ||
+-        link.source != (input ? "system_memory_bo" : "aie_l1") ||
+-        link.target != (input ? "aie_l1" : "system_memory_bo") ||
+-        link.resource != "npu.dma" || link.latencyMs != 0 ||
+-        link.bandwidthBytesPerMs != 0 || link.temporaryBytes != 0 ||
+-        link.minBytes != 0 || link.maxBytes != INT64_MAX ||
+-        !link.memory.empty() || !link.sourceLayout.empty() || !link.targetLayout.empty() ||
+-        !link.sourceDtype.empty() || !link.targetDtype.empty() ||
+-        !link.sourceDevice.empty() || !link.targetDevice.empty() ||
+-        link.provenance.kind != "target_contract" ||
+-        link.provenance.source != "serial explicit DMA; latency/bandwidth uncalibrated")
+-      return fail(error,"transfer link topology/resource/cost mismatch");
+-  }
++  if(!checkGenericMemory(p.memoryBinding,p.capacityBytes,error)) return false;
++  StaticConfig actual;actual.memories=c.memories;actual.resources=c.resources;actual.links=c.links;
++  actual.domains=c.domains;
++  if(staticFingerprint(serializeMemoryArchitecture(actual)) !=
++     staticFingerprint(serializeMemoryArchitecture(p.memoryBinding.architecture)))
++    return fail(error,"target memory/resource/path contract changed");
+   // Check lifetimes as actual storage allocation intervals, independent of
+   // data liveness. Dormant full/tail template pools still consume capacity.
+   std::map<std::string,std::map<size_t,int64_t>> deltas;
+@@ -504,12 +494,12 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+   std::vector<std::map<size_t,size_t>> available(allocations.size());
+   std::vector<size_t> host(a.storages.size(),SIZE_MAX);
+   for (size_t i = 0; i < allocations.size(); ++i)
+-    if (allocations[i].memory == "system_memory_bo") host[allocations[i].storage] = i;
++    if (allocations[i].memory == p.memoryBinding.hostMemory) host[allocations[i].storage] = i;
+   auto local = [&](size_t phase, const GenericTileRegion &r) -> int64_t {
+     std::string key = p.strategy == "serial-tiled" ? poolKey(p,(*phases)[phase],phase,r)
+                   : "storage-"+std::to_string(r.storage)+".data";
+     for (size_t i = 0; i < allocations.size(); ++i)
+-      if (allocations[i].memory == "aie_l1" && allocations[i].key == key &&
++      if (allocations[i].memory == p.memoryBinding.localMemory && allocations[i].key == key &&
+           allocations[i].storage == r.storage && allocations[i].beginPhase <= phase &&
+           phase < allocations[i].endPhase) return i;
+     return -1;
+@@ -538,7 +528,7 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+       return fail(error,"copy region exceeds its physical allocation");
+     if (value.createdBy >= 0) continue;
+     if (c.versions[value.version].producer != -1 || value.availableFrom != 0 ||
+-        allocation.memory != "system_memory_bo" ||
++        allocation.memory != p.memoryBinding.hostMemory ||
+         available[value.allocation].count(cell))
+       return fail(error,"fabricated or duplicate initial location copy");
+     available[value.allocation][cell] = copy; seenCopies[copy] = true;
+@@ -595,7 +585,7 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+       transferIndex = found->second;
+       const auto &t = p.transfers[transferIndex];
+       if ((p.strategy == "serial-tiled" && t.phase != event.phase) || event.task != phase.task ||
+-          event.link != t.direction || event.resource != "npu.dma" ||
++          event.link != (t.direction=="host_to_l1"?p.memoryBinding.inputLink:p.memoryBinding.outputLink) || event.resource != p.memoryBinding.dmaResource ||
+           event.reads != t.sourceCopies || event.writes != t.targetCopies)
+         return fail(error,"DMA event differs from actual source/destination binding");
+       GenericTileRegion demand;
+@@ -613,8 +603,11 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+         countBytes += bytes(a,regions[cell]);
+       }
+       if (countBytes != t.bytes) return fail(error,"DMA cell bytes differ from planned transfer");
++      auto link=std::find_if(c.links.begin(),c.links.end(),[&](const auto &l){return l.id==event.link;});
++      if(link==c.links.end() || t.bytes<link->minBytes || t.bytes>link->maxBytes)
++        return fail(error,"DMA violates target transfer size capability");
+     } else {
+-      if (event.resource != "npu.compute" || !event.link.empty())
++      if (event.resource != p.memoryBinding.computeResource || !event.link.empty())
+         return fail(error,"compute event uses an invalid execution resource");
+       int64_t initializedStorage = -1;
+       if (event.kind == "initialize") {
+@@ -670,7 +663,7 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+           return fail(error,"task fails to produce its own unique source version");
+         seenVersions[value.version] = true; latest[cell] = value.version;
+       }
+-      if (al.memory != "system_memory_bo" && reset.insert(value.allocation).second) {
++      if (al.memory != p.memoryBinding.hostMemory && reset.insert(value.allocation).second) {
+         for (auto old : available[value.allocation]) {
+           beforeOverwrite(old.second); expectedRelease[old.second] = index;
+         }
+@@ -693,7 +686,7 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+   for (size_t i = 0; i < c.copies.size(); ++i)
+   {
+     const auto &allocation = allocations[c.copies[i].allocation];
+-    if (allocation.memory != "system_memory_bo") {
++    if (allocation.memory != p.memoryBinding.hostMemory) {
+       auto end = std::lower_bound(c.events.begin(),c.events.end(),allocation.endPhase,
+           [](const auto &event, size_t phase) { return event.phase < phase; });
+       expectedRelease[i] = std::min(expectedRelease[i],size_t(end-c.events.begin()));
+@@ -718,7 +711,7 @@ bool orbit::taskflow::checkProgramCommunication(const GenericAnalysis &a,
+     transferBytes+=transfer.bytes;
+   }
+   if(c.transferBytes!=transferBytes || c.estimatedMakespanMs || !c.computeEstimates.empty() || !c.peakMemoryBytes.empty())return fail(error,"native uncalibrated cost or traffic mismatch");
+-  for(const auto &event:c.events)if(event.memory!=(event.kind=="transfer"?"":"aie_l1"))return fail(error,"event execution memory mismatch");
++  for(const auto &event:c.events)if(event.memory!=(event.kind=="transfer"?"":p.memoryBinding.localMemory))return fail(error,"event execution memory mismatch");
+   return checkEdges(a,c,error);
+ }
+ 
+@@ -735,7 +728,7 @@ llvm::json::Value orbit::taskflow::serializeProgramCommunication(const ProgramCo
+     for (auto value : values) { number(value); if (!compact) a.push_back(int64_t(value)); }
+     return a;
+   };
+-  llvm::json::Array memories,resources,links,allocations,regions,versions,copies,events,dataEdges,orderEdges,estimates,placements;
++  llvm::json::Array memories,resources,links,allocations,regions,versions,copies,events,dataEdges,orderEdges,estimates,placements,executionRegions;
+   llvm::json::Object peaks;
+   for(const auto &peak:c.peakMemoryBytes){word(peak.first);number(peak.second);peaks[peak.first]=peak.second;}
+   word(programDataPolicyName(c.dataPolicy).str()); word(c.bodyFingerprint);
+@@ -743,8 +736,18 @@ llvm::json::Value orbit::taskflow::serializeProgramCommunication(const ProgramCo
+   auto jsonWord=[&](const llvm::json::Value &v){std::string value;llvm::raw_string_ostream stream(value);stream<<v;word(value);};
+   jsonWord(c.estimatedMakespanMs ? llvm::json::Value(*c.estimatedMakespanMs) : llvm::json::Value(nullptr));
+   for(const auto &estimate:c.computeEstimates)jsonWord(serializeMappingComputeEstimate(estimate));
++  for(const auto &region:c.executionRegions){
++    llvm::json::Array stages;for(auto stage:region.deviceStages)stages.push_back(int64_t(stage));
++    llvm::json::Value record=llvm::json::Object{{"id",region.id},{"placement",region.placement},{"submission_resource",region.submissionResource},
++      {"begin_event",int64_t(region.beginEvent)},{"end_event_exclusive",int64_t(region.endEvent)},{"device_stages",std::move(stages)},
++      {"host_submission_count",region.submissionCount},{"submission_kind","host_submission"},
++      {"cost_ownership","prepared-region composite includes submission, device compute/transfers/wait and readback once"}};
++    jsonWord(record);executionRegions.push_back(std::move(record));
++  }
+   for(const auto &placement:c.placements){number(placement.task);word(placement.resource);word(placement.memory);word(placement.implementation);
+     placements.push_back(llvm::json::Object{{"task",int64_t(placement.task)},{"resource",placement.resource},{"memory",placement.memory},{"implementation",placement.implementation}});}
++  StaticConfig architecture;architecture.domains=c.domains;architecture.memories=c.memories;architecture.resources=c.resources;architecture.links=c.links;
++  auto architectureJSON=serializeMemoryArchitecture(architecture);jsonWord(architectureJSON);
+   for (const auto &memory : c.memories) {
+     word(memory.id); number(memory.capacityBytes);
+     number(memory.accessibleDevices.size());for(const auto &device:memory.accessibleDevices)word(device);
+@@ -836,6 +839,8 @@ llvm::json::Value orbit::taskflow::serializeProgramCommunication(const ProgramCo
+     {"schedule",c.placements.empty()?"phase barriers and copy producer/overwrite dependencies; ordinals are a topological witness, independent same-phase transfers may overlap":"serial topological whole-task events; compute and direct transfers charged once"},
+     {"resource_capacity_scope","logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers"},
+     {"system_capacity_scope","allocation accounting limit, not measured available host RAM"},
++    {"execution_regions",std::move(executionRegions)},
++    {"memory_architecture",std::move(architectureJSON)},
+     {"memories",std::move(memories)},{"resources",std::move(resources)},
+     {"links",std::move(links)},{"allocations",std::move(allocations)},
+     {"logical_regions",std::move(regions)},{"versions",std::move(versions)},
+diff --git a/lib/Taskflow/GenericMapping.cpp b/lib/Taskflow/GenericMapping.cpp
+index 293c50d..27c0fb9 100644
+--- a/lib/Taskflow/GenericMapping.cpp
++++ b/lib/Taskflow/GenericMapping.cpp
+@@ -877,7 +877,7 @@ int64_t stagePoolBytes(const GenericAnalysis &a, const GenericMappingPlan &p,
+             key += "."+std::to_string((*templateKey)[d]);
+         } else if (kind == "readonly_panel") key += ".readonly-panel";
+         else if (kind == "incoming_staging") key += ".incoming";
+-        allocations->push_back({storage,"aie_l1",key,allocatedBytes,
++        allocations->push_back({storage,p.memoryBinding.localMemory,key,allocatedBytes,
+                                 stage.beginPhase,stage.endPhase});
+       }
+       if (!stagePools) return;
+@@ -896,7 +896,7 @@ int64_t stagePoolBytes(const GenericAnalysis &a, const GenericMappingPlan &p,
+           {"storage", a.storages[storage].id},
+           {"dtype", a.storages[storage].dtype},
+           {"kind", kind.str()},
+-          {"memory", "aie_l1"},
++          {"memory", p.memoryBinding.localMemory},
+           {"allocated_bytes", allocatedBytes},
+           {"flat_elements", allocatedBytes / width},
+           {"template_shape", std::move(shape)},
+@@ -1263,8 +1263,8 @@ bool checkTileDomains(const GenericAnalysis &a, const GenericMappingPlan &p,
+     std::vector<size_t> dependencies;
+     if (groupIndex) dependencies.push_back(groupIndex - 1);
+     if (stage.groupIndex != groupIndex || group.beginPhase != stage.beginPhase ||
+-        group.endPhase != stage.endPhase || group.resource != "npu.compute" ||
+-        group.memory != "aie_l1" || group.dependencies != dependencies)
++        group.endPhase != stage.endPhase || group.resource != p.memoryBinding.computeResource ||
++        group.memory != p.memoryBinding.localMemory || group.dependencies != dependencies)
+       return fail(error, "execution group schedule/resource binding mismatch");
+     ++groupIndex;
+     while (phaseCursor < p.phases.size() &&
+@@ -1501,12 +1501,13 @@ bool buildTiled(const GenericAnalysis &a, GenericMappingPlan &p,
+     return false;
+   for (size_t stage = 0; stage < p.hardwareStages.size(); ++stage)
+     p.hardwareStages[stage].legalizeChannels = channelsRequired[stage];
++  p.moduleWideChannelConversion=llvm::any_of(p.hardwareStages,[](const auto &s){return s.legalizeChannels;});
+   p.executionGroups.clear();
+   for (size_t index = 0; index < p.hardwareStages.size(); ++index) {
+     auto &stage = p.hardwareStages[index];
+     stage.groupIndex = index;
+     ProgramExecutionGroup group;
+-    group.resource = "npu.compute"; group.memory = "aie_l1";
++    group.resource = p.memoryBinding.computeResource; group.memory = p.memoryBinding.localMemory;
+     group.beginPhase = stage.beginPhase; group.endPhase = stage.endPhase;
+     if (index) group.dependencies.push_back(index - 1);
+     p.executionGroups.push_back(std::move(group));
+@@ -1528,10 +1529,10 @@ void orbit::taskflow::collectGenericAllocations(const GenericAnalysis &a,
+   for (size_t storage = 0; storage < a.storages.size(); ++storage) {
+     bool external = isa<BlockArgument>(a.storages[storage].root);
+     if (p.strategy == "serial-tiled" || external)
+-      allocations.push_back({storage,"system_memory_bo","host-"+std::to_string(storage),
++      allocations.push_back({storage,p.memoryBinding.hostMemory,"host-"+std::to_string(storage),
+                              storageBytes(a.storages[storage]),0,end});
+     if (p.strategy != "serial-tiled")
+-      allocations.push_back({storage,"aie_l1","storage-"+std::to_string(storage)+".data",
++      allocations.push_back({storage,p.memoryBinding.localMemory,"storage-"+std::to_string(storage)+".data",
+                              storageBytes(a.storages[storage]),0,end});
+   }
+   if (p.strategy == "serial-tiled")
+@@ -1563,6 +1564,16 @@ bool orbit::taskflow::checkGenericMapping(const GenericAnalysis &a,
+   if ((p.strategy != "single-herd-resident" && p.strategy != "serial-tiled") ||
+       p.bodyFingerprint != a.bodyFingerprint)
+     return fail(e, "generic plan strategy/body identity mismatch");
++  if (!checkGenericMemory(p.memoryBinding,p.capacityBytes,e)) return false;
++  if (p.targetCapabilities.capacityBytes!=p.capacityBytes ||
++      !checkGenericCapabilities(p.memoryBinding,p.targetCapabilities,e)) return false;
++  for(const auto &impl:p.taskImplementations)
++    if(!llvm::any_of(p.targetCapabilities.implementations,[&](const auto &allowed){return impl.kind==allowed.kind && impl.lanes==allowed.lanes;}))
++      return fail(e,impl.kind=="independent-lane-f32"
++        ? "implementation unavailable: strict f32 vector multiplication is not supported by target capabilities"
++        : "implementation unavailable: requested kind/lanes are not supported by target capabilities");
++  if(p.moduleWideChannelConversion!=llvm::any_of(p.hardwareStages,[](const auto &s){return s.legalizeChannels;}))
++    return fail(e,"module-wide channel conversion differs from checked stages");
+   if (p.channelMergePolicy != "single-logical-fifo-per-stage-storage-direction")
+     return fail(e, "unsupported generic AIR channel merge policy");
+   if (p.capacityBytes <= 0 || p.capacityBytes > 24576)
+@@ -1762,6 +1773,77 @@ bool orbit::taskflow::checkGenericMapping(const GenericAnalysis &a,
+   }
+   return true;
+ }
++namespace {
++std::string costTypeIdentity(Type type) {
++  std::string text;llvm::raw_string_ostream os(text);
++  if(auto memory=dyn_cast<MemRefType>(type)) {
++    os<<"memref-rank-"<<memory.getRank()<<":"<<memory.getElementType()<<":";
++    if(memory.getLayout().isIdentity())os<<"identity";else memory.getLayout().print(os);
++    os<<":";if(memory.getMemorySpace())memory.getMemorySpace().print(os);else os<<"default";
++  } else type.print(os);
++  return text;
++}
++std::string costRegionFamily(const GenericAnalysis &a) {
++  llvm::json::Array storageFacts,tasks;
++  for(const auto &storage:a.storages)storageFacts.push_back(llvm::json::Object{
++    {"role",storage.role},{"type",costTypeIdentity(storage.root.getType())}});
++  std::string alias;llvm::raw_string_ostream aliasStream(alias);
++  if(auto attr=func::FuncOp(a.function)->getAttr("orbit.noalias"))attr.print(aliasStream);
++  for(const auto &task:a.tasks) {
++    std::map<Operation *,size_t> ids;
++    task.operation->walk([&](Operation *op){ids.emplace(op,ids.size());});
++    auto valueIdentity=[&](Value value) {
++      for(size_t i=0;i<task.loops.size();++i)if(value==task.loops[i].induction)
++        return "iv:"+std::to_string(i);
++      for(size_t i=0;i<a.storages.size();++i)if(value==a.storages[i].root)
++        return "storage:"+std::to_string(i)+":"+costTypeIdentity(value.getType());
++      if(auto result=dyn_cast<OpResult>(value)) {
++        auto found=ids.find(result.getOwner());
++        if(found!=ids.end())return "op:"+std::to_string(found->second)+":"+std::to_string(result.getResultNumber());
++        for(size_t i=0;i<a.tasks.size();++i)if(result.getOwner()==a.tasks[i].operation)
++          return "task:"+std::to_string(i)+":"+std::to_string(result.getResultNumber());
++        std::string external;llvm::raw_string_ostream os(external);
++        os<<result.getOwner()->getName()<<":"<<result.getOwner()->getAttrDictionary();
++        if(auto properties=result.getOwner()->getPropertiesAsAttribute())properties.print(os);
++        return external;
++      }
++      if(auto argument=dyn_cast<BlockArgument>(value))return "arg:"+std::to_string(argument.getArgNumber())+":"+costTypeIdentity(value.getType());
++      return std::string("unknown-value");
++    };
++    llvm::json::Array operations,dependencies,arguments;
++    for(auto dependency:task.dependencies)dependencies.push_back(int64_t(dependency));
++    for(auto storage:task.argumentStorages)arguments.push_back(int64_t(storage));
++    task.operation->walk([&](Operation *op){
++      if(op==task.operation)return;
++      llvm::json::Array operands,types;
++      for(Value value:op->getOperands())operands.push_back(valueIdentity(value));
++      for(Type type:op->getResultTypes())types.push_back(costTypeIdentity(type));
++      llvm::json::Object fact{{"operation",op->getName().getStringRef()},
++        {"parent",int64_t(ids.at(op->getParentOp()))},{"operands",std::move(operands)},
++        {"types",std::move(types)}};
++      if(auto loop=dyn_cast<affine::AffineForOp>(op)) {
++        fact["lower_origin"]=loop.getConstantLowerBound();fact["step"]=loop.getStepAsInt();
++        std::string extra;llvm::raw_string_ostream os(extra);
++        for(auto attr:op->getAttrs())if(attr.getName()!="lowerBoundMap" && attr.getName()!="upperBoundMap" && attr.getName()!="step")
++          os<<attr.getName()<<"="<<attr.getValue()<<";";
++        fact["extra_attributes"]=extra;
++        // Only the static extent is erased. Parent/source IV and all access
++        // expressions keep nesting and reduction axes bound to the family.
++      } else {
++        std::string attributes;llvm::raw_string_ostream os(attributes);
++        op->getAttrDictionary().print(os);
++        if(auto properties=op->getPropertiesAsAttribute())properties.print(os);
++        fact["attributes"]=attributes;
++      }
++      operations.push_back(std::move(fact));
++    });
++    tasks.push_back(llvm::json::Object{{"dependencies",std::move(dependencies)},
++      {"argument_storages",std::move(arguments)},{"operations",std::move(operations)}});
++  }
++  return staticFingerprint(llvm::json::Object{{"schema","orbit.direct-air.region-family.v1"},
++    {"noalias",alias},{"storages",std::move(storageFacts)},{"tasks",std::move(tasks)}});
++}
++}
+ llvm::json::Value orbit::taskflow::serializeGenericCostFeatures(const GenericCostFeatures &f) {
+   llvm::json::Object values,operations;llvm::json::Array sources,implementations;
+   for(const auto &v:f.values)values[v.first]=v.second;
+@@ -1769,13 +1851,15 @@ llvm::json::Value orbit::taskflow::serializeGenericCostFeatures(const GenericCos
+   for(const auto &v:f.sourceFingerprints)sources.push_back(v);
+   for(const auto &v:f.implementations)implementations.push_back(v);
+   return llvm::json::Object{{"schema","orbit.direct-air.features.v1"},
+-    {"execution_fingerprint",f.executionFingerprint},{"values",std::move(values)},{"source_operations",std::move(operations)},
++    {"execution_fingerprint",f.executionFingerprint},{"region_family_fingerprint",f.regionFamilyFingerprint},{"architecture_fingerprint",f.architectureFingerprint},{"values",std::move(values)},{"source_operations",std::move(operations)},
+     {"source_fingerprints",std::move(sources)},{"implementations",std::move(implementations)},
+     {"scope","native source/checked plan facts; counts are not instruction counts or measured physical traffic"}};
+ }
+ bool orbit::taskflow::collectGenericCostFeatures(const GenericAnalysis &a,
+     const GenericMappingPlan &p,GenericCostFeatures &f,std::string &error) {
+   f={};f.sourceFingerprints={a.bodyFingerprint};
++  f.regionFamilyFingerprint=costRegionFamily(a);
++  f.architectureFingerprint=staticFingerprint(serializeGenericMemory(p.memoryBinding));
+   auto add=[&](int64_t &value,int64_t amount) {
+     if(amount<0 || value>INT64_MAX-amount)return false;value+=amount;return true;
+   };
+@@ -1786,7 +1870,10 @@ bool orbit::taskflow::collectGenericCostFeatures(const GenericAnalysis &a,
+     }return true;
+   };
+   bool valid=true;
+-  for(const auto &task:a.tasks) {
++  for(size_t taskIndex=0;taskIndex<a.tasks.size();++taskIndex) {
++    const auto &task=a.tasks[taskIndex];
++    const auto implementation=llvm::find_if(p.taskImplementations,[&](const auto &i){return i.task==taskIndex;});
++    const bool mixed=implementation!=p.taskImplementations.end() && implementation->kind=="scalar-product-vector-add-f32" && implementation->lanes==8;
+     task.operation->walk([&](Operation *op){
+       auto dialect=op->getName().getDialectNamespace();
+       if((dialect!="arith" && dialect!="math") || op->getName().getStringRef()=="arith.constant")return;
+@@ -1796,8 +1883,18 @@ bool orbit::taskflow::collectGenericCostFeatures(const GenericAnalysis &a,
+       std::string name=op->getName().getStringRef().str();
+       valid&=add(f.operations[name+(f32?":f32":":other")],n);
+       if(f32)valid&=add(f.values["source_scalar_f32_operations"],n);
+-      if(f32 && (name=="arith.mulf" || name=="arith.divf"))
++      bool mixedOperation=mixed && implementation->parallelLoop>=0 &&
++          size_t(implementation->parallelLoop)<task.loops.size() &&
++          task.loops[implementation->parallelLoop].operation->isProperAncestor(op);
++      if(f32 && (name=="arith.mulf" || name=="arith.divf")) {
+         valid&=add(f.values["source_f32_product_operations"],n);
++        valid&=add(f.values[mixedOperation?"implemented_mixed8_f32_product_operations":"implemented_scalar_f32_product_operations"],n);
++      }
++      if(f32 && (name=="arith.addf" || name=="arith.subf")) {
++        if(mixedOperation) {
++          if(n%8)valid=false;else valid&=add(f.values["implemented_mixed8_f32_addsub_packs"],n/8);
++        } else valid&=add(f.values["implemented_scalar_f32_addsub_operations"],n);
++      }
+       if(f32 && name=="math.exp")valid&=add(f.values["source_math_exp_f32_operations"],n);
+     });
+     for(const auto &access:task.accesses) {
+@@ -1809,8 +1906,15 @@ bool orbit::taskflow::collectGenericCostFeatures(const GenericAnalysis &a,
+   for(const auto *key:{"source_scalar_f32_operations","source_f32_product_operations",
+       "source_math_exp_f32_operations","source_scalar_reads","source_scalar_writes",
+       "dma_bytes","dma_input_bytes","dma_output_bytes","dma_transfer_count",
+-      "active_compute_events","local_initialize_events","local_staging_copy_bytes"})f.values[key]+=0;
+-  f.values["command_count"]=1;
++      "active_compute_events","local_initialize_events","local_staging_copy_bytes",
++      "implemented_scalar_f32_product_operations","implemented_mixed8_f32_product_operations",
++      "implemented_scalar_f32_addsub_operations","implemented_mixed8_f32_addsub_packs"})f.values[key]+=0;
++  f.values["module_wide_channel_conversion"]=p.moduleWideChannelConversion?1:0;
++  f.values["command_count"]=0;
++  f.values["execution_region_count"]=p.communication.executionRegions.size();
++  for(const auto &region:p.communication.executionRegions)
++    if(region.submissionCount<=0 || !add(f.values["command_count"],region.submissionCount))
++      return fail(error,"cost execution region submission count is invalid or overflows");
+   f.values["hardware_stage_count"]=p.strategy=="serial-tiled"?p.hardwareStages.size():1;
+   f.values["execution_group_count"]=p.executionGroups.size();
+   f.values["source_phase_count"]=p.phases.size();
+@@ -1818,6 +1922,25 @@ bool orbit::taskflow::collectGenericCostFeatures(const GenericAnalysis &a,
+   f.values["readonly_retention_scopes"]=p.readOnlyRetentions.size();
+   f.values["serial_tiled"]=p.strategy=="serial-tiled";
+   f.values["capacity_bytes"]=p.capacityBytes;
++  f.values["all_source_loops_affine"]=1;f.values["all_source_loops_unit_step"]=1;
++  f.values["source_loop_depth_max"]=0;f.values["source_has_tile_tail"]=0;f.values["mixed8_lane_coverage_exact"]=1;
++  for(size_t axis=0;axis<3;++axis)f.values["source_max_loop_"+std::to_string(axis)+"_iterations"]=0;
++  for(const auto &task:a.tasks)for(size_t axis=0;axis<task.loops.size();++axis) {
++    const auto &loop=task.loops[axis];
++    f.values["all_source_loops_affine"]&=isa<affine::AffineForOp>(loop.operation);
++    f.values["all_source_loops_unit_step"]&=loop.step==1;
++    f.values["source_loop_depth_max"]=std::max(f.values["source_loop_depth_max"],int64_t(axis+1));
++    int64_t count=(loop.upper-loop.lower-1)/loop.step+1;
++    if(axis<3)f.values["source_max_loop_"+std::to_string(axis)+"_iterations"]=std::max(f.values["source_max_loop_"+std::to_string(axis)+"_iterations"],count);
++    if(axis<p.tileSizes.size() && count%p.tileSizes[axis])f.values["source_has_tile_tail"]=1;
++  }
++  for(const auto &implementation:p.taskImplementations)if(implementation.kind=="scalar-product-vector-add-f32") {
++    if(implementation.lanes!=8)f.values["mixed8_lane_coverage_exact"]=0;
++    for(const auto &phase:p.phases)if(phase.task==implementation.task) {
++      auto bound=llvm::find_if(phase.loops,[&](const auto &b){return int64_t(b.loop)==implementation.parallelLoop;});
++      if(bound==phase.loops.end() || (bound->upper-bound->lower)%8)f.values["mixed8_lane_coverage_exact"]=0;
++    }
++  }
+   for(size_t axis=0;axis<3;++axis)f.values["max_tile_loop_"+std::to_string(axis)+"_iterations"]=0;
+   for(const auto &phase:p.phases) {
+     if(phase.task>=a.tasks.size())return fail(error,"cost feature source task is invalid");
+@@ -1915,7 +2038,8 @@ bool orbit::taskflow::evaluateGenericDirectAIRCost(const GenericCostFeatures &fe
+     return true;
+   }
+   if(kind=="features-only")return unknown("uncalibrated","native feature collection only; no fitted coefficients");
+-  if(kind!="linear-composite")return fail(error,"unsupported direct-AIR cost provider kind");
++  const bool implementationAware=kind=="implementation-composite";
++  if(kind!="linear-composite" && !implementationAware)return fail(error,"unsupported direct-AIR cost provider kind");
+   auto calibration=object->getString("calibration");
+   if(calibration=="uncalibrated")return unknown("uncalibrated","direct-AIR composite coefficients are not calibrated");
+   if(calibration!="calibrated")return fail(error,"direct-AIR cost model requires explicit calibration status");
+@@ -1933,9 +2057,26 @@ bool orbit::taskflow::evaluateGenericDirectAIRCost(const GenericCostFeatures &fe
+   if(!domain || !terms || terms->empty() || terms->size()>4)return fail(error,"direct-AIR composite requires domain and one to four frozen terms");
+   auto sources=domain->getArray("source_fingerprints"),implementations=domain->getArray("implementations"),operations=domain->getArray("operations");
+   auto ranges=domain->getObject("feature_ranges");
+-  if(!sources || sources->empty() || !implementations || implementations->empty() || !operations || !ranges)
++  if((!implementationAware && (!sources || sources->empty())) || !implementations || implementations->empty() || !operations || !ranges)
+     return fail(error,"direct-AIR model requires source, implementation, operation and feature coverage");
+   auto covered=[](const llvm::json::Array &values,llvm::StringRef key){return llvm::any_of(values,[&](const auto &v){return v.getAsString()==key;});};
++  const auto *families=domain->getArray("family_fingerprints");
++  const auto *architectures=domain->getArray("architecture_fingerprints");
++  auto allowTails=domain->getBoolean("allow_tails");
++  if(implementationAware) {
++    if(domain->get("source_fingerprints") || domain->get("source_feature_ranges"))
++      return fail(error,"implementation-composite uses source-family/feature domains, not exact source-hash ranges");
++    if(!families || families->empty() || !architectures || architectures->empty() || !allowTails)
++      return fail(error,"implementation-composite requires source families, architectures and explicit tail policy");
++    for(const auto *identities:{families,architectures})for(const auto &identity:*identities)
++      if(!identity.getAsString() || !digest(*identity.getAsString()))return fail(error,"implementation-composite family/architecture identity must be SHA256");
++    for(const char *key:{"command_count","implemented_scalar_f32_product_operations",
++        "implemented_mixed8_f32_product_operations","hardware_stage_count","source_max_loop_0_iterations",
++        "source_max_loop_1_iterations","source_max_loop_2_iterations","max_tile_loop_0_iterations",
++        "max_tile_loop_1_iterations","max_tile_loop_2_iterations","source_phase_count","dma_bytes",
++        "resident_payload_bytes","capacity_bytes","core_count_per_stage"})
++      if(!ranges->get(key))return fail(error,"implementation-composite requires explicit shape/tile/work/stage/DMA/resource envelope");
++  }
+   std::set<std::string> termsSeen;double total=0;
+   for(const auto &term:*terms) {
+     auto entry=term.getAsObject();auto name=entry?entry->getString("feature"):std::nullopt;
+@@ -1947,6 +2088,9 @@ bool orbit::taskflow::evaluateGenericDirectAIRCost(const GenericCostFeatures &fe
+     if(!std::isfinite(contribution) || !std::isfinite(total+contribution))return fail(error,"direct-AIR composite estimate overflows");
+     total+=contribution;
+   }
++  if(implementationAware && termsSeen!=std::set<std::string>{"command_count",
++      "implemented_scalar_f32_product_operations","implemented_mixed8_f32_product_operations","hardware_stage_count"})
++    return fail(error,"implementation-composite requires the four declared implementation/work/fixed-stage terms");
+   for(const auto &range:*ranges) {
+     auto limits=range.second.getAsArray();auto actual=features.values.find(range.first.str());
+     if(actual==features.values.end() || !limits || limits->size()!=2 || !(*limits)[0].getAsInteger() || !(*limits)[1].getAsInteger() ||
+@@ -1978,7 +2122,23 @@ bool orbit::taskflow::evaluateGenericDirectAIRCost(const GenericCostFeatures &fe
+     return unknown("out_of_domain","partitioned complete-program overhead is not calibrated by this single-command provider");
+   if(features.values.find("all_storage_f32")==features.values.end() || features.values.at("all_storage_f32")!=1)
+     return unknown("out_of_domain","calibrated direct-AIR provider currently requires f32 storage");
+-  for(const auto &source:features.sourceFingerprints)if(!covered(*sources,source))return unknown("out_of_domain","source fingerprint outside frozen source groups");
++  if(!implementationAware)for(const auto &source:features.sourceFingerprints)if(!covered(*sources,source))return unknown("out_of_domain","source fingerprint outside frozen source groups");
++  if(implementationAware) {
++    if(!digest(features.regionFamilyFingerprint) || !covered(*families,features.regionFamilyFingerprint))
++      return unknown("out_of_domain","source SSA/access family outside implementation calibration");
++    if(!digest(features.architectureFingerprint) || !covered(*architectures,features.architectureFingerprint))
++      return unknown("out_of_domain","target memory/link/resource architecture outside implementation calibration");
++    auto fact=[&](const char *key,int64_t value){auto found=features.values.find(key);return found!=features.values.end() && found->second==value;};
++    if(!fact("all_source_loops_affine",1) || !fact("all_source_loops_unit_step",1) || !fact("mixed8_lane_coverage_exact",1))
++      return unknown("out_of_domain","implementation model requires static affine unit-step source and exact supported lane coverage");
++    if(!*allowTails && !fact("source_has_tile_tail",0))return unknown("out_of_domain","source/tile tails not included in frozen calibration domain");
++    for(const auto &operation:features.operations)
++      if(operation.first!="arith.mulf:f32" && operation.first!="arith.addf:f32" && operation.first!="arith.subf:f32")
++        return unknown("out_of_domain","implementation model currently covers source f32 multiply/add/subtract only");
++    for(const auto &implementation:features.implementations)
++      if(implementation!="scalar:1" && implementation!="scalar-product-vector-add-f32:8")
++        return unknown("out_of_domain","implementation model covers scalar and supported mixed8 only");
++  }
+   for(const auto &implementation:features.implementations)if(!covered(*implementations,implementation))return unknown("out_of_domain","compute implementation outside calibrated domain");
+   for(const auto &operation:features.operations)if(!covered(*operations,operation.first))return unknown("out_of_domain","source operation outside calibrated coverage");
+   for(const auto &range:*ranges) {
+@@ -1995,7 +2155,7 @@ bool orbit::taskflow::evaluateGenericDirectAIRCost(const GenericCostFeatures &fe
+     }
+   }
+   if(total<=0)return unknown("uncalibrated","composite model has no positive estimate for this candidate");
+-  cost.valueMs=total;cost.status="calibrated";cost.reason="composite full-call estimate; terms are not independently measured physical components";
++  cost.valueMs=total;cost.status="calibrated";cost.reason=implementationAware?"implementation-aware prepared-region composite; transfer/runtime included, no independently identified physical components":"composite full-call estimate; terms are not independently measured physical components";
+   return true;
+ }
+ namespace {
+@@ -2063,6 +2223,8 @@ bool orbit::taskflow::planGenericMapping(const GenericAnalysis &a,
+   if (cfg)
+     if (auto capacity = cfg->getInteger("capacity_bytes"))
+       p.capacityBytes = *capacity;
++  if (!configureGenericMemory(config,p.capacityBytes,p.memoryBinding,e) ||
++      !getGenericTargetCapabilities(config,p.targetCapabilities,e)) return false;
+   for (size_t i = 0; i < a.storages.size(); ++i) {
+     int64_t n = storageBytes(a.storages[i]);
+     if (n < 0 || p.residentBytes > INT64_MAX - n)
+@@ -2245,7 +2407,7 @@ orbit::taskflow::serializeGenericMapping(const GenericAnalysis &a,
+                            {"dtype", storage.dtype},
+                            {"shape", std::move(shape)},
+                            {"bytes", bytes},
+-                           {"memory", "system_memory_bo"},
++                           {"memory", p.memoryBinding.hostMemory},
+                            {"lifetime", "whole_graph_lifetime"}});
+   }
+   for (auto task : p.fusedInitializerTasks)
+@@ -2434,7 +2596,7 @@ orbit::taskflow::serializeGenericMapping(const GenericAnalysis &a,
+            pool.second * (stagingPools.count(pool.first) ? 2 : 1)},
+           {"import_staging_bytes",
+            stagingPools.count(pool.first) ? pool.second : 0},
+-          {"memory", "aie_l1"},
++          {"memory", p.memoryBinding.localMemory},
+           {"lifetime", "task source region; actual shape-specific hardware "
+                        "pool totals listed in hardware_stages"}});
+     begin = end;
+@@ -2489,14 +2651,14 @@ orbit::taskflow::serializeGenericMapping(const GenericAnalysis &a,
+           {"sizes", ints(t.sizes)},
+           {"extent", p.strategy == "serial-tiled" ? "rectangular_tile"
+                                                   : "full_static_buffer"},
+-          {"source", t.direction == "host_to_l1" ? "host_system_bo" : "aie_l1"},
++          {"source", t.direction == "host_to_l1" ? p.memoryBinding.hostMemory : p.memoryBinding.localMemory},
+           {"target",
+-           t.direction == "host_to_l1" ? "aie_l1" : "host_system_bo"}});
++           t.direction == "host_to_l1" ? p.memoryBinding.localMemory : p.memoryBinding.hostMemory}});
+   if (p.strategy == "single-herd-resident")
+     for (size_t i = 0; i < a.storages.size(); ++i)
+       residency.push_back(
+           llvm::json::Object{{"storage", a.storages[i].id},
+-                             {"memory", "aie_l1"},
++                             {"memory", p.memoryBinding.localMemory},
+                              {"lifetime", "whole_herd"},
+                              {"bytes", storageBytes(a.storages[i])}});
+   int64_t logicalReadBytes = 0, logicalWriteBytes = 0, scalarReads = 0,
+@@ -2611,6 +2773,9 @@ orbit::taskflow::serializeGenericMapping(const GenericAnalysis &a,
+       {"strategy", p.strategy},
+       {"placement", "npu_single_core_serial"},
+       {"capacity_bytes", p.capacityBytes},
++      {"target_memory", serializeGenericMemory(p.memoryBinding)},
++      {"target_capabilities", serializeGenericCapabilities(p.targetCapabilities)},
++      {"target_capability_identity", p.targetCapabilities.identity},
+       {"resident_bytes", p.residentBytes},
+       {"phase_peak_live_bytes", phasePeak},
+       {"allocation_lifetime",
+@@ -2646,6 +2811,10 @@ orbit::taskflow::serializeGenericMapping(const GenericAnalysis &a,
+       {"backend_internal_transport",
+        "AIR compiler may add shim/L2 staging; final IR ledger required; not "
+        "measured traffic"}};
++  if(p.moduleWideChannelConversion)report["backend_legalization"]=llvm::json::Object{
++    {"channel_conversion_scope","module"},{"async_herd_scope","module"},
++    {"local_release_scope","static-hardware-stage"},{"extra_transfer_bytes",0},
++    {"extra_tensor_padding_bytes",0},{"reason","installed DMA-to-channel pass converts every stage; all compact stage loops require matching async herd token scope"}};
+   if(p.directCost.enabled) {
+     report["direct_air_cost"]=directCostReport(p.directCost);
+     report["cost_status"]=p.directCost.status;
+diff --git a/lib/Taskflow/NativeTransforms.cpp b/lib/Taskflow/NativeTransforms.cpp
+index 58f36cd..fc708ae 100644
+--- a/lib/Taskflow/NativeTransforms.cpp
++++ b/lib/Taskflow/NativeTransforms.cpp
+@@ -170,6 +170,14 @@ bool orbit::taskflow::setNativeImplementation(ModuleOp module,
+     error = "implementation requires scalar/1, independent-lane-f32/positive lanes, or scalar-product-vector-add-f32/four-or-eight lanes";
+     return false;
+   }
++  // Scalar/1 is the module default. Keep one canonical representation so
++  // switching back from a vector choice cannot create a second identity for
++  // the same source body, checked plan and executable implementation.
++  if(kind=="scalar") {
++    module->removeAttr("orbit.implementation");
++    module->removeAttr("orbit.vector_lanes");
++    return true;
++  }
+   Builder b(module.getContext());
+   module->setAttr("orbit.implementation", b.getStringAttr(kind));
+   module->setAttr("orbit.vector_lanes", b.getI64IntegerAttr(lanes));
+diff --git a/lib/Taskflow/ProgramDataOrganization.cpp b/lib/Taskflow/ProgramDataOrganization.cpp
+index c10b155..6e0f2ce 100644
+--- a/lib/Taskflow/ProgramDataOrganization.cpp
++++ b/lib/Taskflow/ProgramDataOrganization.cpp
+@@ -35,6 +35,7 @@ int64_t storageBytes(const GenericStorage &s) {
+ bool placements(const GenericAnalysis &a,const StaticConfig &target,
+     const ProgramDataOrganizationChoice &choice,std::vector<MappingTaskPlacement> &out,std::string &error) {
+   if(choice.placements.size()!=a.tasks.size())return reject(error,"one explicit placement per source task required");
++  if(!validateMemoryArchitecture(target,error))return false;
+   out.resize(a.tasks.size());std::set<size_t> seen;
+   for(const auto &p:choice.placements) {
+     if(p.task>=a.tasks.size() || !seen.insert(p.task).second)return reject(error,"invalid or duplicate task placement");
+@@ -42,7 +43,7 @@ bool placements(const GenericAnalysis &a,const StaticConfig &target,
+     auto memory=std::find_if(target.memories.begin(),target.memories.end(),[&](const auto &m){return m.id==p.memory;});
+     if(resource==target.resources.end() || resource->capacity<1 || resource->kind!="compute" ||
+        memory==target.memories.end() || memory->capacityBytes<=0 ||
+-       std::find(memory->accessibleDevices.begin(),memory->accessibleDevices.end(),resource->device)==memory->accessibleDevices.end())
++       !memoryAccessible(target,p.memory,p.resource))
+       return reject(error,"task resource cannot access selected memory");
+     out[p.task]=p;
+   } return true;
+@@ -62,7 +63,7 @@ bool orbit::taskflow::planProgramDataOrganization(const GenericAnalysis &a,
+     const StaticConfig &target,const ProgramDataOrganizationChoice &choice,
+     ProgramCommunicationPlan &c,std::string &error) {
+   c={}; c.dataPolicy=choice.policy;c.bodyFingerprint=a.bodyFingerprint;
+-  c.memories=target.memories;c.resources=target.resources;c.links=target.links;
++  c.domains=target.domains;c.memories=target.memories;c.resources=target.resources;c.links=target.links;
+   if(!placements(a,target,choice,c.placements,error))return false;
+   std::vector<Effects> effects;if(!sourceEffects(a,effects,error))return false;
+   c.computeEstimates=choice.computeEstimates;
+@@ -115,16 +116,24 @@ bool orbit::taskflow::planProgramDataOrganization(const GenericAnalysis &a,
+     auto found=available.find({storage,memory});
+     if(found!=available.end() && c.copies[found->second].version==size_t(latest[storage])) {copy=found->second;return true;}
+     if(latest[storage]<0)return reject(error,"source read has no initialized version");
+-    size_t source=SIZE_MAX;const StaticTransfer *link=nullptr;
+-    for(const auto &entry:available) if(entry.first.first==storage && c.copies[entry.second].version==size_t(latest[storage])) {
+-      auto l=linkFor(target,a.storages[storage],entry.first.second,memory,storageBytes(a.storages[storage]));
+-      if(l){source=entry.second;link=l;break;}
++    size_t source=SIZE_MAX;std::vector<std::string> path;
++    StaticConfig routes=target;routes.links.clear();int64_t b=storageBytes(a.storages[storage]);
++    // Filter semantic constraints before connectivity, not after choosing a route.
++    for(const auto &l:target.links)if(linkFor(target,a.storages[storage],l.source,l.target,b)==&l)routes.links.push_back(l);
++    for(const auto &entry:available)if(entry.first.first==storage && c.copies[entry.second].version==size_t(latest[storage])) {
++      std::vector<std::string> candidate;std::string ignored;
++      if(findMemoryPath(routes,entry.first.second,memory,candidate,ignored) &&
++         (source==SIZE_MAX || candidate.size()<path.size())){source=entry.second;path=std::move(candidate);}
++    }
++    if(source==SIZE_MAX || path.empty())return reject(error,"no legal transfer path for required copy");
++    for(const auto &id:path) {
++      auto link=std::find_if(target.links.begin(),target.links.end(),[&](const auto &l){return l.id==id;});
++      size_t event=start("transfer",task,link->target,link->resource,link->id);read(source,event,false);
++      copy=create(latest[storage],allocation(storage,link->target,task),event);
++      if(c.transferBytes>INT64_MAX-b)return reject(error,"traffic overflow");c.transferBytes+=b;
++      if(std::isfinite(link->bandwidthBytesPerMs) && std::isfinite(link->latencyMs) && link->bandwidthBytesPerMs>0 && link->latencyMs>=0 && !link->provenance.source.empty())duration+=link->latencyMs+b/link->bandwidthBytesPerMs;else known=false;
++      source=copy;
+     }
+-    if(!link)return reject(error,"no legal direct transfer for required copy");
+-    size_t event=start("transfer",task,memory,link->resource,link->id);read(source,event,false);
+-    copy=create(latest[storage],allocation(storage,memory,task),event);
+-    int64_t b=storageBytes(a.storages[storage]);if(c.transferBytes>INT64_MAX-b)return reject(error,"traffic overflow");c.transferBytes+=b;
+-    if(std::isfinite(link->bandwidthBytesPerMs) && std::isfinite(link->latencyMs) && link->bandwidthBytesPerMs>0 && link->latencyMs>=0 && !link->provenance.source.empty())duration+=link->latencyMs+b/link->bandwidthBytesPerMs;else known=false;
+     return true;
+   };
+   for(size_t task=0;task<a.tasks.size();++task) {
+@@ -145,9 +154,14 @@ bool orbit::taskflow::planProgramDataOrganization(const GenericAnalysis &a,
+         c.events[event].orderEdges.push_back(c.orderEdges.size());c.orderEdges.push_back({size_t(c.events.rend()-prior-1),event,"source task dependency without value consumption"});}
+     }
+     if(choice.policy==ProgramDataPolicy::PhaseLocal) {
+-      // Imported copies are ephemeral; produced versions remain as their source.
+-      for(size_t copy:reads) if(c.copies[copy].createdBy>=0 && c.events[c.copies[copy].createdBy].kind=="transfer")
+-        available.erase({c.regions[c.versions[c.copies[copy].version].region].storage,place.memory});
++      // Every imported location is task-local, including intermediate copies
++      // along a multi-hop route. Only external and compute-produced copies
++      // remain valid sources for a later task under this policy.
++      for(auto it=available.begin();it!=available.end();) {
++        auto creator=c.copies[it->second].createdBy;
++        if(creator>=0 && c.events[creator].kind=="transfer")it=available.erase(it);
++        else ++it;
++      }
+     }
+   }
+   for(size_t s=0;s<a.storages.size();++s)if(a.storages[s].role=="output") {
+@@ -184,6 +198,7 @@ bool orbit::taskflow::checkProgramDataOrganization(const GenericAnalysis &a,
+   if(!sourceEffects(a,effects,error) || !placements(a,target,choice,place,error))return false;
+   for(const auto &storage:a.storages)if(storageBytes(storage)<=0)
+     return reject(error,"source storage byte count is invalid or overflows int64");
++  if(!c.executionRegions.empty())return reject(error,"whole-task CPU planner has no declared offload submission boundary");
+   if(c.dataPolicy!=choice.policy || c.bodyFingerprint!=a.bodyFingerprint ||
+      c.regions.size()!=a.storages.size() || c.placements.size()!=place.size())return reject(error,"source/policy/placement coverage mismatch");
+   for(size_t t=0;t<place.size();++t)if(c.placements[t].task!=t || c.placements[t].memory!=place[t].memory ||
+@@ -192,6 +207,9 @@ bool orbit::taskflow::checkProgramDataOrganization(const GenericAnalysis &a,
+   for(size_t s=0;s<a.storages.size();++s)if(c.regions[s].storage!=s ||
+       c.regions[s].sizes!=a.storages[s].shape || c.regions[s].offsets!=std::vector<int64_t>(a.storages[s].shape.size(),0))
+     return reject(error,"logical region differs from source");
++  StaticConfig copyTarget;copyTarget.memories=c.memories;copyTarget.resources=c.resources;copyTarget.links=c.links;copyTarget.domains=c.domains;
++  if(staticFingerprint(serializeMemoryArchitecture(copyTarget))!=staticFingerprint(serializeMemoryArchitecture(target)))
++    return reject(error,"target architecture contract changed");
+   // Target tables are contracts, not candidate-mutable resources.
+   if(c.memories.size()!=target.memories.size() || c.resources.size()!=target.resources.size() || c.links.size()!=target.links.size())
+     return reject(error,"target contract coverage changed");
+@@ -342,8 +360,12 @@ bool orbit::taskflow::checkProgramDataOrganization(const GenericAnalysis &a,
+        copy.releasedAfter!=release || al.beginPhase!=begin || al.endPhase!=end)
+       return reject(error,"copy users/release/allocation lifetime mismatch");
+     if(choice.policy==ProgramDataPolicy::PhaseLocal && copy.createdBy>=0 && c.events[copy.createdBy].kind=="transfer") {
+-      std::set<size_t> consumers;for(auto u:users[i])if(c.events[u].kind=="compute")consumers.insert(c.events[u].task);
+-      if(consumers.size()>1)return reject(error,"phase-local imported copy retained across consumers");
++      // A transit copy can be consumed only by transfers, so compute-user
++      // counting alone would silently permit retention across later tasks.
++      // Bind all uses to the importing task, independently of the builder.
++      std::set<size_t> consumers{c.events[copy.createdBy].task};
++      for(auto u:users[i])consumers.insert(c.events[u].task);
++      if(consumers.size()>1)return reject(error,"phase-local imported copy retained across task/transfer consumers");
+     }
+   }
+   // Event intervals are the valid serial schedule's actual allocation lifetime;
+diff --git a/lib/Taskflow/Search.cpp b/lib/Taskflow/Search.cpp
+index 2541306..b5e212d 100644
+--- a/lib/Taskflow/Search.cpp
++++ b/lib/Taskflow/Search.cpp
+@@ -18,6 +18,7 @@
+ #include "llvm/Support/raw_ostream.h"
+ #include <cmath>
+ #include <map>
++#include <numeric>
+ using namespace orbit::taskflow;
+ namespace j=llvm::json;
+ namespace {
+@@ -47,6 +48,33 @@ std::string hash(llvm::StringRef s) {
+   auto h=llvm::SHA256::hash(llvm::ArrayRef<uint8_t>((const uint8_t*)s.data(),s.size()));
+   std::string r; for(auto c:h){r+="0123456789abcdef"[c>>4];r+="0123456789abcdef"[c&15];}return r;
+ }
++// Requested source configuration is diagnostic evidence, never a valid plan.
++// Failed capacity requests must remain replayable without inventing best_plan.
++j::Object nativeRequestedConfiguration(mlir::ModuleOp module) {
++  j::Array sizes;
++  if(auto attr=module->getAttrOfType<mlir::DenseI64ArrayAttr>("orbit.air_tile_sizes"))
++    for(auto size:attr.asArrayRef())sizes.push_back(size);
++  ProgramMappingChoice choice;std::string diagnostic;
++  bool readable=readNativeMappingChoice(module,choice,diagnostic);
++  auto kind=module->getAttrOfType<mlir::StringAttr>("orbit.implementation");
++  auto lanes=module->getAttrOfType<mlir::IntegerAttr>("orbit.vector_lanes");
++  return j::Object{{"scope","requested canonical source attributes; not a legal mapping witness"},
++      {"tile_sizes",std::move(sizes)},{"data_organization",choice.dataOrganization},
++      {"storage",choice.storage},{"reuse_loop",choice.reuseLoop},{"panel_loop",choice.panelLoop},
++      {"implementation",kind?kind.str():"scalar"},{"vector_lanes",lanes?lanes.getInt():1},
++      {"mapping_readable",readable},{"diagnostic",diagnostic}};
++}
++j::Value uncalibratedMappingSummary(const j::Value &result) {
++  auto object=result.getAsObject();auto best=object?object->getObject("best_plan"):nullptr;
++  if(!object || !best)return nullptr;
++  j::Object plan{{"estimated_ms",nullptr}};
++  for(auto key:{"plan_id","analysis_status","codegen_status","cost_status"})
++    plan[key]=best->getString(key).value_or("").str();
++  return j::Object{{"status",object->getString("status").value_or("").str()},
++      {"reason",object->getString("reason").value_or("").str()},
++      {"best_plan",std::move(plan)},
++      {"scope","compact legal uncalibrated plan flags; complete mapping-result.json retained separately"}};
++}
+ std::string fileDigest(const std::string &path) {
+   auto bytes=llvm::MemoryBuffer::getFile(path);return bytes?hash((*bytes)->getBuffer()):"missing";
+ }
+@@ -96,6 +124,46 @@ std::vector<SearchAction> orbit::taskflow::generateSearchActions(const Program &
+   a.push_back({"fission_matmul_relu",{0,0,0,false,true}});
+   return a;
+ }
++std::vector<SearchAction> orbit::taskflow::generateNativeTileActions(
++    const GenericAnalysis &analysis, const std::array<int64_t,3> &current,
++    const GenericTargetCapabilities &capabilities,
++    const SearchPreferences &preferences, size_t limit) {
++  std::array<int64_t,3> dimensions{1,1,1};
++  for(const auto &task:analysis.tasks)
++    for(size_t axis=0;axis<std::min<size_t>(3,task.loops.size());++axis) {
++      const auto &loop=task.loops[axis];
++      if(loop.step>0 && loop.upper>loop.lower)
++        dimensions[axis]=std::max(dimensions[axis],(loop.upper-loop.lower-1)/loop.step+1);
++    }
++  const std::array<int64_t,3> preferred{preferences.m,preferences.n,preferences.k};
++  std::vector<SearchAction> actions;std::set<std::array<int64_t,3>> seen;
++  // Spatial N first preserves the narrow-panel opportunity under a small
++  // proposal budget. Axes denote the existing native loop-index interface.
++  for(size_t axis: {size_t(1),size_t(2),size_t(0)}) {
++    int64_t targetAlignment=capabilities.tileAlignment[axis];
++    if(targetAlignment<=0 || preferred[axis]<=0)continue;
++    int64_t factor=preferred[axis]/std::gcd(preferred[axis],targetAlignment);
++    if(factor>INT64_MAX/targetAlignment)continue;
++    int64_t alignment=factor*targetAlignment;
++    auto add=[&](int64_t extent) {
++      if(actions.size()>=limit || extent<=0 || extent>dimensions[axis])return;
++      // A whole dimension smaller than alignment is a scalar proposal; the
++      // selected implementation's own tail proof remains the planner's job.
++      if(extent!=dimensions[axis])extent=(extent/alignment)*alignment;
++      if(extent<=0)return;
++      auto tile=current;tile[axis]=extent;
++      if(tile==current || !seen.insert(tile).second)return;
++      actions.push_back({"auto_tiles_"+std::to_string(tile[0])+"_"+
++          std::to_string(tile[1])+"_"+std::to_string(tile[2]),
++          {tile[0],tile[1],tile[2],false,false}});
++    };
++    add(std::max<int64_t>(1,current[axis]/2));
++    if(current[axis]<=INT64_MAX/2)add(std::min(dimensions[axis],current[axis]*2));
++    add(std::min(dimensions[axis],alignment));
++    add(dimensions[axis]);
++  }
++  return actions;
++}
+ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOptions &o,std::string &e) {
+   const bool nativeAir = o.backend == "air" && (o.evaluator.empty() || o.evaluator == "native");
+   const bool nativeStatic = (o.backend == "static" || nativeAir) && (o.evaluator.empty() || o.evaluator == "native");
+@@ -112,6 +180,18 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     auto module=parseNative(text);GenericAnalysis analysis;
+     if(!module||!analyzeGenericProgram(*module,analysis,reason))return false;
+     if(!normalizeNativeMappingChoice(*module,reason))return false;
++    // Normalize pre-existing implementation attributes as well as actions.
++    // Default scalar/1 and its explicit legacy spelling are one candidate.
++    auto implementation=module->getOperation()->getAttr("orbit.implementation");
++    auto vectorLanes=module->getOperation()->getAttr("orbit.vector_lanes");
++    if(implementation || vectorLanes) {
++      auto kind=mlir::dyn_cast_or_null<mlir::StringAttr>(implementation);
++      auto lanes=mlir::dyn_cast_or_null<mlir::IntegerAttr>(vectorLanes);
++      if((implementation && !kind) || (vectorLanes && !lanes)) {
++        reason="native implementation kind/lanes attributes have invalid types";return false;
++      }
++      if(!setNativeImplementation(*module,kind?kind.str():"scalar",lanes?lanes.getInt():1,reason))return false;
++    }
+     if(split&&!splitNativeOuterLoops(*module,reason))return false;
+     if(tiles&&!setNativeAIRTileSizes(*module,tiles->tileM,tiles->tileN,tiles->tileK,reason))return false;
+     if(mappingAction && mappingAction->mapping &&
+@@ -140,6 +220,12 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+   if(auto ec=llvm::sys::fs::create_directories(o.outputDir)){e=ec.message();return false;}
+   j::Value config=j::Object{};if(!o.targetConfigFile.empty()&&!read(o.targetConfigFile,config,e))return false;
+   if(!config.getAsObject()){e="target config must be a JSON object";return false;}
++  j::Value staticConfig=nullptr;
++  if (nativeStatic) {
++    if (auto path=config.getAsObject()->getString("mapping_config")) {
++      if (!read(path->str(),staticConfig,e)) return false;
++    } else staticConfig=config;
++  }
+   int64_t diversitySlots=0;
+   if(auto setting=config.getAsObject()->get("search_diversity_slots")) {
+     auto count=setting->getAsInteger();
+@@ -156,7 +242,38 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     std::string text;llvm::raw_string_ostream stream(text);module->print(stream);
+     return hash(text);
+   };
+-  std::vector<SearchAction> nativeActions{{"split_outer_loops",{}}};
++  bool automatic=false;std::string automaticMode="joint";size_t maxTileProposals=12;int64_t explorationSlots=0;
++  GenericTargetCapabilities proposalCapabilities;
++  SearchPreferences preferences;
++  j::Object automaticProposals;
++  if(auto setting=config.getAsObject()->get("native_auto_candidates")) {
++    auto object=setting->getAsObject();
++    if(!nativeBody || !object) {e="native_auto_candidates requires native source and an object";return false;}
++    automatic=true;
++    if(auto mode=object->getString("mode"))automaticMode=mode->str();
++    if(automaticMode!="joint" && automaticMode!="tiling-only" && automaticMode!="implementation-residency") {
++      e="native auto mode must be joint, tiling-only or implementation-residency";return false;
++    }
++    if(auto count=object->get("max_tile_proposals")) {
++      auto value=count->getAsInteger();
++      if(!value || *value<1 || *value>64) {e="max_tile_proposals must be an integer in [1,64]";return false;}
++      maxTileProposals=size_t(*value);
++    }
++    if(auto count=object->get("exploration_slots")) {
++      auto value=count->getAsInteger();
++      if(!value || *value<0 || *value>o.beamWidth) {e="exploration_slots must be an integer in [0,beam width]";return false;}
++      explorationSlots=*value;
++    }
++    for(auto &entry:*object)if(entry.first!="mode" && entry.first!="max_tile_proposals" && entry.first!="exploration_slots") {
++      e="unknown native_auto_candidates field";return false;
++    }
++    if(!getGenericTargetCapabilities(staticConfig,proposalCapabilities,e))return false;
++    if(proposalCapabilities.tileAlignment.size()!=3 || proposalCapabilities.capacityBytes<=0) {
++      e="native automatic proposals require three tile alignments and positive target capacity";return false;
++    }
++  }
++  std::vector<SearchAction> nativeActions;
++  if(!automatic)nativeActions.push_back({"split_outer_loops",{}});
+   if (auto candidates=config.getAsObject()->getArray("native_air_tile_candidates")) {
+     nativeActions.clear();
+     for (auto &candidate:*candidates) {
+@@ -173,7 +290,7 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+           {sizes[0],sizes[1],sizes[2],false,false}});
+     }
+   }
+-  bool discoverMappings = false;
++  bool discoverMappings = automatic && automaticMode!="tiling-only";
+   if (auto setting=config.getAsObject()->get("native_mapping_candidates")) {
+     if (setting->getAsString() != "discover") {
+       e="native_mapping_candidates currently requires 'discover'";return false;
+@@ -207,9 +324,61 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+       action.partitionExtent=*extent;nativeActions.push_back(std::move(action));
+     }
+   }
++  if(automatic && automaticMode!="tiling-only") {
++    SearchAction local{"auto_mapping_phase_local",{}};
++    local.mapping=ProgramMappingChoice{};nativeActions.push_back(std::move(local));
++  }
+   auto nativeActionsFor=[&](const State &state) {
+     auto actions=nativeActions;
+-    if (discoverMappings) {
++    if(automatic) {
++      auto module=parseNative(state.nativeMLIR);GenericAnalysis analysis;std::string diagnostic;
++      j::Array proposals;
++      if(module && analyzeGenericProgram(*module,analysis,diagnostic)) {
++        if(automaticMode!="implementation-residency") {
++          std::array<int64_t,3> current{1,1,1};
++          if(auto sizes=module->getOperation()->getAttrOfType<mlir::DenseI64ArrayAttr>("orbit.air_tile_sizes")) {
++            if(sizes.size()==3)std::copy(sizes.asArrayRef().begin(),sizes.asArrayRef().end(),current.begin());
++          } else {
++            GenericMappingPlan baseline;
++            if(planGenericMapping(analysis,staticConfig,baseline,diagnostic))
++              for(const auto &phase:baseline.phases)for(const auto &bound:phase.loops)
++                if(bound.loop<3)current[bound.loop]=std::max(current[bound.loop],
++                    (bound.upper-bound.lower-1)/analysis.tasks[phase.task].loops[bound.loop].step+1);
++          }
++          for(auto action:generateNativeTileActions(analysis,current,proposalCapabilities,preferences,maxTileProposals)) {
++            auto candidate=parseNative(state.nativeMLIR);GenericAnalysis facts;GenericMappingPlan plan;
++            diagnostic.clear();
++            bool legal=setNativeAIRTileSizes(*candidate,action.options.tileM,action.options.tileN,action.options.tileK,diagnostic) &&
++                analyzeGenericProgram(*candidate,facts,diagnostic) && planGenericMapping(facts,staticConfig,plan,diagnostic);
++            std::string candidateText;llvm::raw_string_ostream candidateStream(candidateText);
++            candidate->print(candidateStream);candidateStream.flush();
++            j::Object proposal{{"action",action.name},{"kind","tiling"},
++                {"candidate_id",hash(candidateText)},
++                {"requested_configuration",nativeRequestedConfiguration(*candidate)},
++                {"planner_supported",legal},{"reason",diagnostic},
++                {"target_capability_identity",proposalCapabilities.identity},
++                {"capacity_bytes",proposalCapabilities.capacityBytes},
++                {"resident_bytes",legal?j::Value(plan.residentBytes):j::Value(nullptr)}};
++            if(!legal)proposal["native_mlir"]=candidateText;
++            proposals.push_back(std::move(proposal));
++            // All unavailable proposals are reported. Only supported complete
++            // source/target plans consume the finite evaluation budget.
++            if(legal)actions.push_back(std::move(action));
++          }
++        }
++        if(automaticMode!="tiling-only")for(const auto &implementation:proposalCapabilities.implementations) {
++          SearchAction action{"auto_implementation_"+implementation.kind+"_"+std::to_string(implementation.lanes),{}};
++          action.implementation=implementation.kind;action.vectorLanes=implementation.lanes;
++          actions.push_back(std::move(action));
++        }
++      }
++      automaticProposals[state.key]=std::move(proposals);
++      actions.erase(std::remove_if(actions.begin(),actions.end(),[&](const auto &action) {
++        return automaticMode=="tiling-only" ? (!action.implementation.empty() || bool(action.mapping) || action.partitionExtent>=0)
++             : automaticMode=="implementation-residency" && action.options.tileM;
++      }),actions.end());
++    }
++    if (discoverMappings && (!automatic || automaticMode!="tiling-only")) {
+       auto module=parseNative(state.nativeMLIR); GenericAnalysis analysis;
+       std::string diagnostic;
+       if (module && analyzeGenericProgram(*module,analysis,diagnostic))
+@@ -224,7 +393,6 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     }
+     return actions;
+   };
+-  SearchPreferences preferences;
+   if(auto v=config.getAsObject()->get("search_preferences")) {
+     auto object=v->getAsObject();
+     if(!object){e="search_preferences must be an object";return false;}
+@@ -237,6 +405,34 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+       else {e="unknown search preference";return false;}
+     }
+   }
++  auto explorable=[&](const State &state) {
++    if(!automatic || explorationSlots<=0 || state.status!="uncalibrated")return false;
++    auto feedback=state.response.getAsObject();
++    auto diagnostics=feedback?feedback->getObject("diagnostics"):nullptr;
++    auto plan=diagnostics?diagnostics->getObject("best_plan"):nullptr;
++    return feedback && feedback->getString("evaluator_kind")=="native_cpp" &&
++        feedback->getString("status")=="uncalibrated" && !feedback->get("score") &&
++        diagnostics && diagnostics->getString("status")!="unsupported" && plan &&
++        !plan->getNumber("estimated_ms");
++  };
++  auto parentEligible=[&](const State &state){return scored(state)||explorable(state);};
++  auto selectParents=[&](std::vector<State> candidates) {
++    auto less=[](auto &a,auto &b){return a.score!=b.score?a.score<b.score:a.key<b.key;};
++    int64_t scoreWidth=o.beamWidth-explorationSlots;
++    auto selected=selectSearchBeam(candidates,scoreWidth,std::min(diversitySlots,scoreWidth),less,
++        scored,[](auto &s){return s.key;},structuralConfiguration);
++    std::set<std::string> keys;for(const auto &state:selected)keys.insert(state.key);
++    std::stable_sort(candidates.begin(),candidates.end(),[](auto &a,auto &b){return a.key<b.key;});
++    int64_t explored=0;
++    for(const auto &state:candidates)if(explorable(state) && explored<explorationSlots && keys.insert(state.key).second) {
++      selected.push_back(state);++explored;
++    }
++    auto remaining=selectSearchBeam(candidates,o.beamWidth,diversitySlots,less,scored,
++        [](auto &s){return s.key;},structuralConfiguration);
++    for(const auto &state:remaining)if(selected.size()<size_t(o.beamWidth) && keys.insert(state.key).second)
++      selected.push_back(state);
++    return selected;
++  };
+   std::string executable, evaluatorIdentity = "native-cpp-program-data-organization-v8";
+   if (!nativeStatic) {
+     auto found = llvm::sys::findProgramByName(o.evaluator);
+@@ -246,12 +442,6 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     if (!bytes) { e="cannot hash evaluator"; return false; }
+     evaluatorIdentity=(*bytes)->getBuffer().str();
+   }
+-  j::Value staticConfig=nullptr;
+-  if (nativeStatic) {
+-    if (auto path=config.getAsObject()->getString("mapping_config")) {
+-      if (!read(path->str(),staticConfig,e)) return false;
+-    } else staticConfig=config;
+-  }
+   std::string dependencyBinding;bindFiles(config,dependencyBinding);
+   dependencyBinding+=fileDigest(llvm::sys::fs::getMainExecutable(nullptr,(void*)&runStructuredSearch));
+   const std::string evaluationBinding=hash(dependencyBinding+o.backend+canonicalJSON(config)+evaluatorIdentity);
+@@ -315,6 +505,34 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+           }
+         }
+       }
++      if(automatic && explorationSlots>0 && s.status=="uncalibrated") {
++        if(!x->get("score") || render(*x->get("score"))!="null") {
++          e="uncalibrated exploration checkpoint contains a fabricated score";return false;
++        }
++        auto feedback=s.response.getAsObject();std::string diagnostic;
++        auto replanned=evaluateGenericMLIR(stateMLIR(s),staticConfig,diagnostic);
++        auto result=replanned.getAsObject();auto best=result?result->getObject("best_plan"):nullptr;
++        auto old=feedback?feedback->get("diagnostics"):nullptr;
++        if(!explorable(s) || !feedback || feedback->getString("candidate_id")!=stateCandidate(s) ||
++           feedback->getString("source_id")!=stateSource(s) ||
++           feedback->getString("evaluation_identity")!=s.evaluationIdentity ||
++           !result || result->getString("status")=="unsupported" || !best ||
++           best->getNumber("estimated_ms") || !old) {
++          e="uncalibrated exploration checkpoint failed independent plan re-evaluation";return false;
++        }
++        if(auto digest=feedback->getString("mapping_result_canonical_sha256")) {
++          if(*digest!=hash(canonicalJSON(replanned)) ||
++             feedback->getString("plan_id")!=best->getString("plan_id") ||
++             feedback->getString("feedback_storage")!="native-auto-uncalibrated-summary-v1" ||
++             feedback->getBoolean("physical_hardware_measurement")!=false ||
++             feedback->getBoolean("executed")!=false ||
++             canonicalJSON(*old)!=canonicalJSON(uncalibratedMappingSummary(replanned))) {
++            e="uncalibrated exploration compact plan/digest consistency failed";return false;
++          }
++        } else if(canonicalJSON(*old)!=canonicalJSON(replanned)) {
++          e="uncalibrated exploration checkpoint failed independent plan re-evaluation";return false;
++        }
++      }
+       if(!seen.insert(s.key).second){e="duplicate checkpoint archive identity";return false;}
+       archive.push_back(std::move(s));}
+     size_t baselineCount=0;
+@@ -335,7 +553,7 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+       } else {
+         auto parent=llvm::find_if(archive,[&](const auto &s){return s.key==state.parent;});
+         if (parent==archive.end()) {e="action chain parent missing";return false;}
+-        if(!scored(*parent) || state.round!=parent->round+1) {
++        if(!parentEligible(*parent) || state.round!=parent->round+1) {
+           e="checkpoint parent/child round consistency failed";return false;
+         }
+         bool selectedParent=state.round==1 ? parent->key==sourceKey : false;
+@@ -366,9 +584,9 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     }
+     std::vector<std::string> expectedBeam;
+     auto baseline=llvm::find_if(archive,[](const auto &s){return s.parent.empty();});
+-    if(scored(*baseline)) expectedBeam.push_back(baseline->key);
++    if(parentEligible(*baseline)) expectedBeam.push_back(baseline->key);
+     for(size_t i=0;i<selections.size();++i) {
+-      if(expectedBeam.empty()) {e="checkpoint completed a round without a scored parent beam";return false;}
++      if(expectedBeam.empty()) {e="checkpoint completed a round without an eligible parent beam";return false;}
+       // A completed round must account for every current proposal, including
+       // unmeasured budget rows. Otherwise an empty forged selection could skip
+       // work while appearing internally self-consistent.
+@@ -394,14 +612,15 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+       }
+       std::vector<State> candidates;
+       for(const auto &state:archive) if(state.round==int64_t(i+1)) candidates.push_back(state);
+-      auto recomputed=selectSearchBeam(std::move(candidates),o.beamWidth,diversitySlots,
+-          [](auto &a,auto &b){return a.score!=b.score?a.score<b.score:a.key<b.key;},scored,
+-          [](auto &s){return s.key;},structuralConfiguration);
++      auto recomputed=selectParents(std::move(candidates));
+       if(recomputed.size()!=selected->size()) {e="checkpoint selected beam differs from scored round";return false;}
+       expectedBeam.clear();
+       for(size_t j=0;j<selected->size();++j) {
+         auto row=(*selected)[j].getAsObject();
+-        if(!row || row->getString("search_key")!=recomputed[j].key || row->getNumber("score")!=recomputed[j].score) {
++        if(!row || row->getString("search_key")!=recomputed[j].key ||
++           (scored(recomputed[j]) ? row->getNumber("score")!=recomputed[j].score :
++             (!row->get("score") || render(*row->get("score"))!="null" ||
++              row->getString("reason")!="uncalibrated-exploration"))) {
+           e="checkpoint selected beam differs from cost/diversity selection";return false;
+         }
+         expectedBeam.push_back(recomputed[j].key);
+@@ -417,7 +636,7 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+         e="checkpoint beam identity/order consistency failed";return false;
+       }
+       auto state=llvm::find_if(archive,[&](const auto &s){return s.key==*key;});
+-      if(state==archive.end() || !scored(*state)) {e="invalid checkpoint beam";return false;}
++      if(state==archive.end() || !parentEligible(*state)) {e="invalid checkpoint beam";return false;}
+       beam.push_back(*state);
+     }
+   }
+@@ -430,6 +649,10 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     if(evaluations>=o.maxCandidates){s.status="budget_unmeasured";return true;}
+     if(s.p.tasks.size()>4096){s.status="unsupported";s.response=j::Object{{"reason","target task-count guard: >4096"}};return true;}
+     j::Value req=j::Object{{"schema","orbit.search.evaluation.v1"},{"backend",o.backend},{"candidate_id",nativeBody?s.key:s.p.candidateId},{"search_key",s.key},{"evaluation_identity",s.evaluationIdentity},{"source_id",stateSource(s)},{"plan_path",dir+"/plan.json"},{"mlir_path",dir+"/taskflow.mlir"},{"output_dir",dir+"/evaluation"},{"target_config",j::Value(config)}};
++    if(nativeBody) {
++      auto module=parseNative(mlir);
++      (*req.getAsObject())["requested_configuration"]=nativeRequestedConfiguration(*module);
++    }
+     std::string request=dir+"/request.json",response=dir+"/response.json";
+     if(!write(request,render(req),e))return false;
+     ++evaluations;llvm::sys::fs::remove(response);
+@@ -458,7 +681,13 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+           {"physical_hardware_measurement",observed}};
+         if(observed) feedback["measurement_reuse"]="SHA-bound prior complete-command observations; this evaluation does not submit hardware";
+       }
+-      else feedback["diagnostics"]=std::move(result);
++      else if(automatic && explorationSlots>0 && nativeAir && best && !unsupported) {
++        feedback["feedback_storage"]="native-auto-uncalibrated-summary-v1";
++        feedback["mapping_result_canonical_sha256"]=hash(canonicalJSON(result));
++        feedback["plan_id"]=best->getString("plan_id").value_or("").str();
++        feedback["physical_hardware_measurement"]=false;
++        feedback["diagnostics"]=uncalibratedMappingSummary(result);
++      } else feedback["diagnostics"]=std::move(result);
+       if(!write(response,render(j::Value(std::move(feedback))),e)) return false;
+     } else rc=llvm::sys::ExecuteAndWait(executable,{executable,request,response},std::nullopt,{},0,0,&executionError);
+     std::string readError; s.status="runtime_failed";
+@@ -469,7 +698,7 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+     }else s.response=j::Object{{"reason",executionError+readError},{"exit_code",rc}};
+     return true;
+   };
+-  if(archive.empty()){State base; base.p=source;base.nativeMLIR=sourceText;if(!nativeBody&&!transform(base.p,{},e))return false;base.key=stateIdentity(base);base.action="identity";if(!evaluate(base))return false;archive.push_back(base);seen.insert(base.key);if(scored(base))beam.push_back(base);if(!save())return false;}
++  if(archive.empty()){State base; base.p=source;base.nativeMLIR=sourceText;if(!nativeBody&&!transform(base.p,{},e))return false;base.key=stateIdentity(base);base.action="identity";if(!evaluate(base))return false;archive.push_back(base);seen.insert(base.key);if(parentEligible(base))beam.push_back(base);if(!save())return false;}
+   for(;nextRound<=o.maxRounds && !beam.empty();){
+     std::vector<State> children;
+     for(auto &parent:beam)for(auto &action:(nativeBody ? nativeActionsFor(parent) : generateSearchActions(parent.p,preferences))){
+@@ -480,13 +709,17 @@ bool orbit::taskflow::runStructuredSearch(const Program &source,const SearchOpti
+                          action.options.tileM?&action.options:nullptr,&action) : (!transform(s.p,action.options,reason)||!validate(s.p,reason))){attempts.push_back(j::Object{{"round",nextRound},{"parent",parent.key},{"action",action.name},{"status","semantic_invalid"},{"reason",reason}});continue;}
+       s.key=stateIdentity(s);
+       if(!seen.insert(s.key).second){attempts.push_back(j::Object{{"round",nextRound},{"parent",parent.key},{"action",action.name},{"search_key",s.key},{"candidate_id",nativeBody?s.key:s.p.candidateId},{"status","duplicate"}});
+-        for(auto &old:archive)if(old.key==s.key&&old.round==nextRound&&scored(old))children.push_back(old);continue;}
+-      if(!evaluate(s))return false;archive.push_back(s);if(scored(s))children.push_back(s);if(!save())return false;
++        for(auto &old:archive)if(old.key==s.key&&old.round==nextRound&&parentEligible(old))children.push_back(old);continue;}
++      if(!evaluate(s))return false;archive.push_back(s);if(parentEligible(s))children.push_back(s);if(!save())return false;
+     }
+-    beam=selectSearchBeam(std::move(children),o.beamWidth,diversitySlots,[](auto &a,auto &b){return a.score!=b.score?a.score<b.score:a.key<b.key;},scored,[](auto &s){return s.key;},structuralConfiguration);
+-    j::Array selected;for(auto &s:beam)selected.push_back(j::Object{{"search_key",s.key},{"candidate_id",nativeBody?s.key:s.p.candidateId},{"score",s.score},{"structural_configuration",structuralConfiguration(s)},{"reason",diversitySlots ? "evaluated legal child selected by cost plus reserved structural-diversity slots; archive retains global best" : "lowest evaluated score among unique legal children; archive retains global best"}});
++    beam=selectParents(std::move(children));
++    j::Array selected;for(auto &s:beam)selected.push_back(j::Object{{"search_key",s.key},{"candidate_id",nativeBody?s.key:s.p.candidateId},{"score",scored(s)?j::Value(s.score):j::Value(nullptr)},{"structural_configuration",structuralConfiguration(s)},{"reason",explorable(s)?"uncalibrated-exploration":diversitySlots ? "evaluated legal child selected by cost plus reserved structural-diversity slots; archive retains global best" : "lowest evaluated score among unique legal children; archive retains global best"}});
+     selections.push_back(j::Object{{"round",nextRound},{"selected",std::move(selected)}});++nextRound;if(!save())return false;
+   }
++  if(automatic && !write(o.outputDir+"/automatic-proposals.json",render(j::Object{
++      {"schema","orbit.native.automatic-proposals.v1"},{"mode",automaticMode},{"exploration_slots",explorationSlots},
++      {"target_capability_identity",proposalCapabilities.identity},
++      {"parents",std::move(automaticProposals)}}),e))return false;
+   auto ranked=selectSearchBeam(archive,archive.size(),0,[](auto &a,auto &b){return a.score!=b.score?a.score<b.score:a.key<b.key;},scored,[](auto &s){return s.key;},[](auto &s){return s.action;});
+   j::Array rows;for(auto &s:archive)rows.push_back(row(s));j::Array ranking;for(auto &s:ranked)ranking.push_back(s.key);
+   return write(o.outputDir+"/search.json",render(j::Object{{"schema","orbit.structured.search.v1"},{"backend",o.backend},{"score_unit",o.backend=="amoeba"?"cycles":"ms"},{"binding",binding},{"evaluations",evaluations},{"archive",std::move(rows)},{"ranking",std::move(ranking)},{"selections",std::move(selections)},{"attempts",std::move(attempts)}}),e);
+diff --git a/lib/Taskflow/StaticContract.cpp b/lib/Taskflow/StaticContract.cpp
+index 805120b..d048ff4 100644
+--- a/lib/Taskflow/StaticContract.cpp
++++ b/lib/Taskflow/StaticContract.cpp
+@@ -234,6 +234,7 @@ bool orbit::taskflow::parseStaticConfig(const V &v, StaticConfig &c,
+       throw std::runtime_error("unsupported static config schema");
+     c.original = v;
+     auto &hw = obj(field(o, "hardware"));
++    if(auto domains=hw.getArray("domains"))for(const auto &v:*domains){auto &d=obj(v);c.domains.push_back({str(d,"id"),str(d,"parent"),str(d,"kind")});}
+     std::set<std::string> ids;
+     std::map<std::string, StaticResource> resources;
+     std::map<std::string, StaticMemory> memories;
+@@ -241,9 +242,10 @@ bool orbit::taskflow::parseStaticConfig(const V &v, StaticConfig &c,
+       auto &o = obj(v);
+       StaticResource r{str(o, "id"), str(o, "kind"), str(o, "device"),
+                        integer(o, "capacity")};
++      r.domain=str(o,"domain");
+       unique(ids, r.id);
+       if (r.capacity <= 0 ||
+-          (r.kind != "compute" && r.kind != "communication") ||
++          (r.kind != "compute" && r.kind != "communication" && r.kind != "submission") ||
+           (r.kind == "compute" && r.device.empty()))
+         throw std::runtime_error("invalid resource kind/device/capacity");
+       resources[r.id] = r;
+@@ -254,6 +256,7 @@ bool orbit::taskflow::parseStaticConfig(const V &v, StaticConfig &c,
+       auto &o = obj(v);
+       StaticMemory m{str(o, "id"), integer(o, "capacity_bytes"),
+                      strings(o, "accessible_devices")};
++      m.domain=str(o,"domain");m.kind=str(o,"kind");m.accessibleResources=strings(o,"accessible_resources",false);
+       unique(ids, m.id);
+       if (m.capacityBytes <= 0 || m.accessibleDevices.empty())
+         throw std::runtime_error("invalid memory capacity/access");
+@@ -271,7 +274,7 @@ bool orbit::taskflow::parseStaticConfig(const V &v, StaticConfig &c,
+       for (auto &v : *a) {
+         auto &o = obj(v);
+         StaticTransfer t;
+-        t.id = str(o, "id");
++        t.id = str(o, "id");t.domain=str(o,"domain");
+         unique(ids, t.id);
+         t.resource = str(o, "resource");
+         if (!resources.count(t.resource))
+@@ -546,6 +549,7 @@ bool orbit::taskflow::parseStaticConfig(const V &v, StaticConfig &c,
+       if (std::find(dev.begin(), dev.end(), p.second) == dev.end())
+         throw std::runtime_error("output device cannot access memory");
+     }
++    if(!validateMemoryArchitecture(c,e))return false;
+     return true;
+   } catch (const std::exception &x) {
+     e = x.what();
+diff --git a/lib/TaskflowAIR/AIRBackend.cpp b/lib/TaskflowAIR/AIRBackend.cpp
+index 88f79b9..8430779 100644
+--- a/lib/TaskflowAIR/AIRBackend.cpp
++++ b/lib/TaskflowAIR/AIRBackend.cpp
+@@ -122,7 +122,7 @@ bool bindDMACopies(OpBuilder &b, const GenericAnalysis &a,
+   if(transfer.event<0 || size_t(transfer.event)>=communication.events.size())
+     return reject("AIR DMA has no checked public transfer event");
+   const auto &event=communication.events[transfer.event];
+-  if(event.kind!="transfer" || event.link!=transfer.direction || event.reads!=transfer.sourceCopies || event.writes!=transfer.targetCopies)
++  if(event.kind!="transfer" || event.link!=(transfer.direction=="host_to_l1"?plan.memoryBinding.inputLink:plan.memoryBinding.outputLink) || event.reads!=transfer.sourceCopies || event.writes!=transfer.targetCopies)
+     return reject("AIR DMA source/target copy IDs differ from the checked transfer event");
+   Operation *allocation=local.getDefiningOp();
+   while(allocation && isa<memref::CastOp,memref::ReinterpretCastOp>(allocation)) allocation=allocation->getOperand(0).getDefiningOp();
+@@ -144,7 +144,7 @@ bool bindDMACopies(OpBuilder &b, const GenericAnalysis &a,
+       const auto &version=communication.versions[copy.version];
+       if(version.region>=communication.regions.size()) return false;
+       const auto &cell=communication.regions[version.region];
+-      if(place.storage!=transfer.storage || cell.storage!=transfer.storage || place.memory!=(onHost?"system_memory_bo":"aie_l1") || place.bytes!=bytes || (!onHost && place.key!=key)) return false;
++      if(place.storage!=transfer.storage || cell.storage!=transfer.storage || place.memory!=(onHost?plan.memoryBinding.hostMemory:plan.memoryBinding.localMemory) || place.bytes!=bytes || (!onHost && place.key!=key)) return false;
+       if(place.beginPhase>transfer.phase || transfer.phase>=place.endPhase) return false;
+       auto offsets=transfer.offsets;auto sizes=transfer.sizes;
+       if(sizes.empty()) {offsets.assign(a.storages[transfer.storage].shape.size(),0);sizes=a.storages[transfer.storage].shape;}
+@@ -1110,6 +1110,13 @@ static bool lowerGenericToAIRImpl(const GenericAnalysis &a,
+           error="direct AIR read/write tile requires a proved local source initializer; host feedback accumulation is not validated by this toolchain";
+           return false;
+         }
++  // The installed DMA-to-channel pass converts the complete module, even
++  // though only a subset of stages needs explicit FIFO/port legalization.
++  // Every herd it hoists must therefore yield an async token: otherwise its
++  // generated scf.parallel has no init/reduce token while a nested compact
++  // scf.for carries one, and reconnecting that token is invalid. This changes
++  // transport representation, not the checked source phases or stage order.
++  const bool moduleChannelConversion=plan.moduleWideChannelConversion;
+   auto function = a.function;
+   auto *ctx = function.getContext();
+   if (!ctx->allowsUnregisteredDialects()) {
+@@ -1143,6 +1150,11 @@ static bool lowerGenericToAIRImpl(const GenericAnalysis &a,
+         }
+   }
+   output = ModuleOp::create(loc);
++  if(moduleChannelConversion) {
++    output->getOperation()->setAttr("orbit.channel_conversion_scope",b.getStringAttr("module"));
++    output->getOperation()->setAttr("orbit.async_herd_scope",b.getStringAttr("module"));
++    output->getOperation()->setAttr("orbit.local_release_scope",b.getStringAttr("static-hardware-stage"));
++  }
+   b.setInsertionPointToEnd(output->getBody());
+   SmallVector<Type> abiTypes(function.getArgumentTypes());
+   if (plan.strategy == "serial-tiled")
+@@ -1163,7 +1175,7 @@ static bool lowerGenericToAIRImpl(const GenericAnalysis &a,
+   auto one = b.create<arith::ConstantIndexOp>(loc, 1);
+   auto *herd = hierarchy(b, "air.herd", "orbit_herd", {one, one},
+                          segment->getRegion(0).front().getArguments(),
+-                         plan.strategy=="serial-tiled" && !plan.hardwareStages.empty() && plan.hardwareStages.front().legalizeChannels);
++                         moduleChannelConversion);
+   herd->setAttr("orbit.mapping_strategy",
+                 b.getStringAttr(plan.strategy));
+   b.setInsertionPointToStart(&herd->getRegion(0).front());
+@@ -1239,7 +1251,7 @@ static bool lowerGenericToAIRImpl(const GenericAnalysis &a,
+       auto alloc = b.create<memref::AllocOp>(loc, type);
+       alloc->setAttr("orbit.tile_pool", b.getStringAttr(dtype));
+       alloc->setAttr("orbit.storage_index", b.getI64IntegerAttr(poolStorages[dtype]));
+-      if (plan.hardwareStages[stageIndex].legalizeChannels)
++      if (moduleChannelConversion)
+         alloc->setAttr("orbit.lifetime", b.getStringAttr("static-hardware-stage-region"));
+       pools[dtype] = alloc;
+     }
+@@ -1462,8 +1474,9 @@ static bool lowerGenericToAIRImpl(const GenericAnalysis &a,
+     // The target allocates these L1 pools statically for the whole stage.
+     // Its channel dependency importer cannot reconnect an end-of-stage
+     // deallocation through already channelized nested tile loops. On that
+-    // explicitly planned path, region exit owns the lifetime instead.
+-    if (!plan.hardwareStages[stageIndex].legalizeChannels)
++    // complete-module conversion path, every stage exits its static local
++    // allocation lifetime here, including stages without port-pinning needs.
++    if (!moduleChannelConversion)
+       for (auto &[dtype, pool] : pools) b.create<memref::DeallocOp>(loc, pool);
+     if (stageIndex + 1 < plan.hardwareStages.size()) {
+       make(b, "air.herd_terminator");
+@@ -1479,7 +1492,7 @@ static bool lowerGenericToAIRImpl(const GenericAnalysis &a,
+       segment = hierarchy(b, "air.segment", "orbit_segment_" + suffix, {}, stageArgs);
+       b.setInsertionPointToStart(&segment->getRegion(0).front());
+       Value stageOne = b.create<arith::ConstantIndexOp>(loc, 1);
+-      herd = hierarchy(b, "air.herd", "orbit_herd_" + suffix, {stageOne,stageOne}, segment->getRegion(0).front().getArguments(), plan.hardwareStages[stageIndex+1].legalizeChannels);
++      herd = hierarchy(b, "air.herd", "orbit_herd_" + suffix, {stageOne,stageOne}, segment->getRegion(0).front().getArguments(), moduleChannelConversion);
+       herd->setAttr("orbit.mapping_strategy", b.getStringAttr(plan.strategy));
+       b.setInsertionPointToStart(&herd->getRegion(0).front());
+       ha = herd->getRegion(0).front().getArguments().drop_front(4);
+diff --git a/test/TaskflowGeneric/data-organization.cpp b/test/TaskflowGeneric/data-organization.cpp
+index 0b8a055..2e1d0b2 100644
+--- a/test/TaskflowGeneric/data-organization.cpp
++++ b/test/TaskflowGeneric/data-organization.cpp
+@@ -157,8 +157,75 @@ int main() {
+    }else ++checks;
+  }
+  reject("negative allocation bytes",[](auto &p){p.allocations.front().bytes=-1;});
++ // Target-owned sharing, resource access and multi-hop connectivity.
++ auto arch=target;arch.domains={{"system","","system"},{"device","system","device"},{"tile0","device","tile"},{"tile1","device","tile"}};
++ arch.resources[0].domain="system";arch.resources[1].domain="tile0";arch.resources[2].domain="device";
++ arch.resources.push_back({"accelerator1","compute","accel",1,"tile1"});
++ arch.memories[0].domain="system";arch.memories[0].kind="dram";arch.memories[0].accessibleResources={"cpu"};
++ arch.memories[1].domain="device";arch.memories[1].kind="shared-sram";arch.memories[1].accessibleResources={"accelerator","accelerator1"};
++ arch.memories.push_back({"local0",192,{"accel"},"tile0","local-sram",{"accelerator"}});
++ arch.memories.push_back({"local1",192,{"accel"},"tile1","local-sram",{"accelerator1"}});
++ auto edge=[&](const char *id,const char *from,const char *to){auto l=in;l.id=id;l.source=from;l.target=to;l.domain="device";return l;};
++ arch.links={edge("to-shared","dram","sram"),edge("to-local0","sram","local0"),edge("to-local1","sram","local1")};
++ auto require=[&](bool valid,const char *name){if(!valid){llvm::errs()<<"architecture: "<<name<<": "<<error<<"\n";ok=false;}else ++checks;};
++ require(validateMemoryArchitecture(arch,error),"shared and two-local architecture");
++ require(memoryAccessible(arch,"sram","accelerator1") && !memoryAccessible(arch,"local0","accelerator1"),"precise resource accessibility overrides same device");
++ std::vector<std::string> path;
++ require(findMemoryPath(arch,"dram","local1",path,error) && path==std::vector<std::string>{"to-shared","to-local1"},"two-hop reachability");
++ require(!findMemoryPath(arch,"local1","local0",path,error),"directed unreachable path");
++ auto malformed=arch;malformed.domains.front().parent="tile0";
++ require(!validateMemoryArchitecture(malformed,error),"ownership cycle rejected");
++ malformed=arch;malformed.memories.back().accessibleResources={"missing"};
++ require(!validateMemoryArchitecture(malformed,error),"unknown accessor rejected");
++ malformed=arch;malformed.links.back().resource="accelerator";
++ require(!validateMemoryArchitecture(malformed,error),"compute resource cannot be DMA");
++ StaticConfig roundtrip;require(parseMemoryArchitecture(serializeMemoryArchitecture(arch),roundtrip,error) &&
++   staticFingerprint(serializeMemoryArchitecture(roundtrip))==staticFingerprint(serializeMemoryArchitecture(arch)),"architecture roundtrip");
++ auto commonChoice=choice;commonChoice.placements.back().resource="accelerator1";commonChoice.computeEstimates.back().resource="accelerator1";
++ ProgramCommunicationPlan sharedPlan,separatePlan,pathPlan;
++ require(planProgramDataOrganization(a,arch,commonChoice,sharedPlan,error) && sharedPlan.transferBytes==64,"shared copy allocated/transferred once across compute resources");
++ auto separate=arch;commonChoice.placements[1].memory="local0";commonChoice.placements[2].memory="local1";
++ separate.assumptions.outputLocations["B"]="local0";separate.assumptions.outputLocations["C"]="local1";
++ require(planProgramDataOrganization(a,separate,commonChoice,separatePlan,error) && separatePlan.transferBytes==192,"shared staging plus two local copies with actual path bytes");
++ auto separateLocalChoice=commonChoice;separateLocalChoice.policy=ProgramDataPolicy::PhaseLocal;
++ ProgramCommunicationPlan separateLocalPlan;
++ require(planProgramDataOrganization(a,separate,separateLocalChoice,separateLocalPlan,error) && separateLocalPlan.transferBytes==256,
++   "phase-local releases every imported multi-hop copy at task boundary");
++ require(checkProgramDataOrganization(a,separate,separateLocalChoice,separateLocalPlan,error) &&
++   checkProgramDataOrganization(a,separate,commonChoice,separatePlan,error),"both multi-hop policies pass independent checking");
++ auto importCount=[&](const ProgramCommunicationPlan &p,const std::string &memory){size_t count=0;
++   for(const auto &copy:p.copies)if(copy.createdBy>=0 && p.events[copy.createdBy].kind=="transfer" &&
++       p.allocations[copy.allocation].memory==memory)++count;return count;};
++ require(importCount(separatePlan,"sram")==1 && importCount(separateLocalPlan,"sram")==2 &&
++   importCount(separatePlan,"local0")==1 && importCount(separatePlan,"local1")==1 &&
++   importCount(separateLocalPlan,"local0")==1 && importCount(separateLocalPlan,"local1")==1,
++   "only retained policy shares a transit creation across tasks");
++ auto hiddenTransitRetention=separatePlan;hiddenTransitRetention.dataPolicy=ProgramDataPolicy::PhaseLocal;
++ error.clear();
++ require(!checkProgramDataOrganization(a,separate,separateLocalChoice,hiddenTransitRetention,error) &&
++   error.find("across task/transfer consumers")!=std::string::npos,
++   "independent checker rejects phase-local transit sharing with accurate lifetimes/costs");
++ // The producer's DRAM version remains a source for both consumers. Removing
++ // imported copies must not discard compute-created copies or fabricate a
++ // new logical version to pay for the second route.
++ require(separateLocalPlan.versions.size()==separatePlan.versions.size() &&
++   separateLocalPlan.dataEdges.size()==separatePlan.dataEdges.size() &&
++   separateLocalPlan.orderEdges.size()==separatePlan.orderEdges.size() &&
++   separateLocalPlan.allocations.size()==separatePlan.allocations.size()+1,
++   "phase-local route recreation preserves source versions and data/order edges");
++ auto unc=arch;for(auto &l:unc.links){l.latencyMs=0;l.bandwidthBytesPerMs=0;l.provenance={};}
++ auto sharedChoice=choice;sharedChoice.placements.back().resource="accelerator1";sharedChoice.computeEstimates.back().resource="accelerator1";
++ require(planProgramDataOrganization(a,unc,sharedChoice,pathPlan,error) && !pathPlan.estimatedMakespanMs && pathPlan.transferBytes==64,"uncalibrated paths still check capacity and validity");
++ malformed=arch;malformed.memories[1].capacityBytes=127;
++ require(!planProgramDataOrganization(a,malformed,sharedChoice,pathPlan,error),"shared memory capacity limits residency");
++ auto denied=sharedChoice;denied.placements.back().memory="local0";
++ require(!planProgramDataOrganization(a,arch,denied,pathPlan,error),"same device cannot bypass local accessibility");
++ auto tampered=sharedPlan;tampered.memories[1].accessibleResources={"accelerator"};
++ require(!checkProgramDataOrganization(a,arch,sharedChoice,tampered,error),"access contract tamper rejected independently");
+  llvm::outs()<<llvm::json::Object{{"status",ok?"PASS":"FAIL"},{"checks",int64_t(checks)},
+   {"scope","actual MLIR fanout on synthetic CPU target; no cross-stage AIR claim"},
++  {"architecture",serializeMemoryArchitecture(arch)},{"shared_memory_example",serializeProgramCommunication(sharedPlan)},{"separate_local_example",serializeProgramCommunication(separatePlan)},
++  {"separate_local_phase_policy_example",serializeProgramCommunication(separateLocalPlan)},
+   {"source_facts",serializeGenericAnalysis(a)},{"phase_local",serializeProgramCommunication(local)},{"retain_across_users",serializeProgramCommunication(retained)}}<<"\n";
+  return ok?0:1;
+ }
+diff --git a/test/TaskflowGeneric/direct-air-cost.cpp b/test/TaskflowGeneric/direct-air-cost.cpp
+index 67ba32a..251f15e 100644
+--- a/test/TaskflowGeneric/direct-air-cost.cpp
++++ b/test/TaskflowGeneric/direct-air-cost.cpp
+@@ -6,6 +6,8 @@
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/SCF/IR/SCF.h"
+ #include "mlir/Parser/Parser.h"
++#include "mlir/IR/Builders.h"
++#include "llvm/ADT/APFloat.h"
+ #include "llvm/Support/raw_ostream.h"
+ #include <cmath>
+ using namespace orbit::taskflow;
+@@ -140,6 +142,80 @@ int main(int argc,char **argv) {
+   auto observed2=observed();(*observed2.getAsObject())["model_version"]="2";
+   auto observedPlanId=planned.planId;
+   expect(apply(observed2) && planned.planId!=observedPlanId && planned.directCost.features.executionFingerprint==f.executionFingerprint,"observations checkpoint identity");
++  auto implementationModel=[&](){
++    auto value=model();auto &o=*value.getAsObject();o["kind"]="implementation-composite";
++    llvm::json::Object ranges;
++    for(const auto &entry:f.values)ranges[entry.first]=llvm::json::Array{entry.second,entry.second};
++    llvm::json::Array ops;for(const auto &entry:f.operations)ops.push_back(entry.first);
++    o["domain"]=llvm::json::Object{{"family_fingerprints",llvm::json::Array{f.regionFamilyFingerprint}},
++      {"architecture_fingerprints",llvm::json::Array{f.architectureFingerprint}},
++      {"implementations",llvm::json::Array{"scalar:1","scalar-product-vector-add-f32:8"}},
++      {"operations",std::move(ops)},{"allow_tails",false},{"feature_ranges",std::move(ranges)}};
++    o["terms"]=llvm::json::Array{
++      llvm::json::Object{{"feature","command_count"},{"coefficient_ms",0.1}},
++      llvm::json::Object{{"feature","implemented_scalar_f32_product_operations"},{"coefficient_ms",0.01}},
++      llvm::json::Object{{"feature","implemented_mixed8_f32_product_operations"},{"coefficient_ms",0.005}},
++      llvm::json::Object{{"feature","hardware_stage_count"},{"coefficient_ms",0.2}}};
++    return value;
++  };
++  auto im=implementationModel();
++  expect(evaluateGenericDirectAIRCost(f,im,target,c,error) && c.valueMs && std::abs(*c.valueMs-.3)<1e-12,"implementation composite four terms");
++  auto otherSource=f;otherSource.sourceFingerprints={std::string(64,'c')};
++  expect(evaluateGenericDirectAIRCost(otherSource,im,target,c,error) && c.valueMs,"family admits new source fingerprint");
++  auto implementationOOD=[&](const char *name,auto change){auto facts=f;change(facts);
++    expect(evaluateGenericDirectAIRCost(facts,im,target,c,error) && !c.valueMs && c.status=="out_of_domain",name);};
++  implementationOOD("family OOD",[](auto &v){v.regionFamilyFingerprint=std::string(64,'d');});
++  implementationOOD("architecture OOD",[](auto &v){v.architectureFingerprint=std::string(64,'d');});
++  implementationOOD("new tile outside envelope",[](auto &v){++v.values["max_tile_loop_0_iterations"];});
++  implementationOOD("tail excluded",[](auto &v){v.values["source_has_tile_tail"]=1;});
++  implementationOOD("mixed4 excluded",[](auto &v){v.implementations={"scalar-product-vector-add-f32:4"};});
++  implementationOOD("exp not silently product",[](auto &v){v.operations["math.exp:f32"]=1;});
++  auto missingEnvelope=implementationModel();missingEnvelope.getAsObject()->getObject("domain")->getObject("feature_ranges")->erase("dma_bytes");
++  expect(!evaluateGenericDirectAIRCost(f,missingEnvelope,target,c,error),"implementation envelope mandatory");
++  auto wrongTerms=implementationModel();(*wrongTerms.getAsObject()->getArray("terms"))[1].getAsObject()->operator[]("feature")="dma_bytes";
++  expect(!evaluateGenericDirectAIRCost(f,wrongTerms,target,c,error),"implementation terms frozen not double charged");
++  auto badRegions=plain;badRegions.communication.executionRegions[0].submissionCount=0;
++  expect(!collectGenericCostFeatures(a,badRegions,alteredFeatures,error),"nonpositive public submission rejected");
++  auto twoRegions=plain;twoRegions.communication.executionRegions.push_back(twoRegions.communication.executionRegions[0]);
++  expect(collectGenericCostFeatures(a,twoRegions,alteredFeatures,error) && alteredFeatures.values["command_count"]==2 && alteredFeatures.values["execution_region_count"]==2,"public submissions counted once per region");
++  std::string source;llvm::raw_string_ostream sourceStream(source);module->print(sourceStream);sourceStream.flush();
++  auto replaceAll=[](std::string text,const std::string &from,const std::string &to){size_t at=0;while((at=text.find(from,at))!=std::string::npos){text.replace(at,from.size(),to);at+=to.size();}return text;};
++  // These checks isolate family derivation from target legality: no transformed
++  // program is executed or represented as a successfully checked mapping.
++  auto familyFrom=[&](const std::string &text){
++    auto m=mlir::parseSourceString<mlir::ModuleOp>(text,&context);GenericAnalysis analysis;GenericCostFeatures facts;
++    if(!m || !analyzeGenericProgram(*m,analysis,error) || !collectGenericCostFeatures(analysis,plain,facts,error))return std::string();
++    return facts.regionFamilyFingerprint;
++  };
++  auto bigger=replaceAll(replaceAll(source,"16xf32","24xf32"),"to 16","to 24");
++  expect(familyFrom(bigger)==f.regionFamilyFingerprint,"family erases static extents only");
++  auto renamed=replaceAll(source,"@add","@renamed");
++  expect(familyFrom(renamed)==f.regionFamilyFingerprint,"family erases task and function names");
++  auto clone=mlir::cast<mlir::ModuleOp>(module->clone());GenericAnalysis cloneAnalysis;
++  expect(analyzeGenericProgram(clone,cloneAnalysis,error),"family mutation source analysis");
++  mlir::OpBuilder builder(&context);builder.setInsertionPointToStart(&cloneAnalysis.tasks[0].operation->getRegion(0).front());
++  auto constant=builder.create<mlir::arith::ConstantFloatOp>(clone.getLoc(),llvm::APFloat(1.0f),builder.getF32Type());
++  GenericCostFeatures oneConstant,twoConstant;
++  collectGenericCostFeatures(cloneAnalysis,plain,oneConstant,error);
++  constant->setAttr("value",builder.getF32FloatAttr(2.0));
++  collectGenericCostFeatures(cloneAnalysis,plain,twoConstant,error);
++  expect(oneConstant.regionFamilyFingerprint!=twoConstant.regionFamilyFingerprint,"family preserves arithmetic constants");
++  auto loop=mlir::cast<mlir::affine::AffineForOp>(cloneAnalysis.tasks[0].loops[0].operation);
++  loop.setStep(2);GenericCostFeatures changedStep;collectGenericCostFeatures(cloneAnalysis,plain,changedStep,error);
++  expect(changedStep.regionFamilyFingerprint!=twoConstant.regionFamilyFingerprint,"family preserves reduction or spatial step");
++  loop.setStep(1);
++  auto load=mlir::cast<mlir::affine::AffineLoadOp>(cloneAnalysis.tasks[0].accesses[0].operation);
++  load.getProperties().map=mlir::AffineMapAttr::get(mlir::AffineMap::get(1,0,{15-builder.getAffineDimExpr(0)},&context));
++  GenericCostFeatures changedMap;collectGenericCostFeatures(cloneAnalysis,plain,changedMap,error);
++  expect(changedMap.regionFamilyFingerprint!=twoConstant.regionFamilyFingerprint,"family preserves affine access maps");
++  auto root=cloneAnalysis.storages[0].root;auto oldType=root.getType();
++  root.setType(mlir::MemRefType::get({16},builder.getF32Type(),mlir::StridedLayoutAttr::get(&context,0,{2})));
++  GenericCostFeatures changedLayout;collectGenericCostFeatures(cloneAnalysis,plain,changedLayout,error);
++  expect(changedLayout.regionFamilyFingerprint!=changedMap.regionFamilyFingerprint,"family preserves memory layout");root.setType(oldType);
++  mlir::func::FuncOp(cloneAnalysis.function)->setAttr("orbit.noalias",builder.getStringAttr("changed-contract"));
++  GenericCostFeatures changedAlias;collectGenericCostFeatures(cloneAnalysis,plain,changedAlias,error);
++  expect(changedAlias.regionFamilyFingerprint!=changedMap.regionFamilyFingerprint,"family preserves alias contract");
++  clone.erase();
+   llvm::outs()<<llvm::json::Value(llvm::json::Object{{"status",ok?"passed":"failed"},{"checks",int64_t(checks)},{"calibration","synthetic contracts only"}})<<"\n";
+   return ok?0:1;
+ }
+diff --git a/test/TaskflowGeneric/program-mapping.cpp b/test/TaskflowGeneric/program-mapping.cpp
+index 4b6156a..eef2951 100644
+--- a/test/TaskflowGeneric/program-mapping.cpp
++++ b/test/TaskflowGeneric/program-mapping.cpp
+@@ -146,6 +146,10 @@ int main(int argc, char **argv) {
+   reject("unplanned native transfer device",[](auto &p) { p.communication.links.front().sourceDevice="other"; });
+   reject("unplanned native transfer memory",[](auto &p) { p.communication.links.front().memory="other"; });
+   reject("invented native link calibration",[](auto &p) { p.communication.links.front().provenance.source="measured"; });
++  reject("invented module channel scope",[](auto &p){p.moduleWideChannelConversion=!p.moduleWideChannelConversion;});
++  reject("duplicate launch per input",[](auto &p){p.communication.executionRegions.front().submissionCount=2;});
++  reject("partial program-call coverage",[](auto &p){--p.communication.executionRegions.front().endEvent;});
++  reject("missing device stage",[](auto &p){p.communication.executionRegions.front().deviceStages.pop_back();});
+   auto report = serializeGenericMapping(analysis,panel);
+   const auto *object = report.getAsObject();
+   if (!object->getObject("program_communication") ||
+diff --git a/test/run_core_regressions.py b/test/run_core_regressions.py
+index 54dd8f4..5f25c13 100644
+--- a/test/run_core_regressions.py
++++ b/test/run_core_regressions.py
+@@ -59,8 +59,10 @@ def main():
+     python('static-regions', 'TaskflowMapping/regions.py')
+     python('search-preferences', 'TaskflowMapping/search_preferences.py')
+     python('search-contract', 'TaskflowValidation/search_contract.py')
++    python('memory-architecture', 'TaskflowAIR/memory_architecture_v10.py')
+     python('data-policy', 'TaskflowAIR/data_organization_v8.py')
+     python('joint-data-search', 'TaskflowAIR/joint_data_search_v8.py')
++    python('automatic-native-search', 'TaskflowGeneric/automatic_search_v10.py')
+     if args.amoeba_tool:
+         python('original-native-search', 'TaskflowMapping/native_search.py', tool,
+                '--amoeba-tool', args.amoeba_tool.resolve())
+@@ -74,6 +76,8 @@ def main():
+         python('air-joint-data-search', 'TaskflowAIR/joint_data_search_v8.py', air, '--air')
+         python('air-unsupported', 'TaskflowGeneric/unsupported_v6.py', air)
+         python('air-pool-names', 'TaskflowGeneric/pool_names_v6.py', air)
++        python('air-tail-channel-scope', 'TaskflowAIR/tail_channel_scope_v10.py', air, '--air-opt', args.air_opt)
++        python('air-memory-architecture', 'TaskflowAIR/memory_architecture_v10.py', air, '--air')
+         python('air-mixed-f32', 'TaskflowAIR/mixed_f32_v9.py', air, '--air-opt', args.air_opt)
+         python('air-stream-capacity', 'TaskflowAIR/stream_capacity_v9.py', air)
+         def shaped_source(template, m, k, n):

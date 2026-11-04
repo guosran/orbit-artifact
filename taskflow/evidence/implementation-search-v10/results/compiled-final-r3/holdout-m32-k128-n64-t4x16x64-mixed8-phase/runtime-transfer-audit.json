@@ -1,0 +1,174 @@
+{
+  "status": "passed",
+  "scope": "Static final runtime BD lengths times task repeats, per ABI storage and transfer direction; per-stage checked transfer records when available, aggregate-only for older compact plans with only a global native summary; not measured traffic or proof of device progress.",
+  "source": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/compiled-final-r3/holdout-m32-k128-n64-t4x16x64-mixed8-phase/hardware/air_project/npu.input.air.mlir",
+  "source_sha256": "3eb42dff7ab17aea32d9569af74e760d30ca0207a5190f7425625a6c82084466",
+  "plan_sha256": "a5f9d4fc4a61a7240897975f47ab7abd04d23e6415744277d05aa4921627fe1a",
+  "abi_sha256": "3d1b844cf4ec4c24ca68598c5827dd3f5dd05dfb19da69ddd5c20e1ff1b892c6",
+  "audit_source_sha256": "2f714262708f8e0d54a52fa190ffac520b37981eabac62ca97149e9f36c85985",
+  "stages": [
+    {
+      "stage": 0,
+      "device": "orbit_segment",
+      "tasks": [
+        {
+          "argument": 3,
+          "storage": "intermediate",
+          "direction": "l1_to_host",
+          "channel": "air_channel_2",
+          "bd_elements": 256,
+          "repetitions": 8,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 1,
+          "storage": "B",
+          "direction": "host_to_l1",
+          "channel": "air_channel_1",
+          "bd_elements": 8192,
+          "repetitions": 8,
+          "bytes": 262144
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        },
+        {
+          "argument": 0,
+          "storage": "A",
+          "direction": "host_to_l1",
+          "channel": "air_channel_0",
+          "bd_elements": 512,
+          "repetitions": 4,
+          "bytes": 8192
+        }
+      ],
+      "comparisons": [
+        {
+          "storage": "A",
+          "direction": "host_to_l1",
+          "expected_bytes": 65536,
+          "actual_runtime_bytes": 65536,
+          "passed": true
+        },
+        {
+          "storage": "B",
+          "direction": "host_to_l1",
+          "expected_bytes": 262144,
+          "actual_runtime_bytes": 262144,
+          "passed": true
+        },
+        {
+          "storage": "intermediate",
+          "direction": "l1_to_host",
+          "expected_bytes": 8192,
+          "actual_runtime_bytes": 8192,
+          "passed": true
+        }
+      ],
+      "expected_scope": "per-stage-native-transfers"
+    },
+    {
+      "stage": 1,
+      "device": "orbit_segment_96",
+      "tasks": [
+        {
+          "argument": 2,
+          "storage": "Y",
+          "direction": "l1_to_host",
+          "channel": "air_channel_4",
+          "bd_elements": 256,
+          "repetitions": 8,
+          "bytes": 8192
+        },
+        {
+          "argument": 3,
+          "storage": "intermediate",
+          "direction": "host_to_l1",
+          "channel": "air_channel_3",
+          "bd_elements": 256,
+          "repetitions": 8,
+          "bytes": 8192
+        }
+      ],
+      "comparisons": [
+        {
+          "storage": "Y",
+          "direction": "l1_to_host",
+          "expected_bytes": 8192,
+          "actual_runtime_bytes": 8192,
+          "passed": true
+        },
+        {
+          "storage": "intermediate",
+          "direction": "host_to_l1",
+          "expected_bytes": 8192,
+          "actual_runtime_bytes": 8192,
+          "passed": true
+        }
+      ],
+      "expected_scope": "per-stage-native-transfers"
+    }
+  ],
+  "aggregate_comparisons": [],
+  "errors": []
+}

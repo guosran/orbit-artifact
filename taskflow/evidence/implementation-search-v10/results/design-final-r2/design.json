@@ -1,0 +1,248 @@
+{
+  "comparators": {
+    "implementation_stage_4term": {
+      "fit": "train-only NNLS, same frozen objective",
+      "terms": [
+        "command_count",
+        "implemented_scalar_f32_product_operations",
+        "implemented_mixed8_f32_product_operations",
+        "hardware_stage_count"
+      ]
+    },
+    "legacy_theoretical": {
+      "boundary_limitation": "old static source-operation/DMA sensitivity excludes unmeasured backend/runtime effects",
+      "calibration": "uncalibrated v9 original coefficients, not fitted or renamed",
+      "coefficients": {
+        "launch_ms": 0.1,
+        "per_scalar_operation_ms": 1e-06,
+        "per_transfer_byte_ms": 1e-07
+      },
+      "provenance": {
+        "sha256": "0b742f641e83b1444abd5230c9fac8dfab7c4e8d0d426b8f799a20fa7c4ea4c0",
+        "source": "taskflow/scripts/taskflow_profiled_search_v9.py"
+      },
+      "provider": "original C++ theoretical direct-AIR sensitivity"
+    },
+    "simple_implementation_3term": {
+      "fit": "independent train-only NNLS, same frozen objective",
+      "stage_coefficient_ms": 0,
+      "terms": [
+        "command_count",
+        "implemented_scalar_f32_product_operations",
+        "implemented_mixed8_f32_product_operations"
+      ]
+    }
+  },
+  "domain": {
+    "allow_tails": true,
+    "architecture_fingerprints": [
+      "12cc31201646365046845a65cdb777626dd5cd1dacdd123ec1f375f483b08bf7"
+    ],
+    "family_fingerprints": [
+      "e8d106a573ab175eef0ac2e7b5ca6643912167ef08094b3f694f7c222fceae12"
+    ],
+    "feature_ranges": {
+      "active_compute_events": [
+        40,
+        96
+      ],
+      "all_source_loops_affine": [
+        1,
+        1
+      ],
+      "all_source_loops_unit_step": [
+        1,
+        1
+      ],
+      "all_storage_f32": [
+        1,
+        1
+      ],
+      "capacity_bytes": [
+        24576,
+        24576
+      ],
+      "command_count": [
+        1,
+        1
+      ],
+      "core_count_per_stage": [
+        1,
+        1
+      ],
+      "dma_bytes": [
+        77824,
+        352256
+      ],
+      "dma_input_bytes": [
+        69632,
+        335872
+      ],
+      "dma_output_bytes": [
+        8192,
+        16384
+      ],
+      "dma_transfer_count": [
+        58,
+        224
+      ],
+      "execution_group_count": [
+        2,
+        15
+      ],
+      "execution_region_count": [
+        1,
+        1
+      ],
+      "hardware_stage_count": [
+        2,
+        15
+      ],
+      "implemented_mixed8_f32_addsub_packs": [
+        0,
+        32768
+      ],
+      "implemented_mixed8_f32_product_operations": [
+        0,
+        264192
+      ],
+      "implemented_scalar_f32_addsub_operations": [
+        0,
+        262144
+      ],
+      "implemented_scalar_f32_product_operations": [
+        0,
+        264192
+      ],
+      "local_initialize_events": [
+        8,
+        32
+      ],
+      "local_staging_copy_bytes": [
+        0,
+        0
+      ],
+      "max_tile_loop_0_iterations": [
+        4,
+        8
+      ],
+      "max_tile_loop_1_iterations": [
+        16,
+        32
+      ],
+      "max_tile_loop_2_iterations": [
+        32,
+        64
+      ],
+      "mixed8_lane_coverage_exact": [
+        1,
+        1
+      ],
+      "module_wide_channel_conversion": [
+        0,
+        1
+      ],
+      "readonly_retention_scopes": [
+        0,
+        4
+      ],
+      "resident_payload_bytes": [
+        3584,
+        18432
+      ],
+      "serial_tiled": [
+        1,
+        1
+      ],
+      "source_f32_product_operations": [
+        132096,
+        264192
+      ],
+      "source_has_tile_tail": [
+        0,
+        1
+      ],
+      "source_loop_depth_max": [
+        3,
+        3
+      ],
+      "source_math_exp_f32_operations": [
+        0,
+        0
+      ],
+      "source_max_loop_0_iterations": [
+        16,
+        32
+      ],
+      "source_max_loop_1_iterations": [
+        64,
+        80
+      ],
+      "source_max_loop_2_iterations": [
+        128,
+        129
+      ],
+      "source_phase_count": [
+        48,
+        128
+      ],
+      "source_scalar_f32_operations": [
+        263168,
+        526336
+      ],
+      "source_scalar_reads": [
+        394240,
+        788480
+      ],
+      "source_scalar_writes": [
+        133120,
+        266240
+      ]
+    },
+    "implementations": [
+      "scalar-product-vector-add-f32:8",
+      "scalar:1"
+    ],
+    "operations": [
+      "arith.addf:f32",
+      "arith.mulf:f32"
+    ]
+  },
+  "features": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/design-final-r2/static-features.json",
+    "sha256": "2280dbab35a78bbfc7c35aca5faf40dc6552219b9dd3a946d8627a75737181e3"
+  },
+  "matrix": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/preregistered-inputs-r6/matrix.json",
+    "sha256": "f36cb273a8e0e8506dbf2e063ff84323b844ce4b144fea405796e4a17a1bbf94"
+  },
+  "objective": "relative-residual-floor-1ms",
+  "proposal": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/proposal.json",
+    "sha256": "35f55b6d02a0647411512bb8d7263a5ac61284c912c2477242313dc37b1b7b02"
+  },
+  "registration": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/preregistered-inputs-r6/preregistration.json",
+    "sha256": "b345ccde2a6cae74a0ab5532061fb9061886c76855e7a5009ea7c72bc117bfed"
+  },
+  "report": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/design-final-r2/design-report.json",
+    "sha256": "8d2fa324021a81ef6f27611bcb81470e9b32590d4d9df9e954d6eb65050523bf"
+  },
+  "schema": "orbit.implementation-search.design.v10",
+  "source": {
+    "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/fit_implementation_cost_v10.py",
+    "sha256": "ec4825d4fac1cb10a009f1cf0b83afdc239d02c2f829e2bdd92a371b9fe71be4"
+  },
+  "terms": [
+    "command_count",
+    "implemented_scalar_f32_product_operations",
+    "implemented_mixed8_f32_product_operations",
+    "hardware_stage_count"
+  ],
+  "timing_labels_read": false,
+  "tool": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/proposals-final-r4/frozen-tools/taskflow-opt",
+    "sha256": "98d5da45a76df0852d6e63bff3843229a6a19d77d72c83afffefa706ecedae07"
+  }
+}

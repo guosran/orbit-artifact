@@ -1,0 +1,55 @@
+{
+  "status": "passed",
+  "audit_source_sha256": "592128af10e2542d950b0e0b7704036c480f84aa1a851e372b30be65359ca107",
+  "source": "/home/shiran/project/orbit-artifact/.work/implementation-search-v10/channel-port-verifier-fix-r1/protocol-tests/host-trailing-ssa-and-quoted-comment-braces/hardware/air_project/aie.input.air.mlir",
+  "source_sha256": "f592b7ee7f1a911affe85fde511a511df1157fab4e209603f4d2a66fa9bd6d4b",
+  "plan_sha256": "8eb364ab103b43a5f8efe678a38fdc36035b3c6d324e465fc9bf94608614e6a0",
+  "checks": [
+    {
+      "stage": 0,
+      "storage": "A",
+      "direction": "S2MM",
+      "planned_port": 1,
+      "actual_ports": [
+        1
+      ],
+      "templates": 1,
+      "elements": [
+        1
+      ]
+    }
+  ],
+  "bd_rows": [
+    {
+      "stage": 0,
+      "device": "orbit_segment",
+      "direction": "S2MM",
+      "tile_channel": 1,
+      "block": "bb0",
+      "buffer": "%buf0",
+      "storage": "A",
+      "elements": 1
+    }
+  ],
+  "compute_payloads": [
+    {
+      "stage": 0,
+      "device": "orbit_segment",
+      "buffers": [
+        {
+          "buffer": "%buf0",
+          "tile": [
+            0,
+            2
+          ],
+          "bytes": 4
+        }
+      ],
+      "actual_compute_buffer_bytes": 4,
+      "planned_bytes": 4,
+      "additional_local_payload_bytes": 0
+    }
+  ],
+  "artifact_compile_status": "compiled",
+  "scope": "Emitted AIE IR static DMA channel/BD mapping and compute-buffer declarations (linker placement may remain uncompleted; see compile status) correlated through compiler storage view provenance; not device event tracing or measured traffic. Buffer reuse, runtime scheduling and actual on-wire byte counts are not inferred."
+}

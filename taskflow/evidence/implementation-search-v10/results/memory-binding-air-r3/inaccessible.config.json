@@ -1,0 +1,138 @@
+{
+  "generic_air": {
+    "memory_architecture": {
+      "domains": [
+        {
+          "id": "system",
+          "kind": "system",
+          "parent": ""
+        },
+        {
+          "id": "npu",
+          "kind": "device",
+          "parent": "system"
+        },
+        {
+          "id": "npu.tile",
+          "kind": "tile",
+          "parent": "npu"
+        }
+      ],
+      "links": [
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "domain": "npu",
+          "id": "import0",
+          "latency_ms": 0,
+          "max_bytes": 9223372036854775807,
+          "memory": "",
+          "min_bytes": 0,
+          "provenance": {
+            "kind": "target_contract",
+            "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+          },
+          "resource": "dma0",
+          "source": "system.dram",
+          "source_device": "",
+          "source_dtype": "",
+          "source_layout": "",
+          "target": "tile.sram",
+          "target_device": "",
+          "target_dtype": "",
+          "target_layout": "",
+          "temporary_bytes": 0
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "domain": "npu",
+          "id": "export0",
+          "latency_ms": 0,
+          "max_bytes": 9223372036854775807,
+          "memory": "",
+          "min_bytes": 0,
+          "provenance": {
+            "kind": "target_contract",
+            "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+          },
+          "resource": "dma0",
+          "source": "tile.sram",
+          "source_device": "",
+          "source_dtype": "",
+          "source_layout": "",
+          "target": "system.dram",
+          "target_device": "",
+          "target_dtype": "",
+          "target_layout": "",
+          "temporary_bytes": 0
+        }
+      ],
+      "memories": [
+        {
+          "accessible_devices": [
+            "host"
+          ],
+          "accessible_resources": [
+            "host.worker"
+          ],
+          "capacity_bytes": 9223372036854775807,
+          "domain": "system",
+          "id": "system.dram",
+          "kind": "system-bo"
+        },
+        {
+          "accessible_devices": [
+            "npu"
+          ],
+          "accessible_resources": [
+            "absent"
+          ],
+          "capacity_bytes": 24576,
+          "domain": "npu.tile",
+          "id": "tile.sram",
+          "kind": "local-sram"
+        }
+      ],
+      "resources": [
+        {
+          "capacity": 1,
+          "device": "npu",
+          "domain": "npu.tile",
+          "id": "core0",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "domain": "npu",
+          "id": "dma0",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "domain": "system",
+          "id": "host-submission",
+          "kind": "submission"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "domain": "system",
+          "id": "host.worker",
+          "kind": "compute"
+        }
+      ]
+    },
+    "memory_binding": {
+      "compute_resource": "core0",
+      "dma_resource": "dma0",
+      "host_memory": "system.dram",
+      "input_link": "import0",
+      "local_memory": "tile.sram",
+      "output_link": "export0",
+      "submission_resource": "host-submission"
+    }
+  }
+}

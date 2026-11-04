@@ -1,0 +1,43 @@
+{
+  "phase": "new frozen tool proposal after real tail DMA-to-channel crash fix; no NPU labels yet",
+  "core_base": "612bf40ed37d15fbb405ecf7db553c79ce7f8430",
+  "artifact_base": "40427ffa3482b5e9962cf641ae4c92ab5d5d8333",
+  "current_tools": "frozen-tools-r3",
+  "air_sha256": "98d5da45a76df0852d6e63bff3843229a6a19d77d72c83afffefa706ecedae07",
+  "core_sha256": "940ce6ad49b479df84630259c996f8f3ef26e66e7cd2a32485d4824f9032b37e",
+  "prepared": "preregistered-inputs-r6",
+  "protocol": "12train +6holdout +1capacitynegative, three seeds11/23/47, 2warm+5hot; four-term/3-term/legacy comparators frozen after training only",
+  "active_proposal": "proposals-final-r4",
+  "active_proposal_exec_session": 85614,
+  "active_regression_session": 85500,
+  "positive_prior": "proposals-final-r3 19/19 covered/native-rejection; design-final-r1 exactrank4 condition10.0643 independently audited237checks; source/architecture now superseded BEFORE labels",
+  "failures": [
+    "proposal-coverage-probe-r1 boundedCPU K1/M1 329s/RSS12.9GB",
+    "proposal-coverage-probe-r2 stopped superseded fullfeedback; partial allkept",
+    "proposals-final-r1 scalardefault/explicitduplicate; canonicalfixed",
+    "proposals-final-r2 finitebeam original4/32/64holdoutmissing; preregisteredr6 beforelabels changedonlyfour to4/16/64",
+    "compiled-final-r1 16validELF 2tailSIGABRTwrapper250 beforeaircc; noNPU"
+  ],
+  "current_fix": "moduleWideChannelConversion derived/checked/serialized: allherds async+staticstage release whenwholemodule channelpass used; preservesphase/tile/FP32. HostBO computeaccess only host.worker; NPU/DMA/submit kind/device/owner binding strict.",
+  "cpu_evidence": [
+    "tail-channel-scope-cpu-r1 scalar+mixed15stages installedconversion/nativechecks passes; oldtrainAIRdiffonlyplanhash",
+    "memory-binding-air-r3 18checksPASS",
+    "memory-architecture-common-final-r1.json 53checksPASS",
+    "cost C++67checksPASS",
+    "full-regressions-r5 34groupsPASS before latest tail fix; r6 in progress adds tail group",
+    "automatic-search-cpu-r4-independent canonical scalar identities and allsearch checksPASS"
+  ],
+  "ffn_inputs": "representative-ffn-inputs-r1 fullM5 D2048 I11008 3seeds source+float64refs 775MB; notcompiled/running",
+  "next": [
+    "wait proposals-final-r4 -> design-final-r2 with venvpython fit_implementation_cost_v10.py design",
+    "compile18 fresh compiled-final-r2 --jobs2, sourceenv first; preserve old16 packages, do notborrowidentity",
+    "profile train via taskflow_implementation_experiment_v10.py; root soleNPUoperator",
+    "fit freeze with reserved holdout path nonexistent; predict all3models + native predictive-search",
+    "profile6heldouts after prediction freeze and audit errors/ranking/regret perprogram",
+    "primary native search + equalbudget tiling-only/impl-res modes; select at least1new untrained/outsidev9four candidate by native ranking or explicit uncertainty budget, compile and interleaved baseline comparison",
+    "larger fullM5FFN representative physicalNPU validation; stage/payload/communication/correctness/time; modelFFNfamilyOOD mustremainexplicit",
+    "clean-shell cpu/mock/reprotest, fullregress, finaldocs Englishagents.md",
+    "curateartifactevidence separate repo, commit/push both using useremail"
+  ],
+  "constraints": "preserve docs/presentations unrelated; no new runtime/CPUfallback/precision changes; user authorized push; all commits user.email sguoau@connect.ust.hk"
+}

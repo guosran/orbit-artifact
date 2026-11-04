@@ -1,0 +1,167 @@
+{
+  "audit": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/train-final-r1/independent-audit/profile-train.json",
+    "sha256": "d29c844c8dcc3e3455d22bb1196467f9574fc2dd56c9237c0e2e82a28c677816"
+  },
+  "cases": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/train-final-r1/cases.json",
+    "sha256": "e26e66602dbf8df26adae90647eba24cc7189d1efb7533f7e80ab84e2a5051bf"
+  },
+  "design": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/design-final-r2/design.json",
+    "sha256": "cbec8b613b335530d607f4663f3f61db50947c8a03a5d28dcf6eb439b4a5af6d"
+  },
+  "holdout_timing_labels_read": false,
+  "invocation": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/train-final-r1/profile-train/invocation.json",
+    "sha256": "61552cc04b0bbffff5f73f815bfc3581b601f59d62d096a9f644c32db3db7fe3"
+  },
+  "preparation": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/frozen-model-final-r1/preparation-contract.json",
+    "sha256": "934d4f5891f5987c3d5b6ed25a5dca3cbd75e87a1147a077a9d9192593d581fc"
+  },
+  "profile": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/train-final-r1/profile-train/results.json",
+    "sha256": "8f53450791e4eba2bbab2bd3f7de891ddcf3a32cdf12a76b84cce2517b453276"
+  },
+  "schema": "orbit.implementation-search.training-labels.v10",
+  "target": {
+    "id": "direct-air-implementation-search-v10",
+    "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:8e979891d0b8ab212bc1c8b0da8e6fca2516f4c1a3ad66340a22fcade278cb33",
+    "toolchain": "{\"compile_context\":{\"aircc\":{\"device\":\"npu2\",\"flags\":[\"--device\",\"npu2\",\"--no-xchesscc\",\"--no-xbridge\",\"--output-format\",\"elf\",\"--peano=<recorded-llvm-aie-version>\",\"--stack-size=4096\",\"--omit-ping-pong-transform=all\"],\"toolchain\":{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}},\"native_flags\":[\"--air-distribute-initialization\",\"--target-config-sha256=4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228\"]},\"native_lowering_sha256\":\"98d5da45a76df0852d6e63bff3843229a6a19d77d72c83afffefa706ecedae07\"}"
+  },
+  "training": [
+    {
+      "hot_count": 15,
+      "label_ms": 9.70073,
+      "name": "train-m16-k128-n64-t8x16x32-scalar-phase",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "implemented_mixed8_f32_product_operations": 0,
+        "implemented_scalar_f32_product_operations": 132096
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 9.750638,
+      "name": "train-m16-k128-n64-t8x16x32-scalar-panel",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 5,
+        "implemented_mixed8_f32_product_operations": 0,
+        "implemented_scalar_f32_product_operations": 132096
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 8.91519,
+      "name": "train-m16-k128-n64-t8x16x32-mixed8-phase",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "implemented_mixed8_f32_product_operations": 132096,
+        "implemented_scalar_f32_product_operations": 0
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 9.226472,
+      "name": "train-m16-k128-n64-t8x16x32-mixed8-panel",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 5,
+        "implemented_mixed8_f32_product_operations": 132096,
+        "implemented_scalar_f32_product_operations": 0
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 18.735657,
+      "name": "train-m32-k128-n64-t8x16x32-scalar-phase",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "implemented_mixed8_f32_product_operations": 0,
+        "implemented_scalar_f32_product_operations": 264192
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 18.477233,
+      "name": "train-m32-k128-n64-t8x16x32-scalar-panel",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 5,
+        "implemented_mixed8_f32_product_operations": 0,
+        "implemented_scalar_f32_product_operations": 264192
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 17.066631,
+      "name": "train-m32-k128-n64-t8x16x32-mixed8-phase",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "implemented_mixed8_f32_product_operations": 264192,
+        "implemented_scalar_f32_product_operations": 0
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 17.144109,
+      "name": "train-m32-k128-n64-t8x16x32-mixed8-panel",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 5,
+        "implemented_mixed8_f32_product_operations": 264192,
+        "implemented_scalar_f32_product_operations": 0
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 18.480763,
+      "name": "train-m32-k128-n64-t8x32x32-scalar-phase",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "implemented_mixed8_f32_product_operations": 0,
+        "implemented_scalar_f32_product_operations": 264192
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 18.694057,
+      "name": "train-m32-k128-n64-t8x32x32-scalar-panel",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 3,
+        "implemented_mixed8_f32_product_operations": 0,
+        "implemented_scalar_f32_product_operations": 264192
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 17.338634,
+      "name": "train-m32-k128-n64-t8x32x32-mixed8-phase",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 2,
+        "implemented_mixed8_f32_product_operations": 264192,
+        "implemented_scalar_f32_product_operations": 0
+      }
+    },
+    {
+      "hot_count": 15,
+      "label_ms": 17.259557,
+      "name": "train-m32-k128-n64-t8x32x32-mixed8-panel",
+      "native_features": {
+        "command_count": 1,
+        "hardware_stage_count": 3,
+        "implemented_mixed8_f32_product_operations": 264192,
+        "implemented_scalar_f32_product_operations": 0
+      }
+    }
+  ]
+}

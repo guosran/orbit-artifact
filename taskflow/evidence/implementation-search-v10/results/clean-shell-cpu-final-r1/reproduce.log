@@ -1,0 +1,317 @@
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/shiran/project/orbit-artifact/builds/taskflow-v10/core
+[1/21] Building Taskflow.cpp.inc...
+[2/21] Building Taskflow.h.inc...
+[3/21] Building TaskflowDialect.h.inc...
+[4/17] Building TaskflowDialect.cpp.inc...
+[5/17] Building TaskflowTypes.cpp.inc...
+[6/17] Building TaskflowTypes.h.inc...
+[7/8] Building TaskflowPasses.h.inc...
+[8/8] Checking independent Taskflow semantics and fail-closed verification
+Taskflow core: materialization, boundary tiling, K sequence, fusion/fission, witness authentication, legacy fail-closed: PASS
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Configuring done (0.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/shiran/project/orbit-artifact/builds/taskflow-v10/amoeba
+[1/164] Building Neura.cpp.inc...
+[2/164] Building Neura.h.inc...
+[3/158] Building NeuraDialect.h.inc...
+[4/153] Building NeuraDialect.cpp.inc...
+[5/152] Building NeuraTypes.cpp.inc...
+[6/152] Building NeuraTypes.h.inc...
+[7/152] Building NeuraPasses.h.inc...
+[8/130] Building NeuraConversionPasses.h.inc...
+[9/114] Building Taskflow.h.inc...
+[10/114] Building Taskflow.cpp.inc...
+[11/114] Building TaskflowDialect.cpp.inc...
+[12/114] Building TaskflowDialect.h.inc...
+[13/113] Building TaskflowTypes.h.inc...
+[14/88] Building TaskflowTypes.cpp.inc...
+[15/86] Building TaskflowPasses.h.inc...
+[16/82] Building NeuraBackendPasses.h.inc...
+[17/38] Building AmoebaConversionPasses.h.inc...
+[18/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/MemoryArchitecture.cpp.o
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp: In function 'bool orbit::taskflow::parseMemoryArchitecture(const {anonymous}::V&, StaticConfig&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:84:126: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+   84 |     for(auto entry:{std::make_pair("latency_ms",&l.latencyMs),std::make_pair("bandwidth_bytes_per_ms",&l.bandwidthBytesPerMs)})if(const V *p=x->get(entry.first)){auto n=p->getAsNumber();if(!n)return fail(e,"invalid link cost");*entry.second=*n;}
+      |                                                                                                                              ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:84:49: note: 'double*' temporary created here
+   84 |     for(auto entry:{std::make_pair("latency_ms",&l.latencyMs),std::make_pair("bandwidth_bytes_per_ms",&l.bandwidthBytesPerMs)})if(const V *p=x->get(entry.first)){auto n=p->getAsNumber();if(!n)return fail(e,"invalid link cost");*entry.second=*n;}
+      |                                                 ^~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:84:126: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+   84 |     for(auto entry:{std::make_pair("latency_ms",&l.latencyMs),std::make_pair("bandwidth_bytes_per_ms",&l.bandwidthBytesPerMs)})if(const V *p=x->get(entry.first)){auto n=p->getAsNumber();if(!n)return fail(e,"invalid link cost");*entry.second=*n;}
+      |                                                                                                                              ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:84:103: note: 'double*' temporary created here
+   84 |     for(auto entry:{std::make_pair("latency_ms",&l.latencyMs),std::make_pair("bandwidth_bytes_per_ms",&l.bandwidthBytesPerMs)})if(const V *p=x->get(entry.first)){auto n=p->getAsNumber();if(!n)return fail(e,"invalid link cost");*entry.second=*n;}
+      |                                                                                                       ^~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:85:152: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+   85 |     for(auto entry:{std::make_pair("min_bytes",&l.minBytes),std::make_pair("max_bytes",&l.maxBytes),std::make_pair("temporary_bytes",&l.temporaryBytes)})if(const V *p=x->get(entry.first)){auto n=p->getAsInteger();if(!n)return fail(e,"invalid link byte constraint");*entry.second=*n;}
+      |                                                                                                                                                        ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:85:48: note: 'long int*' temporary created here
+   85 |     for(auto entry:{std::make_pair("min_bytes",&l.minBytes),std::make_pair("max_bytes",&l.maxBytes),std::make_pair("temporary_bytes",&l.temporaryBytes)})if(const V *p=x->get(entry.first)){auto n=p->getAsInteger();if(!n)return fail(e,"invalid link byte constraint");*entry.second=*n;}
+      |                                                ^~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:85:152: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+   85 |     for(auto entry:{std::make_pair("min_bytes",&l.minBytes),std::make_pair("max_bytes",&l.maxBytes),std::make_pair("temporary_bytes",&l.temporaryBytes)})if(const V *p=x->get(entry.first)){auto n=p->getAsInteger();if(!n)return fail(e,"invalid link byte constraint");*entry.second=*n;}
+      |                                                                                                                                                        ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:85:88: note: 'long int*' temporary created here
+   85 |     for(auto entry:{std::make_pair("min_bytes",&l.minBytes),std::make_pair("max_bytes",&l.maxBytes),std::make_pair("temporary_bytes",&l.temporaryBytes)})if(const V *p=x->get(entry.first)){auto n=p->getAsInteger();if(!n)return fail(e,"invalid link byte constraint");*entry.second=*n;}
+      |                                                                                        ^~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:85:152: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+   85 |     for(auto entry:{std::make_pair("min_bytes",&l.minBytes),std::make_pair("max_bytes",&l.maxBytes),std::make_pair("temporary_bytes",&l.temporaryBytes)})if(const V *p=x->get(entry.first)){auto n=p->getAsInteger();if(!n)return fail(e,"invalid link byte constraint");*entry.second=*n;}
+      |                                                                                                                                                        ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:85:134: note: 'long int*' temporary created here
+   85 |     for(auto entry:{std::make_pair("min_bytes",&l.minBytes),std::make_pair("max_bytes",&l.maxBytes),std::make_pair("temporary_bytes",&l.temporaryBytes)})if(const V *p=x->get(entry.first)){auto n=p->getAsInteger();if(!n)return fail(e,"invalid link byte constraint");*entry.second=*n;}
+      |                                                                                                                                      ^~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp: In function 'bool orbit::taskflow::configureGenericMemory(const {anonymous}::V&, int64_t, GenericMemoryBinding&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:52: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                    ^~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:97: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                 ^~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:147: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                   ^~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:197: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                     ^~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:241: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                 ^~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:284: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                            ^~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:358: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                                      ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:110:336: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  110 |       for(auto entry:{std::make_pair("host_memory",&b.hostMemory),std::make_pair("local_memory",&b.localMemory),std::make_pair("compute_resource",&b.computeResource),std::make_pair("dma_resource",&b.dmaResource),std::make_pair("input_link",&b.inputLink),std::make_pair("output_link",&b.outputLink),std::make_pair("submission_resource",&b.submissionResource)})if(const V *v=o->get(entry.first)){auto s=v->getAsString();if(!s || s->empty())return fail(e,"invalid memory binding identifier");*entry.second=s->str();}}}
+      |                                                                                                                                                                                                                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~
+[19/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/Search.cpp.o
+[20/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/StaticContract.cpp.o
+[21/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericCommunication.cpp.o
+/home/shiran/project/orbit/lib/Taskflow/GenericCommunication.cpp:35:6: warning: 'bool {anonymous}::inside(const orbit::taskflow::MappingRegion&, const orbit::taskflow::MappingRegion&)' defined but not used [-Wunused-function]
+   35 | bool inside(const MappingRegion &a, const MappingRegion &b) {
+      |      ^~~~~~
+[22/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramDataOrganization.cpp.o
+[23/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o
+[24/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramPartition.cpp.o
+[25/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/NativeTransforms.cpp.o
+[26/29] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[27/29] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/JointNeighborhoodSearchPass.cpp.o
+[28/29] Linking CXX static library lib/Backend/Neura/Orchestration/JointScheduling/libMLIRAmoebaNeuraJointScheduling.a
+[29/29] Linking CXX executable tools/mlir-amoeba-opt/mlir-amoeba-opt
+ffn base 0.041621866666666674
+ffn n 0.11162186666666665
+ffn k 0.11162186666666665
+ffn_m128 base 48.78346557866668
+ffn_m128 n 49.15246557866668
+ffn_m128 k 92.38649431466668
+ffn_m5 base 7.027888533333334
+ffn_m5 n 7.056888533333334
+ffn_m5 k 7.037888533333334
+gemm_relu base 0.014107033333333335
+gemm_relu n 0.028107033333333333
+gemm_relu k 0.04410703333333334
+gemm_relu fused 0.014107033333333335
+{"passed": true, "positive_checks": 22, "negative_checks": 28}
+{"passed": true, "cases": 19, "negative": 39, "mode": "native_regression"}
+{"passed": true, "checks": 17}
+{"passed": true, "count": 16}
+{"passed": true, "count": 6}
+{"passed": true, "checks": 4}
+-- Testing: 35 tests, 2 workers --
+Testing:  0.. 10.. 20.. 30.. 40.. 50.. 60.. 70.. 80.. 90.. 
+
+Testing Time: 0.85s
+
+Total Discovered Tests: 35
+  Passed: 35 (100.00%)
+{"passed": true, "workload_variants": 17, "plans_checked": 196}
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 15.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /home/shiran/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.3")  
+-- Linker detection: GNU ld
+-- Performing Test C_SUPPORTS_FPIC
+-- Performing Test C_SUPPORTS_FPIC - Success
+-- Performing Test CXX_SUPPORTS_FPIC
+-- Performing Test CXX_SUPPORTS_FPIC - Success
+-- Building with -fPIC
+-- Performing Test C_SUPPORTS_FNO_SEMANTIC_INTERPOSITION
+-- Performing Test C_SUPPORTS_FNO_SEMANTIC_INTERPOSITION - Success
+-- Performing Test CXX_SUPPORTS_FNO_SEMANTIC_INTERPOSITION
+-- Performing Test CXX_SUPPORTS_FNO_SEMANTIC_INTERPOSITION - Success
+-- Performing Test SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG
+-- Performing Test SUPPORTS_FVISIBILITY_INLINES_HIDDEN_FLAG - Success
+-- Performing Test CXX_SUPPORTS_SUGGEST_OVERRIDE_FLAG
+-- Performing Test CXX_SUPPORTS_SUGGEST_OVERRIDE_FLAG - Success
+-- Performing Test CXX_WSUGGEST_OVERRIDE_ALLOWS_ONLY_FINAL
+-- Performing Test CXX_WSUGGEST_OVERRIDE_ALLOWS_ONLY_FINAL - Success
+-- Performing Test C_WCOMMENT_ALLOWS_LINE_WRAP
+-- Performing Test C_WCOMMENT_ALLOWS_LINE_WRAP - Failed
+-- Performing Test C_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG
+-- Performing Test C_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG - Failed
+-- Performing Test CXX_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG
+-- Performing Test CXX_SUPPORTS_CTAD_MAYBE_UNSPPORTED_FLAG - Success
+-- Performing Test LINKER_SUPPORTS_COLOR_DIAGNOSTICS
+-- Performing Test LINKER_SUPPORTS_COLOR_DIAGNOSTICS - Failed
+-- Looking for os_signpost_interval_begin
+-- Looking for os_signpost_interval_begin - not found
+-- Found Python3: /home/shiran/project/aie-toy/.venv/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Configuring done (1.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/shiran/project/orbit-artifact/builds/taskflow-v10/air
+[1/23] Building Taskflow.h.inc...
+[2/23] Building Taskflow.cpp.inc...
+[3/23] Building TaskflowDialect.cpp.inc...
+[4/23] Building TaskflowDialect.h.inc...
+[5/19] Building TaskflowTypes.cpp.inc...
+[6/19] Building TaskflowTypes.h.inc...
+[7/10] Building TaskflowPasses.h.inc...
+[8/10] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramDataOrganization.cpp.o
+[9/10] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[10/10] Linking CXX executable tools/taskflow-opt/taskflow-opt
+[1/20] Building Taskflow.cpp.inc...
+[2/20] Building Taskflow.h.inc...
+[3/20] Building TaskflowDialect.cpp.inc...
+[4/20] Building TaskflowDialect.h.inc...
+[5/16] Building TaskflowTypes.cpp.inc...
+[6/16] Building TaskflowTypes.h.inc...
+[7/7] Building TaskflowPasses.h.inc...
+{"passed": true, "count": 28}
+{"passed": true, "count": 10}
+{"passed": true, "checks": 18}
+Acceptance completed: /home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/clean-shell-cpu-final-r1/cpu-regression/cpu-regression/regression/regression/regression
+[1/20] Building Taskflow.cpp.inc...
+[2/20] Building Taskflow.h.inc...
+[3/20] Building TaskflowDialect.cpp.inc...
+[4/20] Building TaskflowDialect.h.inc...
+[5/17] Building TaskflowTypes.h.inc...
+[6/11] Building TaskflowTypes.cpp.inc...
+[7/9] Building TaskflowPasses.h.inc...
+[8/9] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-tiled-mapping-test.dir/__/__/test/TaskflowGeneric/tiled-mapping.cpp.o
+[9/9] Linking CXX executable tools/taskflow-opt/taskflow-tiled-mapping-test
+{"passed": true, "checks": 5}
+{"passed": true, "pool_count": 3, "payload_bytes": 24}
+{"passed": true, "mutations": 3}
+{"passed": true, "mutations": 7}
+{"accepted": 4, "rejected": 1}
+[1/22] Building Taskflow.cpp.inc...
+[2/22] Building Taskflow.h.inc...
+[3/22] Building TaskflowDialect.cpp.inc...
+[4/22] Building TaskflowDialect.h.inc...
+[5/19] Building TaskflowTypes.cpp.inc...
+[6/19] Building TaskflowTypes.h.inc...
+[7/11] Building TaskflowPasses.h.inc...
+[8/11] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-partition-test.dir/__/__/test/TaskflowGeneric/program-partition.cpp.o
+[9/11] Linking CXX executable tools/taskflow-opt/taskflow-program-partition-test
+[10/11] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-mapping-test.dir/__/__/test/TaskflowGeneric/program-mapping.cpp.o
+[11/11] Linking CXX executable tools/taskflow-opt/taskflow-program-mapping-test
+{"passed": true, "cases": 3, "mutants": 4}
+{"accepted": 8, "rejected": 1, "baseline_b_bytes": 131072, "retained_b_bytes": 32768}
+PASS: original search materializes three complete-program command schedules; unavailable target implementation rejected
+/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/clean-shell-cpu-final-r1/cpu-regression/cpu-regression/regression/selected/cases.json
+{"status": "passed", "checks": 26}
+[1/20] Building Taskflow.cpp.inc...
+[2/20] Building Taskflow.h.inc...
+[3/20] Building TaskflowDialect.cpp.inc...
+[4/20] Building TaskflowDialect.h.inc...
+[5/16] Building TaskflowTypes.h.inc...
+[6/10] Building TaskflowTypes.cpp.inc...
+[7/7] Building TaskflowPasses.h.inc...
+public data organization: alias/default identity, capacity coupling, conflicts and body preservation PASS
+{"passed": true, "accepted": 5, "rejected": 1, "rounds": 2, "joint_plan_id": "34d9a0b9a38461053251f1ef4e88fdd1de62fb77d99fefeceb7b8fa69ac53e63", "hardware_execution": false}
+{"status": "passed", "contracts": 8, "device_submissions": 0}
+scripts/run_taskflow_data_organization_v8.sh: line 25: rg: command not found
+{"seed": 0, "candidate": "mock", "repeat": 0, "wall_ms": 0.054089, "passed": true}
+{"seed": 0, "candidate": "mock", "repeat": 1, "wall_ms": 0.038489, "passed": true}
+{"seed": 0, "candidate": "mock", "repeat": 2, "wall_ms": 0.035729, "passed": true}
+{"status": "passed", "checks": ["minimal no API hooks", "detailed cached BO/API counts", "identical algorithm/results in observer modes", "failure retained and hooks restored", "finite/tolerance/shape/FP32 contract", "per-case seed paths and pre-device ELF identity", "CPU mocked CLI I/O timing and host-only timeline", "actual cached wait backend identity, including unavailable mock"], "device_submissions": 0, "installed_runtime_imported": false, "compilation": false}
+[1/30] Building Taskflow.h.inc...
+[2/30] Building Taskflow.cpp.inc...
+[3/30] Building TaskflowDialect.cpp.inc...
+[4/30] Building TaskflowDialect.h.inc...
+[5/21] Building TaskflowTypes.cpp.inc...
+[6/21] Building TaskflowTypes.h.inc...
+[7/7] Building TaskflowPasses.h.inc...
+core: PASS
+generic-analysis: PASS
+generic-search: PASS
+distribution: PASS
+unsupported-core: PASS
+taskflow-generic-mapping-test: PASS
+taskflow-tiled-mapping-test: PASS
+taskflow-program-mapping-test: PASS
+taskflow-program-partition-test: PASS
+taskflow-data-organization-test: PASS
+taskflow-direct-air-cost-test: PASS
+static-mapping: PASS
+static-regions: PASS
+search-preferences: PASS
+search-contract: PASS
+memory-architecture: PASS
+data-policy: PASS
+joint-data-search: PASS
+automatic-native-search: PASS
+original-native-search: PASS
+air-lowering: PASS
+air-tiling: PASS
+air-mapping: PASS
+air-channels: PASS
+air-policy: PASS
+air-joint-data-search: PASS
+air-unsupported: PASS
+air-pool-names: PASS
+air-tail-channel-scope: PASS
+air-memory-architecture: PASS
+air-mixed-f32: PASS
+air-stream-capacity: PASS
+air-tiled-search: PASS
+air-program-search: PASS
+air-partition-search: PASS
+{"status": "passed", "checks": ["compiled lowering SHA and flags bound to target", "different compiled native tool rejected", "source-specific native guards emitted and propagated unchanged to frozen model", "native features emitted only by mocked native CLI", "holdout label keys absent before fit", "real existing fitter with synthetic labels", "model mutation rejected", "native plan mutation rejected", "post-freeze scoring without refit", "changed heldout runtime context rejected", "different heldout ELF rejected", "preexisting holdout execution rejected"], "compilation": false, "device_submissions": 0, "runtime_imported": false}
+{"status": "passed", "checks": ["native legal unpriced candidate retained and illegal/priced mutants rejected", "draft rejected", "duplicate coordinate leakage rejected", "bool tile rejected", "three seed independent FP64 reference equations and FP32 output shapes", "source remains computation/dependency only", "existing CGRA model hashes unchanged"], "compilation": false, "device_submissions": 0, "timing_labels_read": false, "scope": "small CPU fixture; not a real preregistered hardware experiment"}
+{"status": "passed", "checks": ["static rank-four design before labels", "known four nonnegative coefficients recovered", "native family/architecture domain, no source-SHA gate", "predeclared tails retained", "holdout labels not consumed", "model mutation rejected", "holdout candidate in training rejected"], "compilation": false, "device_submissions": 0, "scope": "synthetic native facts/labels only; no hardware calibration"}
+{"status": "passed", "checks": ["canonical runtime policy independent of case name/count with exact evidence preserved", "static-input policy mismatch rejected", "warmup mismatch rejected", "known MAPE/ranking/regret formulas", "prediction ties preserved as regret range", "numerical failure excluded"], "compilation": false, "device_submissions": 0, "scope": "synthetic CPU protocol only; not hardware/model validation"}
+{'status': 'passed', 'checks': ['separate three native model prediction commands', 'legacy theoretical and stage-zero ablation frozen independently', 'native original automatic predictive search command', 'fixed unknown exploration slots without manual candidate lists', 'recursive frozen compiled-artifact mutation rejected before search'], 'actual_compilation': False, 'device_submissions': 0, 'scope': 'synthetic command-flow responses only; no actual native search/model validation'}
+{"status": "passed", "checks": [{"name": "host-trailing-ssa-and-quoted-comment-braces", "returncode": 0, "expected": "pass"}, {"name": "conflicting-real-buffer-inside-device", "returncode": 1, "expected": "reject"}, {"name": "wrong-port-still-rejected", "returncode": 1, "expected": "reject"}, {"name": "extra-payload-still-rejected", "returncode": 1, "expected": "reject"}, {"name": "missing-provenance-still-rejected", "returncode": 1, "expected": "reject"}], "auditor_sha256": "592128af10e2542d950b0e0b7704036c480f84aa1a851e372b30be65359ca107", "compilation": false, "device_submissions": 0, "scope": "textual parser/checker fixtures only, not MLIR compiler or hardware validation"}
+{"status": "passed", "checks": 15}

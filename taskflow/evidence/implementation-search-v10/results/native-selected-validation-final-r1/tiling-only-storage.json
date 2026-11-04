@@ -1,0 +1,86 @@
+{
+  "status": "passed",
+  "elf_sha256": "2fc4f086c70c7633d07f043134af09f2569d74561bc27fad6a55437892477638",
+  "stack_reserved_bytes": 4096,
+  "stages": [
+    {
+      "linker_script": "ldScripts_orbit_segment_80_core_0_2.ld.script",
+      "runtime_reset": false,
+      "sha256": "9ab63384341fd813e472e7358757bcc001f77a4670f88c952e581801e40a0e4e",
+      "stack_address": 458752,
+      "stack_reserved_bytes": 4096,
+      "buffers": [
+        {
+          "name": "buf4",
+          "address": 462848,
+          "bytes": 512
+        },
+        {
+          "name": "buf3",
+          "address": 475136,
+          "bytes": 512
+        }
+      ],
+      "buffer_payload_bytes": 1024,
+      "planned_payload_bytes": 1024,
+      "extra_local_payload_bytes": 0
+    },
+    {
+      "linker_script": "ldScripts_orbit_segment_core_0_2.ld.script",
+      "runtime_reset": false,
+      "sha256": "35f1f4e4937bab22df3885d61e91fbd66bbb7b3253ae9045a4188c4754af62d4",
+      "stack_address": 458752,
+      "stack_reserved_bytes": 4096,
+      "buffers": [
+        {
+          "name": "buf2",
+          "address": 491520,
+          "bytes": 512
+        },
+        {
+          "name": "buf1",
+          "address": 462848,
+          "bytes": 2048
+        },
+        {
+          "name": "buf0",
+          "address": 475136,
+          "bytes": 1024
+        }
+      ],
+      "buffer_payload_bytes": 3584,
+      "planned_payload_bytes": 3584,
+      "extra_local_payload_bytes": 0
+    }
+  ],
+  "max_stage_payload_bytes": 3584,
+  "host_abi_buffers": [
+    {
+      "name": "A",
+      "role": "input",
+      "bytes": 16384
+    },
+    {
+      "name": "B",
+      "role": "input",
+      "bytes": 32768
+    },
+    {
+      "name": "Y",
+      "role": "output",
+      "bytes": 8192
+    },
+    {
+      "name": "intermediate",
+      "role": "temporary",
+      "bytes": 8192
+    }
+  ],
+  "scope": "Final installed aiecc linker script buffer and reserved stack addresses; stage payloads need not coexist. BO bytes are system memory, not persistent AIE SRAM. Runtime/data/alignment consume additional memory; successful compiler allocation/link verification remains authoritative.",
+  "compute_stage_count": 2,
+  "runtime_reset_stage_count": 0,
+  "capacity_bytes": 24576,
+  "errors": [],
+  "audit_source_sha256": "f3e864c706344f7c9535f013319467d7568b7ff8fa2a9b6f4a8b68ac593ea96b",
+  "plan_sha256": "0359b494f0d06b9308377f2e768744b7c9769d872992c00dffed3d6cb2f2ae54"
+}

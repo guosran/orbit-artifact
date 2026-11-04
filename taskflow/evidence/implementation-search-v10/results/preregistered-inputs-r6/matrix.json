@@ -1,0 +1,357 @@
+{
+  "schema": "orbit.implementation-search.matrix.v10",
+  "status": "preregistered",
+  "seeds": [
+    11,
+    23,
+    47
+  ],
+  "boundary": "prepared-command-host-to-host",
+  "timing": {
+    "observer": "detailed",
+    "warmups": 2,
+    "hot": 5
+  },
+  "model_protocol": {
+    "terms": [
+      "command_count",
+      "implemented_scalar_f32_product_operations",
+      "implemented_mixed8_f32_product_operations",
+      "hardware_stage_count"
+    ],
+    "objective": "relative-residual-floor-1ms",
+    "fit": "column-scaled nonnegative least squares, exhaustive active subsets, at most four terms",
+    "required_training_rank": 4,
+    "max_scaled_design_condition": 1000000,
+    "domain": "native actual SSA/access shape-erased family plus predeclared native feature envelope and implementation whitelist",
+    "holdout": "new M/K tiling and new shape/tails, frozen before timing",
+    "communication": "whole command labels include transfer/runtime; no additive transfer charge",
+    "old_data": "v9 timings are historical only and never default training labels",
+    "comparators": {
+      "legacy_theoretical": {
+        "provider": "original C++ theoretical direct-AIR sensitivity",
+        "coefficients": {
+          "launch_ms": 0.1,
+          "per_scalar_operation_ms": 1e-06,
+          "per_transfer_byte_ms": 1e-07
+        },
+        "calibration": "uncalibrated v9 original coefficients, not fitted or renamed",
+        "provenance": {
+          "source": "taskflow/scripts/taskflow_profiled_search_v9.py",
+          "sha256": "0b742f641e83b1444abd5230c9fac8dfab7c4e8d0d426b8f799a20fa7c4ea4c0"
+        },
+        "boundary_limitation": "old static source-operation/DMA sensitivity excludes unmeasured backend/runtime effects"
+      },
+      "simple_implementation_3term": {
+        "terms": [
+          "command_count",
+          "implemented_scalar_f32_product_operations",
+          "implemented_mixed8_f32_product_operations"
+        ],
+        "stage_coefficient_ms": 0,
+        "fit": "independent train-only NNLS, same frozen objective"
+      },
+      "implementation_stage_4term": {
+        "terms": [
+          "command_count",
+          "implemented_scalar_f32_product_operations",
+          "implemented_mixed8_f32_product_operations",
+          "hardware_stage_count"
+        ],
+        "fit": "train-only NNLS, same frozen objective"
+      }
+    }
+  },
+  "programs": [
+    {
+      "id": "m16-k128-n64",
+      "m": 16,
+      "k": 128,
+      "n": 64
+    },
+    {
+      "id": "m32-k128-n64",
+      "m": 32,
+      "k": 128,
+      "n": 64
+    },
+    {
+      "id": "m17-k129-n80",
+      "m": 17,
+      "k": 129,
+      "n": 80
+    }
+  ],
+  "cells": [
+    {
+      "name": "train-m16-k128-n64-t8x16x32-scalar-phase",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "train-m16-k128-n64-t8x16x32-scalar-panel",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "train-m16-k128-n64-t8x16x32-mixed8-phase",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "train-m16-k128-n64-t8x16x32-mixed8-panel",
+      "program": "m16-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x16x32-scalar-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x16x32-scalar-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x16x32-mixed8-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x16x32-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        16,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x32x32-scalar-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x32x32-scalar-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x32x32-mixed8-phase",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "train-m32-k128-n64-t8x32x32-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "train",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "holdout-m32-k128-n64-t4x16x64-scalar-phase",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "holdout-m32-k128-n64-t4x16x64-scalar-panel",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "holdout-m17-k129-n80-t8x32x32-scalar-phase",
+      "program": "m17-k129-n80",
+      "split": "holdout",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ],
+      "implementation": "scalar:1",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "holdout-m32-k128-n64-t4x16x64-mixed8-phase",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "holdout-m32-k128-n64-t4x16x64-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "holdout",
+      "tile_sizes": [
+        4,
+        16,
+        64
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "storage1-panel"
+    },
+    {
+      "name": "holdout-m17-k129-n80-t8x32x32-mixed8-phase",
+      "program": "m17-k129-n80",
+      "split": "holdout",
+      "tile_sizes": [
+        8,
+        32,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "phase-local"
+    },
+    {
+      "name": "negative-m32-k128-n64-t8x64x32-mixed8-panel",
+      "program": "m32-k128-n64",
+      "split": "negative",
+      "tile_sizes": [
+        8,
+        64,
+        32
+      ],
+      "implementation": "scalar-product-vector-add-f32:8",
+      "data_organization": "storage1-panel",
+      "expected_rejection": "capacity; no timing label"
+    }
+  ],
+  "native_search": {
+    "backend": "air",
+    "root_tile": [
+      8,
+      16,
+      32
+    ],
+    "max_rounds": 6,
+    "max_candidates": 512,
+    "beam_width": 16,
+    "diversity_slots": 2,
+    "native_auto_candidates": {
+      "mode": "joint",
+      "max_tile_proposals": 12,
+      "exploration_slots": 16
+    },
+    "search_preferences": {
+      "m_alignment": 4,
+      "n_alignment": 8,
+      "k_alignment": 16
+    }
+  },
+  "notes": [
+    "12 training + 6 heldout cells and one expected capacity negative",
+    "root approved coordinates before any v10 timing labels",
+    "native original search must materialize every selected coordinate; missing cells fail coverage, never patch MLIR",
+    "static native train matrix rank and condition gate must pass before fit/heldout",
+    "both A and B restaged every run, no static system BO inputs",
+    "three seed interleaved repeats; physical frequency unlocked unless independently established"
+  ],
+  "amendment": {
+    "prior_registration": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/preregistered-inputs-r5/preregistration.json",
+    "prior_sha256": "d6f8f49371f3baea21bb41f3bb18d3eb5ab36955f1015156c93d3c32defa534d",
+    "reason": "before any v10 timing labels: canonical final-r2 automatic search covered all 12 train cells and both tail holdouts but finite beam did not reach four requested M32 tile4/32/64 cells; original native archive independently contains exactly one legal candidate per replacement tile4/16/64 implementation/residency coordinate. Replace only these four configuration holdouts on static finite-beam reachability, never measured timing. This is an unseen M/K tile combination, not an unseen source family.",
+    "prior_failed_attempts_preserved": [
+      "proposal-coverage-probe-r1",
+      "proposals-final-r1",
+      "proposals-final-r2"
+    ],
+    "timing_labels_read": false
+  }
+}

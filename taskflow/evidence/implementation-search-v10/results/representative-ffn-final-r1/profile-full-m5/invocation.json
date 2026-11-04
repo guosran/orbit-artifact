@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "taskflow/scripts/taskflow_ffn_profile.py",
+    "--cases",
+    "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/cases.json",
+    "--observer",
+    "detailed",
+    "--iterations",
+    "1",
+    "--warmups",
+    "1",
+    "--output",
+    "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/profile-full-m5"
+  ],
+  "cases_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/cases.json",
+  "cases_sha256": "3bb9cfed9e6fbb2839a4d1381a496f81bd7c9e7b94eb99b3ea106ad743347a32",
+  "script_sha256": "79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69",
+  "observer": "detailed",
+  "precision": "FP32",
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "mode": "profiling; sample counts alone are not multi-seed acceptance",
+  "identities": {
+    "full-m5-baseline": {
+      "elf_sha256": "d7314f8c5797f036e1636e48fd3a510545b7483ddf7ae70be524484570089870",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/baseline/abi.json",
+      "abi_sha256": "45cec24804a8046cf39cb9892e0ed0709938b5182f6ab8a6b7affa5f78e7585e",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 0.5506505807861686,
+        "source_sha256": "7bc779199289560323ed9cecff9bcf26135520529327abb44cb6bcadf44db72e",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/baseline/hardware/program.elf",
+        "elf_sha256": "d7314f8c5797f036e1636e48fd3a510545b7483ddf7ae70be524484570089870",
+        "kernel_name": "main:ffn",
+        "argument_count": 8
+      }
+    },
+    "full-m5-lifted": {
+      "elf_sha256": "6a6575516d22c89549ad32ab44fb0be059f25a468498f53ac87b073590e3f6e1",
+      "abi_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/lifted/abi.json",
+      "abi_sha256": "45cec24804a8046cf39cb9892e0ed0709938b5182f6ab8a6b7affa5f78e7585e",
+      "compile_record": {
+        "status": "compiled",
+        "returncode": 0,
+        "seconds": 1.3834272450767457,
+        "source_sha256": "a418b7bca86c2be9fe5dc21c5be46a9ce7f09a1e20a5e754adae9f0d265df892",
+        "bf16_emulation": false,
+        "stack_size_bytes": 4096,
+        "omit_ping_pong": true,
+        "elf_path": "/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/representative-ffn-final-r1/lifted/hardware/program.elf",
+        "elf_sha256": "6a6575516d22c89549ad32ab44fb0be059f25a468498f53ac87b073590e3f6e1",
+        "kernel_name": "main:ffn",
+        "argument_count": 8
+      }
+    }
+  }
+}

@@ -2,7 +2,49 @@
 """Correlate planned ports with emitted AIE DMA starts, BDs and storage views."""
 import argparse,hashlib,json,re
 from pathlib import Path
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('hardware',type=Path);p.add_argument('--plan',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();plan=json.loads(a.plan.read_text());source=a.hardware/'air_project/aie.input.air.mlir';text=source.read_text();parts=re.split(r'aie\.device\(npu2\) @(\w+) \{',text);devices={parts[i]:parts[i+1] for i in range(1,len(parts),2)};rows=[];checks=[];payloads=[]
+
+def code_mask(text):
+ """Keep code positions/newlines, masking quoted strings and both comment forms."""
+ result=list(text);i=0
+ def blank(begin,end):
+  for position in range(begin,end):
+   if text[position]!='\n':result[position]=' '
+ while i<len(text):
+  if text.startswith('//',i):
+   end=text.find('\n',i+2);end=len(text) if end<0 else end;blank(i,end);i=end
+  elif text.startswith('/*',i):
+   begin=i;depth=1;i+=2
+   while i<len(text) and depth:
+    if text.startswith('/*',i):depth+=1;i+=2
+    elif text.startswith('*/',i):depth-=1;i+=2
+    else:i+=1
+   assert depth==0,'unterminated MLIR block comment'
+   blank(begin,i)
+  elif text[i]=='"':
+   begin=i;i+=1
+   while i<len(text):
+    if text[i]=='\\':i+=2
+    elif text[i]=='"':i+=1;break
+    else:i+=1
+   else:raise AssertionError('unterminated MLIR quoted string')
+   blank(begin,min(i,len(text)))
+  else:i+=1
+ return ''.join(result)
+
+
+def device_bodies(text):
+ """Extract only each balanced device region, never the module's trailing main."""
+ masked=code_mask(text);devices={}
+ for match in re.finditer(r'\baie\.device\s*\(npu2\)\s*@([\w.$-]+)\s*\{',masked):
+  begin=match.end();depth=1;end=begin
+  while end<len(masked) and depth:
+   depth+=(masked[end]=='{')-(masked[end]=='}');end+=1
+  assert depth==0,'unclosed AIE device region'
+  assert match[1] not in devices,'duplicate AIE device symbol'
+  devices[match[1]]=text[begin:end-1]
+ return devices
+
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('hardware',type=Path);p.add_argument('--plan',type=Path,required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args();plan=json.loads(a.plan.read_text());source=a.hardware/'air_project/aie.input.air.mlir';text=source.read_text();devices=device_bodies(text);rows=[];checks=[];payloads=[]
 for index,stage in enumerate(plan.get('hardware_stages',[])):
  if not stage.get('legalize_channels',False):continue
  name='orbit_segment' if index==0 else 'orbit_segment_'+str(stage['begin_phase']);body=devices[name];storage={}
@@ -15,7 +57,10 @@ for index,stage in enumerate(plan.get('hardware_stages',[])):
  payload=sum(b['bytes'] for b in buffers);assert payload<=plan['capacity_bytes'],'emitted compute payload exceeds policy'
  assert payload<=stage['allocated_bytes'],'installed compiler adds unplanned compute payload'
  payloads.append(dict(stage=index,device=name,buffers=buffers,actual_compute_buffer_bytes=payload,planned_bytes=stage['allocated_bytes'],additional_local_payload_bytes=payload-stage['allocated_bytes']))
- for line in body.splitlines():
+ masked_body=code_mask(body)
+ for operation in re.finditer(r'\bmemref\.reinterpret_cast\s+(%\w+)',masked_body):
+  end=body.find('\n',operation.start());end=len(body) if end<0 else end
+  line=body[operation.start():end]
   m=re.search(r'memref\.reinterpret_cast (%\w+).*orbit.storage = "([^"]+)"',line)
   if m:
    assert m[1] not in storage or storage[m[1]]==m[2],'ambiguous buffer storage provenance'

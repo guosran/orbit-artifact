@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/test/TaskflowAIR/audit_channel_ports_v6.py", line 21, in <module>
+    assert m[1] not in storage or storage[m[1]]==m[2],'ambiguous buffer storage provenance'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ambiguous buffer storage provenance
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_execute.py", line 204, in <module>
+    if __name__=='__main__':raise SystemExit(main())
+                                             ^^^^^^
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow_direct_air_execute.py", line 172, in main
+    subprocess.run([sys.executable,str(audit),str(out),'--plan',str(a.preflight_channel_plan.resolve()),
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/home/shiran/project/aie-toy/.venv/bin/python', '/home/shiran/project/orbit-artifact/taskflow/test/TaskflowAIR/audit_channel_ports_v6.py', '/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/compiled-final-r2/holdout-m17-k129-n80-t8x32x32-mixed8-phase/hardware', '--plan', '/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/compiled-final-r2/holdout-m17-k129-n80-t8x32x32-mixed8-phase/plan.json', '--output', '/home/shiran/project/orbit-artifact/results/taskflow/implementation-search-v10/compiled-final-r2/holdout-m17-k129-n80-t8x32x32-mixed8-phase/channel-port-audit.json']' returned non-zero exit status 1.

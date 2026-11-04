@@ -1,0 +1,230 @@
+{
+  "generic_air": {
+    "capacity_bytes": 24576,
+    "cost_model": {
+      "boundary": "prepared-command-host-to-host",
+      "calibration": "calibrated",
+      "domain": {
+        "allow_tails": true,
+        "architecture_fingerprints": [
+          "12cc31201646365046845a65cdb777626dd5cd1dacdd123ec1f375f483b08bf7"
+        ],
+        "family_fingerprints": [
+          "e8d106a573ab175eef0ac2e7b5ca6643912167ef08094b3f694f7c222fceae12"
+        ],
+        "feature_ranges": {
+          "active_compute_events": [
+            40,
+            96
+          ],
+          "all_source_loops_affine": [
+            1,
+            1
+          ],
+          "all_source_loops_unit_step": [
+            1,
+            1
+          ],
+          "all_storage_f32": [
+            1,
+            1
+          ],
+          "capacity_bytes": [
+            24576,
+            24576
+          ],
+          "command_count": [
+            1,
+            1
+          ],
+          "core_count_per_stage": [
+            1,
+            1
+          ],
+          "dma_bytes": [
+            77824,
+            352256
+          ],
+          "dma_input_bytes": [
+            69632,
+            335872
+          ],
+          "dma_output_bytes": [
+            8192,
+            16384
+          ],
+          "dma_transfer_count": [
+            58,
+            224
+          ],
+          "execution_group_count": [
+            2,
+            15
+          ],
+          "execution_region_count": [
+            1,
+            1
+          ],
+          "hardware_stage_count": [
+            2,
+            15
+          ],
+          "implemented_mixed8_f32_addsub_packs": [
+            0,
+            32768
+          ],
+          "implemented_mixed8_f32_product_operations": [
+            0,
+            264192
+          ],
+          "implemented_scalar_f32_addsub_operations": [
+            0,
+            262144
+          ],
+          "implemented_scalar_f32_product_operations": [
+            0,
+            264192
+          ],
+          "local_initialize_events": [
+            8,
+            32
+          ],
+          "local_staging_copy_bytes": [
+            0,
+            0
+          ],
+          "max_tile_loop_0_iterations": [
+            4,
+            8
+          ],
+          "max_tile_loop_1_iterations": [
+            16,
+            32
+          ],
+          "max_tile_loop_2_iterations": [
+            32,
+            64
+          ],
+          "mixed8_lane_coverage_exact": [
+            1,
+            1
+          ],
+          "module_wide_channel_conversion": [
+            0,
+            1
+          ],
+          "readonly_retention_scopes": [
+            0,
+            4
+          ],
+          "resident_payload_bytes": [
+            3584,
+            18432
+          ],
+          "serial_tiled": [
+            1,
+            1
+          ],
+          "source_f32_product_operations": [
+            132096,
+            264192
+          ],
+          "source_has_tile_tail": [
+            0,
+            1
+          ],
+          "source_loop_depth_max": [
+            3,
+            3
+          ],
+          "source_math_exp_f32_operations": [
+            0,
+            0
+          ],
+          "source_max_loop_0_iterations": [
+            16,
+            32
+          ],
+          "source_max_loop_1_iterations": [
+            64,
+            80
+          ],
+          "source_max_loop_2_iterations": [
+            128,
+            129
+          ],
+          "source_phase_count": [
+            48,
+            128
+          ],
+          "source_scalar_f32_operations": [
+            263168,
+            526336
+          ],
+          "source_scalar_reads": [
+            394240,
+            788480
+          ],
+          "source_scalar_writes": [
+            133120,
+            266240
+          ]
+        },
+        "implementations": [
+          "scalar-product-vector-add-f32:8",
+          "scalar:1"
+        ],
+        "operations": [
+          "arith.addf:f32",
+          "arith.mulf:f32"
+        ]
+      },
+      "kind": "implementation-composite",
+      "model_id": "gemm-scale-scalar-mixed8-v10",
+      "model_version": "1",
+      "schema": "orbit.direct-air.cost.v1",
+      "target": {
+        "id": "direct-air-implementation-search-v10",
+        "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:8e979891d0b8ab212bc1c8b0da8e6fca2516f4c1a3ad66340a22fcade278cb33",
+        "toolchain": "{\"compile_context\":{\"aircc\":{\"device\":\"npu2\",\"flags\":[\"--device\",\"npu2\",\"--no-xchesscc\",\"--no-xbridge\",\"--output-format\",\"elf\",\"--peano=<recorded-llvm-aie-version>\",\"--stack-size=4096\",\"--omit-ping-pong-transform=all\"],\"toolchain\":{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}},\"native_flags\":[\"--air-distribute-initialization\",\"--target-config-sha256=4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228\"]},\"native_lowering_sha256\":\"98d5da45a76df0852d6e63bff3843229a6a19d77d72c83afffefa706ecedae07\"}"
+      },
+      "terms": [
+        {
+          "coefficient_ms": 0.7464502092895792,
+          "feature": "command_count"
+        },
+        {
+          "coefficient_ms": 6.707968338767362e-05,
+          "feature": "implemented_scalar_f32_product_operations"
+        },
+        {
+          "coefficient_ms": 6.189361103860985e-05,
+          "feature": "implemented_mixed8_f32_product_operations"
+        },
+        {
+          "coefficient_ms": 0.0379142886494567,
+          "feature": "hardware_stage_count"
+        }
+      ],
+      "training_manifest_digest": "3e9419884df1dd647c3f6a90131242663ca62e6ae379c983df7b3e11a68fbacf"
+    },
+    "cost_target": {
+      "boundary": "prepared-command-host-to-host",
+      "id": "direct-air-implementation-search-v10",
+      "runtime": "MultiLaunchRunner:27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;observer:detailed;profiler:79537909cb85788741c135e432f6e2c90adcb65edfd72a0b9d2480ca7b51ee69;selected-wait:triton.backends.amd_triton_npu.multilaunch._wait_polling@27accc98f465f8aea95cfd757b95156d013ece5082dd73397e4fd3507e8c60ff;bo-preparation:8e979891d0b8ab212bc1c8b0da8e6fca2516f4c1a3ad66340a22fcade278cb33",
+      "toolchain": "{\"compile_context\":{\"aircc\":{\"device\":\"npu2\",\"flags\":[\"--device\",\"npu2\",\"--no-xchesscc\",\"--no-xbridge\",\"--output-format\",\"elf\",\"--peano=<recorded-llvm-aie-version>\",\"--stack-size=4096\",\"--omit-ping-pong-transform=all\"],\"toolchain\":{\"llvm-aie\":\"22.0.0.2026102001+4f5df13d\",\"mlir-aie-no-rtti\":\"1.4.5.dev83+g1631e1b\",\"mlir-air\":\"0.0.1.2026102900+66a24f9.no.rtti\",\"triton-xdna\":\"3.8.0.2026110104+79d7ae3\"}},\"native_flags\":[\"--air-distribute-initialization\",\"--target-config-sha256=4acd92996c4813ce32633fd4d2264fffecf3f1c0429fac1eb00880bc958c2228\"]},\"native_lowering_sha256\":\"98d5da45a76df0852d6e63bff3843229a6a19d77d72c83afffefa706ecedae07\"}"
+    }
+  },
+  "model_version": "v10-preregistered-native-auto-unpriced",
+  "native_auto_candidates": {
+    "exploration_slots": 4,
+    "max_tile_proposals": 12,
+    "mode": "joint"
+  },
+  "search_diversity_slots": 2,
+  "search_preferences": {
+    "k_alignment": 16,
+    "m_alignment": 4,
+    "n_alignment": 8
+  }
+}
