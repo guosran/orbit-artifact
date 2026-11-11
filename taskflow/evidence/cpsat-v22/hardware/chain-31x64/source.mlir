@@ -1,0 +1,31 @@
+module {
+ func.func @chain_31x64(%I: memref<31x64xf32> {orbit.role="input",orbit.name="I"},%R: memref<31x64xf32> {orbit.role="output",orbit.name="R"}) attributes {orbit.noalias,llvm.emit_c_interface} {
+  %T=memref.alloc() {orbit.name="T"} : memref<31x64xf32>
+  %done_T=taskflow.task @write_T will_reads(%I : memref<31x64xf32>) will_writes(%T : memref<31x64xf32>) [original_read_memrefs(%I : memref<31x64xf32>),original_write_memrefs(%T : memref<31x64xf32>)] : (memref<31x64xf32>,memref<31x64xf32>)->memref<31x64xf32> {
+  ^bb0(%r0: memref<31x64xf32>,%dst: memref<31x64xf32>):
+   affine.for %i=0 to 31 {
+    affine.for %j=0 to 64 {
+     %v0=affine.load %r0[%i,%j] : memref<31x64xf32>
+     %c=arith.constant 1.000000 : f32
+     %v=arith.addf %v0,%c : f32
+     affine.store %v,%dst[%i,%j] : memref<31x64xf32>
+    }
+   }
+   taskflow.yield done_writes(%dst : memref<31x64xf32>)
+  }
+  %done_R=taskflow.task @write_R will_reads(%done_T : memref<31x64xf32>) will_writes(%R : memref<31x64xf32>) [original_read_memrefs(%done_T : memref<31x64xf32>),original_write_memrefs(%R : memref<31x64xf32>)] : (memref<31x64xf32>,memref<31x64xf32>)->memref<31x64xf32> {
+  ^bb0(%r0: memref<31x64xf32>,%dst: memref<31x64xf32>):
+   affine.for %i=0 to 31 {
+    affine.for %j=0 to 64 {
+     %v0=affine.load %r0[%i,%j] : memref<31x64xf32>
+     %c=arith.constant 2.000000 : f32
+     %v=arith.mulf %v0,%c : f32
+     affine.store %v,%dst[%i,%j] : memref<31x64xf32>
+    }
+   }
+   taskflow.yield done_writes(%dst : memref<31x64xf32>)
+  }
+  memref.dealloc %T : memref<31x64xf32>
+  return
+ }
+}

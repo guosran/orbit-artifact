@@ -1,0 +1,200 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "actual",
+      "valid": true,
+      "returncode": 0,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/actual.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/actual.json"
+      ]
+    },
+    {
+      "name": "wrong-device",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-device.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-device.json"
+      ]
+    },
+    {
+      "name": "wrong-arithmetic",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-arithmetic.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-arithmetic.json"
+      ]
+    },
+    {
+      "name": "output-hole",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/output-hole.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/output-hole.json"
+      ]
+    },
+    {
+      "name": "wrong-bd-length",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-bd-length.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-bd-length.json"
+      ]
+    },
+    {
+      "name": "wrong-placement",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-placement.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/wrong-placement.json"
+      ]
+    },
+    {
+      "name": "missing-start",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/missing-start.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/missing-start.json"
+      ]
+    },
+    {
+      "name": "duplicate-await",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/duplicate-await.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/duplicate-await.json"
+      ]
+    },
+    {
+      "name": "premature-free",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/premature-free.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/premature-free.json"
+      ]
+    },
+    {
+      "name": "unknown-wrapper",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/unknown-wrapper.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/unknown-wrapper.json"
+      ]
+    },
+    {
+      "name": "unknown-core",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/unknown-core.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/unknown-core.json"
+      ]
+    },
+    {
+      "name": "unknown-allocation",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/unknown-allocation.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/unknown-allocation.json"
+      ]
+    },
+    {
+      "name": "missing-runtime-name",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/missing-runtime-name.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/missing-runtime-name.json"
+      ]
+    },
+    {
+      "name": "symbol-only-external-use",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/symbol-only-external-use.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/symbol-only-external-use.json"
+      ]
+    },
+    {
+      "name": "cross-owner-flow",
+      "valid": false,
+      "returncode": 1,
+      "command": [
+        "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+        "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x136-tail/fixture/source.mlir",
+        "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/cross-owner-flow.mlir",
+        "--npu-shards=2",
+        "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+        "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-multicore-contract-r2/cross-owner-flow.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "lower": [
+    "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+    "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x64/fixture/source.mlir",
+    "--lower-multicore-to-air=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x64/cores-1",
+    "--npu-shards=1",
+    "--target-config=/tmp/orbit-cpsat-native-config-r1.json"
+  ],
+  "check": [
+    "/tmp/orbit-cpsat-v22-build/tools/taskflow-opt/taskflow-opt",
+    "/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x64/fixture/source.mlir",
+    "--check-multicore-aie=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x64/cores-1/final-aie.generic.mlir",
+    "--npu-shards=1",
+    "--target-config=/tmp/orbit-cpsat-native-config-r1.json",
+    "--implementation-output=/home/shiran/project/orbit-artifact/results/taskflow/cpsat-v22-hardware-r3/chain-17x64/cores-1/implementation-contract.json"
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "final_aie_checked": false,
+  "model_is_assumed": true,
+  "model_makespan_ns": 13144,
+  "partition": {
+    "buffers": [
+      {
+        "dtype": "f32",
+        "name": "I",
+        "partition_axis": 0,
+        "role": "input",
+        "shape": [
+          17,
+          64
+        ],
+        "storage_index": 0
+      },
+      {
+        "dtype": "f32",
+        "name": "R",
+        "partition_axis": 0,
+        "role": "output",
+        "shape": [
+          17,
+          64
+        ],
+        "storage_index": 1
+      },
+      {
+        "dtype": "f32",
+        "name": "X",
+        "partition_axis": 0,
+        "role": "temporary",
+        "shape": [
+          17,
+          64
+        ],
+        "storage_index": 2
+      },
+      {
+        "dtype": "f32",
+        "name": "Y",
+        "partition_axis": 0,
+        "role": "temporary",
+        "shape": [
+          17,
+          64
+        ],
+        "storage_index": 3
+      },
+      {
+        "dtype": "f32",
+        "name": "Z",
+        "partition_axis": 0,
+        "role": "temporary",
+        "shape": [
+          17,
+          64
+        ],
+        "storage_index": 4
+      }
+    ],
+    "host_operations": "declared slicing, input staging and output copy only; no arithmetic fallback",
+    "invocation_expansion_limit_scope": "host planning/code generation; not physical memory capacity",
+    "invocations": [
+      {
+        "bindings": [
+          {
+            "buffer_index": 0,
+            "full_buffer_index": 0,
+            "mode": "slice-input",
+            "offsets": [
+              0,
+              0
+            ],
+            "sizes": [
+              17,
+              64
+            ]
+          },
+          {
+            "buffer_index": 1,
+            "full_buffer_index": 1,
+            "mode": "slice-output",
+            "offsets": [
+              0,
+              0
+            ],
+            "sizes": [
+              17,
+              64
+            ]
+          },
+          {
+            "buffer_index": 2,
+            "full_buffer_index": 2,
+            "mode": "temporary",
+            "offsets": [
+              0,
+              0
+            ],
+            "sizes": [
+              17,
+              64
+            ]
+          },
+          {
+            "buffer_index": 3,
+            "full_buffer_index": 3,
+            "mode": "temporary",
+            "offsets": [
+              0,
+              0
+            ],
+            "sizes": [
+              17,
+              64
+            ]
+          },
+          {
+            "buffer_index": 4,
+            "full_buffer_index": 4,
+            "mode": "temporary",
+            "offsets": [
+              0,
+              0
+            ],
+            "sizes": [
+              17,
+              64
+            ]
+          }
+        ],
+        "depends_on": [],
+        "index": 0,
+        "lower": 0,
+        "template_id": "extent17",
+        "upper": 17
+      }
+    ],
+    "max_host_invocation_expansion": 1048576,
+    "partition": {
+      "chunk": 17,
+      "extent": 17,
+      "proof": "all task writes project common independent axis; shared storage axes agree; invariant inputs replicated; source reductions unchanged",
+      "source_loop": 0
+    },
+    "plan_id": "f3424b1283f86efa50ff0f11d4a5285ded682cdb068da4d440482e5befb9e5ee",
+    "schedule": "serial complete-program partitions using existing backend commands",
+    "schema": "orbit.program.partition.v1",
+    "source_fingerprint": "fe49f7fffb21a469683af2bf55f1e4dbee7a15a4b25a95dc73c267a0b2efec74",
+    "templates": [
+      {
+        "abi": "template-17/abi.json",
+        "air": "template-17/program.air.mlir",
+        "extent": 17,
+        "id": "extent17",
+        "plan": "template-17/plan.json",
+        "taskflow": "template-17/taskflow.mlir"
+      }
+    ]
+  },
+  "placement": [
+    {
+      "column": 0,
+      "compute_start_ns": 4852,
+      "input_channel": 0,
+      "input_start_ns": 0,
+      "output_channel": 0,
+      "output_start_ns": 8292,
+      "row": 2,
+      "shard": 0
+    }
+  ],
+  "schedule_realization": "independent resources; event readiness and DMA arbitration, no timed dispatch guarantee",
+  "schema": "orbit.npu-independent-shards.v22",
+  "solver_constraints": 17,
+  "solver_model_build_ms": 0.092827,
+  "solver_ms": 1.649059,
+  "solver_status": "OPTIMAL",
+  "solver_variables": 8,
+  "source_fingerprint": "fe49f7fffb21a469683af2bf55f1e4dbee7a15a4b25a95dc73c267a0b2efec74",
+  "total_lower_ms": 31.021217,
+  "shards": [
+    {
+      "row_offset": 0,
+      "row_count": 17,
+      "source_fingerprint": "fe49f7fffb21a469683af2bf55f1e4dbee7a15a4b25a95dc73c267a0b2efec74"
+    }
+  ]
+}

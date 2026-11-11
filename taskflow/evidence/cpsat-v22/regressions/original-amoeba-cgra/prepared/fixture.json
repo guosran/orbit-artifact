@@ -1,0 +1,75 @@
+{
+  "schema": "orbit.program-graph-amoeba.fixture.v12",
+  "source": {
+    "origin": "/home/shiran/project/orbit/test/TaskflowAIR/fixtures/add-scale.mlir",
+    "path": "source.mlir",
+    "sha256": "167c00dcd93856c22dd7a17d1621b236361ef3b3fa1650d12c3fe90b845e3098"
+  },
+  "generator": {
+    "path": "/home/shiran/project/orbit-artifact/taskflow/test/TaskflowAIR/prepare_program_graph_amoeba_v12.py",
+    "sha256": "51d89a38537a6a28d4e3698c49fd9f6b69ce797b95eb2640a685db3d46c6fa8a"
+  },
+  "seeds": [
+    11,
+    23,
+    47
+  ],
+  "arrays": [
+    {
+      "seed": 11,
+      "inputs": {
+        "path": "inputs-11.npz",
+        "sha256": "353a18e46736103d627b62945a40cc7339fefda72b75b4a0ed2538ffdb1cdef9"
+      },
+      "reference": {
+        "path": "reference-11.npz",
+        "sha256": "800e8f0c6b554867423a49851ef6c690b53de5095d6dbdc6de17ea67ed8b9c0f"
+      }
+    },
+    {
+      "seed": 23,
+      "inputs": {
+        "path": "inputs-23.npz",
+        "sha256": "f7c7225961cc7191239aad06d451e7a1d1eacb5901ce8b119cce7e1484d5b21f"
+      },
+      "reference": {
+        "path": "reference-23.npz",
+        "sha256": "f982068315654e489bc5d821cda342783c00d545e865b2fa999beb08f80af7f4"
+      }
+    },
+    {
+      "seed": 47,
+      "inputs": {
+        "path": "inputs-47.npz",
+        "sha256": "f392cf8692114770027848cfe5c5f3de559d9a9650eb3919d42b2f1e19e7a4eb"
+      },
+      "reference": {
+        "path": "reference-47.npz",
+        "sha256": "00cfe7e6c2d7a00e7aff835d579333d845a86b86b006eb9516e83fb34940c561"
+      }
+    }
+  ],
+  "reference": "float64 (A+B)*2 from original source; cast to f32",
+  "shape": [
+    4,
+    4
+  ],
+  "inputs": [
+    "A",
+    "B"
+  ],
+  "outputs": [
+    "C"
+  ],
+  "temporary": [
+    "T"
+  ],
+  "arithmetic": "16 addf + 16 mulf",
+  "numerical_contract": {
+    "dtype": "f32",
+    "atol": 1e-05,
+    "rtol": 1e-05,
+    "finite": true
+  },
+  "scope": "plain actual Taskflow source copied byte-for-byte; no model inference, planning, mapping or device execution"
+}
