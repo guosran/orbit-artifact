@@ -1,0 +1,83 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "case": "valid",
+      "passed": true,
+      "returncode": 0,
+      "diagnostic": ""
+    },
+    {
+      "case": "wrong-target",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: independent shard resource model requires the npu2 target"
+    },
+    {
+      "case": "wrong-core-column",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: unbound extra shim tile"
+    },
+    {
+      "case": "wrong-BD-offset",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: AIE implementation contract: actual cyclic DMA/lock/buffer coverage is unsupported or incomplete"
+    },
+    {
+      "case": "wrong-arithmetic",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: AIE implementation contract: actual scalar arithmetic/dataflow/constants differ from source stored expressions"
+    },
+    {
+      "case": "wrong-arithmetic2",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: AIE implementation contract: actual scalar arithmetic/dataflow/constants differ from source stored expressions"
+    },
+    {
+      "case": "missing-await",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: output task requires exactly one completion await"
+    },
+    {
+      "case": "missing-free",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: input task resource freed before all shard outputs completed"
+    },
+    {
+      "case": "missing-start",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: DMA task must start exactly once"
+    },
+    {
+      "case": "swapped-caller-ABI",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: configure/run must forward unchanged complete caller ABI before projection"
+    },
+    {
+      "case": "swapped-configurations",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: actual DMA copies differ from public selected versions/regions/directions"
+    },
+    {
+      "case": "duplicate-configuration",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: actual configurations/runs differ from selected public barriers"
+    },
+    {
+      "case": "extra-entry",
+      "passed": true,
+      "returncode": 1,
+      "diagnostic": "taskflow-opt: multicore AIE contract: extra module execution entry"
+    }
+  ]
+}

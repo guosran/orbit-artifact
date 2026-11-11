@@ -1,0 +1,225 @@
+{
+  "generic_air": {
+    "cost_model": {
+      "kind": "event-mechanism",
+      "schema": "orbit.direct-air.cost.v1",
+      "mode": "estimate",
+      "boundary": "unit-test-device",
+      "parameters": {
+        "compute.startup": {
+          "value": 4,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "finite unit test"
+          }
+        },
+        "compute.operation": {
+          "value": 0,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "finite unit test"
+          }
+        },
+        "compute.memory_access": {
+          "value": 0,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "finite unit test"
+          }
+        },
+        "configuration.startup": {
+          "value": 0,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "finite unit test"
+          }
+        },
+        "host.submit": {
+          "value": 0,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "finite unit test"
+          }
+        },
+        "host.complete": {
+          "value": 0,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "finite unit test"
+          }
+        }
+      },
+      "model_id": "finite-test",
+      "implementations": [
+        "scalar"
+      ]
+    }
+  },
+  "program_joint": {
+    "architecture": {
+      "domains": [
+        {
+          "id": "system",
+          "kind": "system",
+          "parent": ""
+        },
+        {
+          "id": "tile0",
+          "parent": "system",
+          "kind": "tile",
+          "coordinates": {
+            "column": 0,
+            "row": 2
+          }
+        },
+        {
+          "id": "tile1",
+          "parent": "system",
+          "kind": "tile",
+          "coordinates": {
+            "column": 1,
+            "row": 2
+          }
+        }
+      ],
+      "resources": [
+        {
+          "id": "host.worker",
+          "kind": "compute",
+          "device": "host",
+          "capacity": 1,
+          "domain": "system"
+        },
+        {
+          "id": "submit",
+          "kind": "submission",
+          "device": "host",
+          "capacity": 1,
+          "domain": "system"
+        },
+        {
+          "id": "core0",
+          "kind": "compute",
+          "device": "npu",
+          "capacity": 1,
+          "domain": "tile0"
+        },
+        {
+          "id": "dma0",
+          "kind": "transfer",
+          "device": "npu",
+          "capacity": 1,
+          "domain": "system"
+        },
+        {
+          "id": "core1",
+          "kind": "compute",
+          "device": "npu",
+          "capacity": 1,
+          "domain": "tile1"
+        },
+        {
+          "id": "dma1",
+          "kind": "transfer",
+          "device": "npu",
+          "capacity": 1,
+          "domain": "system"
+        }
+      ],
+      "memories": [
+        {
+          "id": "host",
+          "kind": "system-bo",
+          "domain": "system",
+          "capacity_bytes": 1000000,
+          "accessible_resources": [
+            "host.worker"
+          ]
+        },
+        {
+          "id": "mem0",
+          "kind": "local-sram",
+          "domain": "tile0",
+          "capacity_bytes": 96,
+          "accessible_resources": [
+            "core0"
+          ]
+        },
+        {
+          "id": "mem1",
+          "kind": "local-sram",
+          "domain": "tile1",
+          "capacity_bytes": 96,
+          "accessible_resources": [
+            "core1"
+          ]
+        }
+      ],
+      "links": [
+        {
+          "id": "in0",
+          "source": "host",
+          "target": "mem0",
+          "resource": "dma0",
+          "domain": "system",
+          "bandwidth_bytes_per_ms": 4000000,
+          "latency_ms": 0,
+          "provenance": {
+            "kind": "architecture",
+            "source": "unit test assumption; no hardware claim"
+          }
+        },
+        {
+          "id": "out0",
+          "source": "mem0",
+          "target": "host",
+          "resource": "dma0",
+          "domain": "system",
+          "bandwidth_bytes_per_ms": 32000000,
+          "latency_ms": 0,
+          "provenance": {
+            "kind": "architecture",
+            "source": "unit test assumption; no hardware claim"
+          }
+        },
+        {
+          "id": "in1",
+          "source": "host",
+          "target": "mem1",
+          "resource": "dma1",
+          "domain": "system",
+          "bandwidth_bytes_per_ms": 4000000,
+          "latency_ms": 0,
+          "provenance": {
+            "kind": "architecture",
+            "source": "unit test assumption; no hardware claim"
+          }
+        },
+        {
+          "id": "out1",
+          "source": "mem1",
+          "target": "host",
+          "resource": "dma1",
+          "domain": "system",
+          "bandwidth_bytes_per_ms": 32000000,
+          "latency_ms": 0,
+          "provenance": {
+            "kind": "architecture",
+            "source": "unit test assumption; no hardware claim"
+          }
+        }
+      ]
+    },
+    "host_memory": "host",
+    "chunks": [
+      1
+    ],
+    "max_configurations": 2
+  }
+}

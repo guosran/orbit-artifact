@@ -1,0 +1,87 @@
+{
+  "generic_air": {
+    "capacity_bytes": 10000,
+    "cost_model": {
+      "kind": "event-mechanism",
+      "schema": "orbit.direct-air.cost.v1",
+      "mode": "estimate",
+      "model_id": "v23-validation",
+      "implementations": [
+        "scalar"
+      ],
+      "boundary": "one-invocation",
+      "parameters": {
+        "compute.startup": {
+          "value": 4,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "compute.operation": {
+          "value": 1,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "compute.memory_access": {
+          "value": 0.5,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "configuration.startup": {
+          "value": 1000,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "host.submit": {
+          "value": 100,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "host.complete": {
+          "value": 100,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "communication.startup": {
+          "value": 100,
+          "unit": "ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        },
+        "communication.bandwidth": {
+          "value": 8,
+          "unit": "bytes/ns",
+          "provenance": {
+            "kind": "assumed",
+            "source": "v23 explicit validation model; no hardware timing claim"
+          }
+        }
+      }
+    }
+  },
+  "program_joint": {
+    "chunks": [
+      17
+    ],
+    "max_configurations": 4
+  }
+}

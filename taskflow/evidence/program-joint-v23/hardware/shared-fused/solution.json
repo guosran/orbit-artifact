@@ -1,0 +1,1319 @@
+{
+  "best_bound_ns": 18,
+  "branches": 44,
+  "budget_exhausted": false,
+  "configuration_end_ns": [
+    18
+  ],
+  "configuration_start_ns": [
+    0
+  ],
+  "conflicts": 0,
+  "constraints": 325,
+  "domain_complete": true,
+  "domain_id": "348dcd57fccdf67bb983603b0960e69670bd1028612d34390fece248f2d449af",
+  "generation_ms": 2.564794,
+  "groups": [
+    {
+      "compute_start_ns": [
+        8,
+        12
+      ],
+      "configuration": 0,
+      "group": 2,
+      "inputs": [
+        {
+          "end_ns": 8,
+          "link": 0,
+          "start_ns": 0,
+          "version": 0
+        }
+      ],
+      "outputs": [
+        {
+          "end_ns": 17,
+          "link": 1,
+          "start_ns": 16,
+          "version": 1
+        },
+        {
+          "end_ns": 18,
+          "link": 1,
+          "start_ns": 17,
+          "version": 2
+        }
+      ],
+      "place": 0
+    }
+  ],
+  "has_objective": true,
+  "has_plan": true,
+  "makespan_ns": 18,
+  "message": "source-bound joint grouping, placement, copies, routes and configuration schedule",
+  "model_build_ms": 1.2806109999999999,
+  "model_id": "8afc4e3cbee3caf18deec77ad6cd8842fcc42ea4530d256b01657f867547ea41",
+  "objective_exact_for_backend": false,
+  "objective_ns": 18,
+  "peak_rss_kib": 198536,
+  "program_graph": {
+    "allocation_bindings": [
+      {
+        "addressing": "region-addressed",
+        "allocation": 0,
+        "spatial_owner": "system"
+      },
+      {
+        "allocation": 1,
+        "spatial_owner": "tile0"
+      },
+      {
+        "allocation": 2,
+        "spatial_owner": "tile0"
+      },
+      {
+        "allocation": 3,
+        "spatial_owner": "tile0"
+      },
+      {
+        "addressing": "region-addressed",
+        "allocation": 4,
+        "spatial_owner": "system"
+      },
+      {
+        "addressing": "region-addressed",
+        "allocation": 5,
+        "spatial_owner": "system"
+      }
+    ],
+    "allocation_lifetime": "phase-pool",
+    "boundaries": {
+      "inputs": {
+        "0": "host"
+      },
+      "output_ownership": "external-after-completion; lifetime endpoints are clipped to the graph event domain",
+      "outputs": {
+        "1": "host",
+        "2": "host"
+      }
+    },
+    "communications": [
+      {
+        "bytes": 32,
+        "dependencies": [],
+        "event": 0,
+        "kind": "copy",
+        "link": "in0",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "dma0",
+        "sizes": [
+          1,
+          8
+        ],
+        "source_copies": [
+          0
+        ],
+        "storage": 0,
+        "target_copies": [
+          1
+        ]
+      },
+      {
+        "bytes": 32,
+        "dependencies": [
+          1,
+          2
+        ],
+        "event": 3,
+        "kind": "copy",
+        "link": "out0",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "dma0",
+        "sizes": [
+          1,
+          8
+        ],
+        "source_copies": [
+          2
+        ],
+        "storage": 1,
+        "target_copies": [
+          4
+        ]
+      },
+      {
+        "bytes": 32,
+        "dependencies": [
+          2
+        ],
+        "event": 4,
+        "kind": "copy",
+        "link": "out0",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "dma0",
+        "sizes": [
+          1,
+          8
+        ],
+        "source_copies": [
+          3
+        ],
+        "storage": 2,
+        "target_copies": [
+          5
+        ]
+      }
+    ],
+    "computation_mlir": "func.func @shared(%arg0: memref<1x8xf32> {orbit.name = \"X\", orbit.role = \"input\"}, %arg1: memref<1x8xf32> {orbit.name = \"Y\", orbit.role = \"output\"}, %arg2: memref<1x8xf32> {orbit.name = \"Z\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n  %done_writes = taskflow.task @a will_reads(%arg0 : memref<1x8xf32>) will_writes(%arg1 : memref<1x8xf32>) [original_read_memrefs(%arg0 : memref<1x8xf32>), original_write_memrefs(%arg1 : memref<1x8xf32>)] : (memref<1x8xf32>, memref<1x8xf32>) -> (memref<1x8xf32>) {\n  ^bb0(%arg3: memref<1x8xf32>, %arg4: memref<1x8xf32>):\n    affine.for %arg5 = 0 to 1 {\n      affine.for %arg6 = 0 to 8 {\n        %0 = affine.load %arg3[%arg5, %arg6] : memref<1x8xf32>\n        %cst = arith.constant 1.000000e+00 : f32\n        %1 = arith.addf %0, %cst : f32\n        affine.store %1, %arg4[%arg5, %arg6] : memref<1x8xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg4 : memref<1x8xf32>)\n  }\n  %done_writes_0 = taskflow.task @b will_reads(%arg0 : memref<1x8xf32>) will_writes(%arg2 : memref<1x8xf32>) [original_read_memrefs(%arg0 : memref<1x8xf32>), original_write_memrefs(%arg2 : memref<1x8xf32>)] : (memref<1x8xf32>, memref<1x8xf32>) -> (memref<1x8xf32>) {\n  ^bb0(%arg3: memref<1x8xf32>, %arg4: memref<1x8xf32>):\n    affine.for %arg5 = 0 to 1 {\n      affine.for %arg6 = 0 to 8 {\n        %0 = affine.load %arg3[%arg5, %arg6] : memref<1x8xf32>\n        %cst = arith.constant 2.000000e+00 : f32\n        %1 = arith.mulf %0, %cst : f32\n        affine.store %1, %arg4[%arg5, %arg6] : memref<1x8xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg4 : memref<1x8xf32>)\n  }\n  return\n}",
+    "cost": {
+      "allocation_accounting": [
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 96,
+          "capacity_bytes": 1000000,
+          "memory": "host",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 96,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        },
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 96,
+          "capacity_bytes": 96,
+          "memory": "mem0",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 96,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        },
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 0,
+          "capacity_bytes": 96,
+          "memory": "mem1",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 0,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        }
+      ],
+      "allocation_peak_scope": "all reserved pool allocations over phase intervals, including dormant templates",
+      "backend_internal_padding_status": "not inferred from this graph",
+      "boundary": "serial dependency/resource schedule; no communication added to a separately selected whole-command composite",
+      "complete_graph_ms": 1.8e-05,
+      "compute_instances": 2,
+      "creation_transfer_events": 3,
+      "logical_source_read_bytes": 64,
+      "logical_source_write_bytes": 64,
+      "payload_scope": "allocation capacity minus known alignment padding; not live logical data or measured physical SRAM usage",
+      "peak_memory_bytes": {
+        "host": 96,
+        "mem0": 96,
+        "mem1": 0
+      },
+      "planned_transfer_bytes": 96,
+      "status": "target-estimate",
+      "submission_count": 1,
+      "traffic_scope": "logical planned rectangular payload, not measured physical DDR traffic"
+    },
+    "execution_groups": [
+      {
+        "begin_phase": 0,
+        "dependencies": [],
+        "end_phase": 2,
+        "id": 0,
+        "member_events": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "memory": "mem0",
+        "resource": "core0",
+        "spatial_owner": "tile0"
+      }
+    ],
+    "execution_regions": [
+      {
+        "begin_event": 0,
+        "completion_event": {
+          "after": [
+            3,
+            4
+          ],
+          "id": "joint-program.complete"
+        },
+        "end_event": 5,
+        "endpoint_memory": "host",
+        "id": "joint-program",
+        "implementation": "direct-air",
+        "input_copies": [
+          0
+        ],
+        "input_data_edges": [
+          0,
+          1
+        ],
+        "invocation_lifecycle": "host-device",
+        "member_events": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "output_copies": [
+          4,
+          5
+        ],
+        "placement": "npu",
+        "predecessor_regions": [],
+        "source_tasks": [
+          0,
+          1
+        ],
+        "submission_event": {
+          "count": 1,
+          "id": "joint-program.submit",
+          "resource": "submit",
+          "shared_by_region_inputs": true
+        }
+      }
+    ],
+    "id": "5e1c7da9d6222f60ca0068933b3b432283d06987545187f47fa1fb05c95dd2d0",
+    "instances": [
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 0,
+            "step": 1,
+            "upper": 1
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 8
+          }
+        ],
+        "domain_task": 0,
+        "event": 1,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 0,
+        "task": 0
+      },
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 0,
+            "step": 1,
+            "upper": 1
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 8
+          }
+        ],
+        "domain_task": 1,
+        "event": 2,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 1,
+        "task": 1
+      }
+    ],
+    "ledger": {
+      "adapter": "native arbitrary-rank adapter of Static allocation/version/location-copy semantics",
+      "allocations": [
+        {
+          "begin_phase": 0,
+          "bytes": 32,
+          "end_phase_exclusive": 2,
+          "key": "host-bo-0",
+          "memory": "host",
+          "storage": 0
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 32,
+          "end_phase_exclusive": 2,
+          "key": "group-0-version-0",
+          "memory": "mem0",
+          "storage": 0
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 32,
+          "end_phase_exclusive": 2,
+          "key": "group-0-version-1",
+          "memory": "mem0",
+          "storage": 1
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 32,
+          "end_phase_exclusive": 2,
+          "key": "group-0-version-2",
+          "memory": "mem0",
+          "storage": 2
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 32,
+          "end_phase_exclusive": 2,
+          "key": "host-bo-1",
+          "memory": "host",
+          "storage": 1
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 32,
+          "end_phase_exclusive": 2,
+          "key": "host-bo-2",
+          "memory": "host",
+          "storage": 2
+        }
+      ],
+      "body_fingerprint": "f6b64770d83b2cd68a0db8876c05f95b66d25ad01a09fd771a73ac38ef25906b",
+      "compute_estimates": [],
+      "copies": [
+        {
+          "allocation": 0,
+          "available_from": 0,
+          "consumer_edges": [],
+          "created_by": -1,
+          "last_users": [
+            0
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            0
+          ],
+          "version": 0
+        },
+        {
+          "allocation": 1,
+          "available_from": 0,
+          "consumer_edges": [
+            0,
+            1
+          ],
+          "created_by": 0,
+          "last_users": [
+            2
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            1,
+            2
+          ],
+          "version": 0
+        },
+        {
+          "allocation": 2,
+          "available_from": 1,
+          "consumer_edges": [],
+          "created_by": 1,
+          "last_users": [
+            3
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            3
+          ],
+          "version": 1
+        },
+        {
+          "allocation": 3,
+          "available_from": 2,
+          "consumer_edges": [],
+          "created_by": 2,
+          "last_users": [
+            4
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            4
+          ],
+          "version": 2
+        },
+        {
+          "allocation": 4,
+          "available_from": 3,
+          "consumer_edges": [],
+          "created_by": 3,
+          "last_users": [],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [],
+          "version": 1
+        },
+        {
+          "allocation": 5,
+          "available_from": 4,
+          "consumer_edges": [],
+          "created_by": 4,
+          "last_users": [],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [],
+          "version": 2
+        }
+      ],
+      "copy_count": 6,
+      "data_edge_count": 2,
+      "data_edges": [
+        {
+          "consumer": 1,
+          "copy": 1,
+          "producer": -1,
+          "region": 0,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "mem0",
+          "version": 0
+        },
+        {
+          "consumer": 2,
+          "copy": 1,
+          "producer": -1,
+          "region": 0,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "mem0",
+          "version": 0
+        }
+      ],
+      "data_organization": "retain-across-users",
+      "estimated_makespan_ms": null,
+      "event_count": 5,
+      "events": [
+        {
+          "data_edges": [],
+          "depends_on": [],
+          "kind": "transfer",
+          "link": "in0",
+          "memory": "",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            0
+          ],
+          "resource": "dma0",
+          "task": 0,
+          "writes": [
+            1
+          ]
+        },
+        {
+          "data_edges": [
+            0
+          ],
+          "depends_on": [
+            0
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "mem0",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            1
+          ],
+          "resource": "core0",
+          "task": 0,
+          "writes": [
+            2
+          ]
+        },
+        {
+          "data_edges": [
+            1
+          ],
+          "depends_on": [
+            0,
+            1
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "mem0",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            1
+          ],
+          "resource": "core0",
+          "task": 1,
+          "writes": [
+            3
+          ]
+        },
+        {
+          "data_edges": [],
+          "depends_on": [
+            1,
+            2
+          ],
+          "kind": "transfer",
+          "link": "out0",
+          "memory": "",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            2
+          ],
+          "resource": "dma0",
+          "task": 1,
+          "writes": [
+            4
+          ]
+        },
+        {
+          "data_edges": [],
+          "depends_on": [
+            2
+          ],
+          "kind": "transfer",
+          "link": "out0",
+          "memory": "",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            3
+          ],
+          "resource": "dma0",
+          "task": 1,
+          "writes": [
+            5
+          ]
+        }
+      ],
+      "execution_regions": [
+        {
+          "begin_event": 0,
+          "cost_ownership": "prepared-region composite includes submission, device compute/transfers/wait and readback once",
+          "device_stages": [],
+          "end_event_exclusive": 5,
+          "host_submission_count": 1,
+          "id": "joint-program",
+          "invocation_lifecycle": "host-device",
+          "placement": "npu",
+          "submission_kind": "host_submission",
+          "submission_resource": "submit"
+        }
+      ],
+      "expanded_details_omitted": false,
+      "links": [
+        {
+          "bandwidth_bytes_per_ms": 4000000,
+          "cost_status": "target_estimate",
+          "id": "in0",
+          "latency_ms": 0,
+          "provenance": "unit test assumption; no hardware claim",
+          "resource": "dma0",
+          "source": "host",
+          "target": "mem0"
+        },
+        {
+          "bandwidth_bytes_per_ms": 32000000,
+          "cost_status": "target_estimate",
+          "id": "out0",
+          "latency_ms": 0,
+          "provenance": "unit test assumption; no hardware claim",
+          "resource": "dma0",
+          "source": "mem0",
+          "target": "host"
+        },
+        {
+          "bandwidth_bytes_per_ms": 4000000,
+          "cost_status": "target_estimate",
+          "id": "in1",
+          "latency_ms": 0,
+          "provenance": "unit test assumption; no hardware claim",
+          "resource": "dma0",
+          "source": "host",
+          "target": "mem1"
+        },
+        {
+          "bandwidth_bytes_per_ms": 32000000,
+          "cost_status": "target_estimate",
+          "id": "out1",
+          "latency_ms": 0,
+          "provenance": "unit test assumption; no hardware claim",
+          "resource": "dma0",
+          "source": "mem1",
+          "target": "host"
+        }
+      ],
+      "logical_region_count": 3,
+      "logical_regions": [
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            1,
+            8
+          ],
+          "storage": 0
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            1,
+            8
+          ],
+          "storage": 1
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            1,
+            8
+          ],
+          "storage": 2
+        }
+      ],
+      "memories": [
+        {
+          "capacity_bytes": 1000000,
+          "id": "host"
+        },
+        {
+          "capacity_bytes": 96,
+          "id": "mem0"
+        },
+        {
+          "capacity_bytes": 96,
+          "id": "mem1"
+        }
+      ],
+      "memory_architecture": {
+        "domains": [
+          {
+            "id": "system",
+            "kind": "system",
+            "parent": ""
+          },
+          {
+            "coordinates": {
+              "column": 0,
+              "row": 2
+            },
+            "id": "tile0",
+            "kind": "tile",
+            "parent": "system"
+          },
+          {
+            "coordinates": {
+              "column": 1,
+              "row": 2
+            },
+            "id": "tile1",
+            "kind": "tile",
+            "parent": "system"
+          }
+        ],
+        "links": [
+          {
+            "bandwidth_bytes_per_ms": 4000000,
+            "cost_status": "target_estimate",
+            "domain": "system",
+            "id": "in0",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "architecture",
+              "source": "unit test assumption; no hardware claim"
+            },
+            "resource": "dma0",
+            "source": "host",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "mem0",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 32000000,
+            "cost_status": "target_estimate",
+            "domain": "system",
+            "id": "out0",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "architecture",
+              "source": "unit test assumption; no hardware claim"
+            },
+            "resource": "dma0",
+            "source": "mem0",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "host",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 4000000,
+            "cost_status": "target_estimate",
+            "domain": "system",
+            "id": "in1",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "architecture",
+              "source": "unit test assumption; no hardware claim"
+            },
+            "resource": "dma0",
+            "source": "host",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "mem1",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 32000000,
+            "cost_status": "target_estimate",
+            "domain": "system",
+            "id": "out1",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "architecture",
+              "source": "unit test assumption; no hardware claim"
+            },
+            "resource": "dma0",
+            "source": "mem1",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "host",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          }
+        ],
+        "memories": [
+          {
+            "accessible_devices": [],
+            "accessible_resources": [
+              "host.worker"
+            ],
+            "capacity_bytes": 1000000,
+            "domain": "system",
+            "id": "host",
+            "kind": "system-bo"
+          },
+          {
+            "accessible_devices": [],
+            "accessible_resources": [
+              "core0"
+            ],
+            "capacity_bytes": 96,
+            "domain": "tile0",
+            "id": "mem0",
+            "kind": "local-sram"
+          },
+          {
+            "accessible_devices": [],
+            "accessible_resources": [
+              "core1"
+            ],
+            "capacity_bytes": 96,
+            "domain": "tile1",
+            "id": "mem1",
+            "kind": "local-sram"
+          }
+        ],
+        "resources": [
+          {
+            "capacity": 1,
+            "device": "host",
+            "domain": "system",
+            "id": "host.worker",
+            "kind": "compute"
+          },
+          {
+            "capacity": 1,
+            "device": "host",
+            "domain": "system",
+            "id": "submit",
+            "kind": "submission"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "tile0",
+            "id": "core0",
+            "kind": "compute"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "system",
+            "id": "dma0",
+            "kind": "transfer"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "tile1",
+            "id": "core1",
+            "kind": "compute"
+          }
+        ]
+      },
+      "memory_lifetime_scope": "native physical pool phase intervals; copies have event validity",
+      "memory_peak_bytes": {},
+      "order_edge_count": 0,
+      "order_edges": [],
+      "resource_capacity_scope": "logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers",
+      "resources": [
+        {
+          "capacity": 1,
+          "device": "host",
+          "id": "host.worker",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "id": "submit",
+          "kind": "submission"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "core0",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "dma0",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "core1",
+          "kind": "compute"
+        }
+      ],
+      "schedule": "explicit group control, core order and copy producer/overwrite dependencies; ordinals are a topological witness, not completion barriers",
+      "schema": "orbit.program.communication.v2",
+      "semantic_digest": "cd06323bd95fc958d29673288d33bfee",
+      "system_capacity_scope": "allocation accounting limit, not measured available host RAM",
+      "task_placements": [],
+      "transfer_bytes": 96,
+      "version_count": 3,
+      "versions": [
+        {
+          "producer": -1,
+          "region": 0
+        },
+        {
+          "producer": 1,
+          "region": 1
+        },
+        {
+          "producer": 2,
+          "region": 2
+        }
+      ]
+    },
+    "logical_data": [
+      {
+        "dtype": "f32",
+        "id": "X",
+        "layout": "row_major",
+        "regions": [
+          0
+        ],
+        "role": "input",
+        "shape": [
+          1,
+          8
+        ],
+        "storage": 0,
+        "versions": [
+          0
+        ]
+      },
+      {
+        "dtype": "f32",
+        "id": "Y",
+        "layout": "row_major",
+        "regions": [
+          1
+        ],
+        "role": "output",
+        "shape": [
+          1,
+          8
+        ],
+        "storage": 1,
+        "versions": [
+          1
+        ]
+      },
+      {
+        "dtype": "f32",
+        "id": "Z",
+        "layout": "row_major",
+        "regions": [
+          2
+        ],
+        "role": "output",
+        "shape": [
+          1,
+          8
+        ],
+        "storage": 2,
+        "versions": [
+          2
+        ]
+      }
+    ],
+    "region_events": [
+      {
+        "copies": [
+          0
+        ],
+        "dependencies": [],
+        "id": 0,
+        "kind": "visible-to-device",
+        "region": 0,
+        "resource": "submit"
+      },
+      {
+        "copies": [],
+        "dependencies": [
+          0
+        ],
+        "id": 1,
+        "kind": "submit",
+        "region": 0,
+        "resource": "submit"
+      },
+      {
+        "copies": [],
+        "dependencies": [
+          1
+        ],
+        "id": 2,
+        "kind": "complete",
+        "region": 0,
+        "resource": "submit"
+      },
+      {
+        "copies": [
+          4,
+          5
+        ],
+        "dependencies": [
+          2
+        ],
+        "id": 3,
+        "kind": "visible-to-host",
+        "region": 0,
+        "resource": "submit"
+      }
+    ],
+    "schedule": {
+      "configurations": [
+        {
+          "end_ms": 1.8e-05,
+          "groups": [
+            0
+          ],
+          "setup_ms": 0,
+          "start_ms": 0
+        }
+      ],
+      "estimated_makespan_ms": 1.8e-05,
+      "event_durations_ms": [
+        7.9999999999999996e-06,
+        3.9999999999999998e-06,
+        3.9999999999999998e-06,
+        9.9999999999999995e-07,
+        9.9999999999999995e-07
+      ],
+      "events": [
+        {
+          "end_ms": 7.9999999999999996e-06,
+          "event": 0,
+          "predecessors": [],
+          "start_ms": 0
+        },
+        {
+          "end_ms": 1.2e-05,
+          "event": 1,
+          "predecessors": [
+            0
+          ],
+          "start_ms": 7.9999999999999996e-06
+        },
+        {
+          "end_ms": 1.5999999999999999e-05,
+          "event": 2,
+          "predecessors": [
+            0,
+            1
+          ],
+          "start_ms": 1.2e-05
+        },
+        {
+          "end_ms": 1.7e-05,
+          "event": 3,
+          "predecessors": [
+            1,
+            2
+          ],
+          "start_ms": 1.5999999999999999e-05
+        },
+        {
+          "end_ms": 1.8e-05,
+          "event": 4,
+          "predecessors": [
+            2
+          ],
+          "start_ms": 1.7e-05
+        }
+      ],
+      "model_identity": "8afc4e3cbee3caf18deec77ad6cd8842fcc42ea4530d256b01657f867547ea41",
+      "policy": "constraint-resource-schedule",
+      "timing_boundary": "unit-test-device",
+      "uncalibrated": []
+    },
+    "schema": "orbit.program-graph.v1",
+    "source": {
+      "analysis_status": "analyzed",
+      "body_fingerprint": "f6b64770d83b2cd68a0db8876c05f95b66d25ad01a09fd771a73ac38ef25906b",
+      "codegen_status": "requires_target_validation",
+      "cost_status": "uncalibrated",
+      "region_semantics": "conservative_static_bounding_boxes",
+      "schema": "orbit.generic.analysis.v1",
+      "storages": [
+        {
+          "dtype": "f32",
+          "id": "X",
+          "role": "input",
+          "shape": [
+            1,
+            8
+          ]
+        },
+        {
+          "dtype": "f32",
+          "id": "Y",
+          "role": "output",
+          "shape": [
+            1,
+            8
+          ]
+        },
+        {
+          "dtype": "f32",
+          "id": "Z",
+          "role": "output",
+          "shape": [
+            1,
+            8
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "X:initial"
+              ],
+              "region": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "storage": "X",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "storage": "Y",
+              "write": true,
+              "write_version": "a:write:1"
+            }
+          ],
+          "dependencies": [],
+          "id": "a",
+          "loops": [
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 1
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 8
+            }
+          ]
+        },
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "X:initial"
+              ],
+              "region": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "storage": "X",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  0,
+                  1
+                ],
+                [
+                  0,
+                  8
+                ]
+              ],
+              "storage": "Z",
+              "write": true,
+              "write_version": "b:write:1"
+            }
+          ],
+          "dependencies": [],
+          "id": "b",
+          "loops": [
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 1
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 8
+            }
+          ]
+        }
+      ]
+    },
+    "source_access_versions": "conservative may-overlap source facts; exact finite execution versions are in the shared ledger",
+    "source_binding": "borrowed actual MLIR operations and values; serialized source is a view, not an executable graph import",
+    "source_dependencies": [],
+    "supported_communication": [
+      "copy",
+      "shared-read-of-existing-copy"
+    ],
+    "target_identity": "842545e553ff87bc1b2ea8bde8cdc31c05495b421574eb33a9e2443932b21226",
+    "unsupported_communication": [
+      "stream",
+      "multicast",
+      "arbitrary-cross-stage-retention"
+    ]
+  },
+  "relative_gap": 0,
+  "schema": "orbit.program-joint.solution.v23",
+  "selection": "joint",
+  "solve_ms": 7.2151800000000001,
+  "source_fingerprint": "f6b64770d83b2cd68a0db8876c05f95b66d25ad01a09fd771a73ac38ef25906b",
+  "status": "OPTIMAL",
+  "total_ms": 9.9594799999999992,
+  "variables": 146,
+  "variant": 0
+}

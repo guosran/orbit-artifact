@@ -1,0 +1,1520 @@
+{
+  "best_bound_ns": 0,
+  "branches": 0,
+  "budget_exhausted": false,
+  "configuration_end_ns": [
+    4568,
+    9036
+  ],
+  "configuration_start_ns": [
+    100,
+    4568
+  ],
+  "conflicts": 0,
+  "constraints": 0,
+  "domain_complete": true,
+  "domain_id": "06742304c743c4f36363fba592a850081c7da0381cf19f8cdaaea7a96e65e0e5",
+  "generation_ms": 1.5055769999999999,
+  "groups": [
+    {
+      "compute_start_ns": [
+        1744
+      ],
+      "configuration": 0,
+      "group": 0,
+      "inputs": [
+        {
+          "end_ns": 1744,
+          "link": 0,
+          "start_ns": 1100,
+          "version": 0
+        }
+      ],
+      "outputs": [
+        {
+          "end_ns": 4568,
+          "link": 1,
+          "start_ns": 3924,
+          "version": 1
+        }
+      ],
+      "place": 0
+    },
+    {
+      "compute_start_ns": [
+        6212
+      ],
+      "configuration": 1,
+      "group": 1,
+      "inputs": [
+        {
+          "end_ns": 6212,
+          "link": 0,
+          "start_ns": 5568,
+          "version": 1
+        }
+      ],
+      "outputs": [
+        {
+          "end_ns": 9036,
+          "link": 1,
+          "start_ns": 8392,
+          "version": 2
+        }
+      ],
+      "place": 0
+    }
+  ],
+  "has_objective": false,
+  "has_plan": true,
+  "makespan_ns": 9136,
+  "message": "",
+  "model_build_ms": 0,
+  "model_id": "1da4882675916205d38c7834aaf132a670338f666227fd1386f4f2ee7bff2427",
+  "objective_exact_for_backend": false,
+  "objective_ns": 0,
+  "peak_rss_kib": -1,
+  "program_graph": {
+    "allocation_bindings": [
+      {
+        "addressing": "region-addressed",
+        "allocation": 0,
+        "spatial_owner": "system"
+      },
+      {
+        "allocation": 1,
+        "spatial_owner": "npu.tile(0,2)"
+      },
+      {
+        "allocation": 2,
+        "spatial_owner": "npu.tile(0,2)"
+      },
+      {
+        "addressing": "region-addressed",
+        "allocation": 3,
+        "spatial_owner": "system"
+      },
+      {
+        "allocation": 4,
+        "spatial_owner": "npu.tile(0,2)"
+      },
+      {
+        "allocation": 5,
+        "spatial_owner": "npu.tile(0,2)"
+      },
+      {
+        "addressing": "region-addressed",
+        "allocation": 6,
+        "spatial_owner": "system"
+      }
+    ],
+    "allocation_lifetime": "phase-pool",
+    "boundaries": {
+      "inputs": {
+        "0": "system_memory_bo"
+      },
+      "output_ownership": "external-after-completion; lifetime endpoints are clipped to the graph event domain",
+      "outputs": {
+        "1": "system_memory_bo"
+      }
+    },
+    "communications": [
+      {
+        "bytes": 4352,
+        "dependencies": [],
+        "event": 0,
+        "kind": "copy",
+        "link": "npu.link.0.input",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "npu.dma.0.input",
+        "sizes": [
+          17,
+          64
+        ],
+        "source_copies": [
+          0
+        ],
+        "storage": 0,
+        "target_copies": [
+          1
+        ]
+      },
+      {
+        "bytes": 4352,
+        "dependencies": [
+          1
+        ],
+        "event": 2,
+        "kind": "copy",
+        "link": "npu.link.0.output",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "npu.dma.0.output",
+        "sizes": [
+          17,
+          64
+        ],
+        "source_copies": [
+          2
+        ],
+        "storage": 2,
+        "target_copies": [
+          3
+        ]
+      },
+      {
+        "bytes": 4352,
+        "dependencies": [
+          0,
+          1,
+          2
+        ],
+        "event": 3,
+        "kind": "copy",
+        "link": "npu.link.0.input",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "npu.dma.0.input",
+        "sizes": [
+          17,
+          64
+        ],
+        "source_copies": [
+          3
+        ],
+        "storage": 2,
+        "target_copies": [
+          4
+        ]
+      },
+      {
+        "bytes": 4352,
+        "dependencies": [
+          0,
+          1,
+          2,
+          4
+        ],
+        "event": 5,
+        "kind": "copy",
+        "link": "npu.link.0.output",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "npu.dma.0.output",
+        "sizes": [
+          17,
+          64
+        ],
+        "source_copies": [
+          5
+        ],
+        "storage": 1,
+        "target_copies": [
+          6
+        ]
+      }
+    ],
+    "computation_mlir": "func.func @chain_17x64(%arg0: memref<17x64xf32> {orbit.name = \"I\", orbit.role = \"input\"}, %arg1: memref<17x64xf32> {orbit.name = \"R\", orbit.role = \"output\"}) attributes {llvm.emit_c_interface, orbit.noalias} {\n  %alloc = memref.alloc() {orbit.name = \"T\"} : memref<17x64xf32>\n  %done_writes = taskflow.task @write_T will_reads(%arg0 : memref<17x64xf32>) will_writes(%alloc : memref<17x64xf32>) [original_read_memrefs(%arg0 : memref<17x64xf32>), original_write_memrefs(%alloc : memref<17x64xf32>)] : (memref<17x64xf32>, memref<17x64xf32>) -> (memref<17x64xf32>) {\n  ^bb0(%arg2: memref<17x64xf32>, %arg3: memref<17x64xf32>):\n    affine.for %arg4 = 0 to 17 {\n      affine.for %arg5 = 0 to 64 {\n        %0 = affine.load %arg2[%arg4, %arg5] : memref<17x64xf32>\n        %cst = arith.constant 1.000000e+00 : f32\n        %1 = arith.addf %0, %cst : f32\n        affine.store %1, %arg3[%arg4, %arg5] : memref<17x64xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg3 : memref<17x64xf32>)\n  }\n  %done_writes_0 = taskflow.task @write_R will_reads(%done_writes : memref<17x64xf32>) will_writes(%arg1 : memref<17x64xf32>) [original_read_memrefs(%done_writes : memref<17x64xf32>), original_write_memrefs(%arg1 : memref<17x64xf32>)] : (memref<17x64xf32>, memref<17x64xf32>) -> (memref<17x64xf32>) {\n  ^bb0(%arg2: memref<17x64xf32>, %arg3: memref<17x64xf32>):\n    affine.for %arg4 = 0 to 17 {\n      affine.for %arg5 = 0 to 64 {\n        %0 = affine.load %arg2[%arg4, %arg5] : memref<17x64xf32>\n        %cst = arith.constant 2.000000e+00 : f32\n        %1 = arith.mulf %0, %cst : f32\n        affine.store %1, %arg3[%arg4, %arg5] : memref<17x64xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg3 : memref<17x64xf32>)\n  }\n  memref.dealloc %alloc : memref<17x64xf32>\n  return\n}",
+    "cost": {
+      "allocation_accounting": [
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 13056,
+          "capacity_bytes": 9223372036854775807,
+          "memory": "system_memory_bo",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 13056,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        },
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 8704,
+          "capacity_bytes": 10000,
+          "memory": "npu.sram.0",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 8704,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        },
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 0,
+          "capacity_bytes": 10000,
+          "memory": "npu.sram.1",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 0,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        }
+      ],
+      "allocation_peak_scope": "all reserved pool allocations over phase intervals, including dormant templates",
+      "backend_internal_padding_status": "not inferred from this graph",
+      "boundary": "serial dependency/resource schedule; no communication added to a separately selected whole-command composite",
+      "complete_graph_ms": 0.0090360000000000006,
+      "compute_instances": 2,
+      "creation_transfer_events": 4,
+      "logical_source_read_bytes": 8704,
+      "logical_source_write_bytes": 8704,
+      "payload_scope": "allocation capacity minus known alignment padding; not live logical data or measured physical SRAM usage",
+      "peak_memory_bytes": {
+        "npu.sram.0": 8704,
+        "npu.sram.1": 0,
+        "system_memory_bo": 13056
+      },
+      "planned_transfer_bytes": 17408,
+      "status": "target-estimate",
+      "submission_count": 1,
+      "traffic_scope": "logical planned rectangular payload, not measured physical DDR traffic"
+    },
+    "execution_groups": [
+      {
+        "begin_phase": 0,
+        "dependencies": [],
+        "end_phase": 1,
+        "id": 0,
+        "member_events": [
+          0,
+          1,
+          2
+        ],
+        "memory": "npu.sram.0",
+        "resource": "npu.core.0",
+        "spatial_owner": "npu.tile(0,2)"
+      },
+      {
+        "begin_phase": 1,
+        "dependencies": [
+          0
+        ],
+        "end_phase": 2,
+        "id": 1,
+        "implementation_dependencies": [
+          0
+        ],
+        "member_events": [
+          3,
+          4,
+          5
+        ],
+        "memory": "npu.sram.0",
+        "resource": "npu.core.0",
+        "spatial_owner": "npu.tile(0,2)"
+      }
+    ],
+    "execution_regions": [
+      {
+        "begin_event": 0,
+        "completion_event": {
+          "after": [
+            5
+          ],
+          "id": "joint-program.complete"
+        },
+        "end_event": 6,
+        "endpoint_memory": "system_memory_bo",
+        "id": "joint-program",
+        "implementation": "direct-air",
+        "input_copies": [
+          0
+        ],
+        "input_data_edges": [
+          0
+        ],
+        "invocation_lifecycle": "host-device",
+        "member_events": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "output_copies": [
+          6
+        ],
+        "placement": "npu",
+        "predecessor_regions": [],
+        "source_tasks": [
+          0,
+          1
+        ],
+        "submission_event": {
+          "count": 1,
+          "id": "joint-program.submit",
+          "resource": "host-submission",
+          "shared_by_region_inputs": true
+        }
+      }
+    ],
+    "id": "455662cc3818a8d71cd7ec56cdc82adee161e4a8e9a545c18ffb084ad1705106",
+    "instances": [
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 0,
+            "step": 1,
+            "upper": 17
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 64
+          }
+        ],
+        "domain_task": 0,
+        "event": 1,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 0,
+        "task": 0
+      },
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 0,
+            "step": 1,
+            "upper": 17
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 64
+          }
+        ],
+        "domain_task": 1,
+        "event": 4,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 1,
+        "task": 1
+      }
+    ],
+    "ledger": {
+      "adapter": "native arbitrary-rank adapter of Static allocation/version/location-copy semantics",
+      "allocations": [
+        {
+          "begin_phase": 0,
+          "bytes": 4352,
+          "end_phase_exclusive": 2,
+          "key": "host-bo-0",
+          "memory": "system_memory_bo",
+          "storage": 0
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 4352,
+          "end_phase_exclusive": 1,
+          "key": "group-0-version-0",
+          "memory": "npu.sram.0",
+          "storage": 0
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 4352,
+          "end_phase_exclusive": 1,
+          "key": "group-0-version-1",
+          "memory": "npu.sram.0",
+          "storage": 2
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 4352,
+          "end_phase_exclusive": 2,
+          "key": "host-bo-2",
+          "memory": "system_memory_bo",
+          "storage": 2
+        },
+        {
+          "begin_phase": 1,
+          "bytes": 4352,
+          "end_phase_exclusive": 2,
+          "key": "group-1-version-1",
+          "memory": "npu.sram.0",
+          "storage": 2
+        },
+        {
+          "begin_phase": 1,
+          "bytes": 4352,
+          "end_phase_exclusive": 2,
+          "key": "group-1-version-2",
+          "memory": "npu.sram.0",
+          "storage": 1
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 4352,
+          "end_phase_exclusive": 2,
+          "key": "host-bo-1",
+          "memory": "system_memory_bo",
+          "storage": 1
+        }
+      ],
+      "body_fingerprint": "69331a8bbb4c915649c5ac3ce9e4d2552bf9dd2561690f0d377528be38853259",
+      "compute_estimates": [],
+      "copies": [
+        {
+          "allocation": 0,
+          "available_from": 0,
+          "consumer_edges": [],
+          "created_by": -1,
+          "last_users": [
+            0
+          ],
+          "layout": "row_major",
+          "released_after": 6,
+          "users": [
+            0
+          ],
+          "version": 0
+        },
+        {
+          "allocation": 1,
+          "available_from": 0,
+          "consumer_edges": [
+            0
+          ],
+          "created_by": 0,
+          "last_users": [
+            1
+          ],
+          "layout": "row_major",
+          "released_after": 3,
+          "users": [
+            1
+          ],
+          "version": 0
+        },
+        {
+          "allocation": 2,
+          "available_from": 1,
+          "consumer_edges": [],
+          "created_by": 1,
+          "last_users": [
+            2
+          ],
+          "layout": "row_major",
+          "released_after": 3,
+          "users": [
+            2
+          ],
+          "version": 1
+        },
+        {
+          "allocation": 3,
+          "available_from": 2,
+          "consumer_edges": [],
+          "created_by": 2,
+          "last_users": [
+            3
+          ],
+          "layout": "row_major",
+          "released_after": 6,
+          "users": [
+            3
+          ],
+          "version": 1
+        },
+        {
+          "allocation": 4,
+          "available_from": 3,
+          "consumer_edges": [
+            1
+          ],
+          "created_by": 3,
+          "last_users": [
+            4
+          ],
+          "layout": "row_major",
+          "released_after": 6,
+          "users": [
+            4
+          ],
+          "version": 1
+        },
+        {
+          "allocation": 5,
+          "available_from": 4,
+          "consumer_edges": [],
+          "created_by": 4,
+          "last_users": [
+            5
+          ],
+          "layout": "row_major",
+          "released_after": 6,
+          "users": [
+            5
+          ],
+          "version": 2
+        },
+        {
+          "allocation": 6,
+          "available_from": 5,
+          "consumer_edges": [],
+          "created_by": 5,
+          "last_users": [],
+          "layout": "row_major",
+          "released_after": 6,
+          "users": [],
+          "version": 2
+        }
+      ],
+      "copy_count": 7,
+      "data_edge_count": 2,
+      "data_edges": [
+        {
+          "consumer": 1,
+          "copy": 1,
+          "producer": -1,
+          "region": 0,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "npu.sram.0",
+          "version": 0
+        },
+        {
+          "consumer": 4,
+          "copy": 4,
+          "producer": 1,
+          "region": 2,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "npu.sram.0",
+          "version": 1
+        }
+      ],
+      "data_organization": "retain-across-users",
+      "estimated_makespan_ms": null,
+      "event_count": 6,
+      "events": [
+        {
+          "data_edges": [],
+          "depends_on": [],
+          "kind": "transfer",
+          "link": "npu.link.0.input",
+          "memory": "",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            0
+          ],
+          "resource": "npu.dma.0.input",
+          "task": 0,
+          "writes": [
+            1
+          ]
+        },
+        {
+          "data_edges": [
+            0
+          ],
+          "depends_on": [
+            0
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "npu.sram.0",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            1
+          ],
+          "resource": "npu.core.0",
+          "task": 0,
+          "writes": [
+            2
+          ]
+        },
+        {
+          "data_edges": [],
+          "depends_on": [
+            1
+          ],
+          "kind": "transfer",
+          "link": "npu.link.0.output",
+          "memory": "",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            2
+          ],
+          "resource": "npu.dma.0.output",
+          "task": 0,
+          "writes": [
+            3
+          ]
+        },
+        {
+          "data_edges": [],
+          "depends_on": [
+            0,
+            1,
+            2
+          ],
+          "kind": "transfer",
+          "link": "npu.link.0.input",
+          "memory": "",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            3
+          ],
+          "resource": "npu.dma.0.input",
+          "task": 1,
+          "writes": [
+            4
+          ]
+        },
+        {
+          "data_edges": [
+            1
+          ],
+          "depends_on": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "npu.sram.0",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            4
+          ],
+          "resource": "npu.core.0",
+          "task": 1,
+          "writes": [
+            5
+          ]
+        },
+        {
+          "data_edges": [],
+          "depends_on": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "kind": "transfer",
+          "link": "npu.link.0.output",
+          "memory": "",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            5
+          ],
+          "resource": "npu.dma.0.output",
+          "task": 1,
+          "writes": [
+            6
+          ]
+        }
+      ],
+      "execution_regions": [
+        {
+          "begin_event": 0,
+          "cost_ownership": "prepared-region composite includes submission, device compute/transfers/wait and readback once",
+          "device_stages": [],
+          "end_event_exclusive": 6,
+          "host_submission_count": 1,
+          "id": "joint-program",
+          "invocation_lifecycle": "host-device",
+          "placement": "npu",
+          "submission_kind": "host_submission",
+          "submission_resource": "host-submission"
+        }
+      ],
+      "expanded_details_omitted": false,
+      "links": [
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "id": "npu.link.0.input",
+          "latency_ms": 0,
+          "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+          "resource": "npu.dma.0.input",
+          "source": "system_memory_bo",
+          "target": "npu.sram.0"
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "id": "npu.link.0.output",
+          "latency_ms": 0,
+          "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+          "resource": "npu.dma.0.output",
+          "source": "npu.sram.0",
+          "target": "system_memory_bo"
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "id": "npu.link.1.input",
+          "latency_ms": 0,
+          "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+          "resource": "npu.dma.1.input",
+          "source": "system_memory_bo",
+          "target": "npu.sram.1"
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "id": "npu.link.1.output",
+          "latency_ms": 0,
+          "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+          "resource": "npu.dma.1.output",
+          "source": "npu.sram.1",
+          "target": "system_memory_bo"
+        }
+      ],
+      "logical_region_count": 3,
+      "logical_regions": [
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            17,
+            64
+          ],
+          "storage": 0
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            17,
+            64
+          ],
+          "storage": 1
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            17,
+            64
+          ],
+          "storage": 2
+        }
+      ],
+      "memories": [
+        {
+          "capacity_bytes": 9223372036854775807,
+          "id": "system_memory_bo"
+        },
+        {
+          "capacity_bytes": 10000,
+          "id": "npu.sram.0"
+        },
+        {
+          "capacity_bytes": 10000,
+          "id": "npu.sram.1"
+        }
+      ],
+      "memory_architecture": {
+        "domains": [
+          {
+            "id": "system",
+            "kind": "system",
+            "parent": ""
+          },
+          {
+            "id": "npu",
+            "kind": "device",
+            "parent": "system"
+          },
+          {
+            "coordinates": {
+              "column": 0,
+              "row": 2
+            },
+            "id": "npu.tile(0,2)",
+            "kind": "tile",
+            "parent": "npu"
+          },
+          {
+            "coordinates": {
+              "column": 1,
+              "row": 2
+            },
+            "id": "npu.tile(1,2)",
+            "kind": "tile",
+            "parent": "npu"
+          }
+        ],
+        "links": [
+          {
+            "bandwidth_bytes_per_ms": 0,
+            "cost_status": "uncalibrated",
+            "domain": "npu.tile(0,2)",
+            "id": "npu.link.0.input",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "target_contract",
+              "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+            },
+            "resource": "npu.dma.0.input",
+            "source": "system_memory_bo",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "npu.sram.0",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 0,
+            "cost_status": "uncalibrated",
+            "domain": "npu.tile(0,2)",
+            "id": "npu.link.0.output",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "target_contract",
+              "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+            },
+            "resource": "npu.dma.0.output",
+            "source": "npu.sram.0",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "system_memory_bo",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 0,
+            "cost_status": "uncalibrated",
+            "domain": "npu.tile(1,2)",
+            "id": "npu.link.1.input",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "target_contract",
+              "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+            },
+            "resource": "npu.dma.1.input",
+            "source": "system_memory_bo",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "npu.sram.1",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 0,
+            "cost_status": "uncalibrated",
+            "domain": "npu.tile(1,2)",
+            "id": "npu.link.1.output",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "target_contract",
+              "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+            },
+            "resource": "npu.dma.1.output",
+            "source": "npu.sram.1",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "system_memory_bo",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          }
+        ],
+        "memories": [
+          {
+            "accessible_devices": [
+              "host"
+            ],
+            "accessible_resources": [
+              "host.worker"
+            ],
+            "capacity_bytes": 9223372036854775807,
+            "domain": "system",
+            "id": "system_memory_bo",
+            "kind": "system-bo"
+          },
+          {
+            "accessible_devices": [
+              "npu"
+            ],
+            "accessible_resources": [
+              "npu.core.0"
+            ],
+            "capacity_bytes": 10000,
+            "domain": "npu.tile(0,2)",
+            "id": "npu.sram.0",
+            "kind": "local-sram"
+          },
+          {
+            "accessible_devices": [
+              "npu"
+            ],
+            "accessible_resources": [
+              "npu.core.1"
+            ],
+            "capacity_bytes": 10000,
+            "domain": "npu.tile(1,2)",
+            "id": "npu.sram.1",
+            "kind": "local-sram"
+          }
+        ],
+        "resources": [
+          {
+            "capacity": 1,
+            "device": "host",
+            "domain": "system",
+            "id": "host-submission",
+            "kind": "submission"
+          },
+          {
+            "capacity": 1,
+            "device": "host",
+            "domain": "system",
+            "id": "host.worker",
+            "kind": "compute"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(0,2)",
+            "id": "npu.core.0",
+            "kind": "compute"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(0,2)",
+            "id": "npu.dma.0.input",
+            "kind": "transfer"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(0,2)",
+            "id": "npu.dma.0.output",
+            "kind": "transfer"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(1,2)",
+            "id": "npu.core.1",
+            "kind": "compute"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(1,2)",
+            "id": "npu.dma.1.input",
+            "kind": "transfer"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(1,2)",
+            "id": "npu.dma.1.output",
+            "kind": "transfer"
+          }
+        ]
+      },
+      "memory_lifetime_scope": "native physical pool phase intervals; copies have event validity",
+      "memory_peak_bytes": {},
+      "order_edge_count": 0,
+      "order_edges": [],
+      "resource_capacity_scope": "logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers",
+      "resources": [
+        {
+          "capacity": 1,
+          "device": "host",
+          "id": "host-submission",
+          "kind": "submission"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "id": "host.worker",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.core.0",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.dma.0.input",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.dma.0.output",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.core.1",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.dma.1.input",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.dma.1.output",
+          "kind": "transfer"
+        }
+      ],
+      "schedule": "explicit group control, core order and copy producer/overwrite dependencies; ordinals are a topological witness, not completion barriers",
+      "schema": "orbit.program.communication.v2",
+      "semantic_digest": "5b9955627f4ede6991c8464d128fb9f0",
+      "system_capacity_scope": "allocation accounting limit, not measured available host RAM",
+      "task_placements": [],
+      "transfer_bytes": 17408,
+      "version_count": 3,
+      "versions": [
+        {
+          "producer": -1,
+          "region": 0
+        },
+        {
+          "producer": 1,
+          "region": 2
+        },
+        {
+          "producer": 4,
+          "region": 1
+        }
+      ]
+    },
+    "logical_data": [
+      {
+        "dtype": "f32",
+        "id": "I",
+        "layout": "row_major",
+        "regions": [
+          0
+        ],
+        "role": "input",
+        "shape": [
+          17,
+          64
+        ],
+        "storage": 0,
+        "versions": [
+          0
+        ]
+      },
+      {
+        "dtype": "f32",
+        "id": "R",
+        "layout": "row_major",
+        "regions": [
+          1
+        ],
+        "role": "output",
+        "shape": [
+          17,
+          64
+        ],
+        "storage": 1,
+        "versions": [
+          2
+        ]
+      },
+      {
+        "dtype": "f32",
+        "id": "T",
+        "layout": "row_major",
+        "regions": [
+          2
+        ],
+        "role": "temporary",
+        "shape": [
+          17,
+          64
+        ],
+        "storage": 2,
+        "versions": [
+          1
+        ]
+      }
+    ],
+    "region_events": [
+      {
+        "copies": [
+          0
+        ],
+        "dependencies": [],
+        "id": 0,
+        "kind": "visible-to-device",
+        "region": 0,
+        "resource": "host-submission"
+      },
+      {
+        "copies": [],
+        "dependencies": [
+          0
+        ],
+        "id": 1,
+        "kind": "submit",
+        "region": 0,
+        "resource": "host-submission"
+      },
+      {
+        "copies": [],
+        "dependencies": [
+          1
+        ],
+        "id": 2,
+        "kind": "complete",
+        "region": 0,
+        "resource": "host-submission"
+      },
+      {
+        "copies": [
+          6
+        ],
+        "dependencies": [
+          2
+        ],
+        "id": 3,
+        "kind": "visible-to-host",
+        "region": 0,
+        "resource": "host-submission"
+      }
+    ],
+    "schedule": {
+      "configurations": [
+        {
+          "end_ms": 0.004568,
+          "groups": [
+            0
+          ],
+          "setup_ms": 0.001,
+          "start_ms": 0.0001
+        },
+        {
+          "end_ms": 0.0090360000000000006,
+          "groups": [
+            1
+          ],
+          "setup_ms": 0.001,
+          "start_ms": 0.004568
+        }
+      ],
+      "estimated_makespan_ms": 0.0090360000000000006,
+      "event_durations_ms": [
+        0.00064400000000000004,
+        0.0021800000000000001,
+        0.00064400000000000004,
+        0.00064400000000000004,
+        0.0021800000000000001,
+        0.00064400000000000004
+      ],
+      "events": [
+        {
+          "end_ms": 0.0017440000000000001,
+          "event": 0,
+          "predecessors": [],
+          "start_ms": 0.0011000000000000001
+        },
+        {
+          "end_ms": 0.0039240000000000004,
+          "event": 1,
+          "predecessors": [
+            0
+          ],
+          "start_ms": 0.0017440000000000001
+        },
+        {
+          "end_ms": 0.004568,
+          "event": 2,
+          "predecessors": [
+            1
+          ],
+          "start_ms": 0.0039240000000000004
+        },
+        {
+          "end_ms": 0.0062119999999999996,
+          "event": 3,
+          "predecessors": [
+            0,
+            1,
+            2
+          ],
+          "start_ms": 0.005568
+        },
+        {
+          "end_ms": 0.0083920000000000002,
+          "event": 4,
+          "predecessors": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "start_ms": 0.0062119999999999996
+        },
+        {
+          "end_ms": 0.0090360000000000006,
+          "event": 5,
+          "predecessors": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "start_ms": 0.0083920000000000002
+        }
+      ],
+      "model_identity": "1da4882675916205d38c7834aaf132a670338f666227fd1386f4f2ee7bff2427",
+      "policy": "constraint-resource-schedule",
+      "timing_boundary": "one-invocation",
+      "uncalibrated": []
+    },
+    "schema": "orbit.program-graph.v1",
+    "source": {
+      "analysis_status": "analyzed",
+      "body_fingerprint": "69331a8bbb4c915649c5ac3ce9e4d2552bf9dd2561690f0d377528be38853259",
+      "codegen_status": "requires_target_validation",
+      "cost_status": "uncalibrated",
+      "region_semantics": "conservative_static_bounding_boxes",
+      "schema": "orbit.generic.analysis.v1",
+      "storages": [
+        {
+          "dtype": "f32",
+          "id": "I",
+          "role": "input",
+          "shape": [
+            17,
+            64
+          ]
+        },
+        {
+          "dtype": "f32",
+          "id": "R",
+          "role": "output",
+          "shape": [
+            17,
+            64
+          ]
+        },
+        {
+          "dtype": "f32",
+          "id": "T",
+          "role": "temporary",
+          "shape": [
+            17,
+            64
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "I:initial"
+              ],
+              "region": [
+                [
+                  0,
+                  17
+                ],
+                [
+                  0,
+                  64
+                ]
+              ],
+              "storage": "I",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  0,
+                  17
+                ],
+                [
+                  0,
+                  64
+                ]
+              ],
+              "storage": "T",
+              "write": true,
+              "write_version": "write_T:write:1"
+            }
+          ],
+          "dependencies": [],
+          "id": "write_T",
+          "loops": [
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 17
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 64
+            }
+          ]
+        },
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "write_T:write:1"
+              ],
+              "region": [
+                [
+                  0,
+                  17
+                ],
+                [
+                  0,
+                  64
+                ]
+              ],
+              "storage": "T",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  0,
+                  17
+                ],
+                [
+                  0,
+                  64
+                ]
+              ],
+              "storage": "R",
+              "write": true,
+              "write_version": "write_R:write:1"
+            }
+          ],
+          "dependencies": [
+            "write_T"
+          ],
+          "id": "write_R",
+          "loops": [
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 17
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 64
+            }
+          ]
+        }
+      ]
+    },
+    "source_access_versions": "conservative may-overlap source facts; exact finite execution versions are in the shared ledger",
+    "source_binding": "borrowed actual MLIR operations and values; serialized source is a view, not an executable graph import",
+    "source_dependencies": [
+      {
+        "consumer_task": 1,
+        "kinds": [
+          "RAW"
+        ],
+        "producer_task": 0,
+        "scope": "source bounding-overlap facts; exact consumed versions and copies are in ledger data edges"
+      }
+    ],
+    "supported_communication": [
+      "copy",
+      "shared-read-of-existing-copy"
+    ],
+    "target_identity": "2eaa2520a8934135ed1f407031a686679142dfb149aa056c88ca957478b37df8",
+    "unsupported_communication": [
+      "stream",
+      "multicast",
+      "arbitrary-cross-stage-retention"
+    ]
+  },
+  "relative_gap": 0,
+  "schema": "orbit.program-joint.solution.v23",
+  "selection": "baseline",
+  "solve_ms": 0,
+  "source_fingerprint": "69331a8bbb4c915649c5ac3ce9e4d2552bf9dd2561690f0d377528be38853259",
+  "status": "FEASIBLE",
+  "total_ms": 0,
+  "variables": 0,
+  "variant": 0
+}
