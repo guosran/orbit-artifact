@@ -1,0 +1,158 @@
+{
+  "schema": "orbit.data-reuse.delivery.v20",
+  "created_utc": "2026-11-06T12:07:32.576656+00:00",
+  "status": "complete-with-explicit-identity-grid-backend-and-ranking-boundaries",
+  "no_commit": true,
+  "no_push": true,
+  "production": "C++/MLIR GenericAnalysis/ProgramGraph/original structured search/ProgramTiming; Taskflow→AIR→AIE; no new planner/scheduler/runtime",
+  "paths": {
+    "report": "RESULTS.md",
+    "concrete": "CONCRETE-PLAN.md",
+    "reproduce": "REPRODUCE.md",
+    "architecture": "/home/shiran/project/orbit/docs/taskflow-data-reuse-v20.md",
+    "instructions": "/home/shiran/project/orbit/agents.md",
+    "source_review": "source-review-r1",
+    "search": "comparison-r2",
+    "search_counts": "comparison-r2/counts-audit.json",
+    "pareto": "pareto-audit-r1.json",
+    "generation": "fresh-generate-r1/result.json",
+    "generation_equality": "fresh-generation-equality-r1.json",
+    "compiled": [
+      "compiled-interleaved-r1/compiled/index.json",
+      "compiled-shared-input-r1/compiled/index.json"
+    ],
+    "actual_physical_signatures": "actual-physical-signatures-r1.json",
+    "pure_order": "pure-order-r1/result.json",
+    "clean_cpu": "final-clean-regressions-r2/delivery-result.json",
+    "input_air_controls": "shared-input-contract-r1",
+    "actual_aie_controls": "actual-aie-negatives-r1/summary.json",
+    "protocols": [
+      "freeze-interleaved-r1/protocol.json",
+      "freeze-shared-input-r1/protocol.json",
+      "freeze-pure-order-r1/protocol.json"
+    ],
+    "observation_reports": [
+      "observation-interleaved-audit-r1/report.json",
+      "observation-shared-input-audit-r1/report.json",
+      "observation-pure-order-audit-r1/report.json"
+    ],
+    "figures": "visualizations-r1/npu-distributions.svg"
+  },
+  "tools": {
+    "taskflow-opt-air": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v20/tools-r1/taskflow-opt-air",
+      "sha256": "ba16eeb179fdb0c1c29de01d8cbe7490ad49f44cfe2b875634da44e47fbb14ca"
+    },
+    "taskflow-opt-core": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v20/tools-r1/taskflow-opt-core",
+      "sha256": "53234dc229ffc90ba5f90a7ae78b5aabe5d86120f0dc580e39b8f954d649002b"
+    }
+  },
+  "preserved_original_backend": {
+    "path": "/home/shiran/project/orbit-artifact/builds/taskflow-v13/amoeba/tools/mlir-amoeba-opt/mlir-amoeba-opt",
+    "sha256": "f3efd22d75355d42cf45d3899e59b9a5746113e89f6541c569a6d3f6e7b1b4e3",
+    "bytes": 507843608,
+    "kind": "Preserved historical Neura/CGRA binary, not freshly rebuilt"
+  },
+  "checks": {
+    "core_groups": 42,
+    "combined_groups": 59,
+    "original_neura_groups": 17,
+    "original_cgra_groups": 8,
+    "lit_tests": 35,
+    "reuse_assertions": 16,
+    "shared_input_assertions": 25,
+    "actual_aie_generic_negatives_per_case": 23,
+    "actual_shared_input_negatives_per_case": 2,
+    "actual_aie_negative_cases": 2,
+    "shared_input_actual_air_negatives": 8,
+    "compiled_primary_packages": 10,
+    "compiled_pure_order_packages": 1,
+    "distinct_primary_actual_operation_structures": [
+      6,
+      3
+    ],
+    "clean_generation_exact_comparisons": 723
+  },
+  "search": {
+    "rounds": 2,
+    "beam_width": 2,
+    "max_evaluations": 96,
+    "joint_proposal_budget": 32,
+    "joint_tile_budget": 4,
+    "source_driven": true,
+    "score_selected_second_round_parents": true,
+    "checkpoint_exact_resume": true,
+    "forged_chain_and_target_rejected": true,
+    "strict_unknown_preserved": true,
+    "case0_priced": [
+      12,
+      6,
+      13,
+      54
+    ],
+    "case1_priced": [
+      12,
+      2,
+      11,
+      24
+    ],
+    "unknown_v19_each": 3,
+    "case0_best_estimates_ms": [
+      0.95072,
+      0.749728,
+      0.752164,
+      0.650668
+    ],
+    "case1_best_estimates_ms": [
+      0.694752,
+      0.604504,
+      0.594792,
+      0.594792
+    ],
+    "joint_signatures_absent_v19": [
+      50,
+      20
+    ],
+    "signature_scope": "Same-source normalized chosen plan facts, not all compiled binaries"
+  },
+  "device": {
+    "main_agent_only": true,
+    "lock": "/tmp/npu.lock",
+    "process_timeout_seconds": 120,
+    "calls": 396,
+    "full_output_arrays": 792,
+    "all_outputs_pass": true,
+    "seeds": [
+      11,
+      23,
+      47
+    ],
+    "warmups": 1,
+    "retained_repeats": 5,
+    "max_abs_error_f32": 2.384185791015625e-07,
+    "fp32_and_independent_fp64_atol": 1e-05,
+    "rtol": 1e-05,
+    "interleaved_joint_paired_median_delta_us": [
+      -256.194,
+      -274.073
+    ],
+    "refit": false,
+    "observations": "Host prepared-invocation distributions; no isolated physical DMA/core timing or DDR traffic"
+  },
+  "boundaries": [
+    "exact static rectangular identity-grid scalar pointwise propagation",
+    "unique source writers; no in-place/reduction/nonidentity general propagation",
+    "pure-order barriers within one tiled group reject; external order preserved",
+    "single-core target-supported memory/stream realization",
+    "one selected scope per logical storage",
+    "bounded scopes/tiles/frontier; no exhaustive global Pareto guarantee",
+    "estimate-driven algorithm selection works; general fine hardware ranking not certified"
+  ],
+  "preservation": {
+    "intake": "intake-r1/intake.json",
+    "historical_v19_unchanged": true,
+    "user_untracked_presentations_preserved": true,
+    "failed_attempts_retained": true
+  }
+}

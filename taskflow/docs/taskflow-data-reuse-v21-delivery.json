@@ -1,0 +1,559 @@
+{
+  "schema": "orbit.data-reuse.delivery.v21",
+  "status": "complete-with-explicitly-incomplete-supplemental-legacy-extension",
+  "created_utc": "2026-11-07T05:37:16.775968+00:00",
+  "no_commit_or_push": true,
+  "production": "C++/MLIR, original ProgramGraph/planner/scheduler/structured search and AIR/AIE checks",
+  "programs": [
+    {
+      "name": "interleaved",
+      "fixture": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fixture-interleaved-r1/fixture.json",
+      "source": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fixture-interleaved-r1/source.mlir",
+      "source_sha256": "c5c258f46643b78bd2aebd1921930a119b5de746a013e5c093dac4d1976a73f0",
+      "permuted_source_sha256": "de99bb7695d37145bd61259d5d11753b77a4dae9d4fc78241d8dc38d4409704b",
+      "dimensions": [
+        17,
+        136
+      ]
+    },
+    {
+      "name": "shared-input",
+      "fixture": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fixture-shared-input-r1/fixture.json",
+      "source": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fixture-shared-input-r1/source.mlir",
+      "source_sha256": "ed4b77e299b055dc0aaf5d87adb806105359f125480228783f9dc6db015881c6",
+      "permuted_source_sha256": "ba0ee74fa34ca08794941e1a4fb505adf3b90a69d8ae6e6031c5831c78d5b3c7",
+      "dimensions": [
+        17,
+        136
+      ]
+    },
+    {
+      "name": "coupling",
+      "fixture": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fixture-coupling-r1/fixture.json",
+      "source": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fixture-coupling-r1/source.mlir",
+      "source_sha256": "24a67a1a227544a8c6262a3fd9a2813b27d88fe1bb35f1e4bcde14a26d254e80",
+      "permuted_source_sha256": "dad57c21b2b3265598e1d0583c85571bf76a32415b26e8f9dc45f923254634c1",
+      "dimensions": [
+        23,
+        152
+      ]
+    }
+  ],
+  "v20_erratum": {
+    "correct_max_abs_error_f32": 2.384185791015625e-07,
+    "original_report_snapshot": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/intake-r1/v20-RESULTS-before-erratum.md",
+      "sha256": "66b069421aa4713271bbd76a322ab569e23b69c606bd80887060051991e6ced7"
+    },
+    "raw_data_unchanged": true
+  },
+  "tools": {
+    "current": {
+      "core": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/replay-core-r1/tools/taskflow-opt/taskflow-opt",
+        "sha256": "096c8ab54a8bdc44eeb746ff39c6587389289f2c266ca938bd8a0d016d699417"
+      },
+      "air": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/tools-air-r2/taskflow-opt-air",
+        "sha256": "36b3a26f83706ddb1e17af4f0a9cc360301f30fe4f8a4d0c28892cf7730af5e6"
+      }
+    },
+    "preserved_original_amoeba_cgra": {
+      "path": "/home/shiran/project/orbit-artifact/builds/taskflow-v13/amoeba/tools/mlir-amoeba-opt/mlir-amoeba-opt",
+      "sha256": "f3efd22d75355d42cf45d3899e59b9a5746113e89f6541c569a6d3f6e7b1b4e3"
+    },
+    "preserved_tool_rebuilt": false
+  },
+  "model": {
+    "unchanged_from_v20": true,
+    "numerical_parameters": {
+      "compute.startup": 200.0,
+      "compute.operation": 2.0,
+      "compute.memory_access": 3.0,
+      "communication.startup": 500.0,
+      "communication.bandwidth": 1.0,
+      "configuration.startup": 40000.0,
+      "host.submit": 100000.0,
+      "host.complete": 100000.0,
+      "host.visibility": 0.0
+    },
+    "frozen_protocol": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/experiment-plan-r3/protocol.json",
+      "sha256": "a9176d3d0016fd1ec5f71344ec257456fcd941fd25a229b8fb95074ca6e058db"
+    },
+    "fitting_after_new_hardware": false
+  },
+  "experiments": {
+    "primary": 120,
+    "cost_budget_runs": 72,
+    "quiet_wall_runs": 48,
+    "complete_bounded_references": 6,
+    "all_new_catalogues_complete": true,
+    "same_configuration_full_plan_graph_comparisons": 3151,
+    "exact_plan_mismatches": 0,
+    "legacy_extension": {
+      "planned": 4,
+      "completed": 1,
+      "incomplete_checkpoint": 1,
+      "unstarted": 2,
+      "resource_stop": {
+        "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/matrix-historical-r1/RESOURCE-STOP.json",
+        "sha256": "facd9ed2bc481c17db62c09cfb6beec5f560b0991603402cbda1f2581a4c0173"
+      },
+      "historical_compatibility": "8 original2-round policy/case runs,134 full source/plan/graph/score/action comparisons with v20, no normalization"
+    }
+  },
+  "backend_validation": {
+    "compiled_sources": 32,
+    "actual_unique_structures": 32,
+    "aliases": 252,
+    "full_search_compile_plan_and_graph_equality": true,
+    "actual_aie_negative_rejections": 48,
+    "actual_aie_canonical_controls": 3,
+    "reference_to_actual_space": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/actual-space-coverage-r1.json",
+      "sha256": "e0714ce764c4349c8ec496cc21cbf6b6d694c9a07d50e2d5a71e71af216c44d5"
+    }
+  },
+  "npu": {
+    "main_agent_only": true,
+    "lock": "/tmp/npu.lock",
+    "outer_timeout_seconds": 120,
+    "distinct_implementations": 32,
+    "batches": 5,
+    "fresh_processes": 10,
+    "seeds": [
+      11,
+      23,
+      47
+    ],
+    "warmups_per_seed": 1,
+    "retained_repeats_per_seed": 5,
+    "poll_us": 20,
+    "total_calls": 1224,
+    "retained_timings": 1020,
+    "warmup_calls": 204,
+    "full_output_arrays": 2448,
+    "max_abs_error_f32": 2.980232238769531e-07,
+    "max_abs_error_f64": 2.384185791015625e-07,
+    "atol": 1e-05,
+    "rtol": 1e-05,
+    "repeated_baselines": "Same unchanged control repeated in2 context batches for coupling/shared-input; never treated as different algorithms.",
+    "pair_scope": "Within each batch and process session only; no cross-batch or independent-day guarantee",
+    "sessions": [
+      {
+        "name": "npu-coupling-batch-0-session-1",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-1/protocol.json",
+          "sha256": "59fc9544b5280291929c3216aa1e23988071966f5ae67524de04a2ac2f822281"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-1/samples.jsonl",
+          "sha256": "6339d483985602389ef407abe6d4b591aedd1741966d253b41cb6f5bda61a09d"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-1/summary.json",
+          "sha256": "f7fa247db7ca6055ab45dc6dbba0a805380d580e506a684330e12d28a074e2e1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-1/identity.json",
+          "sha256": "d8b32e20f135e9df219c7dabe5a2e7f273924d090439fdf10127a890cbcb9344"
+        },
+        "calls": 144
+      },
+      {
+        "name": "npu-coupling-batch-1-session-1",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-1/protocol.json",
+          "sha256": "42a12f8e317ffc87e30c74207eb40806c8c90fb6dd4c86a8c23f65de88d59c78"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-1/samples.jsonl",
+          "sha256": "9c6bb98d0ee27cecb5657cbef4d502b6f10a59663c0d31e7334214037f320b88"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-1/summary.json",
+          "sha256": "cf35fd579b52f8eb4aef097b27429ffb5d8072ef0ab10be0d74c4f1445aedda1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-1/identity.json",
+          "sha256": "f0b05bff38c03b257fa92c6bdd2753679860d8ae2da83d270f52a345fb036bdc"
+        },
+        "calls": 108
+      },
+      {
+        "name": "npu-interleaved-batch-0-session-1",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-1/protocol.json",
+          "sha256": "2d4fecbc3923cd7e1032cc897aa131ddce86ceea7933998b079d55fef9af4229"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-1/samples.jsonl",
+          "sha256": "5e2ef1f7fac37eee9c12f9a5fc33aed10f91e9be5245d43169a93cb6aac581b4"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-1/summary.json",
+          "sha256": "f7fa247db7ca6055ab45dc6dbba0a805380d580e506a684330e12d28a074e2e1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-1/identity.json",
+          "sha256": "7340b5cc159a4cfcb60887d95de1912212a435685d29615432ecf7ef62f7e547"
+        },
+        "calls": 144
+      },
+      {
+        "name": "npu-shared-input-batch-0-session-1",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-1/protocol.json",
+          "sha256": "783a056f6e2cbc3153d30dbd09d6cf743462501053ad8681cffbbe93c7b91915"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-1/samples.jsonl",
+          "sha256": "01d774bfb68b88adea9c00ffc472547f35cc7f0168b67ff8286862831f9ba761"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-1/summary.json",
+          "sha256": "f7fa247db7ca6055ab45dc6dbba0a805380d580e506a684330e12d28a074e2e1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-1/identity.json",
+          "sha256": "8e64222f54c99b110007094390e30da89ff13c233a1bf5eccfeb42224c8d4af0"
+        },
+        "calls": 144
+      },
+      {
+        "name": "npu-shared-input-batch-1-session-1",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-1/protocol.json",
+          "sha256": "00e557d62a3968ce7a754a559a80a05e3293a862f1a41233abec42f46bd67dc2"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-1/samples.jsonl",
+          "sha256": "12d673dafb322deceb337d274fd44db6ef1772f7b97c610d5a957c39d834a83f"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-1/summary.json",
+          "sha256": "383c3165b5d594f8792985ef463a68657de6eb6e01a1a2fa66a6df921c41b5dc"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-1/identity.json",
+          "sha256": "8f7ac30ba42db7a03558ad400ea9a27254affae81da7ca44206318b92780dad8"
+        },
+        "calls": 72
+      },
+      {
+        "name": "npu-shared-input-batch-1-session-2",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-2/protocol.json",
+          "sha256": "00e557d62a3968ce7a754a559a80a05e3293a862f1a41233abec42f46bd67dc2"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-2/samples.jsonl",
+          "sha256": "3034ca83f28ec271ce252af13e179cd345dd41a5b48483b2a230bec8d1da341b"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-2/summary.json",
+          "sha256": "383c3165b5d594f8792985ef463a68657de6eb6e01a1a2fa66a6df921c41b5dc"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-1-session-2/identity.json",
+          "sha256": "8f7ac30ba42db7a03558ad400ea9a27254affae81da7ca44206318b92780dad8"
+        },
+        "calls": 72
+      },
+      {
+        "name": "npu-shared-input-batch-0-session-2",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-2/protocol.json",
+          "sha256": "783a056f6e2cbc3153d30dbd09d6cf743462501053ad8681cffbbe93c7b91915"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-2/samples.jsonl",
+          "sha256": "f77f5567793262171bf687f5b3d0228c39a917ad4f37a09cbe6526c3ce132ce2"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-2/summary.json",
+          "sha256": "f7fa247db7ca6055ab45dc6dbba0a805380d580e506a684330e12d28a074e2e1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-shared-input-batch-0-session-2/identity.json",
+          "sha256": "8e64222f54c99b110007094390e30da89ff13c233a1bf5eccfeb42224c8d4af0"
+        },
+        "calls": 144
+      },
+      {
+        "name": "npu-interleaved-batch-0-session-2",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-2/protocol.json",
+          "sha256": "2d4fecbc3923cd7e1032cc897aa131ddce86ceea7933998b079d55fef9af4229"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-2/samples.jsonl",
+          "sha256": "2f09d8f0c256bda10f7426c55aaf6cf6f322497d72456c80d302aca6b9384f80"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-2/summary.json",
+          "sha256": "f7fa247db7ca6055ab45dc6dbba0a805380d580e506a684330e12d28a074e2e1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-interleaved-batch-0-session-2/identity.json",
+          "sha256": "7340b5cc159a4cfcb60887d95de1912212a435685d29615432ecf7ef62f7e547"
+        },
+        "calls": 144
+      },
+      {
+        "name": "npu-coupling-batch-1-session-2",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-2/protocol.json",
+          "sha256": "42a12f8e317ffc87e30c74207eb40806c8c90fb6dd4c86a8c23f65de88d59c78"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-2/samples.jsonl",
+          "sha256": "e5e912b72978bc3cd450690181428f532ff425c5a5bbb256289031f3191d3514"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-2/summary.json",
+          "sha256": "cf35fd579b52f8eb4aef097b27429ffb5d8072ef0ab10be0d74c4f1445aedda1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-1-session-2/identity.json",
+          "sha256": "f0b05bff38c03b257fa92c6bdd2753679860d8ae2da83d270f52a345fb036bdc"
+        },
+        "calls": 108
+      },
+      {
+        "name": "npu-coupling-batch-0-session-2",
+        "protocol": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-2/protocol.json",
+          "sha256": "59fc9544b5280291929c3216aa1e23988071966f5ae67524de04a2ac2f822281"
+        },
+        "samples": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-2/samples.jsonl",
+          "sha256": "53d7ec46fd8ed287275f590af4ae2c410d91bca5728797fd098d6359fd4e92d0"
+        },
+        "summary": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-2/summary.json",
+          "sha256": "f7fa247db7ca6055ab45dc6dbba0a805380d580e506a684330e12d28a074e2e1"
+        },
+        "identity": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-coupling-batch-0-session-2/identity.json",
+          "sha256": "d8b32e20f135e9df219c7dabe5a2e7f273924d090439fdf10127a890cbcb9344"
+        },
+        "calls": 144
+      }
+    ]
+  },
+  "regressions": {
+    "core_groups": 44,
+    "combined_groups": 61,
+    "preserved_neura": 17,
+    "preserved_cgra": 8,
+    "unfiltered_lit": 35,
+    "constraint_unit_checks": 175,
+    "new_strategy_checks": 28,
+    "current_and_older_air_contracts": "PASS"
+  },
+  "attribution": {
+    "A": "More and different legal candidates, not a strict superset;16 new-only actual implementations executed.",
+    "B": "Strong sequential/alternating policies match or beat joint; no isolated joint superiority established. Same final domain, explicitly different one-step neighborhoods.",
+    "C": "Equal raw/time caps and common actual prefixes expose budget effects; joint needs more work to catch strong tile-first on coupling.",
+    "D": "Better geometry improves paired execution versus optimized halving in2 programs; shared-input lacks stable improvement and retains a faster halving-only tradeoff. More planner work, no universal faster-generation claim."
+  },
+  "limitations": [
+    "Finite source-backed scope/tile catalogue, not all DAG subsets or all integer tiles; reference optimum is conditional on fixed model and admitted domain.",
+    "New quota replaces some halving choices, including a useful measured shared-input alternative.",
+    "3 model-untied pairs show resolved wrong order with stable observed sign in both processes; fine/global hardware ranking uncertified.",
+    "Wall deadlines are nonpreemptive; overshoot/actual work recorded.",
+    "Process-local checked-outcome caches avoid probes, not all selected/checkpoint planning; separate raw revalidation accounting.",
+    "Original2-round legacy behavior preserved; supplemental4-round historical series explicitly incomplete after resource stop.",
+    "Static scalar rectangular identity-grid scope; no generic affine, reduction or multilevel memory solver."
+  ],
+  "preserved_failures": [
+    "search-smoke-r1",
+    "json-copy-repro-r1",
+    "strict-contract-r1",
+    "search-contract-r3",
+    "halving-runtime-pilot-r1",
+    "matrix-historical-r1/RESOURCE-STOP.json",
+    "fresh-matrix-comparison-attempt-r1.json",
+    "tools-air-r1"
+  ],
+  "accepted_evidence": {
+    "RESULTS.md": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/RESULTS.md",
+      "sha256": "377f30ea684798258914c8dc0898d9d34d58179ab8c38105b5f5e5483c82bce3"
+    },
+    "REPRODUCE.md": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/REPRODUCE.md",
+      "sha256": "e93f0cbb1c3e45efb9b9985f63de952d4cda8cad9b5e949c90033c9748758bd7"
+    },
+    "STRATEGIES.md": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/STRATEGIES.md",
+      "sha256": "5fbc4b56119302e0dcb15de0b223823df94d11aeef569223bbbfdeaf19178007"
+    },
+    "ERRATUM-v20.md": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/ERRATUM-v20.md",
+      "sha256": "84cc4f089a104b35b55dccd8540f0a5d07f0321826a95392e005260575a7ccc6"
+    },
+    "erratum-receipt.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/erratum-receipt.json",
+      "sha256": "73d99b48f8237c16f48eb80499570a8ebdba8ce36b67dc88738a5f056a230406"
+    },
+    "BUDGETS.csv": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/BUDGETS.csv",
+      "sha256": "010d9778aa5a2bcb58b3cb512489eaed8b5b1535241df2fe67b293d9780e42d2"
+    },
+    "experiment-plan-r3/protocol.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/experiment-plan-r3/protocol.json",
+      "sha256": "a9176d3d0016fd1ec5f71344ec257456fcd941fd25a229b8fb95074ca6e058db"
+    },
+    "experiment-plan-r3/source-and-budget-bindings.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/experiment-plan-r3/source-and-budget-bindings.json",
+      "sha256": "7f26a27c1136f622865a3d935e269ed922cb40437d075082f2100340380d8c52"
+    },
+    "experiment-plan-r3/cpu-pilot-amendment-evidence.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/experiment-plan-r3/cpu-pilot-amendment-evidence.json",
+      "sha256": "5087dc0578f688d83bdcdb8c92cd223d25c86a682fd11686850e4aef40ee5b1a"
+    },
+    "experiment-plan-r3/hardware-selection.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/experiment-plan-r3/hardware-selection.json",
+      "sha256": "ec025aa6ab970d344a6ce4a003f4de00ecbd0e8915dc8f5d540247fd19913651"
+    },
+    "replay-core-r1/tool-identity.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/replay-core-r1/tool-identity.json",
+      "sha256": "fcdc813587ef350562b34249274a85471e22ad5699e5c3960f0cb6882f304198"
+    },
+    "tools-air-r2/identity.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/tools-air-r2/identity.json",
+      "sha256": "dfac48c570bd1a22597483f280a180eee11cb50d482321796edfc15a5ad1c93d"
+    },
+    "tools-air-r2/runtime-field-probe.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/tools-air-r2/runtime-field-probe.json",
+      "sha256": "8634c42b938f9400c9b24bb96c8e46b276bb3d33b857189b6b28deeaa8c8e3c0"
+    },
+    "tools-air-r2/forced-rebuild-bridge.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/tools-air-r2/forced-rebuild-bridge.json",
+      "sha256": "280307bf7e99925ab3152db7b24e928cf4e339316f4eb5b6de6389fd9e1a773c"
+    },
+    "final-clean-regressions-r1/result.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/final-clean-regressions-r1/result.json",
+      "sha256": "4c025e56ea4a8dbd2e67dc624adebe7ee6a0a73a1c4eac5644c0caab4a59c094"
+    },
+    "final-clean-regressions-r1/core/result.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/final-clean-regressions-r1/core/result.json",
+      "sha256": "936cc80b43ebfa15ff269b2a5dc8cdf570420a886d5eabf8c4661bc08a2032f3"
+    },
+    "final-clean-regressions-r1/combined/result.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/final-clean-regressions-r1/combined/result.json",
+      "sha256": "81fc9d98df805225fe6f2475217abe82855b9130d33e92e7ddbc2cfc5ce8de4d"
+    },
+    "search-contract-r4/result.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/search-contract-r4/result.json",
+      "sha256": "20f1972b0e42554fb4571aca4aada32064cdcca4d7792d52d19749e376dae75d"
+    },
+    "reuse-unit-final-r1/stdout.txt": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/reuse-unit-final-r1/stdout.txt",
+      "sha256": "173fa0d3a0b353b67f4f5e42e00b53c7ac5541f1c401120510024ed113a1ecfb"
+    },
+    "legacy-compatibility-r1.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/legacy-compatibility-r1.json",
+      "sha256": "92a8500a045c9826c716b75d8a280af791672460bd9c1838b813255c9a428e28"
+    },
+    "algorithm-audit-r1/receipt.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/algorithm-audit-r1/receipt.json",
+      "sha256": "0fa334f78d6a38ab7a743067cbf52aaaaf903d6ca8607f47fe7a6110c4eab9ef"
+    },
+    "algorithm-audit-r1/tile-coverage-coupling.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/algorithm-audit-r1/tile-coverage-coupling.json",
+      "sha256": "1621436891ff5b5d95202024b66288516106b51857bb91b79acc6acca741e231"
+    },
+    "comparison-audit-r1/report.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/comparison-audit-r1/report.json",
+      "sha256": "b03b437f238e19291a37f49e74fcd2526b6bb02ca5fa0c670c2c28f43f77ce2c"
+    },
+    "reachability-audit-r2/report.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/reachability-audit-r2/report.json",
+      "sha256": "806bf3347e2299f3306ae36d7ea7f43498ee1c0569436facb6bcd1849ea867c4"
+    },
+    "compiled-representatives-r1/representatives.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/compiled-representatives-r1/representatives.json",
+      "sha256": "3d4042d7a8282b5612e72c9759d12aba71a5fd999fee40227306c45513a6fcdf"
+    },
+    "compiled-representatives-r1/compiled/index.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/compiled-representatives-r1/compiled/index.json",
+      "sha256": "4f109a46301f653534e65232c16cf7efa7316f5ae01ea23b45661e944d79c0f4"
+    },
+    "compiled-representatives-r1/unique-implementations.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/compiled-representatives-r1/unique-implementations.json",
+      "sha256": "792723308d1fd131c5c6b897259d56760594bbaad9e9ada069c97d288941218d"
+    },
+    "actual-space-coverage-r1.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/actual-space-coverage-r1.json",
+      "sha256": "e0714ce764c4349c8ec496cc21cbf6b6d694c9a07d50e2d5a71e71af216c44d5"
+    },
+    "actual-aie-negatives-v21-r1/coverage-receipt.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/actual-aie-negatives-v21-r1/coverage-receipt.json",
+      "sha256": "68630fe481f3da6164dd7c5a316f40e71e8711b5c087ac8c6cea6c5ad8754de3"
+    },
+    "observation-freeze-r1/index.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/observation-freeze-r1/index.json",
+      "sha256": "eda23c32badbd1aeccc8af2d917183fbdcef9161b077e0459ae4aae4d804845f"
+    },
+    "npu-execution-r1.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-execution-r1.json",
+      "sha256": "af8493d7ee36656a9edeaabf54d10902a86bc6e6741f90066d69f1a52b2a42f4"
+    },
+    "npu-independent-audit-r1/report.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-independent-audit-r1/report.json",
+      "sha256": "d509642d0548de8ba17f8ed4eaff863e059e679b370122bdac5b416f69b97fd4"
+    },
+    "npu-ranking-summary-r1/report.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-ranking-summary-r1/report.json",
+      "sha256": "c9cafccae47f17e6d996390128ec5ccc5cdd5e069ba5f4fc3be4849ad7389605"
+    },
+    "npu-audit-negative-controls-r1/summary.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/npu-audit-negative-controls-r1/summary.json",
+      "sha256": "9bef5a5850244867bdec1f0b505905a0b0e44ad3662b2eaa7c7182b997d3eafc"
+    },
+    "hardware-summary-r1.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/hardware-summary-r1.json",
+      "sha256": "a5ab84a5e755a4bf3cabbf260d464b4f067d3e2bb1a399ad2812e0d3d9a39c49"
+    },
+    "fresh-matrix-equality-r1.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/fresh-matrix-equality-r1.json",
+      "sha256": "8e36b486c2056536067efa9d290c613a02a2295feecdd349fd7fef82078592a2"
+    },
+    "source-diff-r1/inventory.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/source-diff-r1/inventory.json",
+      "sha256": "2cc99f1cfe5740e272265d31d1ef3e4cac39eccb29668552c639145e651b6184"
+    },
+    "source-diff-r1/bundle-sha256.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/source-diff-r1/bundle-sha256.json",
+      "sha256": "eec72ac0b6dfcd9732c443afb6d1f770664819710b38a592f19700bd9ddec3ee"
+    },
+    "source-diff-r1/orbit-v21-only.diff": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/source-diff-r1/orbit-v21-only.diff",
+      "sha256": "54636f8a4043b8447715435d34c33dd259b8481a07264e58f50ed5111a66e8ca"
+    },
+    "source-completion-r1/inventory.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/source-completion-r1/inventory.json",
+      "sha256": "e868237ef9676a472443c66f2041b0eebacc881bac247ccb53f4f30d4a0aa9fa"
+    },
+    "source-completion-r1/documentation-completion.diff": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/source-completion-r1/documentation-completion.diff",
+      "sha256": "f8fc817e9d58d70151cd902ab2e88bc4dc6eda0d731d323d3e17943e2ebcd6a7"
+    },
+    "final-git-status.txt": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/final-git-status.txt",
+      "sha256": "d11de4d09d0c4e7b2dfa7ef0b46cbc0ade561478531561c931dc921c5f9bf092"
+    },
+    "final-integrity-r1.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/final-integrity-r1.json",
+      "sha256": "980440c3e730f83fb9487624cb630b25a8d1c548eac95ef0ba6a7b3814d3f116"
+    },
+    "CPU-ARTIFACTS.json": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/data-reuse-v21/CPU-ARTIFACTS.json",
+      "sha256": "62ded47c8de467af3627dc6b78c8b652caa5df5091eeb11ecf979e26bf4b4678"
+    }
+  }
+}
