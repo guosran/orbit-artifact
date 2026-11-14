@@ -1,0 +1,13 @@
+[triton-prefill] model=qwen2.5-3b backend=npu ops=['matmul', 'rms_norm', 'swiglu'] P=5 load 6.0s prefill 5.81s first=12095
+[triton-prefill] first token 12095 (expect 12095) for qwen2.5-3b -- PASS
+[inference] AIR NPU prefill (KV seed + first token), prompt_len=5...
+[inference] prefill first token = 12095 (Paris=12095)
+Time to first token (TTFT): 11.833s
+[decode] qwen2.5-3b ONE xclbin: ATTN_MAXL=256, serves L in [1,132]; 36 layers + lm-head/dispatch
+[inference] decode: 127 tokens in 5.99s 21.21 tok/s (47.2 ms/token)
+[inference] Inference: prompt_len=5, n_tokens=127
+Tokens/second: 21.21
+[e2e] 128 tokens in 38.74s
+[e2e] ids [12095, 13, 576, 6722, 315, 15344, 374, 21718, 13, 576, 6722, 315, 17689, 374, 24081, 13, 576, 6722, 315, 9856, 374, 19846, 13, 576, 6722, 315, 24427, 374, 45826, 13, 576, 6722, 315, 32961, 374, 37169, 13, 576, 6722, 315, 29121, 374, 14168, 13, 576, 6722, 315, 34898, 374, 46287, 13, 576, 6722, 315, 34340, 374, 63061, 13, 576, 6722, 315, 36255, 374, 76334, 13, 576, 6722, 315, 31503, 374, 57858, 13, 576, 6722, 315, 23190, 374, 52082, 13, 576, 6722, 315, 64871, 374, 64871, 13, 576, 6722, 315, 15344, 374, 21718, 13, 576, 6722, 315, 9625, 374, 12095, 13, 576, 6722, 315, 17689, 374, 24081, 13, 576, 6722, 315, 9856, 374, 19846, 13, 576, 6722, 315, 24427, 374, 45826, 13, 576, 6722, 315, 32961, 374, 37169, 13]
+[e2e] decode ids match the recorded 10 for qwen2.5-3b -- PASS
+[e2e] 'The capital of France is' ->  ' Paris. The capital of Italy is Rome. The capital of Spain is Madrid. The capital of Germany is Berlin. The capital of Greece is Athens. The capital of Belgium is Brussels. The capital of Switzerland is Bern. The capital of Austria is Vienna. The capital of Denmark is Copenhagen. The capital of Finland is Helsinki. The capital of Norway is Oslo. The capital of Sweden is Stockholm. The capital of Luxembourg is Luxembourg. The capital of Italy is Rome. The capital of France is Paris. The capital of Spain is Madrid. The capital of Germany is Berlin. The capital of Greece is Athens. The capital of Belgium is Brussels.'

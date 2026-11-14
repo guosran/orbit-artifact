@@ -1,0 +1,3000 @@
+{
+  "gemm_variants": {
+    "down-m128n256k64": {
+      "implementation": "r18-gemm-744e00a17b3fda13d5f81051d4c8df054f8e7bfaac9f5c1c98471a06b2a8847e",
+      "wall_ms": 22.381867,
+      "execution_variant": {
+        "runtime_context_identity": "bb12da75be8d9105d543dc1d257e869a47f6fe54b2af28f3992a39823cab3f3e",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 97951744,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m128n256k64/implementation.json",
+          "sha256": "4646a3b82016e4a29544ff40bd6265ec672298a3c256a3ab5eddfa1a14b30c24"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m128n256k64/air_project/aie.elf",
+          "sha256": "284d8eba7be4f5484055097f45b7b34e9ece9e331bafeaa9ce3f26c7be5a5b63"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m128n256k64/source.air.mlir",
+          "sha256": "3cbf7750e2718eeca1dd9540fdf40ad5128a769772616f450de3149dca1aacce"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "down-m128n512k256": {
+      "implementation": "r18-gemm-0ca8ef3c2749349054279c5094528dafa31eef58a281d8ecea71eb65b8235bca",
+      "wall_ms": 23.790806,
+      "execution_variant": {
+        "runtime_context_identity": "2733178bbd26500de04b5ef152a408b1f29e686c74951c4a23b22099425676b9",
+        "dataflow": "BF16-input/FP32-accumulator; L2K256/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 512,
+          "L2_K": 256,
+          "L1_M": 64,
+          "L1_N": 128,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 97951744,
+          "npu.sram.mem_tile_0_1": 229376,
+          "npu.sram.mem_tile_1_1": 229376,
+          "npu.sram.mem_tile_2_1": 65536,
+          "npu.sram.mem_tile_3_1": 65536,
+          "npu.sram.tile_0_2": 59392,
+          "npu.sram.tile_0_3": 59392,
+          "npu.sram.tile_0_4": 59392,
+          "npu.sram.tile_0_5": 59392,
+          "npu.sram.tile_1_2": 59392,
+          "npu.sram.tile_1_3": 59392,
+          "npu.sram.tile_1_4": 59392,
+          "npu.sram.tile_1_5": 59392
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m128n512k256/implementation.json",
+          "sha256": "b1ff608e109fd7e9fefb8c43b1f8de07978579885b1b2220e6e26d534f9c3c64"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m128n512k256/air_project/aie.elf",
+          "sha256": "b810dd6231c6b9fbcc36277a43597951994e0e5ed9b88d1e0e805a2efdda9b80"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m128n512k256/source.air.mlir",
+          "sha256": "c039df79805b5e929a11f8f1d17498c3a7e4585e30ee34c500bb4b41e82b3283"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "down-m256n256k64": {
+      "implementation": "r18-gemm-00033517a0e051c607d3877ceb81be726c2bc4ab4ccacd98b94dc6b4f9b191cb",
+      "wall_ms": 24.512119,
+      "execution_variant": {
+        "runtime_context_identity": "9c8b6dfa8e2c6d38665d8ea6c5cabcdd2162b8239484b81fd572a59a4750d7b1",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 256,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 105684992,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 81920,
+          "npu.sram.mem_tile_3_1": 81920,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m256n256k64/implementation.json",
+          "sha256": "4cbbe7815a29ae25d1ac128846feb989a77511111a321591d91a844efe0a6242"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m256n256k64/air_project/aie.elf",
+          "sha256": "be1c410a63e4c7d0b3f8411da99e75ffdac026911327dca1ce1d9760aedc7c80"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-m256n256k64/source.air.mlir",
+          "sha256": "3ac14f73b0787d848ad86d4380d1c1660f2c241be890cd15265d1a133f862bcd"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "down-replica2-col0": {
+      "implementation": "r18-gemm-0d42145982f71de34592bb9785e465032c9028e7efd1e767d9796788382bb337",
+      "wall_ms": 24.747224,
+      "execution_variant": {
+        "runtime_context_identity": "c659eac1deeb0c467b9238f07910ee7ac8951e8eb2f36cc6692d2e847cd6a20a",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 97951744,
+          "npu.sram.mem_tile_0_1": 98304,
+          "npu.sram.mem_tile_1_1": 98304,
+          "npu.sram.mem_tile_2_1": 98304,
+          "npu.sram.mem_tile_3_1": 98304,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.down.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          },
+          {
+            "output_value": "prefill.L0.down.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              1024
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-replica2-col0/implementation.json",
+          "sha256": "1034528a974ed3103cc4d55ae508315fe9bd4259367dd40b6d21cbcc54dfee42"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-replica2-col0/air_project/aie.elf",
+          "sha256": "d0725821bc43d0020208f13d0f771d3b375bfa25a7fbf51d5b52920285af7228"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-replica2-col0/source.air.mlir",
+          "sha256": "852548daa7cdadded4f1d61fe9a4c6d2fbc2e6fb3fb640fcafd44124f334a002"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "down-replica2-col4": {
+      "implementation": "r18-gemm-8ae701c76aebe6ffbed4b434774ad457cf66a23a1c71eaaf32baae1bfb7e55a1",
+      "wall_ms": 25.064734,
+      "execution_variant": {
+        "runtime_context_identity": "6d77863b03025f36ee15390b8ca27cb5fac8b6356224460c07f29a717c5a7722",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 4
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.4.2": 1,
+          "npu.core.4.3": 1,
+          "npu.core.4.4": 1,
+          "npu.core.4.5": 1,
+          "npu.core.5.2": 1,
+          "npu.core.5.3": 1,
+          "npu.core.5.4": 1,
+          "npu.core.5.5": 1,
+          "npu.core.6.2": 1,
+          "npu.core.6.3": 1,
+          "npu.core.6.4": 1,
+          "npu.core.6.5": 1,
+          "npu.core.7.2": 1,
+          "npu.core.7.3": 1,
+          "npu.core.7.4": 1,
+          "npu.core.7.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 97951744,
+          "npu.sram.mem_tile_0_1": 16384,
+          "npu.sram.mem_tile_1_1": 16384,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 98304,
+          "npu.sram.mem_tile_5_1": 98304,
+          "npu.sram.mem_tile_6_1": 98304,
+          "npu.sram.mem_tile_7_1": 98304,
+          "npu.sram.tile_4_2": 51200,
+          "npu.sram.tile_4_3": 51200,
+          "npu.sram.tile_4_4": 51200,
+          "npu.sram.tile_4_5": 51200,
+          "npu.sram.tile_5_2": 51200,
+          "npu.sram.tile_5_3": 51200,
+          "npu.sram.tile_5_4": 51200,
+          "npu.sram.tile_5_5": 51200,
+          "npu.sram.tile_6_2": 51200,
+          "npu.sram.tile_6_3": 51200,
+          "npu.sram.tile_6_4": 51200,
+          "npu.sram.tile_6_5": 51200,
+          "npu.sram.tile_7_2": 51200,
+          "npu.sram.tile_7_3": 51200,
+          "npu.sram.tile_7_4": 51200,
+          "npu.sram.tile_7_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.down.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          },
+          {
+            "output_value": "prefill.L0.down.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              1024
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-replica2-col4/implementation.json",
+          "sha256": "d80ef0486682f3ce66e9c0bc7707b94e404c062a9f4e232a526ab0e5fc713eab"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-replica2-col4/air_project/aie.elf",
+          "sha256": "1d0ee0b8cafeb8add6591f154144614d108bd8bd2eb3195d586e3894d0a863a2"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/down-replica2-col4/source.air.mlir",
+          "sha256": "1943470788ddc4f5feacc05799168c62299863acd63e22161ee087a6f92aec87"
+        },
+        "actual_core_coordinates": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            5,
+            5
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            6,
+            5
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            7,
+            5
+          ]
+        ]
+      }
+    },
+    "gate-up-m128n256k32": {
+      "implementation": "r18-gemm-18eb2925e525399c639db7b1f0bda17b63766788ddf25cc46eb927766b86d617",
+      "wall_ms": 605.8205095,
+      "execution_variant": {
+        "runtime_context_identity": "76874db4d353dec631498a0d7d7df9ddda188333de263d7765afe18009cb11b3",
+        "dataflow": "BF16-input/FP32-accumulator; L2K32/L1K32; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 32,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 32,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 204421120,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 8192,
+          "npu.sram.mem_tile_3_1": 8192,
+          "npu.sram.tile_0_2": 34816,
+          "npu.sram.tile_0_3": 34816,
+          "npu.sram.tile_0_4": 34816,
+          "npu.sram.tile_0_5": 34816,
+          "npu.sram.tile_1_2": 34816,
+          "npu.sram.tile_1_3": 34816,
+          "npu.sram.tile_1_4": 34816,
+          "npu.sram.tile_1_5": 34816
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-m128n256k32/implementation.json",
+          "sha256": "df23e3ef8759e20ee16ed4e8405e8dab7d815a77e3dc682b0854804b1141deb2"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-m128n256k32/air_project/aie.elf",
+          "sha256": "a1cae108580b7250c808f21ef7476700cdc0d2768d127eb3946abc8b7c987447"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-m128n256k32/source.air.mlir",
+          "sha256": "ed46df5e6ef0bc4a53ffc3bc64dcf3558dc965c41b862b2b31d739935beb0968"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "gate-up-replica2-col0": {
+      "implementation": "r18-gemm-8062e44894496d6f4612070c6db17ad8548a256d19dcd610fcc2b02da2b72770",
+      "wall_ms": 43.8775255,
+      "execution_variant": {
+        "runtime_context_identity": "9bc38b8c4d9356e1f85398d8191a6dee617b3fe3ec540c99985a1af3f727465d",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 204421120,
+          "npu.sram.mem_tile_0_1": 98304,
+          "npu.sram.mem_tile_1_1": 98304,
+          "npu.sram.mem_tile_2_1": 98304,
+          "npu.sram.mem_tile_3_1": 98304,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.gate_up.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              11008
+            ]
+          },
+          {
+            "output_value": "prefill.L0.gate_up.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              11008
+            ],
+            "extents": [
+              5,
+              11008
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-replica2-col0/implementation.json",
+          "sha256": "60d63a6bb41d12eafea9b8559ad244aced7e792b9c1b923b3bb62abd4d1a0372"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-replica2-col0/air_project/aie.elf",
+          "sha256": "49fc489ded2a54ffe25a5029bb756ee4405adbd4fba94a8ba8a8e807e6c4bc4a"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-replica2-col0/source.air.mlir",
+          "sha256": "9e2890a9281b92bf25e90a374a3c995f2825c6fa9da6c0e2e60f58ce24895072"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "gate-up-replica2-col4": {
+      "implementation": "r18-gemm-7a17e23776caef7ec7eea5c088a6f6ad2b773516b38ed661ee00e3b596fe0d89",
+      "wall_ms": 56.859094,
+      "execution_variant": {
+        "runtime_context_identity": "dc54ea9115c6a1ce121e3a030ab90af45d159d9c3e23a43f12cf7a77c5f4affe",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 4
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.4.2": 1,
+          "npu.core.4.3": 1,
+          "npu.core.4.4": 1,
+          "npu.core.4.5": 1,
+          "npu.core.5.2": 1,
+          "npu.core.5.3": 1,
+          "npu.core.5.4": 1,
+          "npu.core.5.5": 1,
+          "npu.core.6.2": 1,
+          "npu.core.6.3": 1,
+          "npu.core.6.4": 1,
+          "npu.core.6.5": 1,
+          "npu.core.7.2": 1,
+          "npu.core.7.3": 1,
+          "npu.core.7.4": 1,
+          "npu.core.7.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 204421120,
+          "npu.sram.mem_tile_0_1": 16384,
+          "npu.sram.mem_tile_1_1": 16384,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 98304,
+          "npu.sram.mem_tile_5_1": 98304,
+          "npu.sram.mem_tile_6_1": 98304,
+          "npu.sram.mem_tile_7_1": 98304,
+          "npu.sram.tile_4_2": 51200,
+          "npu.sram.tile_4_3": 51200,
+          "npu.sram.tile_4_4": 51200,
+          "npu.sram.tile_4_5": 51200,
+          "npu.sram.tile_5_2": 51200,
+          "npu.sram.tile_5_3": 51200,
+          "npu.sram.tile_5_4": 51200,
+          "npu.sram.tile_5_5": 51200,
+          "npu.sram.tile_6_2": 51200,
+          "npu.sram.tile_6_3": 51200,
+          "npu.sram.tile_6_4": 51200,
+          "npu.sram.tile_6_5": 51200,
+          "npu.sram.tile_7_2": 51200,
+          "npu.sram.tile_7_3": 51200,
+          "npu.sram.tile_7_4": 51200,
+          "npu.sram.tile_7_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.gate_up.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              11008
+            ]
+          },
+          {
+            "output_value": "prefill.L0.gate_up.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              11008
+            ],
+            "extents": [
+              5,
+              11008
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-replica2-col4/implementation.json",
+          "sha256": "900630147652cd4da1ccbc6b22bfb1dd771b176718a0de83ab284ba769ac0458"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-replica2-col4/air_project/aie.elf",
+          "sha256": "7b7b795bb0442939925452790ef629b1bead00f9cd734dbbc4895f1ff25d280c"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/gate-up-replica2-col4/source.air.mlir",
+          "sha256": "d576e262bb6679c636b36d72d586c96b3d2d8bf9da230da289cd366c49c0e49a"
+        },
+        "actual_core_coordinates": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            5,
+            5
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            6,
+            5
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            7,
+            5
+          ]
+        ]
+      }
+    },
+    "m128n256k64": {
+      "implementation": "r18-gemm-bc41f4b5a20357be1b1d42e4b1a4aa702976c1a6f2e80da02245e0e25e24df9a",
+      "wall_ms": 8.945572,
+      "execution_variant": {
+        "runtime_context_identity": "2c23ecbbf4748a6e0e44d8f4e3aa05c5fac89253d8e57db96f28a42cfae688a4",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 24725504,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64/implementation.json",
+          "sha256": "1d14f047ecbb5842bd959ee28ebfb605593b4446e5f2ae8414b15ecb51e4f723"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64/air_project/aie.elf",
+          "sha256": "188ed02e21945720d8d19547689f20ef917a5232e3380614a503d8b75e21e8d6"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64/source.air.mlir",
+          "sha256": "ecf7bfcb398fadf7be480f52bd337590686f05b5732612ea9e76aefa4489d25a"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "m128n512k256": {
+      "implementation": "r18-gemm-d71e8c01c17db8cb6e824e7b8b03bcf2c8070f181e7decaf3d6ec4a03d28e0f1",
+      "wall_ms": 8.114146,
+      "execution_variant": {
+        "runtime_context_identity": "1ea6d72b83ba89623a7038823cbbf5887a08286f23b7980d612e7cbe945d4546",
+        "dataflow": "BF16-input/FP32-accumulator; L2K256/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 512,
+          "L2_K": 256,
+          "L1_M": 64,
+          "L1_N": 128,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 24725504,
+          "npu.sram.mem_tile_0_1": 327680,
+          "npu.sram.mem_tile_1_1": 327680,
+          "npu.sram.mem_tile_2_1": 131072,
+          "npu.sram.mem_tile_3_1": 131072,
+          "npu.sram.tile_0_2": 59392,
+          "npu.sram.tile_0_3": 59392,
+          "npu.sram.tile_0_4": 59392,
+          "npu.sram.tile_0_5": 59392,
+          "npu.sram.tile_1_2": 59392,
+          "npu.sram.tile_1_3": 59392,
+          "npu.sram.tile_1_4": 59392,
+          "npu.sram.tile_1_5": 59392
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n512k256/implementation.json",
+          "sha256": "7e24e58849c20526003885df013c3ed45f723cab5208530c45ade5724d8fb1ab"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n512k256/air_project/aie.elf",
+          "sha256": "e2be162105ec6ab5b9e805e97a91d9a831f717f7db7533ef98bf1074ecb48c76"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n512k256/source.air.mlir",
+          "sha256": "eef35836cb7e75a5c157b09c3cce5d63dd1efd9674a1e3db7837b27e2a048960"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "m256n256k64": {
+      "implementation": "r18-gemm-bcd3a9ebc8932d9dfdd7caf50443365f1e95232978bd72680b9b324e80925c45",
+      "wall_ms": 8.828628,
+      "execution_variant": {
+        "runtime_context_identity": "bea3ec2ecc6994ec94d096c4e09f3e348036f932459e8db68e8d1fc861baef71",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 256,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 28428288,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 81920,
+          "npu.sram.mem_tile_3_1": 81920,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m256n256k64/implementation.json",
+          "sha256": "eb98758e995d0d32339574c5b11a2268c6c806d92a19af103d5322c6fde9e265"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m256n256k64/air_project/aie.elf",
+          "sha256": "ec6f79d126a41de556a204d28cabf9723ded8548e95e8e31ab4ed6bb91a836bc"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m256n256k64/source.air.mlir",
+          "sha256": "c01676d0bdf600a9f8b5165e022396f074c4dc3285c02edbf1616feb4fdc29df"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "o-m128n256k64": {
+      "implementation": "r18-gemm-ca2517c763eb69dc8263f261d326adc7490e7b3620a7796a7e07bc05987a5429",
+      "wall_ms": 6.334721,
+      "execution_variant": {
+        "runtime_context_identity": "b3992008078e40848c09002415f0bf473e0591f8be5fc2570b283a809fa8c447",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 19996672,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m128n256k64/implementation.json",
+          "sha256": "2f1dcd4f183565674df1557b44be491f293fbdc88ce945a186a393257bb566ee"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m128n256k64/air_project/aie.elf",
+          "sha256": "0a38a5c1226de415f28e8d26a97407c7e7f99c110454bf457464d668d151798f"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m128n256k64/source.air.mlir",
+          "sha256": "bad19707e001a6a43af81749ec24dd483da6edf87c096dd9b17aa86eb37c9e75"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "o-m128n512k256": {
+      "implementation": "r18-gemm-0b804468ded111a04793b751a623ed061a3fcdf7a31a6a44e1f851a1a045f1de",
+      "wall_ms": 5.461879,
+      "execution_variant": {
+        "runtime_context_identity": "ef6180c465ee85d91217c5412a8a6027364703bd6479eae91305f978654ac9f3",
+        "dataflow": "BF16-input/FP32-accumulator; L2K256/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 512,
+          "L2_K": 256,
+          "L1_M": 64,
+          "L1_N": 128,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          2,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 19996672,
+          "npu.sram.mem_tile_0_1": 327680,
+          "npu.sram.mem_tile_1_1": 327680,
+          "npu.sram.mem_tile_2_1": 131072,
+          "npu.sram.mem_tile_3_1": 131072,
+          "npu.sram.tile_0_2": 59392,
+          "npu.sram.tile_0_3": 59392,
+          "npu.sram.tile_0_4": 59392,
+          "npu.sram.tile_0_5": 59392,
+          "npu.sram.tile_1_2": 59392,
+          "npu.sram.tile_1_3": 59392,
+          "npu.sram.tile_1_4": 59392,
+          "npu.sram.tile_1_5": 59392
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m128n512k256/implementation.json",
+          "sha256": "5ce0cd3ea0816fbf9f873676379a18fcadd3b87fceed0e13f15530dd65e924a5"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m128n512k256/air_project/aie.elf",
+          "sha256": "a7d61009fc24660b29c4468562bffaa5761f4e73d2c853da827e0ec247d425a1"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m128n512k256/source.air.mlir",
+          "sha256": "2a2d7e580a4203e62a510ddf7b5d6ec6f692bf41e55f807dd627f0974b97f914"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ]
+        ]
+      }
+    },
+    "o-m256n256k64": {
+      "implementation": "r18-gemm-1909360d23c1e857716ad35fb1ef2ea1349f4839b22b558a0056f1e24e7ab5a5",
+      "wall_ms": 7.275557,
+      "execution_variant": {
+        "runtime_context_identity": "f43125dbe4995ae457327166874edc45d3e550eb0aa0d8d55bde68f77b5f9874",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=1",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 256,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 1,
+        "work_distribution": "single-invocation",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 23175168,
+          "npu.sram.mem_tile_0_1": 81920,
+          "npu.sram.mem_tile_1_1": 81920,
+          "npu.sram.mem_tile_2_1": 81920,
+          "npu.sram.mem_tile_3_1": 81920,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m256n256k64/implementation.json",
+          "sha256": "d26d4fccc0357d4b02f82890705642cd203143686d114e44d21227a3b382715e"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m256n256k64/air_project/aie.elf",
+          "sha256": "88b612e9d46e2384e8592ccf5d86b93aa97427c03aca416b51def88c85cba7a3"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-m256n256k64/source.air.mlir",
+          "sha256": "13864a74945e00183a4f0e20c778c1f5818d41305010b46c2dcdf1d7a257ac8c"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "o-replica2-col0": {
+      "implementation": "r18-gemm-0c290c4f3fe5b44fc785bd67396fc2d5565517a113e5c4193d9df188613ba06e",
+      "wall_ms": 6.634873,
+      "execution_variant": {
+        "runtime_context_identity": "0949505be4a236fc974f1675f71835227cab4c6d83c2e63b591ad8c02832b13c",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 19996672,
+          "npu.sram.mem_tile_0_1": 98304,
+          "npu.sram.mem_tile_1_1": 98304,
+          "npu.sram.mem_tile_2_1": 98304,
+          "npu.sram.mem_tile_3_1": 98304,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.o.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          },
+          {
+            "output_value": "prefill.L0.o.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              1024
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-replica2-col0/implementation.json",
+          "sha256": "1eedc36ca65055271a6e95afea40711a07162de9ae62d7a49a87efd8b1233819"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-replica2-col0/air_project/aie.elf",
+          "sha256": "eef5a03d42302606777e62d1f73ccef9c3aa06589df6964698a362e79f54d4cc"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-replica2-col0/source.air.mlir",
+          "sha256": "88e8d64fd4d7462d544b0bfcebe3396f23b09ec4ed0b43be824f688b1bf69fb1"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "o-replica2-col4": {
+      "implementation": "r18-gemm-753064e4a83f112e7059161cecdfbf33c327554f5e638789f5ee03e6ac32af5c",
+      "wall_ms": 6.402228,
+      "execution_variant": {
+        "runtime_context_identity": "963efc243d9b5c75e5a0c5fca0808d6d1e446aa73398fa8a2cc768eb96c995ab",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 4
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.4.2": 1,
+          "npu.core.4.3": 1,
+          "npu.core.4.4": 1,
+          "npu.core.4.5": 1,
+          "npu.core.5.2": 1,
+          "npu.core.5.3": 1,
+          "npu.core.5.4": 1,
+          "npu.core.5.5": 1,
+          "npu.core.6.2": 1,
+          "npu.core.6.3": 1,
+          "npu.core.6.4": 1,
+          "npu.core.6.5": 1,
+          "npu.core.7.2": 1,
+          "npu.core.7.3": 1,
+          "npu.core.7.4": 1,
+          "npu.core.7.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 19996672,
+          "npu.sram.mem_tile_0_1": 16384,
+          "npu.sram.mem_tile_1_1": 16384,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 98304,
+          "npu.sram.mem_tile_5_1": 98304,
+          "npu.sram.mem_tile_6_1": 98304,
+          "npu.sram.mem_tile_7_1": 98304,
+          "npu.sram.tile_4_2": 51200,
+          "npu.sram.tile_4_3": 51200,
+          "npu.sram.tile_4_4": 51200,
+          "npu.sram.tile_4_5": 51200,
+          "npu.sram.tile_5_2": 51200,
+          "npu.sram.tile_5_3": 51200,
+          "npu.sram.tile_5_4": 51200,
+          "npu.sram.tile_5_5": 51200,
+          "npu.sram.tile_6_2": 51200,
+          "npu.sram.tile_6_3": 51200,
+          "npu.sram.tile_6_4": 51200,
+          "npu.sram.tile_6_5": 51200,
+          "npu.sram.tile_7_2": 51200,
+          "npu.sram.tile_7_3": 51200,
+          "npu.sram.tile_7_4": 51200,
+          "npu.sram.tile_7_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.o.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          },
+          {
+            "output_value": "prefill.L0.o.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              1024
+            ],
+            "extents": [
+              5,
+              1024
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-replica2-col4/implementation.json",
+          "sha256": "73832819e2a5fe51d6a513eb132aeb35a11a359179ddafbbb7709384d7d14d2d"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-replica2-col4/air_project/aie.elf",
+          "sha256": "3e4223bb8a4cdcacdb0947733d901cd8556a07b3c65899db886dd6df43946001"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/o-replica2-col4/source.air.mlir",
+          "sha256": "d53a8f3b0b1a7712c0e37bbcda0918a27c95e9ba0b9eecf9a0bf2419c5cb2c2c"
+        },
+        "actual_core_coordinates": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            5,
+            5
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            6,
+            5
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            7,
+            5
+          ]
+        ]
+      }
+    },
+    "replica2-col0": {
+      "implementation": "r18-gemm-f17ecbca51b67ccc63c641ce239bad038eaafba1462fda6dbd6543bdf7d1754b",
+      "wall_ms": 10.205697,
+      "execution_variant": {
+        "runtime_context_identity": "88df640e565bca34c24d9ee4167e71c2c1c6b7480b661e915b2f92d90f13bc3f",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 0
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.0.2": 1,
+          "npu.core.0.3": 1,
+          "npu.core.0.4": 1,
+          "npu.core.0.5": 1,
+          "npu.core.1.2": 1,
+          "npu.core.1.3": 1,
+          "npu.core.1.4": 1,
+          "npu.core.1.5": 1,
+          "npu.core.2.2": 1,
+          "npu.core.2.3": 1,
+          "npu.core.2.4": 1,
+          "npu.core.2.5": 1,
+          "npu.core.3.2": 1,
+          "npu.core.3.3": 1,
+          "npu.core.3.4": 1,
+          "npu.core.3.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 24725504,
+          "npu.sram.mem_tile_0_1": 98304,
+          "npu.sram.mem_tile_1_1": 98304,
+          "npu.sram.mem_tile_2_1": 98304,
+          "npu.sram.mem_tile_3_1": 98304,
+          "npu.sram.mem_tile_4_1": 16384,
+          "npu.sram.mem_tile_5_1": 16384,
+          "npu.sram.mem_tile_6_1": 16384,
+          "npu.sram.mem_tile_7_1": 16384,
+          "npu.sram.tile_0_2": 51200,
+          "npu.sram.tile_0_3": 51200,
+          "npu.sram.tile_0_4": 51200,
+          "npu.sram.tile_0_5": 51200,
+          "npu.sram.tile_1_2": 51200,
+          "npu.sram.tile_1_3": 51200,
+          "npu.sram.tile_1_4": 51200,
+          "npu.sram.tile_1_5": 51200,
+          "npu.sram.tile_2_2": 51200,
+          "npu.sram.tile_2_3": 51200,
+          "npu.sram.tile_2_4": 51200,
+          "npu.sram.tile_2_5": 51200,
+          "npu.sram.tile_3_2": 51200,
+          "npu.sram.tile_3_3": 51200,
+          "npu.sram.tile_3_4": 51200,
+          "npu.sram.tile_3_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.qkv.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              1280
+            ]
+          },
+          {
+            "output_value": "prefill.L0.qkv.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              1280
+            ],
+            "extents": [
+              5,
+              1280
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/replica2-col0/implementation.json",
+          "sha256": "629acfe380195f141f0c857aaa6fabebcb9297a02e3707fb60636acc3b1b22f2"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/replica2-col0/air_project/aie.elf",
+          "sha256": "e09fe0ee640fa0251b25589575782e716b9e31de617afcc9dee878529e11f9f8"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/replica2-col0/source.air.mlir",
+          "sha256": "6841d730e256e83ecba9c094431160641593c110f6016d941b03398cdc12290c"
+        },
+        "actual_core_coordinates": [
+          [
+            0,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            0,
+            5
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            2,
+            5
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      }
+    },
+    "replica2-col4": {
+      "implementation": "r18-gemm-c5133e31404fe6eec316a1f30a74c21fac2ca6899819730965600c6293e75b7e",
+      "wall_ms": 10.656427,
+      "execution_variant": {
+        "runtime_context_identity": "12c232ea8f1d3e726106b90a6de0b1548c977bfbdec21bdbdc26e7f581879ba6",
+        "dataflow": "BF16-input/FP32-accumulator; L2K64/L1K64; independent-output-N-shards=2",
+        "residence_policy": "original-source-weight-view-retained; padded-host-weight-packs/device-BOs/context-released-after-call",
+        "implementation_parameters": {
+          "L2_M": 128,
+          "L2_N": 256,
+          "L2_K": 64,
+          "L1_M": 64,
+          "L1_N": 64,
+          "L1_K": 64,
+          "column_offset": 4
+        },
+        "replicas": 2,
+        "work_distribution": "registered-disjoint-work",
+        "resource_demands": {
+          "npu.device": 1,
+          "npu.command": 1,
+          "npu.core.4.2": 1,
+          "npu.core.4.3": 1,
+          "npu.core.4.4": 1,
+          "npu.core.4.5": 1,
+          "npu.core.5.2": 1,
+          "npu.core.5.3": 1,
+          "npu.core.5.4": 1,
+          "npu.core.5.5": 1,
+          "npu.core.6.2": 1,
+          "npu.core.6.3": 1,
+          "npu.core.6.4": 1,
+          "npu.core.6.5": 1,
+          "npu.core.7.2": 1,
+          "npu.core.7.3": 1,
+          "npu.core.7.4": 1,
+          "npu.core.7.5": 1,
+          "cpu.npu-owner": 1
+        },
+        "resource_shape": [
+          4,
+          4
+        ],
+        "temporary_bytes": {
+          "runtime-abi": 24725504,
+          "npu.sram.mem_tile_0_1": 16384,
+          "npu.sram.mem_tile_1_1": 16384,
+          "npu.sram.mem_tile_2_1": 16384,
+          "npu.sram.mem_tile_3_1": 16384,
+          "npu.sram.mem_tile_4_1": 98304,
+          "npu.sram.mem_tile_5_1": 98304,
+          "npu.sram.mem_tile_6_1": 98304,
+          "npu.sram.mem_tile_7_1": 98304,
+          "npu.sram.tile_4_2": 51200,
+          "npu.sram.tile_4_3": 51200,
+          "npu.sram.tile_4_4": 51200,
+          "npu.sram.tile_4_5": 51200,
+          "npu.sram.tile_5_2": 51200,
+          "npu.sram.tile_5_3": 51200,
+          "npu.sram.tile_5_4": 51200,
+          "npu.sram.tile_5_5": 51200,
+          "npu.sram.tile_6_2": 51200,
+          "npu.sram.tile_6_3": 51200,
+          "npu.sram.tile_6_4": 51200,
+          "npu.sram.tile_6_5": 51200,
+          "npu.sram.tile_7_2": 51200,
+          "npu.sram.tile_7_3": 51200,
+          "npu.sram.tile_7_4": 51200,
+          "npu.sram.tile_7_5": 51200
+        },
+        "resident_allocations": {
+          "prefill.base-kv.full-cache-conservative-bound": {
+            "memory": "runtime-abi",
+            "bytes": 150994944
+          },
+          "prefill.kv-stack-copy-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 737280
+          },
+          "runner.logit-capture-stack-save-upper-bound": {
+            "memory": "runtime-abi",
+            "bytes": 252821504
+          }
+        },
+        "work_partitions": [
+          {
+            "output_value": "prefill.L0.qkv.value",
+            "replica": 0,
+            "offsets": [
+              0,
+              0
+            ],
+            "extents": [
+              5,
+              1280
+            ]
+          },
+          {
+            "output_value": "prefill.L0.qkv.value",
+            "replica": 1,
+            "offsets": [
+              0,
+              1280
+            ],
+            "extents": [
+              5,
+              1280
+            ]
+          }
+        ],
+        "execution_policy": "source-dependency-ready",
+        "source_ordering_identity": "a80070e7f879e074ce803d4e67dd4fa1f2f131505cad1b3abeb6687dd0a831fe",
+        "async_runtime_proof_identity": "571abff1831e0b67ecb0ec404ec7f02a5cca98a715fa40d509acb62c0eb0dfef"
+      },
+      "artifact_binding": {
+        "manifest": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/replica2-col4/implementation.json",
+          "sha256": "ef06175f113e3ba43f11f62392e7221581de26f5dfb274b34f607c8dfff390be"
+        },
+        "backend": {
+          "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/frozen/npu-gemm-variants.py",
+          "sha256": "55e000e262d0988a86cc2648d70ccada7fa64e7deab54c958915d8d7c172b015"
+        },
+        "ELF": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/replica2-col4/air_project/aie.elf",
+          "sha256": "3606144513996ed008e2da65ff20c941676f2f00c066b95ba118a90eb7083773"
+        },
+        "source_air": {
+          "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/replica2-col4/source.air.mlir",
+          "sha256": "974489918d796563a7e2d05779678effdf45f61ff80082e6087274a605e618a4"
+        },
+        "actual_core_coordinates": [
+          [
+            4,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            2
+          ],
+          [
+            5,
+            3
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            5,
+            5
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            6,
+            3
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            6,
+            5
+          ],
+          [
+            7,
+            2
+          ],
+          [
+            7,
+            3
+          ],
+          [
+            7,
+            4
+          ],
+          [
+            7,
+            5
+          ]
+        ]
+      }
+    }
+  },
+  "schema": "orbit.qwen-search-scope-audit.v1",
+  "catalogue": {
+    "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-ready-r19/catalogue-r19-frontier-r3-v2.json",
+    "sha256": "e7c5c8d2bbbc749961bf2f757856ff17e97ee836de932e4da1c1ffc69f75c7c4"
+  },
+  "distinct_gemm_artifacts": 18,
+  "layer_instances": 36,
+  "implementation_choices": 648,
+  "gemm_price_scope": "L0 inclusive callback wall time, not isolated device cycles; all values are milliseconds.",
+  "original_l0_inclusive_callback_ms": {
+    "qkv": 1.9635995,
+    "o": 1.127938,
+    "down": 2.6354315
+  },
+  "gemm_residence_limitation": "Variant callbacks use close-after-call contexts, clear padded host weight packs, and allocate/upload BOs again. Retaining an original source weight view is not retaining the packed/device weights. These prices do not establish tiling quality under matched residence/lifetime.",
+  "decode_search": {
+    "context_count": 4,
+    "dimensions": [
+      "coalescing",
+      "pure-host-RoPE-prefetch"
+    ],
+    "coverage": "Whole 36-layer decoder contexts; arbitrary decoder-internal GEMM/attention tiling is not covered."
+  },
+  "fusion": {
+    "ffn": "One XRT dispatch sequences separate up/gate/SwiGLU/down firmware configurations.",
+    "intermediate_memory": "device-ddr-bo",
+    "sram_residency_claim": false,
+    "true_gemm_epilogue_or_onchip_ffn_pipeline_covered": false,
+    "cpu_regions_compiled": 37,
+    "cpu_native_multi_operator_fusion_proven": 0
+  },
+  "conclusion": "Current catalogue cannot establish that small operators should remain on CPU, nor that tiling is ineffective; on-chip fusion and joint tiling/residence/lifetime require additional implementations and measurements."
+}

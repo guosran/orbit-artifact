@@ -1,0 +1,138 @@
+{
+  "schema": "orbit.qwen-r19-independent-ready-audit.v1",
+  "auditor_sha256": "01da9f3dc810263c84287c0e30cf73cc9158121abc67328c1205701c50af3bc2",
+  "execution": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-vanilla-20261114/orbit-selected-run2/execution",
+  "validation_only": true,
+  "price_fitting": false,
+  "code_files_current_match": true,
+  "code_drift": [],
+  "runtime_proof_identity": "7db54ea1eb63536c227cf59df205472459921e48fe51794ef7f6ace1d478b9af",
+  "requests": [
+    {
+      "sample": 0,
+      "source_operators": 581,
+      "source_exactcover": true,
+      "phase_union_conserves": true,
+      "cpu_regions": 143,
+      "half_invocations": [],
+      "decode_prefetch_calls": 126,
+      "pure_host_rope_device_overlap_ns": 90082541,
+      "memory": {
+        "VmHWM_bytes": 13597487104,
+        "VmRSS_bytes": 13597487104,
+        "VmSwap_bytes": 0,
+        "available_bytes": 8581693440
+      }
+    },
+    {
+      "sample": 1,
+      "source_operators": 581,
+      "source_exactcover": true,
+      "phase_union_conserves": true,
+      "cpu_regions": 143,
+      "half_invocations": [],
+      "decode_prefetch_calls": 126,
+      "pure_host_rope_device_overlap_ns": 97303638,
+      "memory": {
+        "VmHWM_bytes": 13615755264,
+        "VmRSS_bytes": 13615755264,
+        "VmSwap_bytes": 0,
+        "available_bytes": 8571805696
+      }
+    },
+    {
+      "sample": 2,
+      "source_operators": 581,
+      "source_exactcover": true,
+      "phase_union_conserves": true,
+      "cpu_regions": 143,
+      "half_invocations": [],
+      "decode_prefetch_calls": 126,
+      "pure_host_rope_device_overlap_ns": 100424081,
+      "memory": {
+        "VmHWM_bytes": 13616435200,
+        "VmRSS_bytes": 13616435200,
+        "VmSwap_bytes": 0,
+        "available_bytes": 8449851392
+      }
+    }
+  ],
+  "numerical_pairs": [
+    {
+      "reference": "previous_r19",
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-ready-r19/heldout-selected-frontier-r3-r19-v1-prepared/execution/capture.npz",
+      "sha256": "9a75f4e7185df88d8f4dba206becbb447b364b3f034f0a99e11bbc9104f76495",
+      "original_mutual_top5": {
+        "prompt_idx": 0,
+        "prompt_text": "",
+        "n_steps": 32,
+        "k": 5,
+        "divergence_step": null,
+        "test_chosen_at_div": null,
+        "ref_chosen_at_div": null,
+        "test_topk_at_div": null,
+        "ref_topk_at_div": null,
+        "status": "OK",
+        "fail_reason": null,
+        "test_chosen_rank_in_ref": null,
+        "ref_chosen_rank_in_test": null,
+        "test_chosen_text_at_div": null,
+        "ref_chosen_text_at_div": null,
+        "agreed_prefix_text": null
+      },
+      "first_token_divergence_zero_based": null,
+      "same_context_logit_rows": 128,
+      "same_context_max_abs_error": 0.0,
+      "full_logits_bitexact": true,
+      "post_divergence_error_metrics_computed": false
+    },
+    {
+      "reference": "hf",
+      "file": "/home/shiran/project/aie-toy/results/qwen25-3b/hf-bf16-P5-capture.npz",
+      "sha256": "2a356bba43dd7b20611e5a87d772be98d8705ccdcc5b16dcf5da9814c36afed5",
+      "original_mutual_top5": {
+        "prompt_idx": 0,
+        "prompt_text": "",
+        "n_steps": 32,
+        "k": 5,
+        "divergence_step": 5,
+        "test_chosen_at_div": 15344,
+        "ref_chosen_at_div": 9856,
+        "test_topk_at_div": [
+          15344,
+          17689,
+          9856,
+          5616,
+          279
+        ],
+        "ref_topk_at_div": [
+          9856,
+          17689,
+          15344,
+          279,
+          9448
+        ],
+        "status": "OK",
+        "fail_reason": null,
+        "test_chosen_rank_in_ref": 3,
+        "ref_chosen_rank_in_test": 3,
+        "test_chosen_text_at_div": null,
+        "ref_chosen_text_at_div": null,
+        "agreed_prefix_text": null
+      },
+      "first_token_divergence_zero_based": 5,
+      "same_context_logit_rows": 6,
+      "same_context_max_abs_error": 4.186279296875,
+      "full_logits_bitexact": null,
+      "post_divergence_error_metrics_computed": false
+    }
+  ],
+  "persistent_npu_owner_verified": true,
+  "cpu_compile_proofs": {
+    "count": 37,
+    "native_multi_operator_fusion_proven": 0,
+    "actual_generated_code_verified": true
+  },
+  "all_measured_token_streams_equal": true,
+  "all_original_gates_pass": true
+}

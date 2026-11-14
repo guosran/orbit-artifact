@@ -1,0 +1,210 @@
+{
+  "schema": "orbit.qwen-ffn-runtime.v1",
+  "logical_shape": [
+    2048,
+    11008,
+    2048
+  ],
+  "row_tile": 128,
+  "block_m": 128,
+  "block_n": 256,
+  "padded_hidden": 11264,
+  "retention": "retain",
+  "split_order": "up-gate",
+  "fusion": "single-xrt-dispatch-multiple-firmware-array-configurations",
+  "numerical_contract": "BF16 GEMM inputs/f32 accumulation; BF16 gate/up drains; original NPU SwiGLU BF16 rounding; f32 down output; numerical gate required",
+  "sram_residency_claim": false,
+  "memory": "device-ddr-bo",
+  "scratch_initialization": "original runner zeroes and syncs intermediate BOs on first call",
+  "static_indices": [
+    1,
+    2,
+    3
+  ],
+  "intermediate_indices": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "output_indices": [
+    7
+  ],
+  "buffers": [
+    {
+      "index": 0,
+      "id": "input",
+      "shape": [
+        128,
+        2048
+      ],
+      "bytes": 524288,
+      "role": "host-input",
+      "memory": "device-ddr-bo",
+      "first_kernel": 0,
+      "last_kernel": 3,
+      "lifetime": "layer-bo-key until close",
+      "upload": "every-call",
+      "download": "never"
+    },
+    {
+      "index": 1,
+      "id": "gate-weight",
+      "shape": [
+        2048,
+        11264
+      ],
+      "bytes": 46137344,
+      "role": "weight",
+      "memory": "device-ddr-bo",
+      "first_kernel": 1,
+      "last_kernel": 1,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-cache-sync",
+      "download": "never"
+    },
+    {
+      "index": 2,
+      "id": "up-weight",
+      "shape": [
+        2048,
+        11264
+      ],
+      "bytes": 46137344,
+      "role": "weight",
+      "memory": "device-ddr-bo",
+      "first_kernel": 0,
+      "last_kernel": 0,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-cache-sync",
+      "download": "never"
+    },
+    {
+      "index": 3,
+      "id": "down-weight",
+      "shape": [
+        11264,
+        2048
+      ],
+      "bytes": 46137344,
+      "role": "weight",
+      "memory": "device-ddr-bo",
+      "first_kernel": 3,
+      "last_kernel": 3,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-cache-sync",
+      "download": "never"
+    },
+    {
+      "index": 4,
+      "id": "gate",
+      "shape": [
+        128,
+        11264
+      ],
+      "bytes": 2883584,
+      "role": "intermediate",
+      "memory": "device-ddr-bo",
+      "first_kernel": 1,
+      "last_kernel": 2,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-zero",
+      "download": "never"
+    },
+    {
+      "index": 5,
+      "id": "up",
+      "shape": [
+        128,
+        11264
+      ],
+      "bytes": 2883584,
+      "role": "intermediate",
+      "memory": "device-ddr-bo",
+      "first_kernel": 0,
+      "last_kernel": 2,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-zero",
+      "download": "never"
+    },
+    {
+      "index": 6,
+      "id": "activation",
+      "shape": [
+        128,
+        11264
+      ],
+      "bytes": 2883584,
+      "role": "intermediate",
+      "memory": "device-ddr-bo",
+      "first_kernel": 2,
+      "last_kernel": 3,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-zero",
+      "download": "never"
+    },
+    {
+      "index": 7,
+      "id": "output",
+      "shape": [
+        128,
+        2048
+      ],
+      "bytes": 1048576,
+      "role": "host-output",
+      "memory": "device-ddr-bo",
+      "first_kernel": 3,
+      "last_kernel": 3,
+      "lifetime": "layer-bo-key until close",
+      "upload": "first-call-zero",
+      "download": "every-call"
+    }
+  ],
+  "kernel_order": [
+    "up",
+    "gate",
+    "swiglu",
+    "down"
+  ],
+  "executable_status": "requires compiled artifact and board numerical gate",
+  "compiled": true,
+  "artifact": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/compiled-up-gate/aie.elf",
+  "artifact_sha256": "6347efad4e58176065aabdf0b5de0a94d48c7cfa1219918d0052e7bf69820891",
+  "entrypoint": "main:orbit_qwen_ffn_r18_m128_128x256_up_gate",
+  "source_files": [
+    {
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/experimental/qwen-runtime-search/qwen-r18-ffn.py",
+      "sha256": "0c18c9aedfa4bee2d2c65463a97392be14e27c469c8eebb42590d909bfcb4608"
+    },
+    {
+      "file": "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/examples/llm_q4nx/kernels.py",
+      "sha256": "9938ce28233ca33593c0a994bd7a7833bd4f20532173ff0aef1b216768d3a22f"
+    },
+    {
+      "file": "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/examples/llm_q4nx/fused_mlp.py",
+      "sha256": "8475a38f8038e95801855fa2d80096a6418cbeb78f520a3fe1af58df145ac463"
+    }
+  ],
+  "emitted_files": [
+    {
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/compiled-up-gate/combined.mlir",
+      "sha256": "abe0287a3672e86e1ce4580abe8f294ef1b89e327f8e484b5615ef515470c8eb"
+    },
+    {
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/compiled-up-gate/op-0.ttshared.mlir",
+      "sha256": "02e579bc43041c36c63adccf3122aae88e3f4d75d81c249306532db85b806997"
+    },
+    {
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/compiled-up-gate/op-1.ttshared.mlir",
+      "sha256": "02e579bc43041c36c63adccf3122aae88e3f4d75d81c249306532db85b806997"
+    },
+    {
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/compiled-up-gate/op-2.ttshared.mlir",
+      "sha256": "9957257ca2fd71325bd32b40d98bdd2fa6f23ae7df850e456edfd1c64cff5fb8"
+    },
+    {
+      "file": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-whole-graph-r18/frozen-r18-v4/compiled-up-gate/op-3.ttshared.mlir",
+      "sha256": "6c6c60a398ddcdea03c8f4a576a126b262054cb7a2fa33621ab1ffdbcb7d752c"
+    }
+  ]
+}

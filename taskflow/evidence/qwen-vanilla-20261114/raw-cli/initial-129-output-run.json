@@ -1,0 +1,53 @@
+{
+  "schema": "orbit.vanilla-qwen-cli-run.v1",
+  "vendor_commit": "79d7ae3d1df7b52d87595f774bf6421b07cb9162",
+  "air_commit": "66a24f982a1e78553f682c5740d50c2216444584",
+  "vendor_tracked_clean": true,
+  "source_sha256": {
+    "examples/qwen25_3b_q4nx/qwen25_3b_q4nx_inference.py": "ead4c649555bddd2da7d2cfb971d0ffdb0f2eabbb2ebc6d163478bcfe9573bde",
+    "examples/qwen25_3b_q4nx/config.py": "d7c3cc35d6dec31ce568082c4ba66c7292db7f695c79d88f97acd261d1c19fec",
+    "examples/llm_q4nx/harness.py": "473f5ca58ae7ad07c693400fc37f2ce296efc1cb9fdd3564e28e2e6116e6ea59",
+    "examples/llm_q4nx/qwen25_prefill.py": "5ba9146394e00dc7198c8575f3de5a9538da8cf0b07352c7ac0e6976fb56fd54",
+    "examples/llm_q4nx/llama_prefill.py": "5e89bfa4f1e12d76bbff7d2293ac609dfc59817fe6a79b1dd5426e3c3e7ccd1b",
+    "examples/llm_q4nx/kernels.py": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+  },
+  "command": [
+    "/home/shiran/project/aie-toy/.venv/bin/python",
+    "-u",
+    "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/qwen25_3b_q4nx/qwen25_3b_q4nx_inference.py",
+    "--prefill-engine",
+    "triton",
+    "--backend",
+    "npu",
+    "--decode",
+    "npu",
+    "--prompt",
+    "785,6722,315,9625,374",
+    "--max-tokens",
+    "128",
+    "--max-seq",
+    "2048",
+    "--greedy",
+    "--model",
+    "/home/shiran/.cache/huggingface/hub/models--FastFlowLM--Qwen2.5-3B-Instruct-NPU2/snapshots/839749b231d1b065a9b8a14c65609b02c6a55f4c/model.q4nx"
+  ],
+  "environment": {
+    "AIR_LLMS_ROOT": "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/llms",
+    "XILINX_XRT": "/usr",
+    "AMD_TRITON_NPU_RUNTIME": "xrt",
+    "Q4NX_TOKENIZER_DIR": "/home/shiran/.cache/huggingface/hub/models--Qwen--Qwen2.5-3B-Instruct/snapshots/aa8e72537993ba99e69dfaafa59ed015b17504d1",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "OMP_NUM_THREADS": "4",
+    "MKL_NUM_THREADS": "4",
+    "OPENBLAS_NUM_THREADS": "4"
+  },
+  "measurement_scope": "Direct original CLI. Process wall includes model load and native setup. Native printed compute timers retained separately; not the r19 ready executor.",
+  "status": "COMPLETED",
+  "pid": 3217781,
+  "started_unix": 1794651718.7571373,
+  "returncode": 0,
+  "process_wall_seconds": 42.290669959038496,
+  "original_vendor_still_clean": true
+}
