@@ -1,0 +1,86 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "21f63871944907ebffb913748ddcbf8e24a4fc9a27b915d15fa91989aa21a80e",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "arg0",
+      "role": "input",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "arg1",
+      "role": "output",
+      "shape": [
+        64,
+        64
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              0,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    }
+  ]
+}

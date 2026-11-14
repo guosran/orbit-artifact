@@ -1,0 +1,28 @@
+[
+  {
+    "case": "actual",
+    "command": [
+      "/tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-opt",
+      "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-gap-closure-20261114/multidfg-shape2x2-r1/source.mlir",
+      "--target-config=/home/shiran/project/orbit-artifact/results/taskflow/taskflow-gap-closure-20261114/multidfg-shape2x2-r1/target.json",
+      "--check-placed-wave=0",
+      "--check-aie=/tmp/orbit-gap-closure-selected-pools-check-r2/actual.mlir",
+      "--implementation-output=/tmp/orbit-gap-closure-selected-pools-check-r2/actual.receipt.json"
+    ],
+    "returncode": 0,
+    "expected_accept": true
+  },
+  {
+    "case": "missing-active-slice",
+    "command": [
+      "/tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-opt",
+      "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-gap-closure-20261114/multidfg-shape2x2-r1/source.mlir",
+      "--target-config=/home/shiran/project/orbit-artifact/results/taskflow/taskflow-gap-closure-20261114/multidfg-shape2x2-r1/target.json",
+      "--check-placed-wave=0",
+      "--check-aie=/tmp/orbit-gap-closure-selected-pools-check-r2/missing-active-slice.mlir",
+      "--implementation-output=/tmp/orbit-gap-closure-selected-pools-check-r2/missing-active-slice.receipt.json"
+    ],
+    "returncode": 1,
+    "expected_accept": false
+  }
+]

@@ -1,0 +1,1465 @@
+{
+  "buffers": [
+    {
+      "bytes": 4096,
+      "layout": "affine_map<(d0) -> (d0)>",
+      "memory_space": "2 : i32",
+      "operation": 8,
+      "parent": 1,
+      "proposed_bindings": {},
+      "shape": [
+        1024
+      ],
+      "type": "memref<1024xf32, 2 : i32>",
+      "value": 6
+    },
+    {
+      "bytes": 4096,
+      "layout": "affine_map<(d0) -> (d0)>",
+      "memory_space": "2 : i32",
+      "operation": 9,
+      "parent": 1,
+      "proposed_bindings": {},
+      "shape": [
+        1024
+      ],
+      "type": "memref<1024xf32, 2 : i32>",
+      "value": 7
+    },
+    {
+      "bytes": 8192,
+      "layout": "affine_map<(d0) -> (d0)>",
+      "memory_space": "2 : i32",
+      "operation": 10,
+      "parent": 1,
+      "proposed_bindings": {},
+      "shape": [
+        2048
+      ],
+      "type": "memref<2048xf32, 2 : i32>",
+      "value": 8
+    },
+    {
+      "bytes": 16384,
+      "layout": "affine_map<(d0, d1) -> (d0, d1)>",
+      "memory_space": "0",
+      "operation": 11,
+      "parent": 1,
+      "proposed_bindings": {},
+      "shape": [
+        64,
+        64
+      ],
+      "type": "memref<64x64xf32>",
+      "value": 9
+    },
+    {
+      "bytes": 16384,
+      "layout": "affine_map<(d0, d1) -> (d0, d1)>",
+      "memory_space": "0",
+      "operation": 12,
+      "parent": 1,
+      "proposed_bindings": {},
+      "shape": [
+        64,
+        64
+      ],
+      "type": "memref<64x64xf32>",
+      "value": 10
+    }
+  ],
+  "computations": [
+    39,
+    40,
+    41
+  ],
+  "groups": [
+    {
+      "operation": 26,
+      "proposed_bindings": {}
+    },
+    {
+      "operation": 65,
+      "proposed_bindings": {}
+    },
+    {
+      "operation": 66,
+      "proposed_bindings": {}
+    }
+  ],
+  "operation_counts": {
+    "aie.buffer": 3,
+    "aie.core": 1,
+    "aie.device": 2,
+    "aie.dma_bd": 4,
+    "aie.dma_start": 2,
+    "aie.end": 5,
+    "aie.external_buffer": 2,
+    "aie.flow": 2,
+    "aie.lock": 4,
+    "aie.mem": 1,
+    "aie.next_bd": 2,
+    "aie.runtime_sequence": 2,
+    "aie.shim_dma_allocation": 2,
+    "aie.tile": 2,
+    "aie.use_lock": 8,
+    "aiex.configure": 1,
+    "aiex.dma_await_task": 1,
+    "aiex.dma_configure_task_for": 2,
+    "aiex.dma_free_task": 1,
+    "aiex.dma_start_task": 2,
+    "aiex.run": 1,
+    "arith.addf": 1,
+    "arith.constant": 6,
+    "builtin.module": 1,
+    "cf.br": 2,
+    "memref.load": 1,
+    "memref.reinterpret_cast": 2,
+    "memref.store": 1,
+    "scf.for": 2,
+    "scf.yield": 2
+  },
+  "operations": [
+    {
+      "attributes": {},
+      "id": 0,
+      "name": "builtin.module",
+      "operands": [],
+      "parent": -1,
+      "properties": "",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              1,
+              63
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "dlti.dl_spec": "#dlti.dl_spec<index = 32 : i64>"
+      },
+      "id": 1,
+      "name": "aie.device",
+      "operands": [],
+      "parent": 0,
+      "properties": "{device = 8 : i32, sym_name = \"orbit_public_graph_configuration\"}",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              26,
+              47,
+              48,
+              49,
+              50,
+              51,
+              62
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 2,
+      "name": "aie.tile",
+      "operands": [],
+      "parent": 1,
+      "properties": "{col = 0 : i32, row = 0 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 0
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 3,
+      "name": "aie.tile",
+      "operands": [],
+      "parent": 1,
+      "properties": "{col = 0 : i32, row = 3 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 1
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 4,
+      "name": "aie.lock",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{init = 1 : i32, lockID = 3 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 2
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 5,
+      "name": "aie.lock",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{init = 0 : i32, lockID = 2 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 3
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 6,
+      "name": "aie.lock",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{init = 1 : i32, lockID = 1 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 4
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 7,
+      "name": "aie.lock",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{init = 0 : i32, lockID = 0 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 5
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 8,
+      "name": "aie.buffer",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{aligned = true, sym_name = \"buf2\"}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<1024xf32, 2 : i32>",
+          "value": 6
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 9,
+      "name": "aie.buffer",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{aligned = true, sym_name = \"buf1\"}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<1024xf32, 2 : i32>",
+          "value": 7
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 10,
+      "name": "aie.buffer",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{aligned = true, sym_name = \"buf0\"}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<2048xf32, 2 : i32>",
+          "value": 8
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 11,
+      "name": "aie.external_buffer",
+      "operands": [],
+      "parent": 1,
+      "properties": "{sym_name = \"__air_external_buffer\"}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<64x64xf32>",
+          "value": 9
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 12,
+      "name": "aie.external_buffer",
+      "operands": [],
+      "parent": 1,
+      "properties": "{sym_name = \"__air_external_buffer_1\"}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<64x64xf32>",
+          "value": 10
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 13,
+      "name": "aie.mem",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              14,
+              15
+            ]
+          },
+          {
+            "arguments": [],
+            "operations": [
+              16,
+              17,
+              18,
+              19
+            ]
+          },
+          {
+            "arguments": [],
+            "operations": [
+              20
+            ]
+          },
+          {
+            "arguments": [],
+            "operations": [
+              21
+            ]
+          },
+          {
+            "arguments": [],
+            "operations": [
+              22,
+              23,
+              24,
+              25
+            ]
+          }
+        ]
+      ],
+      "results": [
+        {
+          "type": "index",
+          "value": 11
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "value": "1 : i32"
+      },
+      "id": 14,
+      "name": "arith.constant",
+      "operands": [],
+      "parent": 13,
+      "properties": "{value = 1 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "i32",
+          "value": 12
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 15,
+      "name": "aie.dma_start",
+      "operands": [],
+      "parent": 13,
+      "properties": "{channel = 0 : i32, channel_dir = 1 : i32, repeat_count = 0 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "i1",
+          "value": 13
+        }
+      ],
+      "successors": [
+        [
+          16,
+          17,
+          18,
+          19
+        ],
+        [
+          21
+        ]
+      ]
+    },
+    {
+      "attributes": {},
+      "id": 16,
+      "name": "aie.use_lock",
+      "operands": [
+        5,
+        12
+      ],
+      "parent": 13,
+      "properties": "{action = 2 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "task_id": "0 : i32"
+      },
+      "id": 17,
+      "name": "aie.dma_bd",
+      "operands": [
+        8
+      ],
+      "parent": 13,
+      "properties": "{operandSegmentSizes = array<i32: 1, 0, 0, 0, 0, 0>, static_len = 1024 : i32, static_offset = 0 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 18,
+      "name": "aie.use_lock",
+      "operands": [
+        4,
+        12
+      ],
+      "parent": 13,
+      "properties": "{action = 1 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 19,
+      "name": "aie.next_bd",
+      "operands": [],
+      "parent": 13,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": [
+        [
+          16,
+          17,
+          18,
+          19
+        ]
+      ]
+    },
+    {
+      "attributes": {},
+      "id": 20,
+      "name": "aie.end",
+      "operands": [],
+      "parent": 13,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 21,
+      "name": "aie.dma_start",
+      "operands": [],
+      "parent": 13,
+      "properties": "{channel = 0 : i32, channel_dir = 0 : i32, repeat_count = 0 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "i1",
+          "value": 14
+        }
+      ],
+      "successors": [
+        [
+          22,
+          23,
+          24,
+          25
+        ],
+        [
+          20
+        ]
+      ]
+    },
+    {
+      "attributes": {},
+      "id": 22,
+      "name": "aie.use_lock",
+      "operands": [
+        2,
+        12
+      ],
+      "parent": 13,
+      "properties": "{action = 2 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "task_id": "0 : i32"
+      },
+      "id": 23,
+      "name": "aie.dma_bd",
+      "operands": [
+        6
+      ],
+      "parent": 13,
+      "properties": "{operandSegmentSizes = array<i32: 1, 0, 0, 0, 0, 0>, static_len = 1024 : i32, static_offset = 0 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 24,
+      "name": "aie.use_lock",
+      "operands": [
+        3,
+        12
+      ],
+      "parent": 13,
+      "properties": "{action = 1 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 25,
+      "name": "aie.next_bd",
+      "operands": [],
+      "parent": 13,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": [
+        [
+          22,
+          23,
+          24,
+          25
+        ]
+      ]
+    },
+    {
+      "attributes": {
+        "air.herd_local_id": "array<i64: 0, 0>",
+        "air.herd_name": "\"orbit_public_core_0_3\"",
+        "air.herd_size": "array<i64: 1, 1>"
+      },
+      "id": 26,
+      "name": "aie.core",
+      "operands": [
+        1
+      ],
+      "parent": 1,
+      "properties": "{stack_size = 4096 : i32}",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          },
+          {
+            "arguments": [],
+            "operations": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              44,
+              45,
+              46
+            ]
+          }
+        ]
+      ],
+      "results": [
+        {
+          "type": "index",
+          "value": 15
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "value": "1 : i32"
+      },
+      "id": 27,
+      "name": "arith.constant",
+      "operands": [],
+      "parent": 26,
+      "properties": "{value = 1 : i32}",
+      "regions": [],
+      "results": [
+        {
+          "type": "i32",
+          "value": 16
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "value": "64 : index"
+      },
+      "id": 28,
+      "name": "arith.constant",
+      "operands": [],
+      "parent": 26,
+      "properties": "{value = 64 : index}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 17
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "value": "16 : index"
+      },
+      "id": 29,
+      "name": "arith.constant",
+      "operands": [],
+      "parent": 26,
+      "properties": "{value = 16 : index}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 18
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "value": "1 : index"
+      },
+      "id": 30,
+      "name": "arith.constant",
+      "operands": [],
+      "parent": 26,
+      "properties": "{value = 1 : index}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 19
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "value": "0 : index"
+      },
+      "id": 31,
+      "name": "arith.constant",
+      "operands": [],
+      "parent": 26,
+      "properties": "{value = 0 : index}",
+      "regions": [],
+      "results": [
+        {
+          "type": "index",
+          "value": 20
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 32,
+      "name": "cf.br",
+      "operands": [],
+      "parent": 26,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": [
+        [
+          33,
+          34,
+          35,
+          36,
+          37,
+          44,
+          45,
+          46
+        ]
+      ]
+    },
+    {
+      "attributes": {},
+      "id": 33,
+      "name": "aie.use_lock",
+      "operands": [
+        4,
+        16
+      ],
+      "parent": 26,
+      "properties": "{action = 2 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 34,
+      "name": "aie.use_lock",
+      "operands": [
+        3,
+        16
+      ],
+      "parent": 26,
+      "properties": "{action = 2 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "operandSegmentSizes": "array<i32: 1, 0, 0, 0>",
+        "static_offsets": "array<i64: 0>",
+        "static_sizes": "array<i64: 16, 64>",
+        "static_strides": "array<i64: 64, 1>"
+      },
+      "id": 35,
+      "name": "memref.reinterpret_cast",
+      "operands": [
+        6
+      ],
+      "parent": 26,
+      "properties": "{operandSegmentSizes = array<i32: 1, 0, 0, 0>, static_offsets = array<i64: 0>, static_sizes = array<i64: 16, 64>, static_strides = array<i64: 64, 1>}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<16x64xf32, strided<[64, 1]>, 2 : i32>",
+          "value": 21
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "operandSegmentSizes": "array<i32: 1, 0, 0, 0>",
+        "static_offsets": "array<i64: 0>",
+        "static_sizes": "array<i64: 16, 64>",
+        "static_strides": "array<i64: 64, 1>"
+      },
+      "id": 36,
+      "name": "memref.reinterpret_cast",
+      "operands": [
+        8
+      ],
+      "parent": 26,
+      "properties": "{operandSegmentSizes = array<i32: 1, 0, 0, 0>, static_offsets = array<i64: 0>, static_sizes = array<i64: 16, 64>, static_strides = array<i64: 64, 1>}",
+      "regions": [],
+      "results": [
+        {
+          "type": "memref<16x64xf32, strided<[64, 1]>, 2 : i32>",
+          "value": 22
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "loop_annotation": "#llvm.loop_annotation<mustProgress = true>"
+      },
+      "id": 37,
+      "name": "scf.for",
+      "operands": [
+        20,
+        18,
+        19
+      ],
+      "parent": 26,
+      "properties": "",
+      "regions": [
+        [
+          {
+            "arguments": [
+              {
+                "type": "index",
+                "value": 23
+              }
+            ],
+            "operations": [
+              38,
+              43
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "loop_annotation": "#llvm.loop_annotation<mustProgress = true>"
+      },
+      "id": 38,
+      "name": "scf.for",
+      "operands": [
+        20,
+        17,
+        19
+      ],
+      "parent": 37,
+      "properties": "",
+      "regions": [
+        [
+          {
+            "arguments": [
+              {
+                "type": "index",
+                "value": 24
+              }
+            ],
+            "operations": [
+              39,
+              40,
+              41,
+              42
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 39,
+      "name": "memref.load",
+      "operands": [
+        21,
+        23,
+        24
+      ],
+      "parent": 38,
+      "properties": "",
+      "regions": [],
+      "results": [
+        {
+          "type": "f32",
+          "value": 25
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "fastmath": "#arith.fastmath<none>"
+      },
+      "id": 40,
+      "name": "arith.addf",
+      "operands": [
+        25,
+        25
+      ],
+      "parent": 38,
+      "properties": "{fastmath = #arith.fastmath<none>}",
+      "regions": [],
+      "results": [
+        {
+          "type": "f32",
+          "value": 26
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 41,
+      "name": "memref.store",
+      "operands": [
+        26,
+        22,
+        23,
+        24
+      ],
+      "parent": 38,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 42,
+      "name": "scf.yield",
+      "operands": [],
+      "parent": 38,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 43,
+      "name": "scf.yield",
+      "operands": [],
+      "parent": 37,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 44,
+      "name": "aie.use_lock",
+      "operands": [
+        2,
+        16
+      ],
+      "parent": 26,
+      "properties": "{action = 1 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 45,
+      "name": "aie.use_lock",
+      "operands": [
+        5,
+        16
+      ],
+      "parent": 26,
+      "properties": "{action = 1 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 46,
+      "name": "cf.br",
+      "operands": [],
+      "parent": 26,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": [
+        [
+          33,
+          34,
+          35,
+          36,
+          37,
+          44,
+          45,
+          46
+        ]
+      ]
+    },
+    {
+      "attributes": {},
+      "id": 47,
+      "name": "aie.flow",
+      "operands": [
+        0,
+        1
+      ],
+      "parent": 1,
+      "properties": "{dest_bundle = 1 : i32, dest_channel = 0 : i32, source_bundle = 1 : i32, source_channel = 0 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 48,
+      "name": "aie.flow",
+      "operands": [
+        1,
+        0
+      ],
+      "parent": 1,
+      "properties": "{dest_bundle = 1 : i32, dest_channel = 0 : i32, source_bundle = 1 : i32, source_channel = 0 : i32}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 49,
+      "name": "aie.shim_dma_allocation",
+      "operands": [
+        0
+      ],
+      "parent": 1,
+      "properties": "{channel_dir = 0 : i32, channel_index = 0 : i64, plio = false, sym_name = \"air_channel_1\"}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 50,
+      "name": "aie.shim_dma_allocation",
+      "operands": [
+        0
+      ],
+      "parent": 1,
+      "properties": "{channel_dir = 1 : i32, channel_index = 0 : i64, plio = false, sym_name = \"air_channel_0\"}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 51,
+      "name": "aie.runtime_sequence",
+      "operands": [],
+      "parent": 1,
+      "properties": "{sym_name = \"orbit_public_graph_configuration_sequence\"}",
+      "regions": [
+        [
+          {
+            "arguments": [
+              {
+                "type": "memref<64x64xf32>",
+                "value": 27
+              },
+              {
+                "type": "memref<64x64xf32>",
+                "value": 28
+              },
+              {
+                "type": "memref<64x64xf32>",
+                "value": 29
+              }
+            ],
+            "operations": [
+              52,
+              55,
+              56,
+              59,
+              60,
+              61
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {
+        "air.preserve_shim_dma_order": "unit"
+      },
+      "id": 52,
+      "name": "aiex.dma_configure_task_for",
+      "operands": [],
+      "parent": 51,
+      "properties": "{alloc = @air_channel_1, issue_token = true}",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              53,
+              54
+            ]
+          }
+        ]
+      ],
+      "results": [
+        {
+          "type": "index",
+          "value": 30
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 53,
+      "name": "aie.dma_bd",
+      "operands": [
+        29
+      ],
+      "parent": 52,
+      "properties": "{operandSegmentSizes = array<i32: 1, 0, 0, 0, 0, 0>, static_len = 1024 : i32, static_offset = 0 : i32, static_sizes = array<i64: 16, 64>, static_strides = array<i64: 64, 1>}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 54,
+      "name": "aie.end",
+      "operands": [],
+      "parent": 52,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 55,
+      "name": "aiex.dma_start_task",
+      "operands": [
+        30
+      ],
+      "parent": 51,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 56,
+      "name": "aiex.dma_configure_task_for",
+      "operands": [],
+      "parent": 51,
+      "properties": "{alloc = @air_channel_0}",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              57,
+              58
+            ]
+          }
+        ]
+      ],
+      "results": [
+        {
+          "type": "index",
+          "value": 31
+        }
+      ],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 57,
+      "name": "aie.dma_bd",
+      "operands": [
+        27
+      ],
+      "parent": 56,
+      "properties": "{operandSegmentSizes = array<i32: 1, 0, 0, 0, 0, 0>, static_len = 1024 : i32, static_offset = 0 : i32, static_sizes = array<i64: 16, 64>, static_strides = array<i64: 64, 1>}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 58,
+      "name": "aie.end",
+      "operands": [],
+      "parent": 56,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 59,
+      "name": "aiex.dma_start_task",
+      "operands": [
+        31
+      ],
+      "parent": 51,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 60,
+      "name": "aiex.dma_await_task",
+      "operands": [
+        30
+      ],
+      "parent": 51,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 61,
+      "name": "aiex.dma_free_task",
+      "operands": [
+        31
+      ],
+      "parent": 51,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 62,
+      "name": "aie.end",
+      "operands": [],
+      "parent": 1,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 63,
+      "name": "aie.device",
+      "operands": [],
+      "parent": 0,
+      "properties": "{device = 8 : i32, sym_name = \"main\"}",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              64,
+              67
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 64,
+      "name": "aie.runtime_sequence",
+      "operands": [],
+      "parent": 63,
+      "properties": "{sym_name = \"pointwise\"}",
+      "regions": [
+        [
+          {
+            "arguments": [
+              {
+                "type": "memref<64x64xf32>",
+                "value": 32
+              },
+              {
+                "type": "memref<64x64xf32>",
+                "value": 33
+              },
+              {
+                "type": "memref<64x64xf32>",
+                "value": 34
+              }
+            ],
+            "operations": [
+              65
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 65,
+      "name": "aiex.configure",
+      "operands": [],
+      "parent": 64,
+      "properties": "{symbol = @orbit_public_graph_configuration}",
+      "regions": [
+        [
+          {
+            "arguments": [],
+            "operations": [
+              66
+            ]
+          }
+        ]
+      ],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 66,
+      "name": "aiex.run",
+      "operands": [
+        32,
+        33,
+        34
+      ],
+      "parent": 65,
+      "properties": "{runtime_sequence_symbol = @orbit_public_graph_configuration_sequence}",
+      "regions": [],
+      "results": [],
+      "successors": []
+    },
+    {
+      "attributes": {},
+      "id": 67,
+      "name": "aie.end",
+      "operands": [],
+      "parent": 63,
+      "properties": "",
+      "regions": [],
+      "results": [],
+      "successors": []
+    }
+  ],
+  "schema": "orbit.mlir.implementation-facts.v19",
+  "scope": "Actual operation structure, SSA values, CFG successors, buffer types/layouts, DMA operands and synchronization operations; proposed orbit bindings are separate and are not coverage proof.",
+  "synchronizations": [
+    4,
+    5,
+   taskflow-opt: public graph final AIE: extra/aliased buffer or unsupported memory/lock/topology owner
+ 6,
+    7,
+    16,
+    18,
+    22,
+    24,
+    33,
+    34,
+    42,
+    43,
+    44,
+    45,
+    60
+  ],
+  "transfers": [
+    {
+      "operation": 17,
+      "parent": 13,
+      "proposed_bindings": {}
+    },
+    {
+      "operation": 23,
+      "parent": 13,
+      "proposed_bindings": {}
+    },
+    {
+      "operation": 53,
+      "parent": 52,
+      "proposed_bindings": {}
+    },
+    {
+      "operation": 57,
+      "parent": 56,
+      "proposed_bindings": {}
+    }
+  ]
+}

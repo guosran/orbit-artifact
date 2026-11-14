@@ -1,0 +1,433 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "73737c756165f1d94286e5685be7976569088503af06a170dda6c5b3ebeaa5ef",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "arg0",
+      "role": "input",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "arg1",
+      "role": "output",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "alloc2",
+      "role": "temporary",
+      "shape": [
+        11,
+        64
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              0,
+              11
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              11
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "alloc2",
+          "write": true,
+          "write_version": "Pointwise.replica.0.0.split.0:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise.replica.0.0.split.0",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "Pointwise.replica.0.0.split.0:write:1"
+          ],
+          "region": [
+            [
+              0,
+              11
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "alloc2",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              11
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise.replica.0.0.split.1:write:1"
+        }
+      ],
+      "dependencies": [
+        "Pointwise.replica.0.0.split.0"
+      ],
+      "id": "Pointwise.replica.0.0.split.1",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 11
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              11,
+              22
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              11,
+              22
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise.replica.0.1:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise.replica.0.1",
+      "loops": [
+        {
+          "lower": 11,
+          "step": 1,
+          "upper": 22
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              22,
+              33
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              22,
+              33
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise.replica.0.2:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise.replica.0.2",
+      "loops": [
+        {
+          "lower": 22,
+          "step": 1,
+          "upper": 33
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              33,
+              44
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              33,
+              44
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise.replica.0.3:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise.replica.0.3",
+      "loops": [
+        {
+          "lower": 33,
+          "step": 1,
+          "upper": 44
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              44,
+              54
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              44,
+              54
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise.replica.0.4:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise.replica.0.4",
+      "loops": [
+        {
+          "lower": 44,
+          "step": 1,
+          "upper": 54
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "arg0:initial"
+          ],
+          "region": [
+            [
+              54,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg0",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              54,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "arg1",
+          "write": true,
+          "write_version": "Pointwise.replica.0.5:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "Pointwise.replica.0.5",
+      "loops": [
+        {
+          "lower": 54,
+          "step": 1,
+          "upper": 64
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    }
+  ]
+}

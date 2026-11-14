@@ -1,0 +1,58 @@
+module attributes {orbit.program_graph = "56d85de044f0ae81ae42c9813028e4ae309654ba2a7c6529aea060f57c2e1c89"} {
+  air.channel @channel_0 [1, 1]
+  air.channel @channel_1 [1, 1]
+  func.func @pointwise(%arg0: memref<32x32xf32> {orbit.name = "arg0", orbit.role = "input"}, %arg1: memref<32x32xf32> {orbit.name = "arg1", orbit.role = "output"}, %arg2: memref<32x32xf32> {orbit.name = "alloc2", orbit.role = "temporary"}) attributes {llvm.emit_c_interface, orbit.noalias} {
+    %c1 = arith.constant 1 : index
+    %0 = air.launch @orbit_public_graph async (%arg3, %arg4) in (%arg5=%c1, %arg6=%c1) args(%arg7=%arg0, %arg8=%arg2) : memref<32x32xf32>, memref<32x32xf32> attributes {air.preserve_shim_dma_order, id = 1 : i32} {
+      %c0 = arith.constant 0 : index
+      %1 = air.channel.put async  @channel_0[%c0, %c0] (%arg7[] [] []) {id = 1 : i32} : (memref<32x32xf32>)
+      %2 = air.channel.get async  @channel_1[%c0, %c0] (%arg8[] [] []) {id = 2 : i32} : (memref<32x32xf32>)
+      %3 = air.segment @orbit_public_graph_configuration async  attributes {id = 2 : i32, x_loc = 0 : i64, x_size = 8 : i64, y_loc = 2 : i64, y_size = 6 : i64} {
+        %c1_0 = arith.constant 1 : index
+        %4 = air.herd @orbit_public_core_0_3 async  tile (%arg9, %arg10) in (%arg11=%c1_0, %arg12=%c1_0) attributes {id = 3 : i32, orbit.spatial_owner = "npu.tile.0.3", x_loc = 0 : i64, y_loc = 3 : i64} {
+          %c32 = arith.constant 32 : index
+          %c1_1 = arith.constant 1 : index
+          %c0_2 = arith.constant 0 : index
+          %async_token, %results = air.execute -> (memref<1024xf32, 2 : i32>) {
+            %alloc = memref.alloc() {orbit.allocation = 1 : i64, orbit.allocation_offsets_elements = array<i64: 0>, orbit.allocations = array<i64: 1>, orbit.storage_index = 0 : i64, orbit.tile_pool = "public-storage-0"} : memref<1024xf32, 2 : i32>
+            air.execute_terminator %alloc : memref<1024xf32, 2 : i32>
+          }
+          %async_token_3, %results_4 = air.execute -> (memref<1024xf32, 2 : i32>) {
+            %alloc = memref.alloc() {orbit.allocation = 2 : i64, orbit.allocation_offsets_elements = array<i64: 0>, orbit.allocations = array<i64: 2>, orbit.storage_index = 2 : i64, orbit.tile_pool = "public-storage-2"} : memref<1024xf32, 2 : i32>
+            air.execute_terminator %alloc : memref<1024xf32, 2 : i32>
+          }
+          %5 = air.channel.get async  @channel_0[%arg9, %arg10] (%results[] [] []) {id = 3 : i32} : (memref<1024xf32, 2 : i32>)
+          air.wait_all [%5] 
+          %reinterpret_cast = memref.reinterpret_cast %results to offset: [0], sizes: [32, 32], strides: [32, 1] {orbit.allocation = 1 : i64, orbit.logical_offsets = array<i64: 0, 0>, orbit.logical_sizes = array<i64: 32, 32>, orbit.storage_index = 0 : i64} : memref<1024xf32, 2 : i32> to memref<32x32xf32, strided<[32, 1]>, 2 : i32>
+          %reinterpret_cast_5 = memref.reinterpret_cast %results_4 to offset: [0], sizes: [32, 32], strides: [32, 1] {orbit.allocation = 2 : i64, orbit.logical_offsets = array<i64: 0, 0>, orbit.logical_sizes = array<i64: 32, 32>, orbit.storage_index = 2 : i64} : memref<1024xf32, 2 : i32> to memref<32x32xf32, strided<[32, 1]>, 2 : i32>
+          %6 = air.wait_all async 
+          %7 = scf.for %arg13 = %c0_2 to %c32 step %c1_1 iter_args(%arg14 = %6) -> (!air.async.token) {
+            %9 = scf.for %arg15 = %c0_2 to %c32 step %c1_1 iter_args(%arg16 = %arg14) -> (!air.async.token) {
+              %async_token_8, %results_9 = air.execute [%arg16] -> (f32) {
+                %12 = memref.load %reinterpret_cast[%arg13, %arg15] : memref<32x32xf32, strided<[32, 1]>, 2 : i32>
+                air.execute_terminator %12 : f32
+              }
+              %10 = arith.addf %results_9, %results_9 : f32
+              %async_token_10 = air.execute [%arg16] {
+                memref.store %10, %reinterpret_cast_5[%arg13, %arg15] : memref<32x32xf32, strided<[32, 1]>, 2 : i32>
+              }
+              %11 = air.wait_all async [%async_token_8, %async_token_10] 
+              scf.yield %11 : !air.async.token
+            }
+            scf.yield %9 : !air.async.token
+          }
+          %8 = air.channel.put async  @channel_1[%arg9, %arg10] (%results_4[] [] []) {id = 4 : i32} : (memref<1024xf32, 2 : i32>)
+          air.wait_all [%8] 
+          %async_token_6 = air.execute [%async_token] {
+            memref.dealloc %results : memref<1024xf32, 2 : i32>
+          }
+          %async_token_7 = air.execute [%async_token_3] {
+            memref.dealloc %results_4 : memref<1024xf32, 2 : i32>
+          }
+        }
+        air.wait_all [%4]  {air.segment_end}
+      }
+    }
+    return
+  }
+}

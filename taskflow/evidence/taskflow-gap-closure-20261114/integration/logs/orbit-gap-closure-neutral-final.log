@@ -1,0 +1,319 @@
+[0/1] Re-running CMake...
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Calibration contracts SKIP: configured Python lacks NumPy/SciPy
+-- Configuring done (0.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: /tmp/orbit-taskflow-neutral-build
+[1/150] Building Taskflow.cpp.inc...
+[2/150] Building Taskflow.h.inc...
+[3/150] Building TaskflowDialect.cpp.inc...
+[4/150] Building TaskflowDialect.h.inc...
+[5/149] Building TaskflowTypes.cpp.inc...
+[6/149] Building TaskflowTypes.h.inc...
+[7/134] Building TaskflowPasses.h.inc...
+[8/134] Building CXX object lib/TaskflowDialect/CMakeFiles/obj.MLIRTaskflow.dir/TaskflowOps.cpp.o
+[9/134] Linking CXX static library lib/TaskflowDialect/libMLIRTaskflow.a
+[10/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskPlacement.cpp.o
+[11/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskflowTiling.cpp.o
+[12/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/Search.cpp.o
+[13/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/SourceActions.cpp.o
+[14/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/SourceSearchDriver.cpp.o
+[15/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/SourceMappingActions.cpp.o
+/home/shiran/project/orbit/lib/Taskflow/SourceMappingActions.cpp: In lambda function:
+/home/shiran/project/orbit/lib/Taskflow/SourceMappingActions.cpp:204:24: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<orbit::taskflow::GenericLoop>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  204 |           sizes.size() != found->loops.size() || sizes.size() == 0) {
+      |           ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/SourceMappingActions.cpp: In lambda function:
+/home/shiran/project/orbit/lib/Taskflow/SourceMappingActions.cpp:316:22: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int64_t' {aka 'long int'} [-Wsign-compare]
+  316 |                 axis < global.size() ? std::min(extent, global[axis]) : extent);
+      |                 ~~~~~^~~~~~~~~~~~~~~
+[16/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramAllHeterogeneousCost.cpp.o
+[17/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramMatrixImplementation.cpp.o
+[18/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramBeamSearch.cpp.o
+[19/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramAllSearch.cpp.o
+[20/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramGraphSearch.cpp.o
+[21/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/MemoryArchitecture.cpp.o
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp: In function 'bool orbit::taskflow::parseMemoryArchitecture(const {anonymous}::V&, StaticConfig&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:408:75: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  408 |           std::make_pair("bandwidth_bytes_per_ms", &l.bandwidthBytesPerMs)})
+      |                                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:407:40: note: 'double*' temporary created here
+  407 |          {std::make_pair("latency_ms", &l.latencyMs),
+      |                                        ^~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:408:75: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  408 |           std::make_pair("bandwidth_bytes_per_ms", &l.bandwidthBytesPerMs)})
+      |                                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:408:52: note: 'double*' temporary created here
+  408 |           std::make_pair("bandwidth_bytes_per_ms", &l.bandwidthBytesPerMs)})
+      |                                                    ^~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:417:76: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  417 |                        std::make_pair("temporary_bytes", &l.temporaryBytes)})
+      |                                                                            ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:415:52: note: 'long int*' temporary created here
+  415 |     for (auto entry : {std::make_pair("min_bytes", &l.minBytes),
+      |                                                    ^~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:417:76: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  417 |                        std::make_pair("temporary_bytes", &l.temporaryBytes)})
+      |                                                                            ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:416:52: note: 'long int*' temporary created here
+  416 |                        std::make_pair("max_bytes", &l.maxBytes),
+      |                                                    ^~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:417:76: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  417 |                        std::make_pair("temporary_bytes", &l.temporaryBytes)})
+      |                                                                            ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:417:58: note: 'long int*' temporary created here
+  417 |                        std::make_pair("temporary_bytes", &l.temporaryBytes)})
+      |                                                          ^~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp: In function 'bool orbit::taskflow::configureGenericMemory(const {anonymous}::V&, int64_t, GenericMemoryBinding&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:475:43: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  475 |            {std::make_pair("host_memory", &b.hostMemory),
+      |                                           ^~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:476:44: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  476 |             std::make_pair("local_memory", &b.localMemory),
+      |                                            ^~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:477:48: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  477 |             std::make_pair("compute_resource", &b.computeResource),
+      |                                                ^~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:478:44: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  478 |             std::make_pair("dma_resource", &b.dmaResource),
+      |                                            ^~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:479:42: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  479 |             std::make_pair("input_link", &b.inputLink),
+      |                                          ^~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:480:43: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  480 |             std::make_pair("output_link", &b.outputLink),
+      |                                           ^~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:73: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                                         ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:481:51: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  481 |             std::make_pair("submission_resource", &b.submissionResource)})
+      |                                                   ^~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp: In function 'bool orbit::taskflow::getGenericTargetCapabilities(const {anonymous}::V&, GenericTargetCapabilities&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:553:68: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  553 |             std::make_pair("max_group_outputs", &c.maxGroupOutputs)})
+      |                                                                    ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:552:48: note: 'long int*' temporary created here
+  552 |            {std::make_pair("max_group_inputs", &c.maxGroupInputs),
+      |                                                ^~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:553:68: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  553 |             std::make_pair("max_group_outputs", &c.maxGroupOutputs)})
+      |                                                                    ^
+/home/shiran/project/orbit/lib/Taskflow/MemoryArchitecture.cpp:553:49: note: 'long int*' temporary created here
+  553 |             std::make_pair("max_group_outputs", &c.maxGroupOutputs)})
+      |                                                 ^~~~~~~~~~~~~~~~~~
+[22/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramOperatorSource.cpp.o
+[23/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramOperatorMapping.cpp.o
+[24/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramResourceSchedule.cpp.o
+[25/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramGraph.cpp.o
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp: In function 'bool orbit::taskflow::parseWholeTaskProgramGraphConfig(const llvm::json::Value&, StaticConfig&, ProgramDataOrganizationChoice&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:59: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:734:40: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  734 |            {std::make_pair("resource", &estimate.resource),
+      |                                        ^~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:59: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:735:46: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  735 |             std::make_pair("implementation", &estimate.implementation),
+      |                                              ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:59: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:736:37: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  736 |             std::make_pair("model", &estimate.model),
+      |                                     ^~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:59: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:737:45: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  737 |             std::make_pair("model_version", &estimate.modelVersion),
+      |                                             ^~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:59: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:738:42: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  738 |             std::make_pair("provenance", &estimate.provenance),
+      |                                          ^~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:59: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                                           ^
+/home/shiran/project/orbit/lib/Taskflow/ProgramGraph.cpp:739:40: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  739 |             std::make_pair("boundary", &estimate.boundary)}) {
+      |                                        ^~~~~~~~~~~~~~~~~~
+[26/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramJointSolver.cpp.o
+[27/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramJointMILPSolver.cpp.o
+[28/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramJointDomain.cpp.o
+[29/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/AmoebaMapping.cpp.o
+[30/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramJointPlan.cpp.o
+[31/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/HeterogeneousMapping.cpp.o
+[32/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/HeterogeneousSearch.cpp.o
+[33/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramHeterogeneousSearch.cpp.o
+[34/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/MechanismCost.cpp.o
+/home/shiran/project/orbit/lib/Taskflow/MechanismCost.cpp: In function 'bool orbit::taskflow::parseMechanismParameters(const {anonymous}::J&, std::vector<MechanismParameter>&, std::string&)':
+/home/shiran/project/orbit/lib/Taskflow/MechanismCost.cpp:445:69: warning: possibly dangling reference to a temporary [-Wdangling-reference]
+  445 |                        {"raw_manifest_sha256", &p.rawManifestSHA256}}) {
+      |                                                                     ^
+/home/shiran/project/orbit/lib/Taskflow/MechanismCost.cpp:437:52: note: 'std::__cxx11::basic_string<char>*' temporary created here
+  437 |     for (auto entry : {std::make_pair("mechanism", &p.mechanism),
+      |                                                    ^~~~~~~~~~~~
+[35/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramTiming.cpp.o
+[36/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramInvocationCost.cpp.o
+[37/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramRegionCompositeCost.cpp.o
+[38/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramInvocationEvaluation.cpp.o
+[39/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMechanismTiming.cpp.o
+[40/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramMechanismCost.cpp.o
+[41/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericProgramTiming.cpp.o
+[42/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericNativeCompositeTiming.cpp.o
+[43/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericProgramContrast.cpp.o
+[44/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/SyncBoundaryMapping.cpp.o
+[45/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/DeviceTransferCost.cpp.o
+[46/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/DeviceTransferAudit.cpp.o
+[47/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramPhysicalMapping.cpp.o
+[48/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramStateSequence.cpp.o
+[49/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramReplicaPlacement.cpp.o
+[50/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramNativeProjection.cpp.o
+[51/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramEventTransform.cpp.o
+[52/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskflowInvocation.cpp.o
+[53/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericConstraintSearch.cpp.o
+[54/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericReuse.cpp.o
+[55/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericCommunication.cpp.o
+[56/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramDataOrganization.cpp.o
+[57/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/GenericMapping.cpp.o
+[58/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramPartition.cpp.o
+[59/134] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/NativeTransforms.cpp.o
+[60/134] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[61/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIR.cpp.o
+[62/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIRSelection.cpp.o
+[63/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/AIRBackend.cpp.o
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp: In lambda function:
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:983:25: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long unsigned int, std::allocator<long unsigned int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  983 |             deps.size() != t->dependencies.size())
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1050:25: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long int, std::allocator<long int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 1050 |           offset.size() != storage->shape.size() ||
+      |           ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1052:26: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long int, std::allocator<long int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 1052 |           strides.size() != storage->shape.size()) {
+      |           ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp: In function 'bool orbit::taskflow::checkGenericAIRMapping(const GenericAnalysis&, const GenericMappingPlan&, mlir::ModuleOp, std::string&)':
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1077:58: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 1077 |     if (!seg || seg.size() != 3 || seg[0] != 0 || seg[1] != dims ||
+      |                                                   ~~~~~~~^~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1078:16: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 1078 |         seg[2] != sourceFunction.getNumArguments() ||
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[64/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIRLoop.cpp.o
+[65/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramMatrixAIR.cpp.o
+[66/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIE.cpp.o
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp: In member function 'bool {anonymous}::ScalarTrace::expression(mlir::Value, std::string&)':
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp:181:13: warning: unused variable 'n' [-Wunused-variable]
+  181 |     int64_t n;
+      |             ^
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp: In lambda function:
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp:564:30: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int64_t' {aka 'long int'} [-Wsign-compare]
+  564 |         for (size_t q = 0; q < ids.size(); ++q) {
+      |                            ~~^~~~~~~~~~~~
+[67/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramMatrixRuntime.cpp.o
+[68/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/AIEImplementation.cpp.o
+[69/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUIndependentShards.cpp.o
+[70/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUShardsAIE.cpp.o
+[71/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUPhysicalProgram.cpp.o
+[72/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUShapePolicyProjection.cpp.o
+[73/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramJointAIE.cpp.o
+[74/134] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramJointAIR.cpp.o
+[75/134] Linking CXX static library lib/TaskflowAIR/libMLIRTaskflowAIR.a
+[76/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-state-sequence-test.dir/__/__/test/TaskflowGeneric/program-state-sequence.cpp.o
+[77/134] Linking CXX executable tools/taskflow-opt/taskflow-program-state-sequence-test
+[78/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-opt.dir/taskflow-opt.cpp.o
+[79/134] Linking CXX executable tools/taskflow-opt/taskflow-opt
+[80/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-specialization-test.dir/__/__/test/TaskflowGeneric/taskflow-specialization.cpp.o
+[81/134] Linking CXX executable tools/taskflow-opt/taskflow-specialization-test
+[82/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-heterogeneous-state-test.dir/__/__/test/TaskflowGeneric/heterogeneous-state.cpp.o
+/home/shiran/project/orbit/test/TaskflowGeneric/heterogeneous-state.cpp: In function 'int main()':
+/home/shiran/project/orbit/test/TaskflowGeneric/heterogeneous-state.cpp:50:39: warning: loop variable 'devices' creates a copy from type 'const std::vector<std::__cxx11::basic_string<char> >' [-Wrange-loop-construct]
+   50 |   for (const std::vector<std::string> devices :
+      |                                       ^~~~~~~
+/home/shiran/project/orbit/test/TaskflowGeneric/heterogeneous-state.cpp:50:39: note: use reference type to prevent copying
+   50 |   for (const std::vector<std::string> devices :
+      |                                       ^~~~~~~
+      |                                       &
+[83/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-deferred-plan-test.dir/__/__/test/TaskflowGeneric/taskflow-deferred-plan.cpp.o
+[84/134] Linking CXX executable tools/taskflow-opt/taskflow-heterogeneous-state-test
+[85/134] Linking CXX executable tools/taskflow-opt/taskflow-deferred-plan-test
+[86/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-generic-carry-domain-test.dir/__/__/test/TaskflowGeneric/generic-carry-domain.cpp.o
+[87/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-representation-coverage-test.dir/__/__/test/TaskflowGeneric/program-representation-coverage.cpp.o
+[88/134] Linking CXX executable tools/taskflow-opt/taskflow-generic-carry-domain-test
+[89/134] Linking CXX executable tools/taskflow-opt/taskflow-program-representation-coverage-test
+[90/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-physical-mapping-test.dir/__/__/test/TaskflowGeneric/program-physical-mapping.cpp.o
+[91/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-replica-hierarchy-test.dir/__/__/test/TaskflowGeneric/program-replica-hierarchy.cpp.o
+[92/134] Linking CXX executable tools/taskflow-opt/taskflow-program-physical-mapping-test
+[93/134] Linking CXX executable tools/taskflow-opt/taskflow-program-replica-hierarchy-test
+[94/134] Linking CXX executable tools/taskflow-opt/taskflow-recurrence-composition-test
+[95/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-policy-projection-test.dir/__/__/test/TaskflowAIR/source-policy-projection.cpp.o
+[96/134] Linking CXX executable tools/taskflow-opt/taskflow-source-policy-projection-test
+[97/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-native-projection-test.dir/__/__/test/TaskflowGeneric/program-native-projection.cpp.o
+[98/134] Linking CXX executable tools/taskflow-opt/taskflow-program-native-projection-test
+[99/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-replica-placement-test.dir/__/__/test/TaskflowAIR/source-replica-placement.cpp.o
+[100/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-tiling-test.dir/__/__/test/TaskflowGeneric/taskflow-source-tiling.cpp.o
+[101/134] Linking CXX executable tools/taskflow-opt/taskflow-source-tiling-test
+[102/134] Linking CXX executable tools/taskflow-opt/taskflow-fission-test
+[103/134] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-placement-test
+[104/134] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-test
+[105/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-mapping-actions-test.dir/__/__/test/TaskflowGeneric/source-mapping-actions.cpp.o
+[106/134] Linking CXX executable tools/taskflow-opt/taskflow-source-mapping-actions-test
+[107/134] Linking CXX executable tools/taskflow-opt/taskflow-source-fusion-test
+[108/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-search-test.dir/__/__/test/TaskflowGeneric/source-search.cpp.o
+[109/134] Linking CXX executable tools/taskflow-opt/taskflow-source-search-test
+[110/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-actions-test.dir/__/__/test/TaskflowGeneric/source-actions.cpp.o
+[111/134] Linking CXX executable tools/taskflow-opt/taskflow-source-actions-test
+[112/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-state-sequence-test
+program state sequence: 26 checks
+[113/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-specialization-test
+24 actual-bound specialization/state checks passed
+[114/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-deferred-plan-test
+guarded deferred source plan: 20 checks
+[115/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-heterogeneous-state-test
+CPU/NPU state cuts preserve one ABI root and both boundary versions
+[116/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-representation-coverage-test
+program representation coverage: 11 checks
+[117/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-generic-carry-domain-test
+generic carry domain: 6 checks
+[118/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-physical-mapping-test
+physical program graph: 15 checks
+[119/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-replica-hierarchy-test
+nested physical replicas: 13 checks
+[120/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-native-projection-test
+native physical projection: 22 checks
+[121/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-recurrence-composition-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-recurrence.mlir
+actual normalized recurrence and serial tiling preserve eight prefix-scan results
+[122/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-policy-projection-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-placement-pointwise32.mlir
+source-bound action, stale binding rejection, every-descendant tiles/implementation, immutable parent and forged replay rejection passed
+[123/134] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-replica-placement-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-replica-pointwise.mlir
+FAILED: tools/taskflow-opt/CMakeFiles/check-taskflow-source-replica-placement /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/CMakeFiles/check-taskflow-source-replica-placement 
+cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-replica-placement-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-replica-pointwise.mlir
+program graph: source task instance binding mismatch[124/134] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-normalization-test.dir/__/__/test/TaskflowGeneric/taskflow-source-normalization.cpp.o
+
+ninja: build stopped: subcommand failed.
