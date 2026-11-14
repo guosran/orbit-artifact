@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "load_ms": 144.50624212622643,
+  "samples": [
+    {
+      "repeat": 0,
+      "warmup": false,
+      "wall_ms": 3.31093,
+      "checks": {
+        "Y": {
+          "shape": [
+            64,
+            64
+          ],
+          "finite": true,
+          "max_abs": 0.0,
+          "normalized_l2": 0.0,
+          "passed": true
+        }
+      },
+      "api_events": [
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "buffer_index": 0,
+          "start_ns": 270974,
+          "end_ns": 295483
+        },
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "buffer_index": 1,
+          "start_ns": 313213,
+          "end_ns": 326362
+        },
+        {
+          "kind": "actual_xrt_start",
+          "start_ns": 423480,
+          "end_ns": 447309
+        },
+        {
+          "kind": "actual_xrt_wait",
+          "start_ns": 448599,
+          "end_ns": 3193203
+        },
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "buffer_index": 1,
+          "start_ns": 3251721,
+          "end_ns": 3265651
+        }
+      ]
+    }
+  ],
+  "median_ms": 3.31093,
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "boundary": "existing runner host input staging and synchronization, submit/wait including wait-event checkpoint serialization, output sync/readback and output copy; context creation, numpy input preparation, numerical validation and NPZ result serialization excluded",
+  "storage": "system-memory XRT BOs, not persistent AIE SRAM",
+  "precision": "ABI element type; bf16 emulation only if compile record says enabled",
+  "actual_submissions": [
+    1
+  ],
+  "validation_scope": "one numerical correctness launch per seed; no performance comparison",
+  "physical_speedup_claim": false
+}

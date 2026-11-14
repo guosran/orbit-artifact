@@ -1,0 +1,57 @@
+{
+  "build": {
+    "configure": [
+      "cmake",
+      "-S",
+      "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114",
+      "-B",
+      "/tmp/orbit-artifact-gemm-configure-v1",
+      "-DORBIT_SOURCE_DIR=/home/shiran/project/orbit",
+      "-DLLVM_DIR=/home/shiran/project/llvm-project/build/lib/cmake/llvm",
+      "-DMLIR_DIR=/home/shiran/project/llvm-project/build/lib/cmake/mlir",
+      "-G",
+      "Ninja",
+      "-DORBIT_ENABLE_NEURA=OFF",
+      "-DORBIT_ENABLE_AIR=OFF",
+      "-DORBIT_ENABLE_ORTOOLS=OFF",
+      "-DORBIT_ENABLE_SCIP=OFF"
+    ],
+    "build": [
+      "cmake",
+      "--build",
+      "/tmp/orbit-artifact-gemm-configure-v1",
+      "--target",
+      "taskflow-gemm-operator-search",
+      "-j2"
+    ],
+    "status": "Configure and generation PASS, exit0, in new isolated directory. No standalone artifact target or ORBIT library compilation was executed; only standard CMake compiler feature probes ran.",
+    "validation": {
+      "configure_exit_code": 0,
+      "build_executed": false,
+      "search_executed": false,
+      "npu_used": false,
+      "directory": "/tmp/orbit-artifact-gemm-configure-v1",
+      "features": {
+        "ORBIT_ENABLE_NEURA": false,
+        "ORBIT_ENABLE_AIR": false,
+        "ORBIT_ENABLE_ORTOOLS": false,
+        "ORBIT_ENABLE_SCIP": false
+      },
+      "log": "taskflow/evidence/taskflow-unification-20261114/gemm-lifecycle/artifact-configure.log",
+      "note": "CMake reported calibration tests SKIP because configured system Python lacks NumPy/SciPy; this does not block configuration. Artifact lifecycle9 and adapter4 CPU tests were independently run using aie-toy virtualenv."
+    }
+  },
+  "cpu_tests": [
+    [
+      "/home/shiran/project/aie-toy/.venv/bin/python",
+      "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/qwen_gemm_lifecycle.py"
+    ],
+    [
+      "/home/shiran/project/aie-toy/.venv/bin/python",
+      "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/gemm_operator_search.py",
+      "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/frozen-bin/taskflow-gemm-operator-search"
+    ]
+  ],
+  "runtime_script": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/npu-gemm-runtime.py",
+  "reproduction_note": "All future domain generators must pass --runtime-source this artifact script, not restored historical core path. Search and device performance commands paused; no automatic resumption."
+}

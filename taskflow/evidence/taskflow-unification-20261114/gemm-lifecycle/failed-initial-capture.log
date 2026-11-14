@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/capture-qwen-qkv.py", line 37, in <module>
+    source.proj_fp(0,key))).view(np.uint16)).view(torch.bfloat16) for key in ('q','k','v')]
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/llms/qwen25_3b_q4/qwen25_3b_q4_weights.py", line 283, in proj_fp
+    q, sc = self.proj_raw(k, nm)
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/llms/qwen25_3b_q4/qwen25_3b_q4_weights.py", line 279, in proj_raw
+    return requant_q4_0(_pad(nm, self.bf16(f"model.layers.{k}.{t}.weight")))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/llms/qwen25_3b_q4/qwen25_3b_q4_weights.py", line 272, in bf16
+    return self._hf.bf16(name)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/fused_decode/q4_0_codec.py", line 88, in bf16
+    dt = {"F32": np.float32, "F16": np.float16}[e["dtype"]]
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'I8'

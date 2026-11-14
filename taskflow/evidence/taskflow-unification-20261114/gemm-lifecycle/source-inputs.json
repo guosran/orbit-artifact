@@ -1,0 +1,49 @@
+{
+  "schema": "orbit.qwen-source-gemm-input.v1",
+  "source_operator": "prefill.L0.qkv",
+  "prompt": [
+    785,
+    6722,
+    315,
+    9625,
+    374
+  ],
+  "source_prefix": "original BF16 embedding gather and original CPU RMSNorm; stop before QKV GEMM/bias",
+  "shape": {
+    "M": 5,
+    "K": 2048,
+    "N": 2560
+  },
+  "inputs": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-run2/inputs.npz",
+    "sha256": "3e58a270311110653af3f009196b0d008ea78d9260e5e0984fc4a4555fa88648"
+  },
+  "capture": {
+    "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/capture-qwen-qkv.py",
+    "sha256": "c9eb03000cd40f8ff0b9d1cd4c1b7e51382766e7515ec8e583fa95820b705600"
+  },
+  "source_files": [
+    {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/llama_prefill.py",
+      "sha256": "5e89bfa4f1e12d76bbff7d2293ac609dfc59817fe6a79b1dd5426e3c3e7ccd1b"
+    },
+    {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/qwen25_prefill.py",
+      "sha256": "5ba9146394e00dc7198c8575f3de5a9538da8cf0b07352c7ac0e6976fb56fd54"
+    },
+    {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py",
+      "sha256": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+    }
+  ],
+  "weight_reader": {
+    "path": "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/llms/qwen25_3b_q4/qwen25_3b_q4_weights.py",
+    "sha256": "1f26507531fd5a00697436b76e869693bf1c54fbf8ff223ba9c71793918d72b3"
+  },
+  "model": {
+    "path": "/home/shiran/.cache/huggingface/hub/blobs/1d/1ddd3d7aa7f032f5900d10f492c730f4083320fa69014c3cde81807d45381409",
+    "bytes": 2586811952
+  },
+  "device_opened": false,
+  "scope": "one actual Qwen source operator; not complete inference"
+}

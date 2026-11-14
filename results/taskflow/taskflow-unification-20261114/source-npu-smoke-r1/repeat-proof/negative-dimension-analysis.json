@@ -1,0 +1,95 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "f6d1cf9b0233ccdfe6fb80f91c8bc94f21b78e0828c979c88e96c1dd84bdea66",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "X",
+      "role": "input",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Y",
+      "role": "output",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "T",
+      "role": "temporary",
+      "shape": [
+        64,
+        64
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              0,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "double.fuse.square:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "double.fuse.square",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    }
+  ]
+}

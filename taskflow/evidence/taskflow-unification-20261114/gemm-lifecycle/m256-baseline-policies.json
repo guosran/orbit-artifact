@@ -1,0 +1,37 @@
+{
+  "schema": "orbit.qwen-gemm-baseline-policies.v1",
+  "source": [
+    {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/qwen25_prefill.py",
+      "sha256": "5ba9146394e00dc7198c8575f3de5a9538da8cf0b07352c7ac0e6976fb56fd54"
+    },
+    {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/llama_prefill.py",
+      "sha256": "5e89bfa4f1e12d76bbff7d2293ac609dfc59817fe6a79b1dd5426e3c3e7ccd1b"
+    },
+    {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py",
+      "sha256": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+    },
+    {
+      "path": "/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/triton/backends/amd_triton_npu/driver.py",
+      "sha256": "8cd8f62f5c54deafad25c2530ab45c16fe56572f747f6090fbdc29826bb06717"
+    }
+  ],
+  "pristine_qwen_call_path": {
+    "qwen25_prefill.py:88": "_wide is either {} or transform_script=None; no stage_key",
+    "llama_prefill.py:396": "kernels.triton_matmul(x,w,**mm)",
+    "kernels.py:712": "via_chain = stage_key is not None",
+    "kernels.py:797": "no-chain loops row tiles and invokes launch; each launch stages pointers",
+    "driver.py:2448": "_launch_with_session retains bounded live native sessions",
+    "qwen25_prefill.py:120": "qkv = self._matmul(h, w[\"qkv\"], **self._wide) + w[\"qkv_bias\"]"
+  },
+  "policies": {
+    "original-source-call": "unchanged kernels.triton_matmul(x,w), same Qwen projection call policy; cached native sessions/host padded weights may persist, pointer weights are restaged per launch; never labelled context release after call",
+    "original-persistent-policy": "explicit stage_key added at microbenchmark caller; NPUChain shared context and static_indices={1} keep weight BO resident in DDR, not on-chip SRAM; this is a changed execution policy, not pristine CLI",
+    "release-after-call": "custom runtime deliberately packs weight, opens context, executes, closes context per call; not equivalent to original CLI native session policy",
+    "persistent": "custom explicit immutable packed weight lease and persistent context/DDR BOs; setup and first call captured separately"
+  },
+  "cold_boundary": "runtime construction/bind_weight setup plus first invocation. Model/tokenizer loading and CPU capture excluded; existing cached compiled binaries used. Offline generated compile cost separately in orbit-search-m256-and-heldout.json; original first call includes native module/session preparation, not a clean compiler-cache miss. No full Qwen TTFT claim.",
+  "controlled_comparison": "four policies in one fresh process, warm2/repeat9; fixed order. Paired 3-process heldout only compares explicit original persistent vs custom persistent. Do not merge ratios into a whole-Qwen speedup."
+}

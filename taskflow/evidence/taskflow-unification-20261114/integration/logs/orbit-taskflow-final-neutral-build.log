@@ -1,0 +1,44 @@
+[0/1] Re-running CMake...
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Calibration contracts SKIP: configured Python lacks NumPy/SciPy
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /tmp/orbit-taskflow-neutral-build
+[1/55] Building TaskflowDialect.cpp.inc...
+[2/55] Building Taskflow.cpp.inc...
+[3/55] Building Taskflow.h.inc...
+[4/55] Building TaskflowDialect.h.inc...
+[5/50] Building TaskflowTypes.cpp.inc...
+[6/50] Building TaskflowTypes.h.inc...
+[7/29] Building TaskflowPasses.h.inc...
+[8/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskflowTiling.cpp.o
+[9/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskflowFusion.cpp.o
+[10/29] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskflowFission.cpp.o
+[11/29] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[12/29] Linking CXX executable tools/taskflow-opt/taskflow-source-tiling-test
+[13/29] Linking CXX executable tools/taskflow-opt/taskflow-task-tiles-test
+[14/29] Linking CXX executable tools/taskflow-opt/taskflow-proof-services-test
+[15/29] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-fusion-test.dir/__/__/test/TaskflowGeneric/source-fusion.cpp.o
+[16/29] Linking CXX executable tools/taskflow-opt/taskflow-fission-test
+[17/29] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-test
+[18/29] Linking CXX executable tools/taskflow-opt/taskflow-source-fusion-test
+[19/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-tiling-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+public source tiling factors, replay and feedback checks passed
+[20/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-task-tiles-test /home/shiran/project/orbit/test/TaskflowGeneric/fixtures/heterogeneous-matrix-relu.mlir
+Task-local source tiling: 24 checks passed
+[21/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-proof-services-test
+proof services: 18 checks
+[22/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-fission-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/fission-task-source.mlir
+public fission ranking, multi-stage replay and lineage checks passed
+[23/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-replica-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+independent source replica coverage, work and replay checks passed
+[24/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-fusion-test
+source fusion: 44 checks
+[25/29] Linking CXX executable tools/taskflow-opt/taskflow-source-normalization-test
+[26/29] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-normalization-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/fission-task-recurrence-cut.mlir
+source normalization, generic analysis and replay checks passed
+[27/29] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/AIEImplementation.cpp.o
+[28/29] Linking CXX static library lib/TaskflowAIR/libMLIRTaskflowAIR.a
+[29/29] Linking CXX executable tools/taskflow-opt/taskflow-opt

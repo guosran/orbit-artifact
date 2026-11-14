@@ -1,0 +1,336 @@
+{
+  "schema": "orbit.taskflow.decode-temporal-tiling.v1",
+  "source_binding": {
+    "source_air_sha256": "70001414322ddb94dbd4d4bde00479e23d1690a2ead7aa11111d264613e2198e",
+    "builder_sha256": "5f366360f682648b4bebaa5ed3a1cac10de81995ebad6dabf9bf15c8db7c59e3",
+    "request_sha256": "e8db4418833e96196f24582ba98e9af8ccf7fbfe4e2d3f0d6d06bb4f43b6e40a",
+    "emitted_sha256": "f7a05c862cd42196161a82b01aea7593a3f959e1941e2e6aa9ff08490acc341a",
+    "layers": 36,
+    "vocab_waves": 25
+  },
+  "target": {
+    "target": "npu2",
+    "columns": 8,
+    "compute_row_start": 2,
+    "compute_rows": 4
+  },
+  "target_id": "159a6aabde72ad37df714855b8b2c610292393c28f0781c00d7c4599f16c8e84",
+  "loops": [
+    {
+      "iterations": 600,
+      "ordered_events": [
+        [
+          "air.channel.get",
+          "@inW"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ]
+      ],
+      "projection_weight_distribution": true,
+      "kind": "temporal-tiling",
+      "loop_ordinal": 5,
+      "tile_sizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        12,
+        15,
+        20,
+        24,
+        25,
+        30,
+        40,
+        50,
+        60,
+        75,
+        100,
+        120,
+        150,
+        200,
+        300
+      ],
+      "domain": "all nontrivial exact divisors of source trip count",
+      "arithmetic_reordering": false,
+      "tensor_block_tiling": false
+    },
+    {
+      "iterations": 600,
+      "ordered_events": [
+        [
+          "air.channel.get",
+          "@inW"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ]
+      ],
+      "projection_weight_distribution": true,
+      "kind": "temporal-tiling",
+      "loop_ordinal": 6,
+      "tile_sizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        12,
+        15,
+        20,
+        24,
+        25,
+        30,
+        40,
+        50,
+        60,
+        75,
+        100,
+        120,
+        150,
+        200,
+        300
+      ],
+      "domain": "all nontrivial exact divisors of source trip count",
+      "arithmetic_reordering": false,
+      "tensor_block_tiling": false
+    },
+    {
+      "iterations": 600,
+      "ordered_events": [
+        [
+          "air.channel.get",
+          "@inW"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ]
+      ],
+      "projection_weight_distribution": true,
+      "kind": "temporal-tiling",
+      "loop_ordinal": 7,
+      "tile_sizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        12,
+        15,
+        20,
+        24,
+        25,
+        30,
+        40,
+        50,
+        60,
+        75,
+        100,
+        120,
+        150,
+        200,
+        300
+      ],
+      "domain": "all nontrivial exact divisors of source trip count",
+      "arithmetic_reordering": false,
+      "tensor_block_tiling": false
+    },
+    {
+      "iterations": 600,
+      "ordered_events": [
+        [
+          "air.channel.get",
+          "@inW"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ],
+        [
+          "air.channel.put",
+          "@wL2ToL1"
+        ]
+      ],
+      "projection_weight_distribution": true,
+      "kind": "temporal-tiling",
+      "loop_ordinal": 8,
+      "tile_sizes": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        12,
+        15,
+        20,
+        24,
+        25,
+        30,
+        40,
+        50,
+        60,
+        75,
+        100,
+        120,
+        150,
+        200,
+        300
+      ],
+      "domain": "all nontrivial exact divisors of source trip count",
+      "arithmetic_reordering": false,
+      "tensor_block_tiling": false
+    },
+    {
+      "trip_counts": [
+        8,
+        44
+      ],
+      "k_elements_per_iteration": 256,
+      "accumulator_scope": "outside transformed loop; original zero and flush retained",
+      "ordered_events": [
+        [
+          "air.channel.get",
+          "@inX"
+        ],
+        [
+          "air.channel.get",
+          "@wL2ToL1"
+        ],
+        [
+          "func.call",
+          "@proj_qmm_acc256"
+        ]
+      ],
+      "kind": "projection-kblock-temporal-tiling",
+      "loop_ordinal": 22,
+      "tile_size_min": 2,
+      "tile_size_max": 44,
+      "domain": "all integer K-block group sizes within the source bound; bounded tails"
+    },
+    {
+      "trip_counts": [
+        8,
+        44
+      ],
+      "k_elements_per_iteration": 256,
+      "accumulator_scope": "outside transformed loop; original zero and flush retained",
+      "ordered_events": [
+        [
+          "air.channel.get",
+          "@inX"
+        ],
+        [
+          "air.channel.get",
+          "@wL2ToL1"
+        ],
+        [
+          "func.call",
+          "@proj_qmm_acc256"
+        ]
+      ],
+      "kind": "projection-kblock-temporal-tiling",
+      "loop_ordinal": 25,
+      "tile_size_min": 2,
+      "tile_size_max": 44,
+      "domain": "all integer K-block group sizes within the source bound; bounded tails"
+    }
+  ],
+  "unsupported": [
+    "tensor-block-tiling",
+    "fusion",
+    "fission",
+    "replica",
+    "shape"
+  ],
+  "compiled": false,
+  "executed": false,
+  "physical_hardware_measurement": false,
+  "action": {
+    "kind": "projection-kblock-temporal-tiling",
+    "loop_ordinal": 22,
+    "tile_size": 5
+  },
+  "proof": {
+    "trip_counts": [
+      8,
+      44
+    ],
+    "k_elements_per_iteration": 256,
+    "accumulator_scope": "outside transformed loop; original zero and flush retained",
+    "ordered_events": [
+      [
+        "air.channel.get",
+        "@inX"
+      ],
+      [
+        "air.channel.get",
+        "@wL2ToL1"
+      ],
+      [
+        "func.call",
+        "@proj_qmm_acc256"
+      ]
+    ],
+    "loop_ordinal": 22,
+    "tile_k_blocks": 5,
+    "tile_k_elements": 1280,
+    "proof": "same channel/accumulate order; unchanged external accumulator; exact source-derived bounded tails"
+  },
+  "output_air_sha256": "3edf84649df9d15fa8ebc8dd8eca477f8a73a11d5acc3512cab824ba893186e7"
+}

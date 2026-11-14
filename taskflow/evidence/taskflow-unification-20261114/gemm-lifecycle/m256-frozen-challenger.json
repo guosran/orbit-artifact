@@ -1,0 +1,612 @@
+{
+  "adapter_executable": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/frozen-bin/taskflow-gemm-operator-search",
+    "sha256": "00536af19acd152f388eb28bc56ef70fb93745f42319f0f7607442052bae3d04"
+  },
+  "domain_choices": 16921,
+  "domain_input": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/search-domain-m256.json",
+    "sha256": "dd9a788e93942ac97d8177acb0facd4b192d4d2d19d7bce41a214936e6420a3a"
+  },
+  "evaluation_quota": 24,
+  "evaluator_script": {
+    "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/evaluate-gemm-candidate-v2.py",
+    "sha256": "52042219754bae313ff2f0c8cf273087b6cb154c7c2f1f69e1bf13d69c962c73"
+  },
+  "has_best": true,
+  "overall_wall_cap_seconds": null,
+  "provenance": {
+    "evaluator": {
+      "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/evaluate-gemm-candidate-v2.py",
+      "sha256": "52042219754bae313ff2f0c8cf273087b6cb154c7c2f1f69e1bf13d69c962c73"
+    },
+    "generator": {
+      "path": "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+      "sha256": "fac4572388747a838eba011cf39a76fef55e27cbb4238050a13c8b0d1f6cda91"
+    },
+    "inputs": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-m256/inputs.json",
+      "sha256": "a1ef382e684e8e80e0938092a7cd4de6f17dd6c7e7333d492862f1f9bb99c76f"
+    },
+    "model_identity_receipt": {
+      "path": "/home/shiran/project/orbit-artifact/taskflow/evidence/taskflow-unification-20261114/gemm-lifecycle/model-identity.json",
+      "sha256": "4dbfaec1f7c0d0ade266c7bec47e04ebe29578d1d3dead4e3bc218b5a8f9318b"
+    },
+    "preparer": {
+      "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/prepare-gemm-domain-v2.py",
+      "sha256": "ab819f039d63fa5bb109890688c36780f75ad9108853d2c8472314d5d9f11242"
+    },
+    "reference": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/original-reference-m256/outputs.npz",
+      "sha256": "ebe72856b684cd20b6f1db2bd6eb8c70dade2e85f478c4d99dd27e17c3feda3b"
+    },
+    "source_model": {
+      "bytes": 2586811952,
+      "mtime_ns": 1793697298022814872,
+      "path": "/home/shiran/.cache/huggingface/hub/blobs/1d/1ddd3d7aa7f032f5900d10f492c730f4083320fa69014c3cde81807d45381409",
+      "sha256": "c2f1dcb6fe1e819cc50547f091096f4849890b2fb170d031ff7d790ea0c5e2ce",
+      "verification_seconds": 6.5832264153286815
+    }
+  },
+  "report": {
+    "algorithm": "orbit-public-beam",
+    "all_feasibility_known": false,
+    "all_feasible_costs_known": true,
+    "assignment_key_bytes": 2,
+    "assignment_key_encoding": "lossless fixed-width choice indices",
+    "beam_selection_history": [
+      {
+        "evaluations": 1,
+        "round": 0,
+        "selected": [
+          {
+            "assignment": [
+              0
+            ],
+            "cost_ms": 1.497744,
+            "role": "priced"
+          }
+        ]
+      }
+    ],
+    "beam_width": 4,
+    "best_assignment": [
+      0
+    ],
+    "best_cost_ms": 1.497744,
+    "budget_exhausted": false,
+    "cache_hits": 0,
+    "cache_misses": 24,
+    "cache_policy": "global assignment deduplication; no complete-plan price catalogue",
+    "callback_deadline_overrun_ms": 0,
+    "callback_ms": 215458.01648100003,
+    "callback_preemptible": false,
+    "compatibility_rejections": 0,
+    "compatibility_tuple_cells": 0,
+    "complete_plan_prepricing": false,
+    "deadline_overrun_ms": 0,
+    "dimensions": [
+      {
+        "choices": 16921,
+        "id": "prefill.L0.qkv.implementation",
+        "reason": "",
+        "scope": "source-operator",
+        "status": "source-target-domain; lowering and hardware checked on demand"
+      }
+    ],
+    "diversity_configuration": "support of nonbaseline dimensions",
+    "diversity_slots": 0,
+    "evaluation_trace": [],
+    "evaluation_trace_retained_in_memory": false,
+    "evaluation_trace_rows": 24,
+    "evaluation_trace_streamed": true,
+    "evaluation_workers": 1,
+    "evaluations": 24,
+    "feasible_evaluations": 19,
+    "finite_domain_exhausted": false,
+    "finite_domain_optimality_proved": false,
+    "frontier_fairness": "retain priced beam; alternate when exploration would occupy all slots",
+    "has_best": true,
+    "implementation": "public-domain adapter using existing selectSearchBeam",
+    "initial_state_costs_reused": false,
+    "initial_state_duplicates": 0,
+    "initial_state_proposals": 0,
+    "initial_states_reevaluated": 0,
+    "legacy_default_search": false,
+    "max_evaluations": 24,
+    "max_rounds": null,
+    "model_build_ms": 0,
+    "neighborhood": "legal single-dimension changes; compound choices permitted; no implicit compatibility repair",
+    "objective": "full-checked-evaluator-cost-ms",
+    "randomized": false,
+    "reason": "Evaluation quota reached during neighborhood expansion",
+    "returned_after_deadline": false,
+    "rounds": 0,
+    "solve_ms": 0,
+    "status": "FEASIBLE",
+    "total_ms": 215465.239695,
+    "unknown_cost_evaluations": 0,
+    "unknown_cost_ranking_score": null,
+    "unknown_enqueued": 0,
+    "unknown_expanded": 0,
+    "unknown_exploration_enabled": true,
+    "unknown_exploration_policy": "bounded FIFO of checked-feasible unpriced states",
+    "unknown_exploration_slots": 1,
+    "unknown_feasibility_evaluations": 5,
+    "unknown_frontier_dropped": 0,
+    "unknown_pending_limit": 256,
+    "unknown_pending_peak": 0,
+    "unknown_pending_remaining": 0,
+    "wall_seconds": null
+  },
+  "schema": "orbit.source-generated-gemm-beam.v1",
+  "scope": "one real Qwen source GEMM; bounded evaluations, no full-model or global-optimum claim",
+  "selected": {
+    "id": "3ace306a9ede96e31a0132af55cad4f6e5e1d673f3884e00ac68cdd25f7ed470",
+    "mode": "generated",
+    "parameters": {
+      "bm": 256,
+      "bn": 256,
+      "column_offset": 0,
+      "k": 2048,
+      "l1k": 64,
+      "l1m": 64,
+      "l1n": 64,
+      "l2k": 64,
+      "m": 256,
+      "n": 2560,
+      "replicas": 1,
+      "row_offset": 2
+    }
+  },
+  "selected_measurement": {
+    "candidate": {
+      "id": "3ace306a9ede96e31a0132af55cad4f6e5e1d673f3884e00ac68cdd25f7ed470",
+      "mode": "generated",
+      "parameters": {
+        "bm": 256,
+        "bn": 256,
+        "column_offset": 0,
+        "k": 2048,
+        "l1k": 64,
+        "l1m": 64,
+        "l1n": 64,
+        "l2k": 64,
+        "m": 256,
+        "n": 2560,
+        "replicas": 1,
+        "row_offset": 2
+      }
+    },
+    "feasible": true,
+    "feasibility_known": true,
+    "cost_ms": 1.529303,
+    "message": "compiled/physical checked and bitexact with original NPU for captured real input",
+    "compile": {
+      "command": [
+        "/home/shiran/project/aie-toy/.venv/bin/python",
+        "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+        "--triton-root",
+        "/home/shiran/project/aie-toy/vendor/Triton-XDNA",
+        "--output",
+        "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/orbit-search-m256/evaluation-2/compiled",
+        "--compile",
+        "--bm",
+        "256",
+        "--bn",
+        "256",
+        "--column-offset",
+        "0",
+        "--k",
+        "2048",
+        "--l1k",
+        "64",
+        "--l1m",
+        "64",
+        "--l1n",
+        "64",
+        "--l2k",
+        "64",
+        "--m",
+        "256",
+        "--n",
+        "2560",
+        "--replicas",
+        "1",
+        "--row-offset",
+        "2"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 2.669368918053806
+    },
+    "measurement": {
+      "command": [
+        "/home/shiran/project/aie-toy/.venv/bin/python",
+        "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/evaluate-gemm-candidate-v2.py",
+        "--request",
+        "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/orbit-search-m256/evaluation-2/request.json",
+        "--output",
+        "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/orbit-search-m256/evaluation-2",
+        "--worker"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "seconds": 1.6691261823289096
+    },
+    "physical_implementation": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/orbit-search-m256/evaluation-2/compiled/implementation.json",
+      "sha256": "fcac972c8da72efadea4388956ef122cf3f46ab45c9864706154079625922d8a"
+    },
+    "numerical": {
+      "rows": [
+        {
+          "mode": "original-persistent",
+          "setup_ns": 450,
+          "samples": [
+            {
+              "warmup": true,
+              "wall_ns": 327681898,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": true,
+              "wall_ns": 2263635,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 2037420,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 2701275,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1693789,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1683749,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1666829,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1726578,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1677810,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1705629,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1677129,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": null
+            }
+          ],
+          "median_ms": 1.693789
+        },
+        {
+          "mode": "generated-persistent",
+          "setup_ns": 11976018,
+          "samples": [
+            {
+              "warmup": true,
+              "wall_ns": 5952865,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 5927655,
+                "device_open_ns": 798110,
+                "host_prepare_ns": 194426,
+                "native_inclusive_service_ns": 4596668,
+                "host_assemble_ns": 330581,
+                "release_ns": 7870,
+                "replicas": 1,
+                "first_dispatch": true,
+                "weight_upload_expected": true,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": true,
+              "wall_ns": 1601081,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1582172,
+                "device_open_ns": 16340,
+                "host_prepare_ns": 195575,
+                "native_inclusive_service_ns": 1226800,
+                "host_assemble_ns": 138277,
+                "release_ns": 5180,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1563912,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1552042,
+                "device_open_ns": 10800,
+                "host_prepare_ns": 194785,
+                "native_inclusive_service_ns": 1204021,
+                "host_assemble_ns": 139756,
+                "release_ns": 2680,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1535382,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1526233,
+                "device_open_ns": 7960,
+                "host_prepare_ns": 186966,
+                "native_inclusive_service_ns": 1200411,
+                "host_assemble_ns": 128876,
+                "release_ns": 2020,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1532093,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1519863,
+                "device_open_ns": 7960,
+                "host_prepare_ns": 188045,
+                "native_inclusive_service_ns": 1185291,
+                "host_assemble_ns": 136617,
+                "release_ns": 1950,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1515243,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1505493,
+                "device_open_ns": 7080,
+                "host_prepare_ns": 185916,
+                "native_inclusive_service_ns": 1182221,
+                "host_assemble_ns": 127987,
+                "release_ns": 2289,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1528943,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1519173,
+                "device_open_ns": 7269,
+                "host_prepare_ns": 186966,
+                "native_inclusive_service_ns": 1190581,
+                "host_assemble_ns": 132207,
+                "release_ns": 2150,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1532973,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1521653,
+                "device_open_ns": 8530,
+                "host_prepare_ns": 196925,
+                "native_inclusive_service_ns": 1187491,
+                "host_assemble_ns": 126287,
+                "release_ns": 2420,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1529303,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1519883,
+                "device_open_ns": 7090,
+                "host_prepare_ns": 187826,
+                "native_inclusive_service_ns": 1198060,
+                "host_assemble_ns": 125307,
+                "release_ns": 1600,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1521493,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1511633,
+                "device_open_ns": 6800,
+                "host_prepare_ns": 186165,
+                "native_inclusive_service_ns": 1181741,
+                "host_assemble_ns": 134857,
+                "release_ns": 2070,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            },
+            {
+              "warmup": false,
+              "wall_ns": 1511854,
+              "bitexact": true,
+              "max_abs_error": 0.0,
+              "event": {
+                "wall_ns": 1502904,
+                "device_open_ns": 8190,
+                "host_prepare_ns": 187086,
+                "native_inclusive_service_ns": 1181381,
+                "host_assemble_ns": 124317,
+                "release_ns": 1930,
+                "replicas": 1,
+                "first_dispatch": false,
+                "weight_upload_expected": false,
+                "context_policy": "persistent",
+                "storage": "device-ddr-bo",
+                "sram_residency_claim": false,
+                "held_host_bytes": 14188544,
+                "reserved_operand_bo_bytes": 14188544,
+                "live_operand_bo_bytes": 14188544,
+                "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+              }
+            }
+          ],
+          "median_ms": 1.529303
+        }
+      ],
+      "passed": true,
+      "criterion": "bitexact vs source-bound original NPU output",
+      "scope": "one actual L0 QKV, not full Qwen"
+    }
+  },
+  "diagnostic_selection": {
+    "role": "best-generated challenger only; ORBIT actually selected original-persistent baseline",
+    "actual_search": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/orbit-search-m256/search.json",
+      "sha256": "07c3ed92c3ba9471b799f03dfe74d5142a9069ec2f023bfc15ac32298ea8356b"
+    },
+    "frozen_before_heldout": true
+  }
+}

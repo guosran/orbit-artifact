@@ -1,0 +1,86 @@
+{
+  "schema": "orbit.source-generated-gemm-domain.v1",
+  "target": {
+    "source": {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py",
+      "sha256": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+    },
+    "columns": 8,
+    "rows": 4,
+    "minimum_l1": 64,
+    "minimum_block_m": 128,
+    "max_l1_output_elements": 8192,
+    "pack": [
+      8,
+      8,
+      8
+    ],
+    "minimum_block_k": 16,
+    "weight_dma_max_words": 1048576,
+    "pack_provenance": "AIE2P BF16 MAC packing used by generate_matmul_transform",
+    "status": "necessary source/target bounds only; compilation and physical validation still required"
+  },
+  "provenance": {
+    "generator": {
+      "path": "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+      "sha256": "fac4572388747a838eba011cf39a76fef55e27cbb4238050a13c8b0d1f6cda91"
+    },
+    "preparer": {
+      "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/prepare-gemm-domain-v2.py",
+      "sha256": "ab819f039d63fa5bb109890688c36780f75ad9108853d2c8472314d5d9f11242"
+    },
+    "evaluator": {
+      "path": "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/evaluate-gemm-candidate-v2.py",
+      "sha256": "52042219754bae313ff2f0c8cf273087b6cb154c7c2f1f69e1bf13d69c962c73"
+    },
+    "inputs": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-m256/inputs.json",
+      "sha256": "a1ef382e684e8e80e0938092a7cd4de6f17dd6c7e7333d492862f1f9bb99c76f"
+    },
+    "reference": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/original-reference-m256/outputs.npz",
+      "sha256": "ebe72856b684cd20b6f1db2bd6eb8c70dade2e85f478c4d99dd27e17c3feda3b"
+    },
+    "source_model": {
+      "path": "/home/shiran/.cache/huggingface/hub/blobs/1d/1ddd3d7aa7f032f5900d10f492c730f4083320fa69014c3cde81807d45381409",
+      "sha256": "c2f1dcb6fe1e819cc50547f091096f4849890b2fb170d031ff7d790ea0c5e2ce",
+      "bytes": 2586811952,
+      "mtime_ns": 1793697298022814872,
+      "verification_seconds": 6.5832264153286815
+    },
+    "model_identity_receipt": {
+      "path": "/home/shiran/project/orbit-artifact/taskflow/evidence/taskflow-unification-20261114/gemm-lifecycle/model-identity.json",
+      "sha256": "4dbfaec1f7c0d0ade266c7bec47e04ebe29578d1d3dead4e3bc218b5a8f9318b"
+    }
+  },
+  "domain_size": 16920,
+  "incumbent": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64/implementation.json",
+    "sha256": "1d14f047ecbb5842bd959ee28ebfb605593b4446e5f2ae8414b15ecb51e4f723"
+  },
+  "proposal_order": "incumbent, nearest derived single-field and two-field family neighbors, then all remaining source-target choices",
+  "generator": {
+    "path": "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+    "sha256": "fac4572388747a838eba011cf39a76fef55e27cbb4238050a13c8b0d1f6cda91"
+  },
+  "request_base": {
+    "warmups": 2,
+    "repeats": 9,
+    "runtime_source": "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+    "runtime_sha256": "fac4572388747a838eba011cf39a76fef55e27cbb4238050a13c8b0d1f6cda91",
+    "evaluator_sha256": "52042219754bae313ff2f0c8cf273087b6cb154c7c2f1f69e1bf13d69c962c73",
+    "triton_root": "/home/shiran/project/aie-toy/vendor/Triton-XDNA",
+    "inputs": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-m256/inputs.json",
+    "inputs_manifest": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-m256/inputs.json",
+      "sha256": "a1ef382e684e8e80e0938092a7cd4de6f17dd6c7e7333d492862f1f9bb99c76f"
+    },
+    "reference": {
+      "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/original-reference-m256/outputs.npz",
+      "sha256": "ebe72856b684cd20b6f1db2bd6eb8c70dade2e85f478c4d99dd27e17c3feda3b"
+    },
+    "compile_timeout_seconds": 180,
+    "measurement_timeout_seconds": 120,
+    "capacity_bytes": 268435456
+  }
+}

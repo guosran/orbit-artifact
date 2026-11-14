@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "load_ms": 9.270154871046543,
+  "samples": [
+    {
+      "repeat": 0,
+      "warmup": false,
+      "wall_ms": 0.751462,
+      "checks": {
+        "Y": {
+          "shape": [
+            64,
+            64
+          ],
+          "finite": true,
+          "max_abs": 0.0,
+          "normalized_l2": 0.0,
+          "passed": true
+        }
+      },
+      "api_events": [
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "buffer_index": 0,
+          "start_ns": 54959,
+          "end_ns": 60629
+        },
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "buffer_index": 1,
+          "start_ns": 65039,
+          "end_ns": 67149
+        },
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE",
+          "buffer_index": 2,
+          "start_ns": 69768,
+          "end_ns": 71798
+        },
+        {
+          "kind": "actual_xrt_start",
+          "start_ns": 100498,
+          "end_ns": 108948
+        },
+        {
+          "kind": "actual_xrt_wait",
+          "start_ns": 109478,
+          "end_ns": 706143
+        },
+        {
+          "kind": "actual_bo_sync",
+          "direction": "xclBOSyncDirection.XCL_BO_SYNC_BO_FROM_DEVICE",
+          "buffer_index": 1,
+          "start_ns": 727392,
+          "end_ns": 732882
+        }
+      ]
+    }
+  ],
+  "median_ms": 0.751462,
+  "atol": 1e-05,
+  "rtol": 1e-05,
+  "boundary": "existing runner host input staging and synchronization, submit/wait including wait-event checkpoint serialization, output sync/readback and output copy; context creation, numpy input preparation, numerical validation and NPZ result serialization excluded",
+  "storage": "system-memory XRT BOs, not persistent AIE SRAM",
+  "precision": "ABI element type; bf16 emulation only if compile record says enabled",
+  "actual_submissions": [
+    1
+  ],
+  "validation_scope": "one numerical correctness launch per seed; no performance comparison",
+  "physical_speedup_claim": false
+}

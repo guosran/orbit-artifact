@@ -1,0 +1,478 @@
+{
+  "schema": "orbit.qwen-gemm-lifecycle-comparison.v1",
+  "rows": [
+    {
+      "mode": "original-source-call",
+      "setup_ns": 810,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 478703677,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 3151080,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 2735929,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 2608623,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {},
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": "original non-chain launch has no MultiLaunchRunner boundary"
+      },
+      "median_wall_ns": 2735929
+    },
+    {
+      "mode": "original-persistent-policy",
+      "setup_ns": 1090,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 44523247,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 1295802,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 1332241,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 1464408,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": null
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {
+          "allocation_and_input_staging": 32710,
+          "run_create_bind_and_submit": 29059,
+          "device_wait": 1016727,
+          "output_readback_and_host_view": 14660
+        },
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": null
+      },
+      "median_wall_ns": 1332241
+    },
+    {
+      "mode": "release-after-call",
+      "setup_ns": 240155,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 11420698,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 11415738,
+            "device_open_ns": 479679,
+            "host_prepare_ns": 6143215,
+            "native_inclusive_service_ns": 3729037,
+            "host_assemble_ns": 20850,
+            "release_ns": 1042957,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 6076016
+          }
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 10234754,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 10228754,
+            "device_open_ns": 493749,
+            "host_prepare_ns": 5046059,
+            "native_inclusive_service_ns": 3593760,
+            "host_assemble_ns": 16080,
+            "release_ns": 1079106,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 4980950
+          }
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 10049488,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 10044568,
+            "device_open_ns": 432811,
+            "host_prepare_ns": 5112546,
+            "native_inclusive_service_ns": 3484863,
+            "host_assemble_ns": 12290,
+            "release_ns": 1002058,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 5048108
+          }
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 9932900,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 9929060,
+            "device_open_ns": 379352,
+            "host_prepare_ns": 5131646,
+            "native_inclusive_service_ns": 3471543,
+            "host_assemble_ns": 13000,
+            "release_ns": 933519,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 5068188
+          }
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {
+          "allocation_and_input_staging": 2381527,
+          "run_create_bind_and_submit": 58959,
+          "device_wait": 1003688,
+          "output_readback_and_host_view": 20369
+        },
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": null
+      },
+      "median_wall_ns": 10049488
+    },
+    {
+      "mode": "persistent",
+      "setup_ns": 5311753,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 3972802,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 3957632,
+            "device_open_ns": 383401,
+            "host_prepare_ns": 63699,
+            "native_inclusive_service_ns": 3495372,
+            "host_assemble_ns": 12380,
+            "release_ns": 2780,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 1152794,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 1146474,
+            "device_open_ns": 4389,
+            "host_prepare_ns": 62469,
+            "native_inclusive_service_ns": 1070527,
+            "host_assemble_ns": 7809,
+            "release_ns": 1280,
+            "replicas": 1,
+            "first_dispatch": false,
+            "weight_upload_expected": false,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 1133295,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 1129175,
+            "device_open_ns": 2390,
+            "host_prepare_ns": 60649,
+            "native_inclusive_service_ns": 1058746,
+            "host_assemble_ns": 6480,
+            "release_ns": 910,
+            "replicas": 1,
+            "first_dispatch": false,
+            "weight_upload_expected": false,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 1137655,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "vs_original_npu": {
+            "bitexact": true,
+            "max_abs_error": 0.0
+          },
+          "runtime_event": {
+            "wall_ns": 1134405,
+            "device_open_ns": 1990,
+            "host_prepare_ns": 60458,
+            "native_inclusive_service_ns": 1064817,
+            "host_assemble_ns": 6250,
+            "release_ns": 890,
+            "replicas": 1,
+            "first_dispatch": false,
+            "weight_upload_expected": false,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {
+          "allocation_and_input_staging": 33799,
+          "run_create_bind_and_submit": 24420,
+          "device_wait": 1014507,
+          "output_readback_and_host_view": 17510
+        },
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": null
+      },
+      "median_wall_ns": 1137655
+    }
+  ],
+  "source_inputs": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-run2/inputs.json",
+    "sha256": "b7731f46fadf097ec7adcca8e39118cef629845e29845d06a3f4360b5732da15"
+  },
+  "runtime": {
+    "path": "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+    "sha256": "fac4572388747a838eba011cf39a76fef55e27cbb4238050a13c8b0d1f6cda91"
+  },
+  "implementation": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64/implementation.json",
+    "sha256": "1d14f047ecbb5842bd959ee28ebfb605593b4446e5f2ae8414b15ecb51e4f723"
+  },
+  "original_kernel": {
+    "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py",
+    "sha256": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+  },
+  "original_gemm_ast_sha256": "ad4cb1629c04e2b69504a0ceeb740f288e5f26847b771a52031b6a4ea8c67a38",
+  "capacity_bytes": 268435456,
+  "scope": "one actual Qwen L0 QKV operator; no whole-Qwen timing/admission claim",
+  "numerical_contract": "BF16 inputs and original FP32 reduction; diagnostic allclose rtol=.005 atol=.01, does not replace full-graph numerical gates",
+  "sram_residency_claim": false,
+  "outputs": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/comparison-run3/outputs.npz",
+    "sha256": "0f5d18b3171b7e367bdfb2b69e32df1a201dd3fbfef261666d1a5029203c2bbc"
+  },
+  "matches_original_npu": true
+}

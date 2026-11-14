@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py", line 511, in <module>
+    main()
+  File "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py", line 470, in main
+    builder = lower(chain)
+              ^^^^^^^^^^^^
+  File "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py", line 161, in lower
+    builder.add_op(chain._capture_ttshared(kernel, grid, args, constexprs),
+  File "/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/triton/backends/amd_triton_npu/multilaunch.py", line 169, in add_op
+    air_module = _ttshared_to_air(
+                 ^^^^^^^^^^^^^^^^^
+  File "/home/shiran/project/aie-toy/.venv/lib/python3.12/site-packages/triton/backends/amd_triton_npu/driver.py", line 1638, in _ttshared_to_air
+    pm.run(air_module.operation)
+air._mlir_libs._mlir.ir.MLIRError: Failure while executing pass pipeline:
+error: "acc"("/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py":151:15): 'vector.transfer_read' op inside 'air.herd' accesses memref with memory_space L3; AIE core tiles can only access L1 or more local memory directly. Use air.dma_memcpy_nd to stage data first.
+ note: "acc"("/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py":151:15): see current operation: %48 = "vector.transfer_read"(%25, %arg16, %3) <{in_bounds = [true], operandSegmentSizes = array<i32: 1, 1, 1, 0>, permutation_map = affine_map<(d0) -> (d0)>}> : (memref<8192xbf16>, index, bf16) -> vector<64xbf16>

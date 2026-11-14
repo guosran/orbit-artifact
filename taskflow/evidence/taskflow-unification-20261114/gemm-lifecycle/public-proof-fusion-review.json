@@ -1,0 +1,30 @@
+{
+  "scope": [
+    "OutputCoordinateProof",
+    "SourceIterationDomain",
+    "TaskflowFusion",
+    "Neura fusion adapter"
+  ],
+  "P0": [],
+  "P1_fixed": [
+    {
+      "finding": "Sibling fusion deduplicated read-state operands but concatenated original-memory summaries, losing ordinal alignment and blocking safe composition",
+      "fix": "Build original-read summaries through the same read_idx mapping; preserve the first proved binding for shared state",
+      "test": "source-fusion.cpp asserts one shared state and exactly one corresponding original-storage summary"
+    }
+  ],
+  "remaining": [
+    {
+      "priority": "P2",
+      "finding": "Public source fusion intentionally accepts only matched counter/hyperblock scalar bodies and optional one carry-free scf.for; arbitrary nested control or index-based injectivity proofs remain unsupported",
+      "behavior": "Fail closed without source mutation"
+    },
+    {
+      "priority": "P2",
+      "finding": "Legacy process-wide proof registration remains first-registration immutable fallback for source compatibility",
+      "behavior": "Context-scoped explicit-target registrations take precedence; unknown/ambiguous target fails closed"
+    }
+  ],
+  "format": "clang-format LLVM23 style LLVM on owned compiler files",
+  "validation": "Parent owns incremental full and Neura-OFF build queue; no competing build launched"
+}

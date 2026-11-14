@@ -1,0 +1,211 @@
+{
+  "analysis_status": "analyzed",
+  "body_fingerprint": "78eff522fe9f491f2ec0e002cebc37191c62e56b69d36ef2d0dec2d39d835c93",
+  "codegen_status": "requires_target_validation",
+  "cost_status": "uncalibrated",
+  "region_semantics": "conservative_static_bounding_boxes",
+  "schema": "orbit.generic.analysis.v1",
+  "storages": [
+    {
+      "dtype": "f32",
+      "id": "X",
+      "role": "input",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "Y",
+      "role": "output",
+      "shape": [
+        64,
+        64
+      ]
+    },
+    {
+      "dtype": "f32",
+      "id": "T",
+      "role": "temporary",
+      "shape": [
+        64,
+        64
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              32
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "T",
+          "write": true,
+          "write_version": "double.tile.0.0:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "double.tile.0.0",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 32
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "X:initial"
+          ],
+          "region": [
+            [
+              32,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "X",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              32,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "T",
+          "write": true,
+          "write_version": "double.tile.0.1:write:1"
+        }
+      ],
+      "dependencies": [],
+      "id": "double.tile.0.1",
+      "loops": [
+        {
+          "lower": 32,
+          "step": 1,
+          "upper": 64
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    },
+    {
+      "accesses": [
+        {
+          "exact_region": true,
+          "read": true,
+          "read_versions": [
+            "double.tile.0.0:write:1",
+            "double.tile.0.1:write:1"
+          ],
+          "region": [
+            [
+              0,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "T",
+          "write": false,
+          "write_version": ""
+        },
+        {
+          "exact_region": true,
+          "read": false,
+          "read_versions": [],
+          "region": [
+            [
+              0,
+              64
+            ],
+            [
+              0,
+              64
+            ]
+          ],
+          "storage": "Y",
+          "write": true,
+          "write_version": "square:write:1"
+        }
+      ],
+      "dependencies": [
+        "double.tile.0.0",
+        "double.tile.0.1"
+      ],
+      "id": "square",
+      "loops": [
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        },
+        {
+          "lower": 0,
+          "step": 1,
+          "upper": 64
+        }
+      ]
+    }
+  ]
+}

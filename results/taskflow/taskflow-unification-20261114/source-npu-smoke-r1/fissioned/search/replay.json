@@ -1,0 +1,40 @@
+{
+  "actions": [
+    {
+      "canonical_reset": false,
+      "family": "fusion",
+      "label": "fusion:double.split.0:double.split.1:producer-consumer",
+      "primitives": [
+        {
+          "axis": 0,
+          "factor": 1,
+          "first_task": "double.split.0",
+          "kind": "fusion",
+          "left_nodes": [],
+          "mode": "producer-consumer",
+          "second_task": "double.split.1"
+        }
+      ],
+      "shape_cols": 0,
+      "shape_rows": 0,
+      "shape_task": ""
+    }
+  ],
+  "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+  "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "function": "pointwise",
+  "schema": "orbit-taskflow-source-search-replay-v1",
+  "shapes": [
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "double.split.0.fuse.double.split.1"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "square"
+    }
+  ],
+  "source_fingerprint": "33fce50fa45d76e739e512786751c8dd73622fa92bbcb66eea810ede4a3ded18"
+}

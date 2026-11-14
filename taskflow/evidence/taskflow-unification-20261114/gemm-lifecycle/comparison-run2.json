@@ -1,0 +1,409 @@
+{
+  "schema": "orbit.qwen-gemm-lifecycle-comparison.v1",
+  "rows": [
+    {
+      "mode": "original-source-call",
+      "setup_ns": 3800,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 9682596810,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 2577076,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 2220325,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 2146137,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {},
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": "original non-chain launch has no MultiLaunchRunner boundary"
+      },
+      "median_wall_ns": 2220325
+    },
+    {
+      "mode": "original-persistent-policy",
+      "setup_ns": 1110,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 54893745,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 1319107,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 1048194,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 1091513,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": null
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {
+          "allocation_and_input_staging": 63519,
+          "run_create_bind_and_submit": 71248,
+          "device_wait": 746501,
+          "output_readback_and_host_view": 27890
+        },
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": null
+      },
+      "median_wall_ns": 1091513
+    },
+    {
+      "mode": "release-after-call",
+      "setup_ns": 13759698,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 20690465,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 20682615,
+            "device_open_ns": 765531,
+            "host_prepare_ns": 12452699,
+            "native_inclusive_service_ns": 5898804,
+            "host_assemble_ns": 49208,
+            "release_ns": 1516373,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 12302703
+          }
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 11669760,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 11662480,
+            "device_open_ns": 593726,
+            "host_prepare_ns": 5291428,
+            "native_inclusive_service_ns": 4345222,
+            "host_assemble_ns": 35829,
+            "release_ns": 1396275,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 5221850
+          }
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 10674814,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 10669004,
+            "device_open_ns": 554316,
+            "host_prepare_ns": 5329297,
+            "native_inclusive_service_ns": 3698748,
+            "host_assemble_ns": 17839,
+            "release_ns": 1068804,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 5259468
+          }
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 18838371,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 18830511,
+            "device_open_ns": 556356,
+            "host_prepare_ns": 5405575,
+            "native_inclusive_service_ns": 5892273,
+            "host_assemble_ns": 26500,
+            "release_ns": 6949807,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "release-after-call",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 0,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f",
+            "weight_binding_and_wrapper_ns": 5292898
+          }
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {
+          "allocation_and_input_staging": 5468134,
+          "run_create_bind_and_submit": 151126,
+          "device_wait": 1050644,
+          "output_readback_and_host_view": 32629
+        },
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": null
+      },
+      "median_wall_ns": 11669760
+    },
+    {
+      "mode": "persistent",
+      "setup_ns": 7815615,
+      "samples": [
+        {
+          "index": 0,
+          "warmup": true,
+          "wall_ns": 14026441,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 13995662,
+            "device_open_ns": 7180391,
+            "host_prepare_ns": 124357,
+            "native_inclusive_service_ns": 6653465,
+            "host_assemble_ns": 30599,
+            "release_ns": 6850,
+            "replicas": 1,
+            "first_dispatch": true,
+            "weight_upload_expected": true,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        },
+        {
+          "index": 1,
+          "warmup": false,
+          "wall_ns": 1828624,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 1812865,
+            "device_open_ns": 11410,
+            "host_prepare_ns": 109137,
+            "native_inclusive_service_ns": 1671869,
+            "host_assemble_ns": 17289,
+            "release_ns": 3160,
+            "replicas": 1,
+            "first_dispatch": false,
+            "weight_upload_expected": false,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        },
+        {
+          "index": 2,
+          "warmup": false,
+          "wall_ns": 1867813,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 1856864,
+            "device_open_ns": 8540,
+            "host_prepare_ns": 101347,
+            "native_inclusive_service_ns": 1727047,
+            "host_assemble_ns": 17060,
+            "release_ns": 2870,
+            "replicas": 1,
+            "first_dispatch": false,
+            "weight_upload_expected": false,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        },
+        {
+          "index": 3,
+          "warmup": false,
+          "wall_ns": 1790685,
+          "numerical": {
+            "allclose": false,
+            "max_abs_error": 0.04906129837036133,
+            "relative_l2": 0.006025641690939665
+          },
+          "runtime_event": {
+            "wall_ns": 1779806,
+            "device_open_ns": 6390,
+            "host_prepare_ns": 106827,
+            "native_inclusive_service_ns": 1649699,
+            "host_assemble_ns": 14520,
+            "release_ns": 2370,
+            "replicas": 1,
+            "first_dispatch": false,
+            "weight_upload_expected": false,
+            "context_policy": "persistent",
+            "storage": "device-ddr-bo",
+            "sram_residency_claim": false,
+            "held_host_bytes": 12337152,
+            "reserved_operand_bo_bytes": 12337152,
+            "live_operand_bo_bytes": 12337152,
+            "weight_source_sha256": "8b7da75d24cfee212c7d61b2f69acb28753ed371bd788aa91fe37c721bffb70f"
+          }
+        }
+      ],
+      "phase_probe": {
+        "phases_ns": {
+          "allocation_and_input_staging": 63259,
+          "run_create_bind_and_submit": 57018,
+          "device_wait": 1802645,
+          "output_readback_and_host_view": 27280
+        },
+        "timing_sample": false,
+        "method": "Python line-boundary tracing around unchanged MultiLaunchRunner.run",
+        "unsupported": null
+      },
+      "median_wall_ns": 1828624
+    }
+  ],
+  "source_inputs": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-run2/inputs.json",
+    "sha256": "b7731f46fadf097ec7adcca8e39118cef629845e29845d06a3f4360b5732da15"
+  },
+  "runtime": {
+    "path": "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+    "sha256": "fac4572388747a838eba011cf39a76fef55e27cbb4238050a13c8b0d1f6cda91"
+  },
+  "implementation": {
+    "path": "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64/implementation.json",
+    "sha256": "1d14f047ecbb5842bd959ee28ebfb605593b4446e5f2ae8414b15ecb51e4f723"
+  },
+  "original_kernel": {
+    "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py",
+    "sha256": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+  },
+  "original_gemm_ast_sha256": "ad4cb1629c04e2b69504a0ceeb740f288e5f26847b771a52031b6a4ea8c67a38",
+  "capacity_bytes": 268435456,
+  "scope": "one actual Qwen L0 QKV operator; no whole-Qwen timing/admission claim",
+  "numerical_contract": "BF16 inputs and original FP32 reduction; diagnostic allclose rtol=.005 atol=.01, does not replace full-graph numerical gates",
+  "sram_residency_claim": false
+}

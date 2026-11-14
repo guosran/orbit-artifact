@@ -1,0 +1,92 @@
+{
+  "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+  "backend_rejected": 0,
+  "best_cost_ms": 0.1147456,
+  "best_normalization": {
+    "normalized_counters": 6,
+    "normalized_fingerprint": "73ee205188149f89e4b92b240a6ee27efac0c12d664a4c2e1de3e59a19b065d2",
+    "normalized_tasks": 3,
+    "replay_verified": true,
+    "schema": "orbit-taskflow-source-normalization-v1",
+    "source_fingerprint": "971fd76f451716493f7e7a5169aa34b7956aaf4206e3a02347a10be5658035c8"
+  },
+  "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "complete_domain": false,
+  "cost_scope": "configured generic AIR cost provider",
+  "deduplicated": 14,
+  "deterministic_unsupported_cached": true,
+  "diagnostics": [
+    "double.tile.0.0: fission rejects unsupported task state attribute amoeba.tiling.axis",
+    "double.tile.0.1: fission rejects unsupported task state attribute amoeba.tiling.axis",
+    "double.tile.0.0: fission rejects unsupported task state attribute amoeba.tiling.axis",
+    "double.tile.0.1: fission rejects unsupported task state attribute amoeba.tiling.axis"
+  ],
+  "elapsed_seconds": 0.476132667,
+  "evaluations": 24,
+  "generated": 45,
+  "global_optimality_claim": false,
+  "has_best": true,
+  "initial_shapes": [
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "double.tile.0.0"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "double.tile.0.1"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "square"
+    }
+  ],
+  "phase_ms": {
+    "capability": 4.796676,
+    "enumeration": 8.282081,
+    "evaluation": 373.544927,
+    "materialization": 14.832745,
+    "normalization": 11.844195999999997,
+    "replay": 13.540914
+  },
+  "physical_execution": false,
+  "proposal_order": "round-robin-family-and-task; rotated-by-round",
+  "replay": {
+    "actions": [],
+    "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+    "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+    "function": "pointwise",
+    "schema": "orbit-taskflow-source-search-replay-v1",
+    "shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "double.tile.0.0"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "double.tile.0.1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "square"
+      }
+    ]
+  },
+  "runtime_unknown_retry_policy": "at-most-once-per-round",
+  "schema": "orbit-taskflow-source-search-v1",
+  "source_fingerprint": "971fd76f451716493f7e7a5169aa34b7956aaf4206e3a02347a10be5658035c8",
+  "target_fingerprint": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "termination": "evaluation-budget",
+  "unknown": 11,
+  "full_report": {
+    "path": "/tmp/orbit-public-source-npu-v34-r2/tiled/search/search.json",
+    "sha256": "f9878ad84b19adaf9dbbca3ef705b881853e31be6bd901dc498488ad4628add8",
+    "size_bytes": 16064852,
+    "retained_in_git": false
+  }
+}

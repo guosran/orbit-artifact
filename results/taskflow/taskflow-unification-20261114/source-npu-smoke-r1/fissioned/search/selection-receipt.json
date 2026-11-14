@@ -1,0 +1,102 @@
+{
+  "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+  "backend_rejected": 0,
+  "best_cost_ms": 0.1147456,
+  "best_normalization": {
+    "normalized_counters": 4,
+    "normalized_fingerprint": "4a1598e3968b1858a9f12e33de71d49c11c6ce45e3011bb3c5fd5ef5456f9279",
+    "normalized_tasks": 2,
+    "replay_verified": true,
+    "schema": "orbit-taskflow-source-normalization-v1",
+    "source_fingerprint": "fd243326ac60a03980dbf96e566aeab816d5b8ec25d941242f9fe3ae604c0cd6"
+  },
+  "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "complete_domain": false,
+  "cost_scope": "configured generic AIR cost provider",
+  "deduplicated": 5,
+  "deterministic_unsupported_cached": true,
+  "diagnostics": [],
+  "elapsed_seconds": 0.325014419,
+  "evaluations": 24,
+  "generated": 33,
+  "global_optimality_claim": false,
+  "has_best": true,
+  "initial_shapes": [
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "double.split.0"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "double.split.1"
+    },
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "square"
+    }
+  ],
+  "phase_ms": {
+    "capability": 3.0245480000000002,
+    "enumeration": 6.619771,
+    "evaluation": 222.134122,
+    "materialization": 12.189171000000002,
+    "normalization": 14.521968000000001,
+    "replay": 15.137301999999996
+  },
+  "physical_execution": false,
+  "proposal_order": "round-robin-family-and-task; rotated-by-round",
+  "replay": {
+    "actions": [
+      {
+        "canonical_reset": false,
+        "family": "fusion",
+        "label": "fusion:double.split.0:double.split.1:producer-consumer",
+        "primitives": [
+          {
+            "axis": 0,
+            "factor": 1,
+            "first_task": "double.split.0",
+            "kind": "fusion",
+            "left_nodes": [],
+            "mode": "producer-consumer",
+            "second_task": "double.split.1"
+          }
+        ],
+        "shape_cols": 0,
+        "shape_rows": 0,
+        "shape_task": ""
+      }
+    ],
+    "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+    "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+    "function": "pointwise",
+    "schema": "orbit-taskflow-source-search-replay-v1",
+    "shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "double.split.0.fuse.double.split.1"
+      },
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "square"
+      }
+    ]
+  },
+  "runtime_unknown_retry_policy": "at-most-once-per-round",
+  "schema": "orbit-taskflow-source-search-v1",
+  "source_fingerprint": "33fce50fa45d76e739e512786751c8dd73622fa92bbcb66eea810ede4a3ded18",
+  "target_fingerprint": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "termination": "evaluation-budget",
+  "unknown": 6,
+  "full_report": {
+    "path": "/tmp/orbit-public-source-npu-v34-r2/fissioned/search/search.json",
+    "sha256": "43674e69647750b712b7b6ea316f68506926b0eee0937e3931bce36e3da9160f",
+    "size_bytes": 8507949,
+    "retained_in_git": false
+  }
+}

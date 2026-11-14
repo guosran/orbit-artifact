@@ -1,0 +1,67 @@
+{
+  "status": "PREPARED_NOT_RUN_WAITING_HARDWARE_LANE",
+  "capture_command": [
+    "/home/shiran/project/aie-toy/.venv/bin/python",
+    "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/capture-qwen-qkv.py",
+    "--triton-root",
+    "/home/shiran/project/aie-toy/vendor/Triton-XDNA",
+    "--model",
+    "/home/shiran/.cache/huggingface/hub/models--FastFlowLM--Qwen2.5-3B-Instruct-NPU2/snapshots/839749b231d1b065a9b8a14c65609b02c6a55f4c/model.q4nx",
+    "--output",
+    "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-run2"
+  ],
+  "comparison_command": [
+    "/home/shiran/project/aie-toy/.venv/bin/python",
+    "/home/shiran/project/orbit-artifact/taskflow/scripts/taskflow-unification-20261114/compare-qwen-gemm-lifecycle.py",
+    "--triton-root",
+    "/home/shiran/project/aie-toy/vendor/Triton-XDNA",
+    "--runtime-source",
+    "/home/shiran/project/orbit/experimental/qwen-runtime-search/npu-gemm-variants.py",
+    "--artifact",
+    "/home/shiran/project/orbit-artifact/results/taskflow/qwen-compute-variants-r18/m128n256k64",
+    "--inputs",
+    "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/source-inputs-run2/inputs.json",
+    "--output",
+    "/home/shiran/project/orbit-artifact/results/taskflow/taskflow-unification-20261114/gemm-lifecycle/comparison-run3",
+    "--capacity-bytes",
+    "268435456",
+    "--warmups",
+    "1",
+    "--repeats",
+    "3"
+  ],
+  "environment": {
+    "AIR_LLMS_ROOT": "/home/shiran/project/aie-toy/build/qwen25-3b/Triton-XDNA/third_party/mlir-air-src/programming_examples/llms",
+    "AMD_TRITON_NPU_RUNTIME": "xrt",
+    "XILINX_XRT": "/usr",
+    "OMP_NUM_THREADS": "4",
+    "MKL_NUM_THREADS": "4",
+    "OPENBLAS_NUM_THREADS": "4",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  },
+  "shell_environment_setup": "/home/shiran/project/aie-toy/scripts/env.sh",
+  "lock": "/tmp/npu.lock",
+  "resource_recording": "Run each command under /usr/bin/time -v, write stdout and resource log into its new output parent. Do not wrap comparison in another NPU lock.",
+  "ram": {
+    "capture_estimated_peak_gib": 3,
+    "comparison_headroom_gib": 6,
+    "measurement": "estimate until resource logs exist",
+    "qkv_requested_operand_bo_bytes": 12337152,
+    "opaque_xrt_allocations_in_budget": false
+  },
+  "boundaries": [
+    "source capture and explicit packed-weight setup, outside warm request",
+    "inclusive operator call; release policy includes packing/open/cleanup",
+    "native service + device-open + host preparation/assembly + cleanup event components"
+  ],
+  "scope": "real L0 QKV inputs at original CPU RMSNorm placement, standalone operator; not full Qwen inference/search win",
+  "source_capture_math": "BF16 embedding then original CPU RMSNorm then BF16 input boundary; original Q4NX dequantized BF16 q|k|v weights",
+  "numerical": "diagnostic allclose only; full-graph original gates remain required",
+  "restrictions": [
+    "No NPU before parent releases lane",
+    "Do not change sealed r18/r19 evidence",
+    "Compiled variants remain unadmitted until physical and numerical checks",
+    "Capacity applies to one runtime, not a whole-graph global ledger"
+  ]
+}

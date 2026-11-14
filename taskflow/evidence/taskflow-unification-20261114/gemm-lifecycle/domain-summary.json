@@ -1,0 +1,97 @@
+{
+  "source_shape": {
+    "M": 5,
+    "N": 2560,
+    "K": 2048
+  },
+  "target": {
+    "source": {
+      "path": "/home/shiran/project/aie-toy/vendor/Triton-XDNA/examples/llm_q4nx/kernels.py",
+      "sha256": "5e187a05a97726d2512e48d3c9412a7861a10d503f8ef184dd3c7eae34ef5fad"
+    },
+    "columns": 8,
+    "rows": 4,
+    "minimum_l1": 64,
+    "minimum_block_m": 128,
+    "max_l1_output_elements": 8192,
+    "pack": [
+      8,
+      8,
+      8
+    ],
+    "minimum_block_k": 16,
+    "weight_dma_max_words": 1048576,
+    "pack_provenance": "AIE2P BF16 MAC packing used by generate_matmul_transform",
+    "status": "necessary source/target bounds only; compilation and physical validation still required"
+  },
+  "candidates": 16920,
+  "canonical_stream_sha256": "4cb9c456273270a5d7e3b9ad6b5f2c190626d6075df224dac2f14e639d7eb272",
+  "replica_counts": {
+    "1": 7520,
+    "2": 5400,
+    "4": 2240,
+    "5": 1408,
+    "8": 352
+  },
+  "examples": [
+    {
+      "m": 5,
+      "n": 2560,
+      "k": 2048,
+      "bm": 128,
+      "bn": 64,
+      "l1m": 64,
+      "l1n": 64,
+      "l2k": 16,
+      "l1k": 8,
+      "replicas": 1,
+      "column_offset": 0,
+      "row_offset": 2
+    },
+    {
+      "m": 5,
+      "n": 2560,
+      "k": 2048,
+      "bm": 128,
+      "bn": 64,
+      "l1m": 64,
+      "l1n": 64,
+      "l2k": 16,
+      "l1k": 8,
+      "replicas": 1,
+      "column_offset": 0,
+      "row_offset": 3
+    },
+    {
+      "m": 5,
+      "n": 2560,
+      "k": 2048,
+      "bm": 128,
+      "bn": 64,
+      "l1m": 64,
+      "l1n": 64,
+      "l2k": 16,
+      "l1k": 8,
+      "replicas": 1,
+      "column_offset": 0,
+      "row_offset": 4
+    },
+    {
+      "m": 5,
+      "n": 2560,
+      "k": 2048,
+      "bm": 128,
+      "bn": 64,
+      "l1m": 64,
+      "l1n": 64,
+      "l2k": 16,
+      "l1k": 8,
+      "replicas": 1,
+      "column_offset": 0,
+      "row_offset": 5
+    }
+  ],
+  "compiled": false,
+  "device_opened": false,
+  "coverage": "finite current GEMM lowering parameter domain; not all abstract ORBIT decisions"
+}

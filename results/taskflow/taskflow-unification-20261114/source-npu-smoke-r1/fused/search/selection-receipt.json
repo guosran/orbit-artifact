@@ -1,0 +1,91 @@
+{
+  "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+  "backend_rejected": 0,
+  "best_cost_ms": 0.1114688,
+  "best_normalization": {
+    "normalized_counters": 2,
+    "normalized_fingerprint": "74c579a94ce0677e998e4254ee78c11aea8456fad32d8b4d0e077baf766ff49a",
+    "normalized_tasks": 1,
+    "replay_verified": true,
+    "schema": "orbit-taskflow-source-normalization-v1",
+    "source_fingerprint": "39d2378bf210d9b0809e9d8fc7d626b12bfded544e9d0af8adca2a1b8316399e"
+  },
+  "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "complete_domain": false,
+  "cost_scope": "configured generic AIR cost provider",
+  "deduplicated": 8,
+  "deterministic_unsupported_cached": true,
+  "diagnostics": [
+    "double.fuse.square: fission requires tensor write results, matching read/write provenance, and no read/value result",
+    "tile:double.fuse.square:axis=0:factor=2: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=0:count=2: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=1:factor=2: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=1:count=2: tiling requires one output state and no yielded read/value state",
+    "double.fuse.square: fission requires tensor write results, matching read/write provenance, and no read/value result",
+    "tile:double.fuse.square:axis=0:factor=2: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=0:count=2: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=0:factor=3: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=0:count=3: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=1:factor=2: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=1:count=2: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=1:factor=3: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=1:count=3: tiling requires one output state and no yielded read/value state",
+    "double.fuse.square: fission requires tensor write results, matching read/write provenance, and no read/value result",
+    "tile:double.fuse.square:axis=0:factor=2: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=0:count=2: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=0:factor=3: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=0:count=3: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=1:factor=2: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=1:count=2: tiling requires one output state and no yielded read/value state",
+    "tile:double.fuse.square:axis=1:factor=3: tiling requires one output state and no yielded read/value state",
+    "replica:double.fuse.square:axis=1:count=3: tiling requires one output state and no yielded read/value state"
+  ],
+  "elapsed_seconds": 1.097615513,
+  "evaluations": 24,
+  "generated": 31,
+  "global_optimality_claim": false,
+  "has_best": true,
+  "initial_shapes": [
+    {
+      "cols": 1,
+      "rows": 1,
+      "task": "double.fuse.square"
+    }
+  ],
+  "phase_ms": {
+    "capability": 3.190077,
+    "enumeration": 2.382772,
+    "evaluation": 960.685564,
+    "materialization": 9.468674,
+    "normalization": 5.920619,
+    "replay": 7.3819420000000004
+  },
+  "physical_execution": false,
+  "proposal_order": "round-robin-family-and-task; rotated-by-round",
+  "replay": {
+    "actions": [],
+    "backend": "taskflow-generic-air-source-v1:3977f4321798125fd58f0c32b69683d731d9533f27c522c22020fa45d18f773c",
+    "capability": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+    "function": "pointwise",
+    "schema": "orbit-taskflow-source-search-replay-v1",
+    "shapes": [
+      {
+        "cols": 1,
+        "rows": 1,
+        "task": "double.fuse.square"
+      }
+    ]
+  },
+  "runtime_unknown_retry_policy": "at-most-once-per-round",
+  "schema": "orbit-taskflow-source-search-v1",
+  "source_fingerprint": "39d2378bf210d9b0809e9d8fc7d626b12bfded544e9d0af8adca2a1b8316399e",
+  "target_fingerprint": "be57a0ded9142129dd394be48a2ac8919dcd3f1b3fd07da657ef1b28463dbf86",
+  "termination": "evaluation-budget",
+  "unknown": 2,
+  "full_report": {
+    "path": "/tmp/orbit-public-source-npu-v34-r2/fused/search/search.json",
+    "sha256": "d17dcbf849cd8984e5fca3ad8a0aec5333bc075092f1bd9791b602f9c8b29a60",
+    "size_bytes": 44052648,
+    "retained_in_git": false
+  }
+}
