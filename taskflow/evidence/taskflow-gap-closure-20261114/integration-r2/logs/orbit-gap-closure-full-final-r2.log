@@ -1,0 +1,119 @@
+[1/252] Building Neura.h.inc...
+[2/246] Building Neura.cpp.inc...
+[3/246] Building NeuraDialect.cpp.inc...
+[4/246] Building NeuraDialect.h.inc...
+[5/240] Building NeuraTypes.cpp.inc...
+[6/240] Building NeuraTypes.h.inc...
+[7/240] Building NeuraPasses.h.inc...
+[8/218] Building NeuraConversionPasses.h.inc...
+[9/202] Building Taskflow.cpp.inc...
+[10/202] Building Taskflow.h.inc...
+[11/202] Building TaskflowDialect.cpp.inc...
+[12/202] Building TaskflowDialect.h.inc...
+[13/198] Building TaskflowTypes.cpp.inc...
+[14/198] Building TaskflowTypes.h.inc...
+[15/153] Building TaskflowPasses.h.inc...
+[16/149] Building AmoebaConversionPasses.h.inc...
+[17/142] Building NeuraBackendPasses.h.inc...
+[18/111] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[19/111] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUIndependentShards.cpp.o
+[20/111] Linking CXX static library lib/TaskflowAIR/libMLIRTaskflowAIR.a
+[21/111] Building CXX object lib/Backend/Neura/CMakeFiles/obj.MLIRAmoebaNeuraBackend.dir/NeuraBackend.cpp.o
+[22/111] Building CXX object lib/Backend/Neura/Orchestration/CMakeFiles/obj.MLIRAmoebaNeuraOrchestrationUtil.dir/JointScheduling/ProgramGraphCommunication.cpp.o
+[23/111] Linking CXX static library lib/Backend/Neura/Orchestration/libMLIRAmoebaNeuraOrchestrationUtil.a
+[24/111] Building CXX object lib/Backend/Neura/Orchestration/AnalyticalBasedTaskOrchestration/CMakeFiles/obj.MLIRAmoebaNeuraAnalyticalBasedTaskOrchestration.dir/AnalyticalBasedTaskOrchestration.cpp.o
+[25/111] Linking CXX static library lib/Backend/Neura/Orchestration/AnalyticalBasedTaskOrchestration/libMLIRAmoebaNeuraAnalyticalBasedTaskOrchestration.a
+[26/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/ProgramGraphAmoeba.cpp.o
+[27/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/EnumerateJointSemanticRewritePass.cpp.o
+[28/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/EnumerateJointGraphClosurePass.cpp.o
+[29/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/ReplayJointNeighborhoodActionsPass.cpp.o
+[30/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/ProveStaticActiveTransferShapesPass.cpp.o
+[31/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/JointNeighborhoodSearchPass.cpp.o
+[32/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/JointNeighborhoodActions.cpp.o
+[33/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/MaterializeJointSemanticRewritePass.cpp.o
+[34/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/JointReductionRewritePasses.cpp.o
+[35/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/MaterializeNeuraKReductionPass.cpp.o
+[36/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/MaterializeNeuraJointRewritePass.cpp.o
+/home/shiran/project/orbit/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp: In function 'llvm::LogicalResult {anonymous}::setProvenInPlaceInputRegionAttrs(mlir::OpBuilder&, mlir::taskflow::TaskflowTaskOp, mlir::taskflow::TaskflowTaskOp, const NeuraTilePlan&)':
+/home/shiran/project/orbit/lib/Backend/Neura/Orchestration/JointScheduling/MaterializeNeuraJointRewritePass.cpp:1761:28: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'size_t' {aka 'long unsigned int'} [-Wsign-compare]
+ 1761 |         outputLower.size() != static_cast<size_t>(readType.getRank()))
+      |         ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[37/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/ProductionSramNativeUpperBound.cpp.o
+[38/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/ExtractJointTaskGraphFactsPass.cpp.o
+[39/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/MaterializeJointTaskReplicasPass.cpp.o
+[40/111] Building CXX object lib/Backend/Neura/Transforms/Optimizations/CMakeFiles/obj.MLIRAmoebaNeuraOptimizations.dir/FissionRayCarriedReductionPass.cpp.o
+/home/shiran/project/orbit/lib/Backend/Neura/Transforms/Optimizations/FissionRayCarriedReductionPass.cpp: In function 'llvm::FailureOr<{anonymous}::RayReductionFissionPlan> {anonymous}::analyzeRayReductionFission(mlir::taskflow::TaskflowTaskOp, mlir::func::FuncOp, int64_t, std::string&)':
+/home/shiran/project/orbit/lib/Backend/Neura/Transforms/Optimizations/FissionRayCarriedReductionPass.cpp:168:57: warning: 'bool mlir::Type::isa() const [with Tys = {mlir::IndexType}]' is deprecated: Use mlir::isa<U>() instead [-Wdeprecated-declarations]
+  168 |   if (!task.getValueInputs()[0].getType().isa<IndexType>() ||
+      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+In file included from /home/shiran/project/llvm-project/mlir/include/mlir/IR/AttributeSupport.h:18,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/IR/Attributes.h:12,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Bytecode/BytecodeImplementation.h:17,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Bytecode/BytecodeOpInterface.h:17,
+                 from /home/shiran/project/llvm-project/mlir/include/mlir/Dialect/Func/IR/FuncOps.h:12,
+                 from /home/shiran/project/orbit/include/Backend/Neura/Orchestration/JointScheduling/ProveStaticActiveTransferShapesPass.h:8,
+                 from /home/shiran/project/orbit/include/Backend/Neura/NeuraBackendPasses.h:6,
+                 from /home/shiran/project/orbit/lib/Backend/Neura/Transforms/Optimizations/FissionRayCarriedReductionPass.cpp:9:
+/home/shiran/project/llvm-project/mlir/include/mlir/IR/Types.h:320:6: note: declared here
+  320 | bool Type::isa() const {
+      |      ^~~~
+[41/111] Building CXX object lib/Backend/Neura/Orchestration/JointScheduling/CMakeFiles/obj.MLIRAmoebaNeuraJointScheduling.dir/InheritReplicaAnalyticalTaskCostCatalogPass.cpp.o
+[42/111] Linking CXX static library lib/Backend/Neura/Orchestration/JointScheduling/libMLIRAmoebaNeuraJointScheduling.a
+[43/111] Linking CXX static library lib/Backend/Neura/Transforms/Optimizations/libMLIRAmoebaNeuraOptimizations.a
+[44/111] Linking CXX static library lib/Backend/Neura/libMLIRAmoebaNeuraBackend.a
+[45/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-state-sequence-test.dir/__/__/test/TaskflowGeneric/program-state-sequence.cpp.o
+[46/111] Linking CXX executable tools/taskflow-opt/taskflow-program-state-sequence-test
+[47/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-opt.dir/taskflow-opt.cpp.o
+[48/111] Linking CXX executable tools/taskflow-opt/taskflow-opt
+[49/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-specialization-test.dir/__/__/test/TaskflowGeneric/taskflow-specialization.cpp.o
+[50/111] Linking CXX executable tools/taskflow-opt/taskflow-specialization-test
+[51/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-deferred-plan-test.dir/__/__/test/TaskflowGeneric/taskflow-deferred-plan.cpp.o
+[52/111] Linking CXX executable tools/taskflow-opt/taskflow-deferred-plan-test
+[53/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-heterogeneous-state-test.dir/__/__/test/TaskflowGeneric/heterogeneous-state.cpp.o
+[54/111] Linking CXX executable tools/taskflow-opt/taskflow-heterogeneous-state-test
+[55/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-representation-coverage-test.dir/__/__/test/TaskflowGeneric/program-representation-coverage.cpp.o
+[56/111] Linking CXX executable tools/taskflow-opt/taskflow-program-representation-coverage-test
+[57/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-generic-carry-domain-test.dir/__/__/test/TaskflowGeneric/generic-carry-domain.cpp.o
+[58/111] Linking CXX executable tools/taskflow-opt/taskflow-generic-carry-domain-test
+[59/111] Linking CXX executable tools/taskflow-opt/taskflow-program-replica-hierarchy-test
+[60/111] Linking CXX executable tools/taskflow-opt/taskflow-program-native-projection-test
+[61/111] Linking CXX executable tools/taskflow-opt/taskflow-recurrence-composition-test
+[62/111] Linking CXX executable tools/taskflow-opt/taskflow-source-policy-projection-test
+[63/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-program-physical-mapping-test.dir/__/__/test/TaskflowGeneric/program-physical-mapping.cpp.o
+[64/111] Linking CXX executable tools/taskflow-opt/taskflow-program-physical-mapping-test
+[65/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-replica-placement-test.dir/__/__/test/TaskflowAIR/source-replica-placement.cpp.o
+[66/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-tiling-test.dir/__/__/test/TaskflowGeneric/taskflow-source-tiling.cpp.o
+[67/111] Linking CXX executable tools/taskflow-opt/taskflow-source-tiling-test
+[68/111] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-placement-test
+[69/111] Linking CXX executable tools/taskflow-opt/taskflow-proof-services-test
+[70/111] Linking CXX executable tools/taskflow-opt/taskflow-fission-test
+[71/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-mapping-actions-test.dir/__/__/test/TaskflowGeneric/source-mapping-actions.cpp.o
+[72/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-task-tiles-test.dir/__/__/test/TaskflowGeneric/task-tiles.cpp.o
+[73/111] Linking CXX executable tools/taskflow-opt/taskflow-source-mapping-actions-test
+[74/111] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-test
+[75/111] Linking CXX executable tools/taskflow-opt/taskflow-task-tiles-test
+[76/111] Linking CXX executable tools/taskflow-opt/taskflow-source-fusion-test
+[77/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-actions-test.dir/__/__/test/TaskflowGeneric/source-actions.cpp.o
+[78/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-search-test.dir/__/__/test/TaskflowGeneric/source-search.cpp.o
+[79/111] Linking CXX executable tools/taskflow-opt/taskflow-source-actions-test
+[80/111] Linking CXX executable tools/taskflow-opt/taskflow-source-search-test
+[81/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-normalization-test.dir/__/__/test/TaskflowGeneric/taskflow-source-normalization.cpp.o
+[82/111] Linking CXX executable tools/taskflow-opt/taskflow-source-normalization-test
+[83/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-program-state-sequence-test
+program state sequence: 26 checks
+[84/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-specialization-test
+24 actual-bound specialization/state checks passed
+[85/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-deferred-plan-test
+guarded deferred source plan: 20 checks
+[86/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-heterogeneous-state-test
+CPU/NPU state cuts preserve one ABI root and both boundary versions
+[87/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-program-representation-coverage-test
+program representation coverage: 11 checks
+[88/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-generic-carry-domain-test
+generic carry domain: 6 checks
+[89/111] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-program-physical-mapping-test
+FAILED: tools/taskflow-opt/CMakeFiles/check-taskflow-program-physical-mapping /tmp/orbit-review-full-build/tools/taskflow-opt/CMakeFiles/check-taskflow-program-physical-mapping 
+cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-program-physical-mapping-test
+independent compute permutation keeps actual instance bindings: program graph: source task instance binding mismatch
+[90/111] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-task-implementations-test.dir/__/__/test/TaskflowGeneric/task-implementations.cpp.o
+ninja: build stopped: subcommand failed.

@@ -1,0 +1,48 @@
+[0/1] Re-running CMake...
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Calibration contracts SKIP: configured Python lacks NumPy/SciPy
+-- Configuring done (0.4s)
+-- Generating done (0.2s)
+-- Build files have been written to: /tmp/orbit-review-full-build
+[1/59] Building Neura.cpp.inc...
+[2/59] Building Neura.h.inc...
+[3/59] Building NeuraDialect.cpp.inc...
+[4/59] Building NeuraDialect.h.inc...
+[5/59] Building NeuraTypes.cpp.inc...
+[6/59] Building NeuraTypes.h.inc...
+[7/59] Building Taskflow.cpp.inc...
+[8/59] Building Taskflow.h.inc...
+[9/59] Building TaskflowDialect.cpp.inc...
+[10/59] Building TaskflowDialect.h.inc...
+[11/55] Building TaskflowTypes.cpp.inc...
+[12/55] Building TaskflowTypes.h.inc...
+[13/31] Building TaskflowPasses.h.inc...
+[14/31] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/TaskflowTiling.cpp.o
+[15/31] Building CXX object lib/TaskflowDialect/CMakeFiles/obj.MLIRTaskflow.dir/TaskflowOps.cpp.o
+[16/31] Linking CXX static library lib/TaskflowDialect/libMLIRTaskflow.a
+[17/31] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-policy-projection-test.dir/__/__/test/TaskflowAIR/source-policy-projection.cpp.o
+[18/31] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramNativeProjection.cpp.o
+[19/31] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[20/31] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-tiling-test.dir/__/__/test/TaskflowGeneric/taskflow-source-tiling.cpp.o
+[21/31] Linking CXX executable tools/taskflow-opt/taskflow-program-native-projection-test
+[22/31] Linking CXX executable tools/taskflow-opt/taskflow-opt
+[23/31] Linking CXX executable tools/taskflow-opt/taskflow-source-policy-projection-test
+[24/31] Linking CXX executable tools/taskflow-opt/taskflow-source-tiling-test
+[25/31] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-placement-test
+[26/31] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-program-native-projection-test
+native physical projection: 22 checks
+[27/31] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-source-policy-projection-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-placement-pointwise32.mlir
+source-bound action, stale binding rejection, every-descendant tiles/implementation, immutable parent and forged replay rejection passed
+[28/31] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-source-replica-placement-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-replica-pointwise.mlir
+six real replica herds, nondefault target row, grouped fission stages, geometry and forged-instance rejection passed
+[29/31] cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-source-tiling-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+FAILED: tools/taskflow-opt/CMakeFiles/check-taskflow-source-tiling /tmp/orbit-review-full-build/tools/taskflow-opt/CMakeFiles/check-taskflow-source-tiling 
+cd /tmp/orbit-review-full-build/tools/taskflow-opt && /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-source-tiling-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+multi-output coverage: different output slots require distinct storage[30/31] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-test
+
+ninja: build stopped: subcommand failed.

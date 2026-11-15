@@ -1,0 +1,10 @@
+[
+  "/tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-opt",
+  "/tmp/orbit-gap-closure-approved-neutral-pipeline-r2/pointwise.mlir",
+  "--source-pass-pipeline=builtin.module(func.func(tile-task{task-name=Pointwise axis=0 factor=3}))",
+  "--normalize-taskflow-source",
+  "--source-normalization-witness=/tmp/orbit-gap-closure-approved-neutral-pipeline-r2/normalization.json",
+  "--target-config=/tmp/orbit-gap-closure-approved-neutral-pipeline-r2/target.json",
+  "--lower-to-air",
+  "--air-output=/tmp/orbit-gap-closure-approved-neutral-pipeline-r2/lowered.air.mlir"
+]

@@ -1,0 +1,70 @@
+Crash narrowing checkpoint, 2026-11-15; no performance/device execution.
+Search regression rerun/debug remains paused pending user's explicit authorization.
+
+Existing failed centralized regression evidence:
+ /tmp/orbit-gap-closure-full-final-r4.log
+ /tmp/orbit-gap-closure-neutral-final-r5.log
+ source_pipeline_v33.py source-search stage: process -6 / std::bad_alloc.
+ Existing generated fixture/config:
+ /tmp/orbit-source-v33-tmjrpz3c/pointwise.mlir
+ /tmp/orbit-source-v33-tmjrpz3c/target.json
+ source is actual 15x10 f32 pointwise, not a new workload.
+
+Automatic review rejected launching gdb --args taskflow-opt --search with the
+fixed 2-round/24-candidate contract arguments as paused optimization search.
+No bypass/retry occurred; parent notified. No crash core was available.
+
+Allowed non-search checks actually executed, all using executable
+ /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-opt
+and target config above:
+
+1. Baseline pointwise --normalize-taskflow-source
+ --source-normalization-witness=/tmp/orbit-boundary-nonsearch-witness.json
+ --generic-map : exit 0.
+2. Explicit native policies, generated files
+ /tmp/orbit-boundary-direct-policy0.mlir through policy4.mlir:
+ phase-local/task-shape-stages/phase-local: exit 0.
+ tiled-phase-local/task-shape-stages/phase-local: exit 0.
+ whole-program/whole-program/retain-across-users: exit 0.
+ tiled-phase-local/shape-major/phase-local: exit 0.
+ tiled-phase-local/tile-major/retain-across-users without required retention
+ scope: clean diagnostic exit 1, instance grouping inconsistent scope.
+ All used --normalize-taskflow-source --generic-map,
+ --source-normalization-witness=/tmp/orbit-direct-witness.json.
+3. Actual public fission single candidate:
+ baseline --source-pass-pipeline=builtin.module(func.func(fission-task{task-name=Pointwise left-nodes=0}))
+ --normalize-taskflow-source --source-normalization-witness=/tmp/orbit-direct-witness.json
+ --generic-map : exit 0.
+4. Source/native actions regression on the generated f32 fixture:
+ /tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-source-mapping-actions-test
+ /tmp/orbit-source-v33-tmjrpz3c/pointwise.mlir
+ exit 0, stdout:
+ source/native joint actions, named tile ownership, withdrawal and replay passed
+5. Baseline and explicit whole-program policy2 each:
+ --normalize-taskflow-source --source-normalization-witness=/tmp/orbit-direct-witness.json
+ --program-graph --program-graph-output=/tmp/orbit-direct-graph.json
+ --program-graph-dot=/tmp/orbit-direct-graph.dot : both exit 0.
+ JSON/DOT paths contain last successful whole-program result.
+
+Static findings (no speculative patch):
+ - Neutral SourceSearchDriver evaluator calls evaluateGenericMLIR with normalized
+   module text; GenericMapping.cpp has no call to planProgramDataOrganization,
+   buildPhysicalProgramGraph, or the new boundary helper. Thus the neutral
+   failure is not directly inside the new boundary projection code path.
+ - SourceSearchDriver functionName is an owned std::string, not a StringRef
+   dangling after source_auto_candidates config removal.
+ - GenericMapping evaluator owns its parsed module through graph serialization.
+ - Boundary planner references audited: no new event/copy/allocation reference
+   held across container append found. New independent checker indices/ancestry
+   are preceded by full event/copy/version validation.
+ - Individual baseline/native-policy/fission mappings and graph serialization
+   did not reproduce the failure. Search composition/enumeration/evaluation
+   boundary still needs an authorized crash trace. Root cause remains UNKNOWN.
+
+Boundary integration evidence separately reported by parent:
+ full/neutral representation coverage15, physical16, native projection22 PASS;
+ AIR source placement including multiDFG source positive PASS.
+ Boundary PhaseLocal checker fix exempts only explicitly selected boundary
+ memory from same-task-only imported-copy use; all local/transit copies retain
+ same-task restriction. Actual exports/reloads/routes/traffic/versions/lifetimes
+ and source prefetch barriers remain checked.

@@ -1,0 +1,152 @@
+{
+  "status": "passed",
+  "source_base_commit": "6302bbde073c6e7c3ecd700d36a38904ac9418b9",
+  "compiler_tools": [
+    {
+      "path": "/tmp/orbit-review-full-build/tools/taskflow-opt/taskflow-opt",
+      "sha256": "bbc04239bfbab2af5dfe890f4734c32007ecf56c79e2f663e1da5050c577cbcd"
+    },
+    {
+      "path": "/tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-opt",
+      "sha256": "6308c00019efae5521cb12435fd5e8dc79873e3848716946360ef32b6099c3ff"
+    }
+  ],
+  "search_performance_campaigns": "paused",
+  "board": {
+    "status": "passed",
+    "cases": [
+      {
+        "case": "shape2x2",
+        "run": "shape2x2-r2",
+        "receipt_sha256": "455338c131f730afaa2e6ce5e736444d8d726ecf80a402d5cd3acad5f7cf9093",
+        "device_submissions": 12,
+        "waves": 4
+      },
+      {
+        "case": "state2x2",
+        "run": "state2x2-r1",
+        "receipt_sha256": "853a7ec9d379202563b4eee13a75f378f1ca7ed2a43971b8c144d17a25405d17",
+        "device_submissions": 36,
+        "waves": 4
+      },
+      {
+        "case": "crosscore",
+        "run": "crosscore-r1",
+        "receipt_sha256": "8371185fa843fa8225ae2cce4a74a6d98ac98018f8b4545d5900a5783f8bd8f5",
+        "device_submissions": 6,
+        "waves": 2
+      },
+      {
+        "case": "three-row",
+        "run": "three-row-r4",
+        "receipt_sha256": "9b6478fdb9d611bb79b105f8b24dda0d6ade8f334b6b4e714d1a9d22a32dc17d",
+        "device_submissions": 21,
+        "waves": 7
+      },
+      {
+        "case": "nested2x2",
+        "run": "nested2x2-r2",
+        "receipt_sha256": "455338c131f730afaa2e6ce5e736444d8d726ecf80a402d5cd3acad5f7cf9093",
+        "device_submissions": 12,
+        "waves": 4
+      },
+      {
+        "case": "policy-shape2x2",
+        "run": "policy-shape2x2-r1",
+        "receipt_sha256": "e02708ad5f3405cd799fd13ce6012708c7dad5df8e6177244733dd828cbc2123",
+        "device_submissions": 24,
+        "waves": 8
+      },
+      {
+        "case": "multidfg-shape2x2",
+        "run": "multidfg-shape2x2-r3",
+        "receipt_sha256": "e02708ad5f3405cd799fd13ce6012708c7dad5df8e6177244733dd828cbc2123",
+        "device_submissions": 24,
+        "waves": 8
+      },
+      {
+        "case": "replica-shape1x2",
+        "run": "replica-shape1x2-r1",
+        "receipt_sha256": "455338c131f730afaa2e6ce5e736444d8d726ecf80a402d5cd3acad5f7cf9093",
+        "device_submissions": 12,
+        "waves": 4
+      }
+    ],
+    "current_selected_device_submissions": 147,
+    "final_aie_recheck": "results/taskflow/taskflow-gap-closure-20261114/final-selected-aie-recheck-r3/summary.json",
+    "final_aie_recheck_sha256": "8ad89243a1fca13230dc94d48bc39d14f1801c27ea4cec3891685a1ed506b1bd",
+    "speedup_claim": false
+  },
+  "focused_contracts": {
+    "full_and_neura_off": "passed",
+    "representation_coverage": 15,
+    "physical_mapping": 16,
+    "native_projection": 22,
+    "fusion": 61,
+    "specialization": 24,
+    "deferred_plan": 20,
+    "state_sequence": 26,
+    "replica_hierarchy": 13,
+    "changed_cpp_llvm_format": 111
+  },
+  "fixed_regression": {
+    "test": "source_pipeline_v33.py source-search",
+    "priority": "P1",
+    "root_cause": "copying a parsed LLVM JSON object after erasing an owned field corrupted tombstone keys",
+    "fix": "construct a fresh owned evaluator configuration; retain the original configuration for source/target binding",
+    "additional_integration_fix": "replay-check source normalization before generic evaluation; placed evaluation still consumes original source",
+    "authorization": "user explicitly approved fixed two-round, 24-candidate correctness regression",
+    "device_submissions": 0
+  },
+  "completed_checks": {
+    "status": "passed",
+    "checks": [
+      {
+        "name": "full",
+        "exit_code": 0,
+        "log": "logs/orbit-gap-closure-approved-full-aggregate.log"
+      },
+      {
+        "name": "neutral",
+        "exit_code": 0,
+        "log": "logs/orbit-gap-closure-approved-neutral-aggregate.log"
+      },
+      {
+        "name": "aie",
+        "exit_code": 0,
+        "log": "logs/orbit-gap-closure-approved-aie-recheck.log"
+      },
+      {
+        "name": "llvm-format",
+        "exit_code": 0,
+        "log": "logs/orbit-gap-closure-approved-format.log",
+        "changed_files": 111
+      }
+    ],
+    "fixed_search_regression": {
+      "max_rounds": 2,
+      "max_candidates": 24,
+      "beam_width": 3,
+      "full_and_neura_off": "passed",
+      "device_submissions": 0,
+      "performance_campaign_resumed": false
+    },
+    "actual_board": {
+      "selected_cases": 8,
+      "selected_submissions": 147,
+      "latest_aie_waves": 41,
+      "additional_device_submissions_for_recheck": 0
+    }
+  },
+  "unresolved_p0_p1_in_this_integration": [],
+  "compiler_commits_or_prs_created": false,
+  "physical_capability_boundaries": [
+    "AIR transfer isolation still rejects uncertified multi-output configurations",
+    "arbitrary alias, reduction and symbolic-control proofs are not implied by static source coverage",
+    "numerical launch/wait prices remain unknown until calibrated"
+  ],
+  "feature_pr_plan": {
+    "count": 16,
+    "maximum_added_plus_deleted_per_pr": 1999
+  }
+}

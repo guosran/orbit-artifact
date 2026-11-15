@@ -1,0 +1,156 @@
+[1/22] Building NeuraDialect.cpp.inc...
+[2/22] Building Neura.cpp.inc...
+[3/22] Building Neura.h.inc...
+[4/22] Building NeuraDialect.h.inc...
+[5/22] Building NeuraTypes.cpp.inc...
+[6/22] Building NeuraTypes.h.inc...
+[7/22] Building Taskflow.cpp.inc...
+[8/22] Building TaskflowDialect.cpp.inc...
+[9/22] Building Taskflow.h.inc...
+[10/22] Building TaskflowDialect.h.inc...
+[11/22] Building TaskflowTypes.cpp.inc...
+[12/22] Building TaskflowTypes.h.inc...
+[13/22] Building TaskflowPasses.h.inc...
+[14/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIRSelection.cpp.o
+[15/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIR.cpp.o
+[16/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/ProgramGraphAIE.cpp.o
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp: In member function 'bool {anonymous}::ScalarTrace::expression(mlir::Value, std::string&)':
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp:181:13: warning: unused variable 'n' [-Wunused-variable]
+  181 |     int64_t n;
+      |             ^
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp: In lambda function:
+/home/shiran/project/orbit/lib/TaskflowAIR/ProgramGraphAIE.cpp:564:30: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int64_t' {aka 'long int'} [-Wsign-compare]
+  564 |         for (size_t q = 0; q < ids.size(); ++q) {
+      |                            ~~^~~~~~~~~~~~
+[17/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/AIRBackend.cpp.o
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp: In lambda function:
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:983:25: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long unsigned int, std::allocator<long unsigned int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+  983 |             deps.size() != t->dependencies.size())
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1050:25: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long int, std::allocator<long int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 1050 |           offset.size() != storage->shape.size() ||
+      |           ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1052:26: warning: comparison of integer expressions of different signedness: 'int64_t' {aka 'long int'} and 'std::vector<long int, std::allocator<long int> >::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 1052 |           strides.size() != storage->shape.size()) {
+      |           ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp: In function 'bool orbit::taskflow::checkGenericAIRMapping(const GenericAnalysis&, const GenericMappingPlan&, mlir::ModuleOp, std::string&)':
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1077:58: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 1077 |     if (!seg || seg.size() != 3 || seg[0] != 0 || seg[1] != dims ||
+      |                                                   ~~~~~~~^~~~~~~
+/home/shiran/project/orbit/lib/TaskflowAIR/AIRBackend.cpp:1078:16: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+ 1078 |         seg[2] != sourceFunction.getNumArguments() ||
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[18/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/AIEImplementation.cpp.o
+[19/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUPhysicalProgram.cpp.o
+[20/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUShardsAIE.cpp.o
+[21/22] Building CXX object lib/TaskflowAIR/CMakeFiles/obj.MLIRTaskflowAIR.dir/NPUIndependentShards.cpp.o
+[22/22] Building CXX object tools/taskflow-opt/CMakeFiles/taskflow-source-replica-placement-test.dir/__/__/test/TaskflowAIR/source-replica-placement.cpp.o
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp: In function 'int main(int, char**)':
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:104:31: note: unnamed temporary defined here
+  104 |   if (!setTaskPlacementChoices(*shaped, "pointwise",
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+  105 |                                {{0, "", "", "scalar", 1, {2, 2}}}, error) ||
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:104:31: note: unnamed temporary defined here
+  104 |   if (!setTaskPlacementChoices(*shaped, "pointwise",
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+  105 |                                {{0, "", "", "scalar", 1, {2, 2}}}, error) ||
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:104:31: note: unnamed temporary defined here
+  104 |   if (!setTaskPlacementChoices(*shaped, "pointwise",
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+  105 |                                {{0, "", "", "scalar", 1, {2, 2}}}, error) ||
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:123:31: note: unnamed temporary defined here
+  123 |   if (!setTaskPlacementChoices(
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^
+  124 |           *explicitUnit, "pointwise",
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  125 |           {{0, "npu.tile.6.4", "npu.l1.6.4", "scalar", 1, {1, 1}}}, error) ||
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:123:31: note: unnamed temporary defined here
+  123 |   if (!setTaskPlacementChoices(
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^
+  124 |           *explicitUnit, "pointwise",
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  125 |           {{0, "npu.tile.6.4", "npu.l1.6.4", "scalar", 1, {1, 1}}}, error) ||
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:123:31: note: unnamed temporary defined here
+  123 |   if (!setTaskPlacementChoices(
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^
+  124 |           *explicitUnit, "pointwise",
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  125 |           {{0, "npu.tile.6.4", "npu.l1.6.4", "scalar", 1, {1, 1}}}, error) ||
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:138:31: note: unnamed temporary defined here
+  138 |   if (!setTaskPlacementChoices(
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^
+  139 |           *explicitUnit, "pointwise",
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  140 |           {{0, "npu.tile.6.4", "npu.l1.5.4", "scalar", 1, {1, 1}}}, error) ||
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:138:31: note: unnamed temporary defined here
+  138 |   if (!setTaskPlacementChoices(
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^
+  139 |           *explicitUnit, "pointwise",
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  140 |           {{0, "npu.tile.6.4", "npu.l1.5.4", "scalar", 1, {1, 1}}}, error) ||
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:138:31: note: unnamed temporary defined here
+  138 |   if (!setTaskPlacementChoices(
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^
+  139 |           *explicitUnit, "pointwise",
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  140 |           {{0, "npu.tile.6.4", "npu.l1.5.4", "scalar", 1, {1, 1}}}, error) ||
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:149:31: note: unnamed temporary defined here
+  149 |   if (!setTaskPlacementChoices(*state, "pointwise",
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  150 |                                {{0, "", "", "scalar", 1, {2, 2}}}, error) ||
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:149:31: note: unnamed temporary defined here
+  149 |   if (!setTaskPlacementChoices(*state, "pointwise",
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  150 |                                {{0, "", "", "scalar", 1, {2, 2}}}, error) ||
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:217:1: warning: dangling pointer to an unnamed temporary may be used [-Wdangling-pointer=]
+  217 | }
+      | ^
+/home/shiran/project/orbit/test/TaskflowAIR/source-replica-placement.cpp:149:31: note: unnamed temporary defined here
+  149 |   if (!setTaskPlacementChoices(*state, "pointwise",
+      |        ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  150 |                                {{0, "", "", "scalar", 1, {2, 2}}}, error) ||
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

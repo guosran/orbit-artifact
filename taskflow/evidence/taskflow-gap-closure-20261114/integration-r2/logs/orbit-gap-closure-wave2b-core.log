@@ -1,0 +1,30 @@
+[0/1] Re-running CMake...
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+-- Using MLIRConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/mlir
+-- Using LLVMConfig.cmake in: /home/shiran/project/llvm-project/build/lib/cmake/llvm
+-- Building with -fPIC
+CMake Error at /home/shiran/project/llvm-project/build/lib/cmake/llvm/LLVMProcessSources.cmake:113 (message):
+  Found erroneous configuration for source file NPUPhysicalProgram.cpp
+
+  LLVM's build system enforces that all source files are added to a build
+  target, that exactly one build target exists in each directory, and that
+  this target lists all files in that directory.  If you want multiple
+  targets in the same directory, add PARTIAL_SOURCES_INTENDED to the target
+  specification, though it is discouraged.
+
+  Please update /home/shiran/project/orbit/lib/TaskflowAIR/CMakeLists.txt
+
+Call Stack (most recent call first):
+  /home/shiran/project/llvm-project/build/lib/cmake/llvm/LLVMProcessSources.cmake:59 (llvm_check_source_file_list)
+  /home/shiran/project/llvm-project/build/lib/cmake/llvm/AddLLVM.cmake:538 (llvm_process_sources)
+  /home/shiran/project/llvm-project/build/lib/cmake/mlir/AddMLIR.cmake:380 (llvm_add_library)
+  lib/TaskflowAIR/CMakeLists.txt:1 (add_mlir_library)
+
+
+-- Calibration contracts SKIP: configured Python lacks NumPy/SciPy
+-- Configuring incomplete, errors occurred!
+FAILED: build.ninja 
+/usr/bin/cmake --regenerate-during-build -S/home/shiran/project/orbit -B/tmp/orbit-review-full-build
+ninja: error: rebuilding 'build.ninja': subcommand failed

@@ -1,0 +1,53 @@
+2026-11-15 fixed-regression crash resolution checkpoint
+User explicitly authorized ONLY the existing two-round/24-candidate fixed crash
+regression, not resumption of performance search. No device submissions.
+
+Actual diagnosis:
+ /tmp/orbit-approved-crash-backtrace.txt
+ SourceSearchDriver evaluator -> NPU placed source expansion -> effective=config
+ -> JSON DenseMap bucket ObjectKey copy -> invalid owned string -> SIGSEGV.
+ Minimal no-search LLVMSupport reproducer:
+ /tmp/orbit-json-erase-repro.cpp, /tmp/orbit-json-erase-repro, exit139.
+ Parse original nested config, erase source_auto_candidates, copy JSON Value.
+ Full command and successful control /tmp/orbit-approved-json-repro.log.
+ Fresh field-by-field owned-key filter control exit0; nested generic_air values
+ correctly preserved. No external LLVM modification.
+
+Fix in lib/Taskflow/SourceSearchDriver.cpp:
+ Do not mutate receipt-bound original JSON. Build separate owned JSON Object
+ containing every original field except source_auto_candidates, and pass it to
+ both evaluator paths. Existing full-byte source/target/dependency identities,
+ capability identity and final resealing remain unchanged.
+ SourceSearchDriver syntax-only PASS.
+ A agent independently reviewed ownership and receipt binding, no P0/P1 found.
+
+Parent actual full/neutral reruns no longer crash. They exposed another existing
+ CLI integration issue: nativeEvaluator generic fallback evaluated raw source
+ with taskflow.counter, so baseline and nonplaced alternatives became unknown.
+ Root owns tools/taskflow-opt/taskflow-opt.cpp normalize/verify fallback fix.
+
+Test test/TaskflowGeneric/source_pipeline_v33.py now keeps strict has_best/scored
+ assertions, validates actual placed branches remain unpriced with no estimated
+ latency and no physical execution, and checks original target bytes equal
+ archived target bytes. Tools without concrete placed support still require an
+ unsupported-capability observation. Python syntax PASS.
+ Actual pre-fallback-fix report:
+ /tmp/orbit-gap-closure-approved-full-pipeline/search/search.json
+ 20 unknown (raw counter unsupported), 4 unpriced true placed AIR plans.
+ Final combined regression is pending root rebuild/run; no premature PASS.
+
+Earlier /tmp/orbit-gap-closure-crash-narrowing.log is the preauthorization record
+ and is not overwritten or represented as final successful validation.
+
+FINAL FIXED REGRESSION RESULT (parent-run actual evidence):
+ Full and Neura-OFF/solver-OFF neutral tools both source_pipeline_v33.py --air
+ passed exit0 after CLI generic fallback normalization/verification fix.
+ Outputs:
+ /tmp/orbit-gap-closure-approved-full-pipeline-r2
+ /tmp/orbit-gap-closure-approved-neutral-pipeline-r2
+ Fixed bounds unchanged: two rounds, 24 candidates, beam width3.
+ Includes actual source tile/normalize/map, AIR lower/check, source evaluator
+ baseline scored+best selection, genuinely placed candidates unpriced, original
+ target bytes archived unchanged, existing-output rejection. Device submissions0.
+ Parent is running final aggregates and existing final-AIE rechecks separately;
+ this does not claim those yet or restart any performance search.

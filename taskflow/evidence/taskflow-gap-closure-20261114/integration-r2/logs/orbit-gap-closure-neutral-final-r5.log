@@ -1,0 +1,87 @@
+[1/99] Building Taskflow.cpp.inc...
+[2/99] Building Taskflow.h.inc...
+[3/99] Building TaskflowDialect.cpp.inc...
+[4/99] Building TaskflowDialect.h.inc...
+[5/87] Building TaskflowTypes.h.inc...
+[6/53] Building TaskflowTypes.cpp.inc...
+[7/51] Building TaskflowPasses.h.inc...
+[8/51] Building CXX object lib/Taskflow/CMakeFiles/obj.MLIRTaskflowStructured.dir/ProgramDataOrganization.cpp.o
+[9/51] Linking CXX static library lib/Taskflow/libMLIRTaskflowStructured.a
+[10/51] Linking CXX executable tools/taskflow-opt/taskflow-program-state-sequence-test
+[11/51] Linking CXX executable tools/taskflow-opt/taskflow-opt
+[12/51] Linking CXX executable tools/taskflow-opt/taskflow-specialization-test
+[13/51] Linking CXX executable tools/taskflow-opt/taskflow-deferred-plan-test
+[14/51] Linking CXX executable tools/taskflow-opt/taskflow-heterogeneous-state-test
+[15/51] Linking CXX executable tools/taskflow-opt/taskflow-program-representation-coverage-test
+[16/51] Linking CXX executable tools/taskflow-opt/taskflow-generic-carry-domain-test
+[17/51] Linking CXX executable tools/taskflow-opt/taskflow-program-physical-mapping-test
+[18/51] Linking CXX executable tools/taskflow-opt/taskflow-program-replica-hierarchy-test
+[19/51] Linking CXX executable tools/taskflow-opt/taskflow-recurrence-composition-test
+[20/51] Linking CXX executable tools/taskflow-opt/taskflow-program-native-projection-test
+[21/51] Linking CXX executable tools/taskflow-opt/taskflow-source-policy-projection-test
+[22/51] Linking CXX executable tools/taskflow-opt/taskflow-source-tiling-test
+[23/51] Linking CXX executable tools/taskflow-opt/taskflow-fission-test
+[24/51] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-placement-test
+[25/51] Linking CXX executable tools/taskflow-opt/taskflow-source-replica-test
+[26/51] Linking CXX executable tools/taskflow-opt/taskflow-source-mapping-actions-test
+[27/51] Linking CXX executable tools/taskflow-opt/taskflow-source-search-test
+[28/51] Linking CXX executable tools/taskflow-opt/taskflow-source-fusion-test
+[29/51] Linking CXX executable tools/taskflow-opt/taskflow-source-actions-test
+[30/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-state-sequence-test
+program state sequence: 26 checks
+[31/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-specialization-test
+24 actual-bound specialization/state checks passed
+[32/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-deferred-plan-test
+guarded deferred source plan: 20 checks
+[33/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-heterogeneous-state-test
+CPU/NPU state cuts preserve one ABI root and both boundary versions
+[34/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-representation-coverage-test
+program representation coverage: 15 checks
+[35/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-generic-carry-domain-test
+generic carry domain: 6 checks
+[36/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-physical-mapping-test
+physical program graph: 16 checks
+[37/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-replica-hierarchy-test
+nested physical replicas: 13 checks
+[38/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-program-native-projection-test
+native physical projection: 22 checks
+[39/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-recurrence-composition-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-recurrence.mlir
+actual normalized recurrence and serial tiling preserve eight prefix-scan results
+[40/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-policy-projection-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-placement-pointwise32.mlir
+source-bound action, stale binding rejection, every-descendant tiles/implementation, immutable parent and forged replay rejection passed
+[41/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-replica-placement-test /home/shiran/project/orbit/test/TaskflowAIR/fixtures/source-replica-pointwise.mlir
+six real replica herds, nondefault target row, grouped fission stages, geometry and forged-instance rejection passed
+[42/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-tiling-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+loc("-":4:40): error: 'taskflow.join' op cannot prove a tile state's static region and base
+loc("-":4:40): error: 'taskflow.join' op cannot prove a tile state's static region and base
+public source tiling factors, replay and feedback checks passed
+[43/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-fission-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/fission-task-source.mlir
+public fission ranking, multi-stage replay and lineage checks passed
+[44/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-mapping-actions-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+source/native joint actions, named tile ownership, withdrawal and replay passed
+[45/51] Linking CXX executable tools/taskflow-opt/taskflow-source-normalization-test
+[46/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-replica-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+loc("/home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir":11:13): error: 'taskflow.join' op tile regions do not exactly cover the parent region
+loc("/home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir":11:13): error: 'taskflow.join' op cannot prove a tile state's static region and base
+independent source replica coverage, work and replay checks passed
+[47/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-search-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir
+public beam search, synthetic pricing, replay and unknown checks passed
+[48/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-fusion-test
+source fusion: 61 checks
+[49/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-actions-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/fission-task-source.mlir
+public source actions, compound rollback, replay and target extensions passed
+[50/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-source-normalization-test /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/tiling-task-public-factors.mlir /home/shiran/project/orbit/test/multi-cgra/taskflow/joint-scheduling/fission-task-recurrence-cut.mlir
+source normalization, generic analysis and replay checks passed
+[51/51] cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /usr/bin/python3 /home/shiran/project/orbit/test/TaskflowGeneric/source_pipeline_v33.py --tool /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-opt --air
+FAILED: tools/taskflow-opt/CMakeFiles/check-taskflow-source-pipeline-air /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/CMakeFiles/check-taskflow-source-pipeline-air 
+cd /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt && /usr/bin/python3 /home/shiran/project/orbit/test/TaskflowGeneric/source_pipeline_v33.py --tool /tmp/orbit-taskflow-neutral-build/tools/taskflow-opt/taskflow-opt --air
+Traceback (most recent call last):
+  File "/home/shiran/project/orbit/test/TaskflowGeneric/source_pipeline_v33.py", line 96, in <module>
+    main()
+  File "/home/shiran/project/orbit/test/TaskflowGeneric/source_pipeline_v33.py", line 74, in main
+    run("source-search", ["--search", "--backend=air", f"--target-config={target}",
+  File "/home/shiran/project/orbit/test/TaskflowGeneric/source_pipeline_v33.py", line 47, in run
+    assert (result.returncode == 0) if diagnostic is None else (
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('source-search', -6, "terminate called after throwing an instance of 'std::bad_alloc'\n  what():  std::bad_alloc\n")
+ninja: build stopped: subcommand failed.

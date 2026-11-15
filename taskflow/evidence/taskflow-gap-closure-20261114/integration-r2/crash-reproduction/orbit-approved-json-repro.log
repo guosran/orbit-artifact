@@ -1,0 +1,11 @@
+Minimal actual LLVM owned-key tombstone crash, independent of MLIR/search:
+Source /tmp/orbit-json-erase-repro.cpp
+Fixed construction /tmp/orbit-json-filter-repro.cpp
+Compiler /home/shiran/bin/g++ -std=c++17
+Includes -I/home/shiran/project/llvm-project/llvm/include -I/home/shiran/project/llvm-project/build/include
+Link /home/shiran/project/llvm-project/build/lib/libLLVMSupport.a /home/shiran/project/llvm-project/build/lib/libLLVMDemangle.a /usr/lib/x86_64-linux-gnu/libz.so.1 /usr/lib/x86_64-linux-gnu/libzstd.so.1 -lpthread -ldl -lrt
+Original parse -> erase source_auto_candidates -> json Value copy: executable /tmp/orbit-json-erase-repro, exit139 SIGSEGV.
+Filtered fresh Object with entry.first.str() owned keys -> json Value copy: /tmp/orbit-json-filter-repro, exit0 and correctly prints all nested generic_air fields, no source_auto_candidates.
+Actual authorized fixed regression gdb backtrace /tmp/orbit-approved-crash-backtrace.txt:
+SIGSEGV string copy from invalid owned ObjectKey through DenseMapBase::copyFrom, expandPlacedSource NPUIndependentShards.cpp:672 effective=config; SourceSearchDriver.cpp:264 nativeEvaluator.
+No external LLVM changes. Root fix is immutable original target plus fresh owned evaluator config excluding proposal declaration.

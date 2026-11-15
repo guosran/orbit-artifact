@@ -1,0 +1,2499 @@
+{
+  "actual_dma_bytes": 1200,
+  "allocation_lifetime": "whole_herd",
+  "analysis_status": "supported",
+  "backend_internal_transport": "AIR compiler may add shim/L2 staging; final IR ledger required; not measured traffic",
+  "backend_realization_feature_scope": "phase/stage/core counters describe the checked AIR realization; source/instances/traffic/submissions come from the common program graph",
+  "backend_tensor_padding_bytes": 0,
+  "body_fingerprint": "de6088c680f5b91fdf98f23584c854e38224df7e8e454edb15b6d975dbdafe12",
+  "capacity_bytes": 1048576,
+  "channel_allocations": [],
+  "channel_merge_policy": "single-logical-fifo-per-stage-storage-direction",
+  "codegen_status": "requires_backend_verification",
+  "cost_provenance": "theoretical direct-AIR source scalar-operation and explicit-transfer sensitivity; not calibrated; backend local copies and internal scheduling excluded",
+  "cost_status": "theoretical",
+  "data_organization_scope": "phase-local input copies; source reduction/output retention remains required",
+  "discovered_mapping_opportunities": [
+    {
+      "data_organization": "phase-local",
+      "fact_proof": "actual checked program accesses, copy versions and capacity; feasibility checked after selection",
+      "grouping": "task-shape-stages",
+      "invariant_source_loop": -1,
+      "panel_source_loop": -1,
+      "proposal": "materialize phase-local transfer boundaries with selected tile sizes",
+      "realization": "tiled-phase-local",
+      "storage_index": -1,
+      "tasks": []
+    },
+    {
+      "data_organization": "retain-across-users",
+      "fact_proof": "actual checked program accesses, copy versions and capacity; feasibility checked after selection",
+      "grouping": "whole-program",
+      "invariant_source_loop": -1,
+      "panel_source_loop": -1,
+      "proposal": "retain shared inputs and intermediates within the whole program",
+      "realization": "whole-program",
+      "storage_index": -1,
+      "tasks": []
+    },
+    {
+      "data_organization": "phase-local",
+      "fact_proof": "actual checked program accesses, copy versions and capacity; feasibility checked after selection",
+      "grouping": "shape-major",
+      "invariant_source_loop": -1,
+      "panel_source_loop": -1,
+      "proposal": "materialize phase-local transfer boundaries with selected tile sizes",
+      "realization": "tiled-phase-local",
+      "storage_index": -1,
+      "tasks": []
+    }
+  ],
+  "estimated_ms": 0.10027,
+  "execution_groups": [
+    {
+      "begin_phase": 0,
+      "depends_on": [],
+      "end_phase_exclusive": 3,
+      "implementation_depends_on": [],
+      "memory": "aie_l1",
+      "resource": "npu.compute"
+    }
+  ],
+  "expanded_phase_details_omitted": false,
+  "fused_initializer_tasks": [],
+  "hardware_stage_expansion_scope": "bounded host/codegen expansion; not a measured silicon or local memory resource limit",
+  "hardware_stages": [],
+  "host_buffers": [
+    {
+      "bytes": 600,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "input",
+      "shape": [
+        15,
+        10
+      ],
+      "storage": "arg0",
+      "storage_index": 0
+    },
+    {
+      "bytes": 600,
+      "dtype": "f32",
+      "lifetime": "whole_graph_lifetime",
+      "memory": "system_memory_bo",
+      "role": "output",
+      "shape": [
+        15,
+        10
+      ],
+      "storage": "arg1",
+      "storage_index": 1
+    }
+  ],
+  "host_plan_representation": "explicit phases; compact JSON domains and compact generated AIR for large schedules",
+  "local_allocation_lifetime": "whole_herd",
+  "local_staging_copy_bytes": 0,
+  "logical_boundary_bytes": 1200,
+  "logical_read_bytes": 600,
+  "logical_scalar_reads": 150,
+  "logical_scalar_writes": 150,
+  "logical_write_bytes": 600,
+  "max_group_inputs": 2,
+  "max_group_outputs": 2,
+  "max_hardware_stage_expansion": 128,
+  "phase_count": 0,
+  "phase_domains": [],
+  "phase_peak_live_bytes": 1200,
+  "phase_schedule_digest": "4f81b9f2ba82a6d5db18468a4431dc3f",
+  "phases": [],
+  "physical_execution": false,
+  "placement": "npu_single_core_serial",
+  "plan_id": "eb0bee77ae71b96c80a34e28322cf9f253edff356382d75f4d902e14a5247648",
+  "plan_identity_policy": "orbit.chosen-plan.v19.excludes-proposal-diagnostics",
+  "program_communication": {
+    "adapter": "native arbitrary-rank adapter of Static allocation/version/location-copy semantics",
+    "allocations": [
+      {
+        "begin_phase": 0,
+        "bytes": 600,
+        "end_phase_exclusive": 3,
+        "key": "host-0",
+        "memory": "system_memory_bo",
+        "storage": 0
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 600,
+        "end_phase_exclusive": 3,
+        "key": "storage-0.data",
+        "memory": "aie_l1",
+        "storage": 0
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 600,
+        "end_phase_exclusive": 3,
+        "key": "host-1",
+        "memory": "system_memory_bo",
+        "storage": 1
+      },
+      {
+        "begin_phase": 0,
+        "bytes": 600,
+        "end_phase_exclusive": 3,
+        "key": "storage-1.data",
+        "memory": "aie_l1",
+        "storage": 1
+      }
+    ],
+    "body_fingerprint": "de6088c680f5b91fdf98f23584c854e38224df7e8e454edb15b6d975dbdafe12",
+    "compute_estimates": [],
+    "copies": [
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          0
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          0
+        ],
+        "version": 0
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          0
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          0
+        ],
+        "version": 1
+      },
+      {
+        "allocation": 0,
+        "available_from": 0,
+        "consumer_edges": [],
+        "created_by": -1,
+        "last_users": [
+          0
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          0
+        ],
+        "version": 2
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [
+          0
+        ],
+        "created_by": 0,
+        "last_users": [
+          1
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          1
+        ],
+        "version": 0
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [
+          1
+        ],
+        "created_by": 0,
+        "last_users": [
+          2
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          2
+        ],
+        "version": 1
+      },
+      {
+        "allocation": 1,
+        "available_from": 0,
+        "consumer_edges": [
+          2
+        ],
+        "created_by": 0,
+        "last_users": [
+          3
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          3
+        ],
+        "version": 2
+      },
+      {
+        "allocation": 3,
+        "available_from": 1,
+        "consumer_edges": [],
+        "created_by": 1,
+        "last_users": [
+          4
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          4
+        ],
+        "version": 3
+      },
+      {
+        "allocation": 3,
+        "available_from": 2,
+        "consumer_edges": [],
+        "created_by": 2,
+        "last_users": [
+          4
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          4
+        ],
+        "version": 4
+      },
+      {
+        "allocation": 3,
+        "available_from": 3,
+        "consumer_edges": [],
+        "created_by": 3,
+        "last_users": [
+          4
+        ],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [
+          4
+        ],
+        "version": 5
+      },
+      {
+        "allocation": 2,
+        "available_from": 4,
+        "consumer_edges": [],
+        "created_by": 4,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [],
+        "version": 3
+      },
+      {
+        "allocation": 2,
+        "available_from": 4,
+        "consumer_edges": [],
+        "created_by": 4,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [],
+        "version": 4
+      },
+      {
+        "allocation": 2,
+        "available_from": 4,
+        "consumer_edges": [],
+        "created_by": 4,
+        "last_users": [],
+        "layout": "row_major",
+        "released_after": 5,
+        "users": [],
+        "version": 5
+      }
+    ],
+    "copy_count": 12,
+    "data_edge_count": 3,
+    "data_edges": [
+      {
+        "consumer": 1,
+        "copy": 3,
+        "producer": -1,
+        "region": 0,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 0
+      },
+      {
+        "consumer": 2,
+        "copy": 4,
+        "producer": -1,
+        "region": 1,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 1
+      },
+      {
+        "consumer": 3,
+        "copy": 5,
+        "producer": -1,
+        "region": 2,
+        "required_dtype": "f32",
+        "required_layout": "row_major",
+        "required_memory": "aie_l1",
+        "version": 2
+      }
+    ],
+    "data_organization": "phase-local",
+    "estimated_makespan_ms": null,
+    "event_count": 5,
+    "events": [
+      {
+        "data_edges": [],
+        "depends_on": [],
+        "kind": "transfer",
+        "link": "host_to_l1",
+        "memory": "",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          0,
+          1,
+          2
+        ],
+        "resource": "npu.dma",
+        "task": 0,
+        "writes": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "data_edges": [
+          0
+        ],
+        "depends_on": [
+          0
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 0,
+        "reads": [
+          3
+        ],
+        "resource": "npu.compute",
+        "task": 0,
+        "writes": [
+          6
+        ]
+      },
+      {
+        "data_edges": [
+          1
+        ],
+        "depends_on": [
+          0,
+          1
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 1,
+        "reads": [
+          4
+        ],
+        "resource": "npu.compute",
+        "task": 1,
+        "writes": [
+          7
+        ]
+      },
+      {
+        "data_edges": [
+          2
+        ],
+        "depends_on": [
+          0,
+          2
+        ],
+        "kind": "compute",
+        "link": "",
+        "memory": "aie_l1",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          5
+        ],
+        "resource": "npu.compute",
+        "task": 2,
+        "writes": [
+          8
+        ]
+      },
+      {
+        "data_edges": [],
+        "depends_on": [
+          1,
+          2,
+          3
+        ],
+        "kind": "transfer",
+        "link": "l1_to_host",
+        "memory": "",
+        "order_edges": [],
+        "phase": 2,
+        "reads": [
+          6,
+          7,
+          8
+        ],
+        "resource": "npu.dma",
+        "task": 2,
+        "writes": [
+          9,
+          10,
+          11
+        ]
+      }
+    ],
+    "execution_regions": [
+      {
+        "begin_event": 0,
+        "cost_ownership": "prepared-region composite includes submission, device compute/transfers/wait and readback once",
+        "device_stages": [
+          0
+        ],
+        "end_event_exclusive": 5,
+        "host_submission_count": 1,
+        "id": "program-call",
+        "invocation_lifecycle": "host-device",
+        "placement": "npu",
+        "submission_kind": "host_submission",
+        "submission_resource": "host-submission"
+      }
+    ],
+    "expanded_details_omitted": false,
+    "links": [
+      {
+        "bandwidth_bytes_per_ms": 0,
+        "cost_status": "uncalibrated",
+        "id": "host_to_l1",
+        "latency_ms": 0,
+        "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+        "resource": "npu.dma",
+        "source": "system_memory_bo",
+        "target": "aie_l1"
+      },
+      {
+        "bandwidth_bytes_per_ms": 0,
+        "cost_status": "uncalibrated",
+        "id": "l1_to_host",
+        "latency_ms": 0,
+        "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+        "resource": "npu.dma",
+        "source": "aie_l1",
+        "target": "system_memory_bo"
+      }
+    ],
+    "logical_region_count": 6,
+    "logical_regions": [
+      {
+        "offsets": [
+          0,
+          0
+        ],
+        "sizes": [
+          5,
+          10
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          5,
+          0
+        ],
+        "sizes": [
+          5,
+          10
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          10,
+          0
+        ],
+        "sizes": [
+          5,
+          10
+        ],
+        "storage": 0
+      },
+      {
+        "offsets": [
+          0,
+          0
+        ],
+        "sizes": [
+          5,
+          10
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          5,
+          0
+        ],
+        "sizes": [
+          5,
+          10
+        ],
+        "storage": 1
+      },
+      {
+        "offsets": [
+          10,
+          0
+        ],
+        "sizes": [
+          5,
+          10
+        ],
+        "storage": 1
+      }
+    ],
+    "memories": [
+      {
+        "capacity_bytes": 9223372036854775807,
+        "id": "system_memory_bo"
+      },
+      {
+        "capacity_bytes": 1048576,
+        "id": "aie_l1"
+      }
+    ],
+    "memory_architecture": {
+      "domains": [
+        {
+          "id": "system",
+          "kind": "system",
+          "parent": ""
+        },
+        {
+          "id": "npu",
+          "kind": "device",
+          "parent": "system"
+        },
+        {
+          "coordinates": {
+            "column": 0,
+            "row": 2
+          },
+          "id": "npu.tile(0,2)",
+          "kind": "tile",
+          "parent": "npu"
+        }
+      ],
+      "links": [
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "domain": "npu",
+          "id": "host_to_l1",
+          "latency_ms": 0,
+          "max_bytes": 9223372036854775807,
+          "memory": "",
+          "min_bytes": 0,
+          "provenance": {
+            "kind": "target_contract",
+            "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+          },
+          "resource": "npu.dma",
+          "source": "system_memory_bo",
+          "source_device": "",
+          "source_dtype": "",
+          "source_layout": "",
+          "target": "aie_l1",
+          "target_device": "",
+          "target_dtype": "",
+          "target_layout": "",
+          "temporary_bytes": 0
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "domain": "npu",
+          "id": "l1_to_host",
+          "latency_ms": 0,
+          "max_bytes": 9223372036854775807,
+          "memory": "",
+          "min_bytes": 0,
+          "provenance": {
+            "kind": "target_contract",
+            "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+          },
+          "resource": "npu.dma",
+          "source": "aie_l1",
+          "source_device": "",
+          "source_dtype": "",
+          "source_layout": "",
+          "target": "system_memory_bo",
+          "target_device": "",
+          "target_dtype": "",
+          "target_layout": "",
+          "temporary_bytes": 0
+        }
+      ],
+      "memories": [
+        {
+          "accessible_devices": [
+            "host"
+          ],
+          "accessible_resources": [
+            "host.worker"
+          ],
+          "capacity_bytes": 9223372036854775807,
+          "domain": "system",
+          "id": "system_memory_bo",
+          "kind": "system-bo"
+        },
+        {
+          "accessible_devices": [
+            "npu"
+          ],
+          "accessible_resources": [
+            "npu.compute"
+          ],
+          "capacity_bytes": 1048576,
+          "domain": "npu.tile(0,2)",
+          "id": "aie_l1",
+          "kind": "local-sram"
+        }
+      ],
+      "resources": [
+        {
+          "capacity": 1,
+          "device": "npu",
+          "domain": "npu.tile(0,2)",
+          "id": "npu.compute",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "domain": "npu",
+          "id": "npu.dma",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "domain": "system",
+          "id": "host-submission",
+          "kind": "submission"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "domain": "system",
+          "id": "host.worker",
+          "kind": "compute"
+        }
+      ]
+    },
+    "memory_lifetime_scope": "native physical pool phase intervals; copies have event validity",
+    "memory_peak_bytes": {},
+    "order_edge_count": 0,
+    "order_edges": [],
+    "resource_capacity_scope": "logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers",
+    "resources": [
+      {
+        "capacity": 1,
+        "device": "npu",
+        "id": "npu.compute",
+        "kind": "compute"
+      },
+      {
+        "capacity": 1,
+        "device": "npu",
+        "id": "npu.dma",
+        "kind": "transfer"
+      },
+      {
+        "capacity": 1,
+        "device": "host",
+        "id": "host-submission",
+        "kind": "submission"
+      },
+      {
+        "capacity": 1,
+        "device": "host",
+        "id": "host.worker",
+        "kind": "compute"
+      }
+    ],
+    "schedule": "explicit group control, core order and copy producer/overwrite dependencies; ordinals are a topological witness, not completion barriers",
+    "schema": "orbit.program.communication.v2",
+    "semantic_digest": "6b62f8b18fd6493ae62c35e21c678995",
+    "system_capacity_scope": "allocation accounting limit, not measured available host RAM",
+    "task_placements": [
+      {
+        "implementation": "scalar",
+        "memory": "aie_l1",
+        "resource": "npu.compute",
+        "resource_count": 1,
+        "resource_shape": [
+          1,
+          1
+        ],
+        "task": 0
+      },
+      {
+        "implementation": "scalar",
+        "memory": "aie_l1",
+        "resource": "npu.compute",
+        "resource_count": 1,
+        "resource_shape": [
+          1,
+          1
+        ],
+        "task": 1
+      },
+      {
+        "implementation": "scalar",
+        "memory": "aie_l1",
+        "resource": "npu.compute",
+        "resource_count": 1,
+        "resource_shape": [
+          1,
+          1
+        ],
+        "task": 2
+      }
+    ],
+    "transfer_bytes": 1200,
+    "version_count": 6,
+    "versions": [
+      {
+        "producer": -1,
+        "region": 0
+      },
+      {
+        "producer": -1,
+        "region": 1
+      },
+      {
+        "producer": -1,
+        "region": 2
+      },
+      {
+        "producer": 1,
+        "region": 3
+      },
+      {
+        "producer": 2,
+        "region": 4
+      },
+      {
+        "producer": 3,
+        "region": 5
+      }
+    ]
+  },
+  "program_graph": {
+    "allocation_bindings": [
+      {
+        "addressing": "region-addressed",
+        "allocation": 0,
+        "spatial_owner": "system"
+      },
+      {
+        "addressing": "reusable-slot",
+        "allocation": 1,
+        "spatial_owner": "npu.tile(0,2)"
+      },
+      {
+        "addressing": "region-addressed",
+        "allocation": 2,
+        "spatial_owner": "system"
+      },
+      {
+        "addressing": "region-addressed",
+        "allocation": 3,
+        "spatial_owner": "npu.tile(0,2)"
+      }
+    ],
+    "allocation_lifetime": "phase-pool",
+    "boundaries": {
+      "inputs": {
+        "0": "system_memory_bo"
+      },
+      "output_ownership": "external-after-completion; lifetime endpoints are clipped to the graph event domain",
+      "outputs": {
+        "1": "system_memory_bo"
+      }
+    },
+    "communications": [
+      {
+        "bytes": 600,
+        "dependencies": [],
+        "event": 0,
+        "kind": "copy",
+        "link": "host_to_l1",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "npu.dma",
+        "sizes": [
+          15,
+          10
+        ],
+        "source_copies": [
+          0,
+          1,
+          2
+        ],
+        "storage": 0,
+        "target_copies": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "bytes": 600,
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "event": 4,
+        "kind": "copy",
+        "link": "l1_to_host",
+        "offsets": [
+          0,
+          0
+        ],
+        "resource": "npu.dma",
+        "sizes": [
+          15,
+          10
+        ],
+        "source_copies": [
+          6,
+          7,
+          8
+        ],
+        "storage": 1,
+        "target_copies": [
+          9,
+          10,
+          11
+        ]
+      }
+    ],
+    "computation_mlir": "func.func @pointwise(%arg0: memref<15x10xf32> {amoeba.noalias, orbit.role = \"input\"}, %arg1: memref<15x10xf32> {amoeba.noalias, orbit.role = \"output\"}) attributes {orbit.noalias} {\n  %done_writes = taskflow.task @Pointwise.tile.0.0 will_reads(%arg0 : memref<15x10xf32>) will_writes(%arg1 : memref<15x10xf32>) [original_read_memrefs(%arg0 : memref<15x10xf32>), original_write_memrefs(%arg1 : memref<15x10xf32>)] {amoeba.tiling.axis = 0 : i64, amoeba.tiling.derived_range = array<i64: 0, 5>, amoeba.tiling.factor = 3 : i64, amoeba.tiling.original_range = array<i64: 0, 15>, amoeba.tiling.parent_task = \"Pointwise\", amoeba.tiling.part_index = 0 : i64} : (memref<15x10xf32>, memref<15x10xf32>) -> (memref<15x10xf32>) {\n  ^bb0(%arg2: memref<15x10xf32>, %arg3: memref<15x10xf32>):\n    %c0 = arith.constant 0 : index\n    %c1 = arith.constant 1 : index\n    %c15 = arith.constant 15 : index\n    %c10 = arith.constant 10 : index\n    %c0_2 = arith.constant 0 : index\n    %c5 = arith.constant 5 : index\n    affine.for %arg4 = 0 to 5 {\n      affine.for %arg5 = 0 to 10 {\n        %1 = memref.load %arg2[%arg4, %arg5] : memref<15x10xf32>\n        %2 = arith.addf %1, %1 : f32\n        memref.store %2, %arg3[%arg4, %arg5] : memref<15x10xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg3 : memref<15x10xf32>)\n  }\n  %done_writes_0 = taskflow.task @Pointwise.tile.0.1 will_reads(%arg0 : memref<15x10xf32>) will_writes(%arg1 : memref<15x10xf32>) [original_read_memrefs(%arg0 : memref<15x10xf32>), original_write_memrefs(%arg1 : memref<15x10xf32>)] {amoeba.tiling.axis = 0 : i64, amoeba.tiling.derived_range = array<i64: 5, 10>, amoeba.tiling.factor = 3 : i64, amoeba.tiling.original_range = array<i64: 0, 15>, amoeba.tiling.parent_task = \"Pointwise\", amoeba.tiling.part_index = 1 : i64} : (memref<15x10xf32>, memref<15x10xf32>) -> (memref<15x10xf32>) {\n  ^bb0(%arg2: memref<15x10xf32>, %arg3: memref<15x10xf32>):\n    %c0 = arith.constant 0 : index\n    %c1 = arith.constant 1 : index\n    %c15 = arith.constant 15 : index\n    %c10 = arith.constant 10 : index\n    %c5 = arith.constant 5 : index\n    %c10_2 = arith.constant 10 : index\n    affine.for %arg4 = 5 to 10 {\n      affine.for %arg5 = 0 to 10 {\n        %1 = memref.load %arg2[%arg4, %arg5] : memref<15x10xf32>\n        %2 = arith.addf %1, %1 : f32\n        memref.store %2, %arg3[%arg4, %arg5] : memref<15x10xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg3 : memref<15x10xf32>)\n  }\n  %done_writes_1 = taskflow.task @Pointwise.tile.0.2 will_reads(%arg0 : memref<15x10xf32>) will_writes(%arg1 : memref<15x10xf32>) [original_read_memrefs(%arg0 : memref<15x10xf32>), original_write_memrefs(%arg1 : memref<15x10xf32>)] {amoeba.tiling.axis = 0 : i64, amoeba.tiling.derived_range = array<i64: 10, 15>, amoeba.tiling.factor = 3 : i64, amoeba.tiling.original_range = array<i64: 0, 15>, amoeba.tiling.parent_task = \"Pointwise\", amoeba.tiling.part_index = 2 : i64} : (memref<15x10xf32>, memref<15x10xf32>) -> (memref<15x10xf32>) {\n  ^bb0(%arg2: memref<15x10xf32>, %arg3: memref<15x10xf32>):\n    %c0 = arith.constant 0 : index\n    %c1 = arith.constant 1 : index\n    %c15 = arith.constant 15 : index\n    %c10 = arith.constant 10 : index\n    %c10_2 = arith.constant 10 : index\n    %c15_3 = arith.constant 15 : index\n    affine.for %arg4 = 10 to 15 {\n      affine.for %arg5 = 0 to 10 {\n        %1 = memref.load %arg2[%arg4, %arg5] : memref<15x10xf32>\n        %2 = arith.addf %1, %1 : f32\n        memref.store %2, %arg3[%arg4, %arg5] : memref<15x10xf32>\n      }\n    }\n    taskflow.yield done_writes(%arg3 : memref<15x10xf32>)\n  }\n  %0 = taskflow.join states(%done_writes, %done_writes_0, %done_writes_1) base(%arg1) axis(0) region([0, 0], [15, 10]) : memref<15x10xf32>\n  return\n}",
+    "cost": {
+      "allocation_accounting": [
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 1200,
+          "capacity_bytes": 9223372036854775807,
+          "memory": "system_memory_bo",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 1200,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        },
+        {
+          "alignment_bytes": 1,
+          "alignment_padding_bytes_at_peak": 0,
+          "allocation_payload_bytes_at_peak": 1200,
+          "capacity_bytes": 1048576,
+          "memory": "aie_l1",
+          "padding_scope": "target alignment rounding only; null when unrounded pool payload is not represented",
+          "peak_allocated_bytes": 1200,
+          "peak_position": 0,
+          "position_unit": "phase",
+          "status": "derived-from-checked-allocation-intervals"
+        }
+      ],
+      "allocation_peak_scope": "all reserved pool allocations over phase intervals, including dormant templates",
+      "backend_internal_padding_status": "not inferred from this graph",
+      "boundary": "serial dependency/resource schedule; no communication added to a separately selected whole-command composite",
+      "complete_graph_ms": null,
+      "compute_instances": 3,
+      "creation_transfer_events": 2,
+      "logical_source_read_bytes": 600,
+      "logical_source_write_bytes": 600,
+      "payload_scope": "allocation capacity minus known alignment padding; not live logical data or measured physical SRAM usage",
+      "peak_memory_bytes": {
+        "aie_l1": 1200,
+        "system_memory_bo": 1200
+      },
+      "planned_transfer_bytes": 1200,
+      "status": "uncalibrated",
+      "submission_count": 1,
+      "traffic_scope": "logical planned rectangular payload, not measured physical DDR traffic"
+    },
+    "execution_groups": [
+      {
+        "begin_phase": 0,
+        "dependencies": [],
+        "end_phase": 3,
+        "id": 0,
+        "member_events": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "memory": "aie_l1",
+        "resource": "npu.compute",
+        "spatial_owner": "npu.tile(0,2)"
+      }
+    ],
+    "execution_regions": [
+      {
+        "begin_event": 0,
+        "completion_event": {
+          "after": [
+            4
+          ],
+          "id": "program-call.complete"
+        },
+        "end_event": 5,
+        "endpoint_memory": "system_memory_bo",
+        "id": "program-call",
+        "implementation": "direct-air",
+        "input_copies": [
+          0,
+          1,
+          2
+        ],
+        "input_data_edges": [
+          0,
+          1,
+          2
+        ],
+        "invocation_lifecycle": "host-device",
+        "member_events": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "output_copies": [
+          9,
+          10,
+          11
+        ],
+        "placement": "npu",
+        "predecessor_regions": [],
+        "source_tasks": [
+          0,
+          1,
+          2
+        ],
+        "submission_event": {
+          "count": 1,
+          "id": "program-call.submit",
+          "resource": "host-submission",
+          "shared_by_region_inputs": true
+        }
+      }
+    ],
+    "id": "9958a4881b517a370a53095e34c4bbb253e1c8a0a9c7bb4583790d0b148a424e",
+    "instances": [
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 0,
+            "step": 1,
+            "upper": 5
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 10
+          }
+        ],
+        "domain_task": 0,
+        "event": 1,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 0,
+        "resource_count": 1,
+        "resource_shape": [
+          1,
+          1
+        ],
+        "task": 0
+      },
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 5,
+            "step": 1,
+            "upper": 10
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 10
+          }
+        ],
+        "domain_task": 1,
+        "event": 2,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 1,
+        "resource_count": 1,
+        "resource_shape": [
+          1,
+          1
+        ],
+        "task": 1
+      },
+      {
+        "domain": [
+          {
+            "loop": 0,
+            "lower": 10,
+            "step": 1,
+            "upper": 15
+          },
+          {
+            "loop": 1,
+            "lower": 0,
+            "step": 1,
+            "upper": 10
+          }
+        ],
+        "domain_task": 2,
+        "event": 3,
+        "implementation": "scalar",
+        "kind": "source-task",
+        "lanes": 1,
+        "parallel_loop": -1,
+        "phase": 2,
+        "resource_count": 1,
+        "resource_shape": [
+          1,
+          1
+        ],
+        "task": 2
+      }
+    ],
+    "ledger": {
+      "adapter": "native arbitrary-rank adapter of Static allocation/version/location-copy semantics",
+      "allocations": [
+        {
+          "begin_phase": 0,
+          "bytes": 600,
+          "end_phase_exclusive": 3,
+          "key": "host-0",
+          "memory": "system_memory_bo",
+          "storage": 0
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 600,
+          "end_phase_exclusive": 3,
+          "key": "storage-0.data",
+          "memory": "aie_l1",
+          "storage": 0
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 600,
+          "end_phase_exclusive": 3,
+          "key": "host-1",
+          "memory": "system_memory_bo",
+          "storage": 1
+        },
+        {
+          "begin_phase": 0,
+          "bytes": 600,
+          "end_phase_exclusive": 3,
+          "key": "storage-1.data",
+          "memory": "aie_l1",
+          "storage": 1
+        }
+      ],
+      "body_fingerprint": "de6088c680f5b91fdf98f23584c854e38224df7e8e454edb15b6d975dbdafe12",
+      "compute_estimates": [],
+      "copies": [
+        {
+          "allocation": 0,
+          "available_from": 0,
+          "consumer_edges": [],
+          "created_by": -1,
+          "last_users": [
+            0
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            0
+          ],
+          "version": 0
+        },
+        {
+          "allocation": 0,
+          "available_from": 0,
+          "consumer_edges": [],
+          "created_by": -1,
+          "last_users": [
+            0
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            0
+          ],
+          "version": 1
+        },
+        {
+          "allocation": 0,
+          "available_from": 0,
+          "consumer_edges": [],
+          "created_by": -1,
+          "last_users": [
+            0
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            0
+          ],
+          "version": 2
+        },
+        {
+          "allocation": 1,
+          "available_from": 0,
+          "consumer_edges": [
+            0
+          ],
+          "created_by": 0,
+          "last_users": [
+            1
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            1
+          ],
+          "version": 0
+        },
+        {
+          "allocation": 1,
+          "available_from": 0,
+          "consumer_edges": [
+            1
+          ],
+          "created_by": 0,
+          "last_users": [
+            2
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            2
+          ],
+          "version": 1
+        },
+        {
+          "allocation": 1,
+          "available_from": 0,
+          "consumer_edges": [
+            2
+          ],
+          "created_by": 0,
+          "last_users": [
+            3
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            3
+          ],
+          "version": 2
+        },
+        {
+          "allocation": 3,
+          "available_from": 1,
+          "consumer_edges": [],
+          "created_by": 1,
+          "last_users": [
+            4
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            4
+          ],
+          "version": 3
+        },
+        {
+          "allocation": 3,
+          "available_from": 2,
+          "consumer_edges": [],
+          "created_by": 2,
+          "last_users": [
+            4
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            4
+          ],
+          "version": 4
+        },
+        {
+          "allocation": 3,
+          "available_from": 3,
+          "consumer_edges": [],
+          "created_by": 3,
+          "last_users": [
+            4
+          ],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [
+            4
+          ],
+          "version": 5
+        },
+        {
+          "allocation": 2,
+          "available_from": 4,
+          "consumer_edges": [],
+          "created_by": 4,
+          "last_users": [],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [],
+          "version": 3
+        },
+        {
+          "allocation": 2,
+          "available_from": 4,
+          "consumer_edges": [],
+          "created_by": 4,
+          "last_users": [],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [],
+          "version": 4
+        },
+        {
+          "allocation": 2,
+          "available_from": 4,
+          "consumer_edges": [],
+          "created_by": 4,
+          "last_users": [],
+          "layout": "row_major",
+          "released_after": 5,
+          "users": [],
+          "version": 5
+        }
+      ],
+      "copy_count": 12,
+      "data_edge_count": 3,
+      "data_edges": [
+        {
+          "consumer": 1,
+          "copy": 3,
+          "producer": -1,
+          "region": 0,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "aie_l1",
+          "version": 0
+        },
+        {
+          "consumer": 2,
+          "copy": 4,
+          "producer": -1,
+          "region": 1,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "aie_l1",
+          "version": 1
+        },
+        {
+          "consumer": 3,
+          "copy": 5,
+          "producer": -1,
+          "region": 2,
+          "required_dtype": "f32",
+          "required_layout": "row_major",
+          "required_memory": "aie_l1",
+          "version": 2
+        }
+      ],
+      "data_organization": "phase-local",
+      "estimated_makespan_ms": null,
+      "event_count": 5,
+      "events": [
+        {
+          "data_edges": [],
+          "depends_on": [],
+          "kind": "transfer",
+          "link": "host_to_l1",
+          "memory": "",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            0,
+            1,
+            2
+          ],
+          "resource": "npu.dma",
+          "task": 0,
+          "writes": [
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "data_edges": [
+            0
+          ],
+          "depends_on": [
+            0
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "aie_l1",
+          "order_edges": [],
+          "phase": 0,
+          "reads": [
+            3
+          ],
+          "resource": "npu.compute",
+          "task": 0,
+          "writes": [
+            6
+          ]
+        },
+        {
+          "data_edges": [
+            1
+          ],
+          "depends_on": [
+            0,
+            1
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "aie_l1",
+          "order_edges": [],
+          "phase": 1,
+          "reads": [
+            4
+          ],
+          "resource": "npu.compute",
+          "task": 1,
+          "writes": [
+            7
+          ]
+        },
+        {
+          "data_edges": [
+            2
+          ],
+          "depends_on": [
+            0,
+            2
+          ],
+          "kind": "compute",
+          "link": "",
+          "memory": "aie_l1",
+          "order_edges": [],
+          "phase": 2,
+          "reads": [
+            5
+          ],
+          "resource": "npu.compute",
+          "task": 2,
+          "writes": [
+            8
+          ]
+        },
+        {
+          "data_edges": [],
+          "depends_on": [
+            1,
+            2,
+            3
+          ],
+          "kind": "transfer",
+          "link": "l1_to_host",
+          "memory": "",
+          "order_edges": [],
+          "phase": 2,
+          "reads": [
+            6,
+            7,
+            8
+          ],
+          "resource": "npu.dma",
+          "task": 2,
+          "writes": [
+            9,
+            10,
+            11
+          ]
+        }
+      ],
+      "execution_regions": [
+        {
+          "begin_event": 0,
+          "cost_ownership": "prepared-region composite includes submission, device compute/transfers/wait and readback once",
+          "device_stages": [
+            0
+          ],
+          "end_event_exclusive": 5,
+          "host_submission_count": 1,
+          "id": "program-call",
+          "invocation_lifecycle": "host-device",
+          "placement": "npu",
+          "submission_kind": "host_submission",
+          "submission_resource": "host-submission"
+        }
+      ],
+      "expanded_details_omitted": false,
+      "links": [
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "id": "host_to_l1",
+          "latency_ms": 0,
+          "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+          "resource": "npu.dma",
+          "source": "system_memory_bo",
+          "target": "aie_l1"
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "id": "l1_to_host",
+          "latency_ms": 0,
+          "provenance": "serial explicit DMA; latency/bandwidth uncalibrated",
+          "resource": "npu.dma",
+          "source": "aie_l1",
+          "target": "system_memory_bo"
+        }
+      ],
+      "logical_region_count": 6,
+      "logical_regions": [
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            5,
+            10
+          ],
+          "storage": 0
+        },
+        {
+          "offsets": [
+            5,
+            0
+          ],
+          "sizes": [
+            5,
+            10
+          ],
+          "storage": 0
+        },
+        {
+          "offsets": [
+            10,
+            0
+          ],
+          "sizes": [
+            5,
+            10
+          ],
+          "storage": 0
+        },
+        {
+          "offsets": [
+            0,
+            0
+          ],
+          "sizes": [
+            5,
+            10
+          ],
+          "storage": 1
+        },
+        {
+          "offsets": [
+            5,
+            0
+          ],
+          "sizes": [
+            5,
+            10
+          ],
+          "storage": 1
+        },
+        {
+          "offsets": [
+            10,
+            0
+          ],
+          "sizes": [
+            5,
+            10
+          ],
+          "storage": 1
+        }
+      ],
+      "memories": [
+        {
+          "capacity_bytes": 9223372036854775807,
+          "id": "system_memory_bo"
+        },
+        {
+          "capacity_bytes": 1048576,
+          "id": "aie_l1"
+        }
+      ],
+      "memory_architecture": {
+        "domains": [
+          {
+            "id": "system",
+            "kind": "system",
+            "parent": ""
+          },
+          {
+            "id": "npu",
+            "kind": "device",
+            "parent": "system"
+          },
+          {
+            "coordinates": {
+              "column": 0,
+              "row": 2
+            },
+            "id": "npu.tile(0,2)",
+            "kind": "tile",
+            "parent": "npu"
+          }
+        ],
+        "links": [
+          {
+            "bandwidth_bytes_per_ms": 0,
+            "cost_status": "uncalibrated",
+            "domain": "npu",
+            "id": "host_to_l1",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "target_contract",
+              "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+            },
+            "resource": "npu.dma",
+            "source": "system_memory_bo",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "aie_l1",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          },
+          {
+            "bandwidth_bytes_per_ms": 0,
+            "cost_status": "uncalibrated",
+            "domain": "npu",
+            "id": "l1_to_host",
+            "latency_ms": 0,
+            "max_bytes": 9223372036854775807,
+            "memory": "",
+            "min_bytes": 0,
+            "provenance": {
+              "kind": "target_contract",
+              "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+            },
+            "resource": "npu.dma",
+            "source": "aie_l1",
+            "source_device": "",
+            "source_dtype": "",
+            "source_layout": "",
+            "target": "system_memory_bo",
+            "target_device": "",
+            "target_dtype": "",
+            "target_layout": "",
+            "temporary_bytes": 0
+          }
+        ],
+        "memories": [
+          {
+            "accessible_devices": [
+              "host"
+            ],
+            "accessible_resources": [
+              "host.worker"
+            ],
+            "capacity_bytes": 9223372036854775807,
+            "domain": "system",
+            "id": "system_memory_bo",
+            "kind": "system-bo"
+          },
+          {
+            "accessible_devices": [
+              "npu"
+            ],
+            "accessible_resources": [
+              "npu.compute"
+            ],
+            "capacity_bytes": 1048576,
+            "domain": "npu.tile(0,2)",
+            "id": "aie_l1",
+            "kind": "local-sram"
+          }
+        ],
+        "resources": [
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu.tile(0,2)",
+            "id": "npu.compute",
+            "kind": "compute"
+          },
+          {
+            "capacity": 1,
+            "device": "npu",
+            "domain": "npu",
+            "id": "npu.dma",
+            "kind": "transfer"
+          },
+          {
+            "capacity": 1,
+            "device": "host",
+            "domain": "system",
+            "id": "host-submission",
+            "kind": "submission"
+          },
+          {
+            "capacity": 1,
+            "device": "host",
+            "domain": "system",
+            "id": "host.worker",
+            "kind": "compute"
+          }
+        ]
+      },
+      "memory_lifetime_scope": "native physical pool phase intervals; copies have event validity",
+      "memory_peak_bytes": {},
+      "order_edge_count": 0,
+      "order_edges": [],
+      "resource_capacity_scope": "logical issue witness, not a measured DMA-engine count or a promise of serialized physical transfers",
+      "resources": [
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.compute",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "id": "npu.dma",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "id": "host-submission",
+          "kind": "submission"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "id": "host.worker",
+          "kind": "compute"
+        }
+      ],
+      "schedule": "explicit group control, core order and copy producer/overwrite dependencies; ordinals are a topological witness, not completion barriers",
+      "schema": "orbit.program.communication.v2",
+      "semantic_digest": "6b62f8b18fd6493ae62c35e21c678995",
+      "system_capacity_scope": "allocation accounting limit, not measured available host RAM",
+      "task_placements": [
+        {
+          "implementation": "scalar",
+          "memory": "aie_l1",
+          "resource": "npu.compute",
+          "resource_count": 1,
+          "resource_shape": [
+            1,
+            1
+          ],
+          "task": 0
+        },
+        {
+          "implementation": "scalar",
+          "memory": "aie_l1",
+          "resource": "npu.compute",
+          "resource_count": 1,
+          "resource_shape": [
+            1,
+            1
+          ],
+          "task": 1
+        },
+        {
+          "implementation": "scalar",
+          "memory": "aie_l1",
+          "resource": "npu.compute",
+          "resource_count": 1,
+          "resource_shape": [
+            1,
+            1
+          ],
+          "task": 2
+        }
+      ],
+      "transfer_bytes": 1200,
+      "version_count": 6,
+      "versions": [
+        {
+          "producer": -1,
+          "region": 0
+        },
+        {
+          "producer": -1,
+          "region": 1
+        },
+        {
+          "producer": -1,
+          "region": 2
+        },
+        {
+          "producer": 1,
+          "region": 3
+        },
+        {
+          "producer": 2,
+          "region": 4
+        },
+        {
+          "producer": 3,
+          "region": 5
+        }
+      ]
+    },
+    "logical_data": [
+      {
+        "dtype": "f32",
+        "id": "arg0",
+        "layout": "row_major",
+        "regions": [
+          0,
+          1,
+          2
+        ],
+        "role": "input",
+        "shape": [
+          15,
+          10
+        ],
+        "storage": 0,
+        "versions": [
+          0,
+          1,
+          2
+        ]
+      },
+      {
+        "dtype": "f32",
+        "id": "arg1",
+        "layout": "row_major",
+        "regions": [
+          3,
+          4,
+          5
+        ],
+        "role": "output",
+        "shape": [
+          15,
+          10
+        ],
+        "storage": 1,
+        "versions": [
+          3,
+          4,
+          5
+        ]
+      }
+    ],
+    "region_events": [
+      {
+        "copies": [
+          0,
+          1,
+          2
+        ],
+        "dependencies": [],
+        "id": 0,
+        "kind": "visible-to-device",
+        "region": 0,
+        "resource": "host-submission"
+      },
+      {
+        "copies": [],
+        "dependencies": [
+          0
+        ],
+        "id": 1,
+        "kind": "submit",
+        "region": 0,
+        "resource": "host-submission"
+      },
+      {
+        "copies": [],
+        "dependencies": [
+          1
+        ],
+        "id": 2,
+        "kind": "complete",
+        "region": 0,
+        "resource": "host-submission"
+      },
+      {
+        "copies": [
+          9,
+          10,
+          11
+        ],
+        "dependencies": [
+          2
+        ],
+        "id": 3,
+        "kind": "visible-to-host",
+        "region": 0,
+        "resource": "host-submission"
+      }
+    ],
+    "schedule": {
+      "estimated_makespan_ms": null,
+      "events": [
+        {
+          "end_ms": null,
+          "event": 0,
+          "predecessors": [],
+          "start_ms": null
+        },
+        {
+          "end_ms": null,
+          "event": 1,
+          "predecessors": [
+            0
+          ],
+          "start_ms": null
+        },
+        {
+          "end_ms": null,
+          "event": 2,
+          "predecessors": [
+            0,
+            1
+          ],
+          "start_ms": null
+        },
+        {
+          "end_ms": null,
+          "event": 3,
+          "predecessors": [
+            0,
+            2
+          ],
+          "start_ms": null
+        },
+        {
+          "end_ms": null,
+          "event": 4,
+          "predecessors": [
+            1,
+            2,
+            3
+          ],
+          "start_ms": null
+        }
+      ],
+      "policy": "serial-event-order",
+      "timing_boundary": "serial compute and transfer events; explicit region call overhead remains unknown unless separately calibrated",
+      "uncalibrated": [
+        "event:0:transfer",
+        "event:1:compute",
+        "event:2:compute",
+        "event:3:compute",
+        "event:4:transfer",
+        "region:program-call:submission-and-completion"
+      ]
+    },
+    "schema": "orbit.program-graph.v1",
+    "source": {
+      "analysis_status": "analyzed",
+      "body_fingerprint": "de6088c680f5b91fdf98f23584c854e38224df7e8e454edb15b6d975dbdafe12",
+      "codegen_status": "requires_target_validation",
+      "cost_status": "uncalibrated",
+      "region_semantics": "conservative_static_bounding_boxes",
+      "schema": "orbit.generic.analysis.v1",
+      "storages": [
+        {
+          "dtype": "f32",
+          "id": "arg0",
+          "role": "input",
+          "shape": [
+            15,
+            10
+          ]
+        },
+        {
+          "dtype": "f32",
+          "id": "arg1",
+          "role": "output",
+          "shape": [
+            15,
+            10
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "arg0:initial"
+              ],
+              "region": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  0,
+                  10
+                ]
+              ],
+              "storage": "arg0",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  0,
+                  5
+                ],
+                [
+                  0,
+                  10
+                ]
+              ],
+              "storage": "arg1",
+              "write": true,
+              "write_version": "Pointwise.tile.0.0:write:1"
+            }
+          ],
+          "dependencies": [],
+          "id": "Pointwise.tile.0.0",
+          "loops": [
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 5
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 10
+            }
+          ]
+        },
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "arg0:initial"
+              ],
+              "region": [
+                [
+                  5,
+                  10
+                ],
+                [
+                  0,
+                  10
+                ]
+              ],
+              "storage": "arg0",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  5,
+                  10
+                ],
+                [
+                  0,
+                  10
+                ]
+              ],
+              "storage": "arg1",
+              "write": true,
+              "write_version": "Pointwise.tile.0.1:write:1"
+            }
+          ],
+          "dependencies": [],
+          "id": "Pointwise.tile.0.1",
+          "loops": [
+            {
+              "lower": 5,
+              "step": 1,
+              "upper": 10
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 10
+            }
+          ]
+        },
+        {
+          "accesses": [
+            {
+              "exact_region": true,
+              "read": true,
+              "read_versions": [
+                "arg0:initial"
+              ],
+              "region": [
+                [
+                  10,
+                  15
+                ],
+                [
+                  0,
+                  10
+                ]
+              ],
+              "storage": "arg0",
+              "write": false,
+              "write_version": ""
+            },
+            {
+              "exact_region": true,
+              "read": false,
+              "read_versions": [],
+              "region": [
+                [
+                  10,
+                  15
+                ],
+                [
+                  0,
+                  10
+                ]
+              ],
+              "storage": "arg1",
+              "write": true,
+              "write_version": "Pointwise.tile.0.2:write:1"
+            }
+          ],
+          "dependencies": [],
+          "id": "Pointwise.tile.0.2",
+          "loops": [
+            {
+              "lower": 10,
+              "step": 1,
+              "upper": 15
+            },
+            {
+              "lower": 0,
+              "step": 1,
+              "upper": 10
+            }
+          ]
+        }
+      ]
+    },
+    "source_access_versions": "conservative may-overlap source facts; exact finite execution versions are in the shared ledger",
+    "source_binding": "borrowed actual MLIR operations and values; serialized source is a view, not an executable graph import",
+    "source_dependencies": [],
+    "supported_communication": [
+      "copy",
+      "shared-read-of-existing-copy"
+    ],
+    "unsupported_communication": [
+      "stream",
+      "multicast",
+      "arbitrary-cross-stage-retention"
+    ]
+  },
+  "program_graph_id": "9958a4881b517a370a53095e34c4bbb253e1c8a0a9c7bb4583790d0b148a424e",
+  "program_mapping_choices": {
+    "data_organization": "phase-local",
+    "grouping": "task-shape-stages",
+    "panel_loop": -1,
+    "residency": "phase-local",
+    "reuse_loop": -1,
+    "storage": -1
+  },
+  "readonly_retentions": [],
+  "residency": [
+    {
+      "bytes": 600,
+      "lifetime": "whole_herd",
+      "memory": "aie_l1",
+      "storage": "arg0"
+    },
+    {
+      "bytes": 600,
+      "lifetime": "whole_herd",
+      "memory": "aie_l1",
+      "storage": "arg1"
+    }
+  ],
+  "residency_scopes": [],
+  "resident_bytes": 1200,
+  "retained_regions": [],
+  "schema": "orbit.generic.mapping.v1",
+  "strategy": "single-herd-resident",
+  "system_memory_accounting_scope": "system-memory BO tensor payload; excludes runner host array mirrors, references, runtime and compiler allocations",
+  "system_memory_peak_bytes": 1200,
+  "target_capabilities": {
+    "acquire_all_inputs_at_group_entry": true,
+    "capacity_bytes": 1048576,
+    "implementations": [
+      {
+        "kind": "scalar",
+        "lanes": 1
+      }
+    ],
+    "max_group_inputs": 2,
+    "max_group_outputs": 2,
+    "tile_alignment": [
+      1,
+      1,
+      1
+    ]
+  },
+  "target_capability_identity": "a3c10f66c52807d3b7b24e946256996f97e9c69b0f1d74ea50ddbd5a52549014",
+  "target_memory": {
+    "architecture": {
+      "domains": [
+        {
+          "id": "system",
+          "kind": "system",
+          "parent": ""
+        },
+        {
+          "id": "npu",
+          "kind": "device",
+          "parent": "system"
+        },
+        {
+          "coordinates": {
+            "column": 0,
+            "row": 2
+          },
+          "id": "npu.tile(0,2)",
+          "kind": "tile",
+          "parent": "npu"
+        }
+      ],
+      "links": [
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "domain": "npu",
+          "id": "host_to_l1",
+          "latency_ms": 0,
+          "max_bytes": 9223372036854775807,
+          "memory": "",
+          "min_bytes": 0,
+          "provenance": {
+            "kind": "target_contract",
+            "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+          },
+          "resource": "npu.dma",
+          "source": "system_memory_bo",
+          "source_device": "",
+          "source_dtype": "",
+          "source_layout": "",
+          "target": "aie_l1",
+          "target_device": "",
+          "target_dtype": "",
+          "target_layout": "",
+          "temporary_bytes": 0
+        },
+        {
+          "bandwidth_bytes_per_ms": 0,
+          "cost_status": "uncalibrated",
+          "domain": "npu",
+          "id": "l1_to_host",
+          "latency_ms": 0,
+          "max_bytes": 9223372036854775807,
+          "memory": "",
+          "min_bytes": 0,
+          "provenance": {
+            "kind": "target_contract",
+            "source": "serial explicit DMA; latency/bandwidth uncalibrated"
+          },
+          "resource": "npu.dma",
+          "source": "aie_l1",
+          "source_device": "",
+          "source_dtype": "",
+          "source_layout": "",
+          "target": "system_memory_bo",
+          "target_device": "",
+          "target_dtype": "",
+          "target_layout": "",
+          "temporary_bytes": 0
+        }
+      ],
+      "memories": [
+        {
+          "accessible_devices": [
+            "host"
+          ],
+          "accessible_resources": [
+            "host.worker"
+          ],
+          "capacity_bytes": 9223372036854775807,
+          "domain": "system",
+          "id": "system_memory_bo",
+          "kind": "system-bo"
+        },
+        {
+          "accessible_devices": [
+            "npu"
+          ],
+          "accessible_resources": [
+            "npu.compute"
+          ],
+          "capacity_bytes": 1048576,
+          "domain": "npu.tile(0,2)",
+          "id": "aie_l1",
+          "kind": "local-sram"
+        }
+      ],
+      "resources": [
+        {
+          "capacity": 1,
+          "device": "npu",
+          "domain": "npu.tile(0,2)",
+          "id": "npu.compute",
+          "kind": "compute"
+        },
+        {
+          "capacity": 1,
+          "device": "npu",
+          "domain": "npu",
+          "id": "npu.dma",
+          "kind": "transfer"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "domain": "system",
+          "id": "host-submission",
+          "kind": "submission"
+        },
+        {
+          "capacity": 1,
+          "device": "host",
+          "domain": "system",
+          "id": "host.worker",
+          "kind": "compute"
+        }
+      ]
+    },
+    "binding": {
+      "compute_resource": "npu.compute",
+      "dma_resource": "npu.dma",
+      "host_air_memory_space": 0,
+      "host_memory": "system_memory_bo",
+      "input_link": "host_to_l1",
+      "local_air_memory_space": 2,
+      "local_memory": "aie_l1",
+      "output_link": "l1_to_host",
+      "submission_resource": "host-submission"
+    }
+  },
+  "task_implementations": [
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 0
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 1
+    },
+    {
+      "kind": "scalar",
+      "lanes": 1,
+      "parallel_loop": -1,
+      "task": 2
+    }
+  ],
+  "task_loop_orders": [
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 0
+    },
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 1
+    },
+    {
+      "loop_order": [
+        0,
+        1
+      ],
+      "task": 2
+    }
+  ],
+  "tasks": [
+    {
+      "device": "npu",
+      "index": 0,
+      "resource": "npu.compute",
+      "spatial_owner": "npu.tile(0,2)",
+      "task": "Pointwise.tile.0.0"
+    },
+    {
+      "device": "npu",
+      "index": 1,
+      "resource": "npu.compute",
+      "spatial_owner": "npu.tile(0,2)",
+      "task": "Pointwise.tile.0.1"
+    },
+    {
+      "device": "npu",
+      "index": 2,
+      "resource": "npu.compute",
+      "spatial_owner": "npu.tile(0,2)",
+      "task": "Pointwise.tile.0.2"
+    }
+  ],
+  "theoretical_coefficients": {
+    "launch_ms": 0.10000000000000001,
+    "per_scalar_operation_ms": 9.9999999999999995e-07,
+    "per_transfer_byte_ms": 9.9999999999999995e-08
+  },
+  "tile_sizes": [],
+  "transfer_count": 2,
+  "transfer_summary": [
+    {
+      "bytes": 600,
+      "count": 1,
+      "direction": "host_to_l1",
+      "storage": "arg0",
+      "storage_index": 0
+    },
+    {
+      "bytes": 600,
+      "count": 1,
+      "direction": "l1_to_host",
+      "storage": "arg1",
+      "storage_index": 1
+    }
+  ],
+  "transfers": [
+    {
+      "bytes": 600,
+      "direction": "host_to_l1",
+      "extent": "full_static_buffer",
+      "offsets": [],
+      "phase": 0,
+      "sizes": [],
+      "source": "system_memory_bo",
+      "storage": "arg0",
+      "storage_index": 0,
+      "target": "aie_l1"
+    },
+    {
+      "bytes": 600,
+      "direction": "l1_to_host",
+      "extent": "full_static_buffer",
+      "offsets": [],
+      "phase": 0,
+      "sizes": [],
+      "source": "aie_l1",
+      "storage": "arg1",
+      "storage_index": 1,
+      "target": "system_memory_bo"
+    }
+  ]
+}
